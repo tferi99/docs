@@ -1,0 +1,84 @@
+=======
+Ant FAQ
+=======
+
+- Howto list targets?
+- Debugging Ant with Eclipse?
+- How to trace Ant script?
+- How to update WAR?
+- Ant's built-in properties
+- Howto add SVN revision during ANT build?
+
+=====================================================================================================================
+Howto list targets?
+-------------------
+ant -p
+
+=====================================================================================================================
+Debugging Ant with Eclipse
+--------------------------
+- To debug an Ant script, the first step is to add a breakpoint in the problem area of the script itself: 
+
+- Then you need to right click on the script (in the navigator or package explorer, for instance) and use the 
+	context menu Debug As > Ant Build . 
+	
+	Once you've done that, the debug session will start. 
+	
+=====================================================================================================================	
+How to trace Ant script?
+------------------------
+
+Use -v option.
+
+=====================================================================================================================	
+How to update WAR?
+------------------
+Use 'update="true"' in <war> goal. If source files are elder than files in WAR, they will be ignored. To force overwrite
+with these files refresh date of these files usiong <touch>.
+
+
+	<touch>
+		<fileset dir="${DIR_SRC_CONFIG}/${target_config}"/>
+	</touch>
+
+	<war destfile="${TARGET_WAR}" update="true">
+		<fileset dir="${DIR_SRC_CONFIG}/${target_config}"/>
+	</war>
+
+
+=====================================================================================================================
+Ant's built-in properties
+-------------------------
+ant.file				The absolute path of the build file
+ant.project.name		The name of the project as set in the <project> element's name attribute. 
+ant.home				The root directory of ant
+ant.version				The version of this ant installation. This is not just the version number and includes information such as the compilation date. 
+ant.java.version		The version of the java that ant uses
+basedir					The absolute path of the project
+os.name					Operating system name
+java.home				Java home directory name
+user.home				User directory name
+user.name				User name	
+
+
+=====================================================================================================================
+Howto add SVN revision during ANT build?
+----------------------------------------
+
+	<target name="find-svnrevision" description="Sets property 'revision.number' to the head svn revision">
+		<property name="revision" value="HEAD"/>
+			<!-- find out revision number of HEAD, need svn.exe installed on local machine -->
+			<exec executable="svnversion" outputproperty="svnversion">
+			</exec>
+			<echo>Revision info: ${svnversion}</echo>
+		
+			<echo file="${basedir}/src/com/andtek/andphone/svnrevision.properties" append="false">revision=${svnversion}</echo>
+	</target>
+
+
+Similar solutions:
+	
+	svn info
+	svn log -r "HEAD" -q
+
+

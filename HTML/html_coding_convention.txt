@@ -1,0 +1,35 @@
+============================
+HTML CODING CONVENTIONS MINI
+============================
+
+- Split tags written by JS document.write(), e.g.:
+
+	document.write("<src" + "ript .......">);
+	
+- Add 'alt' property to <img> tag.
+
+- Add TYPE property to <script> and <style> tags, e.g:
+
+	<script type="text/javascript">
+	<style type="text/css">
+
+- Authors should avoid using strings such as "</P>" in their embedded scripts. In JavaScript, 
+authors may use a backslash to prevent the string from being parsed as markup:
+
+	<script type="text/javascript">
+	<!--
+	document.write("<\/P>");
+	// -->
+	</script>	
+
+- In a DOCTYPE, the formal public identifier--the quoted string that appears after the PUBLIC keyword--is case sensitive. 
+A common error is to use the following:
+
+	<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+
+Here the formal public identifier (FPI) is all lowercase. The validator does not recognize the document as HTML 4.0 
+Transitional since the expected FPI for HTML 4.0 Transitional uses different case:
+
+	<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">	
+	
+- ID and name attributes must begin with a letter, not a digit. 	

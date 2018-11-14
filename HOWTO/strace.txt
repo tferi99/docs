@@ -1,0 +1,8 @@
+
+You can trace system calls and signals by calling strace.
+
+strace [-o filename] pid
+
+See also:
+	man strace
+

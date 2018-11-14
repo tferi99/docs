@@ -1,0 +1,100 @@
+Ant kick start
+==============
+Apache Ant is a Java-based build tool.
+In theory, it is kind of like make, without make's wrinkles.
+
+Buildfile
+---------
+- Ant's buildfiles are written in XML. 
+- Each buildfile contains one project and at least one (default) target.
+- Targets contain task elements. 
+- Each task element of the buildfile can have an id attribute and can later be referred to by the value supplied to this. 
+  The value has to be unique.
+
+  <project>
+	<target>
+		<task X>
+
+
+<project>
+---------
+Properties:
+- name		: the name of the project
+- default	: (REQUIRED) the default target to use when no target is supplied.
+- basedir	: the base directory from which all path calculations are done. 
+		  This attribute might be overridden by setting the "basedir" property beforehand.
+
+
+<target>
+--------
+Properties:
+- name		: (REQUIRED) the name of the target.	
+- depends	: a comma-separated list of names of targets on which this target depends.
+- if		: the name of the property that must be set in order for this target to execute.
+- unless	: the name of the property that must not be set in order for this target to execute.
+- description	: a short description of this target's function.
+
+<name attribute1="value1" attribute2="value2" ... />
+
+
+Properties
+----------
+Properties can be set in the buildfile by the property task:
+
+	<property name="prop" value="val">
+
+Using peroperties:
+
+	${prop}
+
+
+<property>
+----------
+Properties:
+classpath	: The classpath to use when looking up a resource. [Path]
+environment	: The prefix to use when retrieving environment variables. [String]
+file		: The file name of a property file to load. [File]
+location	: Property to the absolute file name of the given file. [File]
+name		: Name of the property to set. [String]
+prefix		: Prefix to apply to properties loaded using file or resource. [String]
+refid		: Reference to an Ant datatype declared elsewhere. [Reference]
+resource	: The resource name of a property file to load. [String]
+value		: Value of the property. [String]
+
+
+Built-in Properties
+-------------------
+Ant provides access to all system properties as if they had been defined using a <property> task. 
+For example, ${os.name} expands to the name of the operating system.
+For a list of system properties see the Javadoc of System.getProperties.
+
+
+
+Tips
+----
+ant -help, -h		: help
+ant -diagnostics	: print information that might be helpful to
+			  diagnose or report problems.
+			  
+			  
+			  
+Eclipse integration
+-------------------			  
+1. Project properties/Builders
+
+2. New 
+
+3. Choose builder
+
+4. Main tab
+	- choose a build file (Browse workspace)
+	- choose a base dir
+	
+Debugging Ant with Eclipse
+--------------------------
+- To debug an Ant script, the first step is to add a breakpoint in the problem area of the script itself: 
+
+- Then you need to right click on the script (in the navigator or package explorer, for instance) and use the 
+	context menu Debug As > Ant Build . 
+	
+	Once you've done that, the debug session will start. 

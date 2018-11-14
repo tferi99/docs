@@ -1,0 +1,9 @@
+
+How to create a simple unique filename?
+
+Use the followings:
+	$0$$
+
+	$0		: name of applicationb (argv[0]), you cam identify your file
+	$$		: process ID of actual process
+

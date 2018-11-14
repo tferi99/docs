@@ -1,0 +1,19 @@
+
+/etc/rc.config
+	ROOT_LOGIN_REMOTE	: to enable/disable remote root logging in
+	CWD_IN_ROOT_PATH	: . in root path
+
+	In this file can you enable/disable inetd services.
+
+
+/etc/securetty
+	This file contains ttys, from you can log in as root.
+
+/etc/sudoer
+	In this file you can specify users and commands what these users can 
+	run as root by calling with sodo command.
+
+
+See Yast System administration/Secutity settings for more.
+
+	

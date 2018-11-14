@@ -1,0 +1,17 @@
+How to add new serlet based application server to JBuilder:
+
+1. Install application server
+2. Add a new server entry to JBuilder
+	- Under menu Tools/Configure servers... 'Copy' button
+	  This will create new files in your "C:\Documents and Settings\$USER\.jbuilder9" directory:
+		1. <servername>.library
+		2. <servername> Servlet.library
+	  These files will appear in menu Tools/Configure Libraries... in "User Home" section
+
+3. Add the necessary JARs to server entry in Tools/Configure Libraries... (Class tab)
+	For example Tomcat 4.1 has <fullpath>/servlet.jar, but Tomcat 5.x need other JARs (Servlet-api.jar, Jsp-api.jar)
+
+   There isn't direct reference to Servlet API JARs in Servlet entry of 'Configure Libraries...', only a link to 
+   server entry (See 'Required Libraries tab of Servlet entry in Project section).
+   This entries will provide automatic servlet API change when you change server in project settings.
+

@@ -1,0 +1,19 @@
+About devices
+=============
+Devices can access as files in /dev. Each device file has a major and minor 
+number.
+
+major number	: identifies the device driver referenced by this file.
+				  So every device file handled by the same device driver have 
+				  the same major number.
+minor number	: all physical devices controlled by the same device driver
+				  (so given them the same major number) are distinguished by 
+				  different minor numbers.
+
+
+
+
+See:	Linux Hackers Guide
+		/usr/src/linux/Documentation/devices.txt
+
+

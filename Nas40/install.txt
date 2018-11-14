@@ -1,0 +1,32 @@
+Windows NT 4.0
+--------------
+- minimum ServicePack 3 (tested with 4)
+- IMPORTANT: set domain name in network administrator 
+  (Network neighborhood/Properties/Protocols/TCP-IP/Properties/Dns 'Domain:')
+
+  Without this connection to configuration entry from LDAP server cannot be 
+  read.
+
+You can change settings in 'NAS Administrator' tool.
+
+
+Win2k
+-----
+Restrictions:
+ - you cannot set 'domain name' 
+ - you won't be able to call ''NAS Administrator' tool
+
+You can change configuration by changing registry entries directly:
+
+under:
+[HKEY_LOCAL_MACHINE\SOFTWARE\Netscape\Application Server\4.0\CCS0\LOGGING]
+
+"EnableEvtLog"=dword:00000001		: enabling event logging
+"EvtBatchInterval"=dword:00000005	: flush interval
+"EvtBatchSize"=dword:00000001		: buffer size
+"TextPath"="logs\\nas_tferi"		: log-file name template
+"Text"=dword:00000001			: enabling logging into file
+
+
+
+	

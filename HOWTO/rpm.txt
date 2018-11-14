@@ -1,0 +1,29 @@
+Short user guide for RMP (RedHat Package Manager)
+-------------------------------------------------
+
+rpm -i package		: installing a package
+					  Package name can be also an URL (e.g. FTP path).
+rpm -ivh package	: same as previous + process bar
+rpm --nodeps -i pkg	: install package, but don't check dependencies before
+
+rpm -e package		: removing a package
+rpm -q package		: checking whether a package's installed
+rpm -qa 			: listing all of installed packages
+rpm -qf file		: it says which package contains the given file
+					  try: 
+					  		rpm -qf `which program`
+							
+rpm -V package		: verifying a package consistency (looking for missing 
+					  files)
+rpm -qpi <package file name>
+					: it gives detailed information about given package
+
+rpm -qpl <package file name>
+					: it lists files that are contained by package
+
+
+You can view into package file using Midnight Commander, you can list package components and destinbation locations of installation (mc probably calls rpm to do this ?).
+
+You can find examples for creating RPM packages in /u/src/.../makerpm_... srcripts.
+
+

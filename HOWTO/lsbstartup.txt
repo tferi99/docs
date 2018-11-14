@@ -1,0 +1,35 @@
+================================================================
+How to write LSB-compliant Linux Standard Base) startup scripts?
+================================================================
+
+LSB-compliant init scripts need to:
+
+- provide - at least - the following actions: 
+	start, stop, restart, force-reload, and status. 
+	
+	All of those, except for status, are required by the Debian Policy, chapter 9.3.2 Writing the scripts. "Status" support has been requested into policy, see #291148 and LSBInitScripts/StatusSupport.
+	
+- return proper exit status codes
+
+- document runtime dependencies
+
+- [optionally] Log messages using the Init.d functions: log_success_msg, log_failure_msg and log_warning_msg 
+	(This would introduce consistent output in scripts, as requested in http://lists.debian.org/debian-devel/2005/06/msg00729.html
+	
+This metadata information should be in the following format:
+
+	### BEGIN INIT INFO
+	# Provides:          scriptname
+	# Required-Start:    $remote_fs $syslog
+	# Required-Stop:     $remote_fs $syslog
+	# Default-Start:     2 3 4 5
+	# Default-Stop:      0 1 6
+	# Short-Description: Start daemon at boot time
+	# Description:       Enable service provided by daemon.
+	### END INIT INFO	
+	
+SEE ALSO:
+
+		Google:		'How to LSBize an Init Script'
+		
+		

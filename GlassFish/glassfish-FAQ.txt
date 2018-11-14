@@ -1,0 +1,169 @@
+=============
+GlassFish FAQ
+=============
+
+Resources
+---------
+- Where can I find source code?
+
+Development
+-----------
+- How to debug Glassfish application remotely with Eclipse? (!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+- How to map Virtual Directories in Glassfish?
+
+Security
+--------
+- What is the default admin username/password?
+- Where are the keystores?
+- How to manage realms?
+- How to enable following simlinks?
+- How to trace auth?
+- How to configure JDBC realm?
+
+Troubleshooting
+---------------
+- Problems with logging
+
+----------------------------------------------------------------------------------------------------------------------
+Where can I find source code?
+=============================
+
+	https://svn.java.net/svn/glassfish~svn
+
+----------------------------------------------------------------------------------------------------------------------
+What is the default admin username/password?
+============================================
+admin/adminadmin
+
+----------------------------------------------------------------------------------------------------------------------
+Where are the keystores?
+========================
+
+$domain_dir/config/keystore.jks
+$domain_dir/config/cacerts.jks
+
+Default password:	changeit
+Default alias:		s1as		(-Dcom.sun.enterprise.security.httpsOutboundKeyAlias=s1as)
+
+To list content:
+
+	keytool -list -v -keystore keystore.jks -storepass changeit
+	keytool -list -v -keystore cacerts.jks -storepass changeit
+
+
+To change keystore:
+
+	For configuring GlassFish to use different keystore we can use Web Console and navigate to 
+	
+		Configuration/JVM Settings 
+		
+	and select JVM Options. We should look for an entry like 
+	
+		-Djavax.net.ssl.keyStore=${com.sun.aas.instanceRoot}/config/keystore.jks 
+		
+	and change the path to our own keystore file.
+	
+To change keystore alias:
+
+	To change each listener's alias for HTTP listeners we need to navigate to 
+	
+		Configuration/Network Config/Protocols 
+		
+	and change the Certificate NickName under tab 'SSL' to our selected name. 
+	
+	The simplest way to change the nickname is by replacing s1as with the new alias name in the 
+	domain configuration file:
+	
+		$domain.dir/config/domain.xml 
+		
+
+----------------------------------------------------------------------------------------------------------------------
+How to manage realms?
+=====================
+List realms:
+
+	asadmin list-auth-realms --host 127.0.0.1 --port 4848
+
+	
+
+----------------------------------------------------------------------------------------------------------------------
+How to enable following simlinks?	
+=================================
+Method 1:
+
+	To enable symbolic links in GlassFish, which is disabled by default, go to the admin interface, click 
+
+		Configuration > Http Service > Virtual Servers 
+		
+	and then the name of of the virtual server you are using (e.g. server).
+
+	Under Additional Properties, click Add Property and enter 
+
+		allowLinking 
+		
+	as name and true as value.
+
+	
+Method 2 (maybe deprecated):	
+	It is also possible to activate symbolic links using sun-web.xml.	
+
+	To activate symbolic links in your web application, specify this property in your web application's sun-web.xml: 
+	  <sun-web-app>
+		<property name="allowLinking" value="true"/>
+	  </sun-web-app>
+
+	  The default value of this property is false.
+
+----------------------------------------------------------------------------------------------------------------------
+How to trace auth?
+==================
+Set logging level of 
+	
+	javax.enterprise.system.core.security.level
+	
+to FINEST.
+
+and add JVM parameter:
+
+	-Djava.security.debug=logincontext
+
+----------------------------------------------------------------------------------------------------------------------
+How to configure JDBC realm?
+============================
+1. Go into maintenence page:
+
+	Configurations/server-config/Security/Realms
+
+2. New
+
+3. Specify properties:
+
+	- Specify name of realm
+	- Choose JDBCRealm as Class.
+	- JAAS Context: a valid name from config/login.conf, here always:	jdbcRealm
+	- JNDI: JNDI name of datasource, e.g.:	jdbc/UPaymentDS
+	- Database parameters - here join column is user login name, so preferred using a VIEW (as not a group table with user names).
+	- Digest Algorithm: !!!!!!!! default is NOT plain text password, if you want to plaint text, add 'none'.
+	
+If you have problems, activate logging (see also 'How to trace auth?').
+
+----------------------------------------------------------------------------------------------------------------------
+Problems with logging
+=====================
+- You can find logging configuration in $DOMAIN_DIR/config/logging.properties
+- com.sun.enterprise.server.logging.GFFileHandler.file points to server log file
+- com.sun.enterprise.server.logging.GFFileHandler.level contains level of this log-handler
+- java.util.logging.ConsoleHandler : global log handler by default configuration
+- java.util.logging.ConsoleHandler.level is the global log level
+
+----------------------------------------------------------------------------------------------------------------------
+How to map Virtual Directories in Glassfish?
+============================================
+Domain level solution:
+
+	Menu:	Configuration > http service > virtual servers
+
+	
+
+
+	

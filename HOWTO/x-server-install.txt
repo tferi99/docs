@@ -1,0 +1,20 @@
+============================
+Howto install X-Server + KDE
+============================
+Install KDE in debian
+
+	apt-get install x-window-system-core kde
+
+You'll probably also want to install KDM, for the KDE-style login screen.
+
+	apt-get install kdm
+
+you may need to start X-Server if it is not running, to start it run
+
+	startx
+
+To start KDE each time (you probably want this) you'll need to edit your startup files. If you use KDM or XDM to log in, edit .xsession, otherwise edit .xinitrc or .Xclients.
+
+Install Gnome in Debian
+
+	apt-get install gnome

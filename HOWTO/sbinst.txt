@@ -1,0 +1,36 @@
+How can we install a SoundBlaster under Linux ???
+
+1. First we have to check whether sound card support enabled (CONFIG_SOUND=y kernel parameter).
+
+The previous compiled kernel parameters you can find (probably) in /usr/src/linux/.config file.
+You can modify this file comfortable if you call 'make xconfig' from X, and you load this file.
+
+2. You have to enable OSS support (CONFIG_OSS_SOUND=y).
+3. Enable CONFIG_SOUND_SB and CONFIG_SOUND_MPU401 and generic OPL2/OPL3 as moduls.
+
+MOTE:
+If you have a PnP sound card, you have to create /etc/isapnp.conf file calling by pnpdump. You have to edit this file and uncomment the appropriate rows (depends on IRQ, IO, ..., you can check this values e.g. from Windows device manager).
+
+After rebooting the system, the pnp drivers will be loaded.
+
+4. Then you have to load sound drivers (example: /u/ins_sb).
+
+	(with ISA PnP cards call isapnp /etc/isapnp.conf)
+	modprobe sound
+	insmod uart401
+	insmod sb io=0x220 irq=5 dma=1 dma16=5 
+
+In SuSE you can call these in /etc/rc.d/boot.local. This will be called after boot script but before setting runlevel.
+
+You can check the loaded moduls calling by lsmod or from /proc/modules.
+
+If you would to check the device call the followings:
+
+	cat abc.au > /dev/audio
+
+See more:
+	/dev/doc/howto/Sound-HOWTO
+
+
+
+

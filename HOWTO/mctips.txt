@@ -1,0 +1,15 @@
+=======================
+Midnigth commander tips
+=======================
+
+
+Q: Some people may notice that when starting mc (midnight commander CTRL-O) the following error message shows up:
+	Cannot open master side of pty: No such file or directory(2)
+	
+A: Edit /etc/fstab, insert this line, somewhere after (below) mounting the root (/):
+
+		none  /dev/pts  devpts  mode=0620    0    0	
+	
+	and call (as root):
+	
+		mount -a

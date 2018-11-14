@@ -1,0 +1,38 @@
+==============
+FreeMarker FAQ
+==============
+
+- How to display a boolean variable?
+- How to add optional parameters to a macro?
+
+-----------------------------------------------------------------------------------------------------------------------
+How to display a boolean variable?
+==================================
+
+	booleanVar?string("true", "false")
+
+Although true/false is default, so 
+
+	booleanVar?string
+
+	
+	
+-----------------------------------------------------------------------------------------------------------------------
+How to add optional parameters to a macro?
+==========================================
+If you specify a default value to a paramater it will be optional. E.g.:
+
+	<#macro bordered background="">
+		<div style="border: 1px solid blue; <#if background??>background: ${background}</#if>">
+			<#nested />
+		</div>
+	</#macro>
+
+	<h3>Nested content</h3>
+	<@bordered background="red">
+	Here comes a text in a box
+	</@bordered>
+	
+	<@bordered>
+	Here comes another text in a box but without background parameter
+	</@bordered>

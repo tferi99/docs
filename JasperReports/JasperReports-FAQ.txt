@@ -1,0 +1,371 @@
+-----------------
+JasperReports FAQ
+-----------------
+
+Environment, config
+-------------------
+- Running in Linux
+
+Datasource
+----------
+- How to limit datasource rows?
+- How to specify IN values for a query?
+- How to specify IN values for a query from a String parameter?
+
+Date
+----
+- How to convert seconds into formatted time?
+
+Crosstab
+--------
+- How to add parameter to crosstab?
+
+Component design
+----------------
+- How to specify PDF fonts?
+- How to concatenate formatted date values to a field?
+- How to set background color of a Crosstab cell from style?
+
+
+Layout/band Design
+------------------
+- How to create multi-page design?
+- How to limit datasource rows per pages?
+- How to get column footer to appear directly below details band?
+
+Styles
+------
+- How to add conditional background color to detail fields?
+- How to use external styles?
+
+Subreporting
+------------
+- How to fill the last page with subreport?
+- How to use page numbering with subreports?
+
+Tricks
+------
+- How to show row index?
+
+Expressions
+-----------
+- Does JasperReports support multiple statements in a single expression?
+- Switch-case in expressions
+
+Variables
+---------
+- How to create conditional counters?
+
+Troubleshooting
+---------------
+- iReport extremely slow after adding a classpth entry
+- "java.lang.IllegalArgumentException: Null 'dataset' argument." on chart when no data
+- Variable seems to be evaluated in the next row
+- iReport 5.5 terminated during startup
+
+-------------------------------------------------------------------------------------------------------------
+How to specify PDF fonts?
+=========================
+DEPRECATED!
+
+If you want to use a special font during PDF export you have to configure it.
+Steps are:
+
+- Create a JAR with TTF fonts for application.
+- Add these fonts to iReport:
+	- EITHER copy these fonts into 'fonts' directory of iReport
+	- OR add JAR to font path (Option/Font Path)
+- Configure field properties:
+	- Set your font as PDF font (name is 'XXXX (xxx.ttf)')
+	- Set 'PDF Embedded' to true
+	- Set 'PDF Encoding' if you want to display special characters (e.g CP1250 (Central European))
+	
+	IMPORTANT NOTE:
+		Don't trust default values, so NAME OF PROPERTY MUST BE BOLD! 
+		
+		If you have a default value in a property where values can be choosen from a combo, iReport 
+		shows the FIRST value of combo, but this is NOT THE REAL DEFAULT VALUE.
+		
+		For example if you would like to use hungarian characters you have to explicitly choose 
+		'CP1250 (Central European)' value from combo to change default.
+		Again, name of property MUST BE BOLD!
+		
+
+
+-------------------------------------------------------------------------------------------------------------
+Running in Linux		
+================
+Set the followings in Tomcat:
+
+CATALINA_OPTS="-....... -Djava.awt.headless=true"
+
+Headless mode is a system configuration in which the display device, keyboard, or mouse is lacking. 
+
+
+-------------------------------------------------------------------------------------------------------------
+Does JasperReports support multiple statements in a single expression?
+======================================================================
+
+NO.
+
+But it can be often required, e.g. for date calculation.
+
+You can apply some tricks or the most simple solution writing JAVA hellper package and calling from expressions.
+
+-------------------------------------------------------------------------------------------------------------
+How to create multi-page design?
+================================
+Add pages a subreports and set 'Position Type' property of subreports to 'Float'.
+
+-------------------------------------------------------------------------------------------------------------
+How to show row index?
+======================
+Display 
+
+	$V{REPORT_COUNT}
+
+-------------------------------------------------------------------------------------------------------------
+How to limit datasource rows?
+=============================
+Set 'Print When Expression' property of detail band:
+
+	$V{REPORT_COUNT} < 10
+
+-------------------------------------------------------------------------------------------------------------
+How to limit datasource rows per pages?
+=======================================
+You probably need add a "Break" element to your Detail band with a Print When Expression similar to this:
+
+	$V{REPORT_COUNT} % 5 == 0
+	
+-------------------------------------------------------------------------------------------------------------
+How to fill the last page with subreport?
+=========================================
+Set 'runToBottom' flag of subreport to true
+Tis flag specifies if the subreport should consume all the available space on the current page.
+
+-------------------------------------------------------------------------------------------------------------
+How to use page numbering with subreports?
+==========================================
+Here is the simple pattern I’ve created:
+-	Build your main report with with subreports but don’t put any page numbers into your reports at all.
+-	Create a dummy main report which will be responsible for page numbering.
+-	Put a dummy query into dummy main report which returns exactly 1 row, for example use ‘limit’ for Postgres or add ‘Print When Expression’ to detail band:
+
+SQL limit:
+
+	SELECT id from acdCall LIMIT 1
+
+Print When Expression:
+	
+	$V{REPORT_COUNT} <= 1
+	
+
+-	Put your main report into detail band of dummy main report.
+-	Add page numbering to page title band of dummy main report.
+-	THAT’S ALL!
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to get column footer to appear directly below details band?
+===============================================================
+Set 'Float column footer' property of report.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to concatenate formatted date values to a field?	
+====================================================
+1. Create a date formatter as report parameter:
+
+	$P{dateTimeFormat}:
+	
+		new SimpleDateFormat("yyyy.MM.dd HH:mm")
+		
+		
+2. Use it for a field expression:
+
+	$P{dateTimeFormat}.format($F{groupPeriodStart}) + " - " + $P{dateTimeFormat}.format($F{groupPeriodEnd})		
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to set background color of a Crosstab cell from style?	
+==========================================================
+Current version (5.1) unfortunately does not apply style properties to crosstab cells. Assing a style to label components inside cells instead.
+
+Style should be opaque and can inherit properties from other style.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+iReport extremely slow after adding a classpth entry
+====================================================
+Possible problem:
+
+	Maybe another log4j configuration file also has been added to classpath which contains an extremely high logging level.
+	
+	e.g:
+	
+		    <root>
+				<level value="DEBUG"/>
+				<appender-ref ref="CONSOLE"/>
+			</root>
+
+Fix:
+
+	- Change log4j configuration in external location
+	OR
+	- remove log4j configuration (e.g. copy classes to another location without log4j)
+	
+
+-------------------------------------------------------------------------------------------------------------------------------------
+"java.lang.IllegalArgumentException: Null 'dataset' argument." on chart when no data	
+====================================================================================
+Chart needs data (at least category dataset). Check number of processed record and don't display chart 
+if it's 0.
+	
+PrintWnenExpression of chart:	
+	
+	$V{REPORT_COUNT} > 0
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Variable seems to be evaluated in the next row	
+==============================================
+If you have a variable which calculated from other variables, the order of variables in important.
+Dependent variables should be before variable using them.
+
+Otherwise variable uses values from previous row during evaluation since other variables still contain old values.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to convert seconds into formatted time?
+===========================================
+Create a parameter:
+
+	name: 	timeZoneOffsetMsecs
+	type: 	Integer
+	expr: 	Calendar.getInstance().get(Calendar.ZONE_OFFSET)
+	
+this will give the current timezone offset in milliseconds.
+
+Create a variable:
+
+	type: Timestamp
+	expr: new java.sql.Timestamp($V{secs} * 1000 - $P{timeZoneOffsetMsecs})
+	
+use this variable in cell and specify pattern: HH:mm:ss
+
+NOTE:
+	If you have problem with daylight savings use one more parameter
+
+	name: 	dstOffsetMsecs
+	type: 	Integer
+	expr: 	Calendar.getInstance().get(Calendar.DST_OFFSET)
+
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+How to add parameter to crosstab?	
+=================================
+To parameterize a JasperReports crosstab, create a parameter in the main report and link it with a crosstab parameter.
+
+1. To add a parameter to a crosstab, add a parameter to both the main and the crosstab.
+2. To link them together use the name of main parameter in 'Value Expression' property of crosstab parameter.
+
+	Main paramater:		rate
+	Crosstab parameter value expression:  ${rate}
+	
+Note: don't use the same parameter name for crosstab paramaters which are used in the main.
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Switch-case in expressions
+==========================
+
+(new Integer(1).equals($V{fromState}) ? "One" : 
+(new Integer(2).equals($V{fromState}) ? "Two" :
+(new Integer(3).equals($V{fromState}) ? "Three" : $V{fromState}
+)))
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to create conditional counters?
+===================================
+Use case:
+	We would like to count all entries where field 'state' is 20, per groups.
+	
+Solution:
+1. Add grouping field to datasource query. 
+	Important: Query should be ordered by this field.
+	
+2. Add report group using grouping field.
+
+3. Add variable
+	Variable Class:			Integer
+	Calculation:			Count
+	Reset type:				Group
+	Reset Group:			<group you have just created>
+	Variable expression:	$F{state} == 20 ? 1 : null
+	
+4. Add this field to group footer.
+
+Notes to expression:
+	- return 'null' from expression if you don't want to increment calculator
+	- return not 'null' if you want to increment
+	- If calculation is 'Distinct count' return value of field which is used by distinct decision, e.g.:
+	
+			$F{state} == 20 ? $F{callId} : null
+	
+		This expression will increment counter only once for the same call independently of how many records are there with state 20.
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+How to add conditional background color to detail fields?
+=========================================================
+Add conditional style to an existing style and set 'Condition Expression'.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to use external styles?
+===========================
+- Simply select 'Style' while creating a new report and define style for text, line and rectangles. The style file will be stored as .jrtx file.
+
+- Import reusable style it in your report
+	
+	(Styles in Report Inspector)/Add/Style reference
+	
+	NOTE: Change 'Source Expression' of imported Template if you want to make report portable. Ny default it contains an absolute path to 
+	external style file but you need a path relative to current directory.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to specify IN values for a query?
+=====================================
+Use $X
+
+	$X{IN, <field>, <array/collection parameter>}
+	$X{NOTIN, <field>, <array/collection parameter>}
+	
+for example:
+
+	SELECT * FROM Orders WHERE $X{IN, ShipCountry, CountryList}
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+How to specify IN values for a query from a String parameter?
+=============================================================
+Use $X as above but split incoming comma separated list in a helper parameter:
+
+Incoming CSV parameter:
+
+		callClassificationTagIds		String		"1, 2, 21"
+	
+Helper parameter:
+
+		callClassificationTagIdArray	String[]	$P{callClassificationTagIds}.split(",[ ]*")
+		
+Query:		
+
+		SELECT id, customId, name FROM acdCallTag WHERE $X{IN, customId, callClassificationTagIdArray} ORDER BY name
+
+-------------------------------------------------------------------------------------------------------------------------------------
+iReport 5.5 terminated during startup
+=====================================
+Maybe JDK version not supported. Try to specify another JDK in:
+
+	'jdkhome' variable of  iReport-5.5.0/etc/ireport.conf
+
+
+	
+
+

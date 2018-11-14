@@ -1,0 +1,18 @@
+DHCP tips
+=========
+
+Configuration:		/etc/dhcpd.conf
+
+You can assign fix static addresses by DHCP, for example:
+
+	host tferi {
+   		hardware ethernet 00:09:6B:E3:2C:CB;
+    	fixed-address 192.168.0.113;
+	}
+
+
+Getting active leases:
+
+	/var/state/dhcp/dhcpd.leases
+
+

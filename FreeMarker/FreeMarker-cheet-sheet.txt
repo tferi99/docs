@@ -1,0 +1,43 @@
+============================
+Quick overview (cheat sheet) 
+============================
+
+This is a reminder for those of you who already know FreeMarker or are just experienced programmers:
+
+Specify values directly 
+	Strings: "Foo" or 'Foo' or "It's \"quoted\"" or r"C:\raw\string" 
+	Numbers: 123.45 
+	Booleans: true, false 
+	Sequences: ["foo", "bar", 123.45], 1..100 
+	Hashes: {"name":"green mouse", "price":150} 
+	
+Retrieving variables 
+	Top-level variables: user 
+	Retrieving data from a hash: user.name, user["name"] 
+	Retrieving data from a sequence: products[5] 
+	Special variable: .main 
+	
+String operations 
+	Interpolation (or concatenation): "Hello ${user}!" (or "Free" + "Marker") 
+	Getting a character: name[0] 
+	
+Sequence operations 
+	Concatenation: users + ["guest"] 
+	Sequence slice: products[10..19] or products[5..] 
+	
+Hash operations 
+	Concatenation: passwords + {"joe":"secret42"} 
+	
+Arithmetical calculations: (x * 1.5 + 10) / 2 - y % 100 
+
+Comparison: x == y, x != y, x < y, x > y, x >= y, x <= y, x &lt; y, ...etc. 
+
+Logical operations: !registered && (firstVisit || fromEurope) 
+
+Built-ins: name?upper_case 
+
+Method call: repeat("What", 3) 
+
+Missing value handler operators: 
+	Default value: name!"unknown" or (user.name)!"unknown" or name! or (user.name)! 
+	Missing value test: name?? or (user.name)??

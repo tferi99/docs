@@ -1,0 +1,33 @@
+
+Reading rows of a file in sh
+============================
+open file,  read,  close
+
+exec 5<&0 0<some_file    # save stdin, open file as stdin
+read line1      # first line
+read line2      # second line
+read line3      # one more line
+exec -<&0 0<&5 5<&-    # close file, reset stdin
+
+echo "1: $line1"
+echo "2: $line2"
+echo "3: $line3"
+
+--------------------------------------
+Other:
+
+	while read row
+	do
+  		echo $row
+	done < $PROJLIS
+
+
+Or for more variables:
+
+
+	while read v1 v2
+	do
+    	echo "<$v1><$v2>"
+	done < $PROJLIST
+
+

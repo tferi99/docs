@@ -1,0 +1,9 @@
+Settings for X Window manager of SuSE 9.1
+=========================================
+
+To find the most important configuration parameters run Yast and call 
+
+	System/'/etc/sysconfig' Editor
+
+
+

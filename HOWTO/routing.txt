@@ -1,0 +1,50 @@
+Routing
+=======
+
+One of the purposes of subnetting is that it forms the basis for routing. Here's the routing table on my firewall:
+
+root# netstat -nr
+Kernel IP routing table
+Destination     Gateway         Genmask         Flgs MSS Win irtt Iface
+192.168.9.1     0.0.0.0         255.255.255.255 UH   40  0      0 texas
+206.124.146.177 0.0.0.0         255.255.255.255 UH   40  0      0 eth1
+206.124.146.180 0.0.0.0         255.255.255.255 UH   40  0      0 eth3
+192.168.3.0     0.0.0.0         255.255.255.0   U    40  0      0 eth3
+192.168.2.0     0.0.0.0         255.255.255.0   U    40  0      0 eth1
+192.168.1.0     0.0.0.0         255.255.255.0   U    40  0      0 eth2
+206.124.146.0   0.0.0.0         255.255.255.0   U    40  0      0 eth0
+192.168.9.0     192.0.2.223     255.255.255.0   UG   40  0      0 texas
+127.0.0.0       0.0.0.0         255.0.0.0       U    40  0      0 lo
+0.0.0.0         206.124.146.254 0.0.0.0         UG   40  0      0 eth0
+root#
+
+The device texas is a GRE tunnel to a peer site in the Dallas, Texas area.
+The first three routes are host routes since they indicate how to get to a single host. 
+In the “netstat” output this can be seen by the “Genmask” (Subnet Mask) of 255.255.255.255 
+and the “H” in the Flags column. The remainder are “net” routes since they tell the kernel 
+how to route packets to a subnetwork. The last route is the default route and the gateway 
+mentioned in that route is called the default gateway.
+
+When the kernel is trying to send a packet to IP address A, it starts at the top of the routing table and:
+
+- A is logically ANDed with the “Genmask” value in the table entry.
+
+- The result is compared with the “Destination” value in the table entry.
+
+- If the result and the “Destination” value are the same, then:
+
+- If the “Gateway” column is non-zero, the packet is sent to the gateway over the interface named in the “Iface” column.
+
+- Otherwise, the packet is sent directly to A over the interface named in the “iface” column.
+
+- Otherwise, the above steps are repeated on the next entry in the table.
+
+Since the default route matches any IP address (A LAND 0.0.0.0 = 0.0.0.0), packets that don't match any 
+of the other routing table entries are sent to the default gateway which is usually a router at your ISP. 
+Lets take an example. Suppose that we want to route a packet to 192.168.1.5. That address clearly doesn't 
+match any of the host routes in the table but if we logically and that address with 255.255.255.0, the 
+result is 192.168.1.0 which matches this routing table entry:
+
+192.168.1.0   0.0.0.0       255.255.255.0   U     40  0         0 eth2
+
+So to route a packet to 192.168.1.5, the packet is sent directly over eth2.

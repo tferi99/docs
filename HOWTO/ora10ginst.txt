@@ -1,0 +1,74 @@
+Installing Oracle 10g database server
+=====================================
+
+Shared memory
+-------------
+To see all shared memory settings, execute: 
+
+	ipcs -lm
+
+Setting shared memory temporarly:
+
+	echo 536870912 > /proc/sys/kernel/shmmax
+	echo 128 > /proc/sys/kernel/shmmni
+	echo 2097152 > /proc/sys/kernel/shmall
+or
+	sysctl -w kernel.shmmax=536870912
+	sysctl -w kernel.shmmni=4096
+	sysctl -w kernel.shmall=2097152
+
+
+To set it permanently add entries to /etc/sysctl.conf:
+
+	kernel.shmmax=536870912
+	kernel.shmmni=4096
+	kernel.shmall=2097152
+
+Semaphore
+---------
+To see all semaphore settings, run: 
+
+	ipcs -ls
+
+Setting semaphore temporarly:
+
+	echo 250 32000 100 128 > /proc/sys/kernel/sem
+or
+	sysctl -w kernel.sem="250 32000 100 128"
+
+To set it permanently add entries to /etc/sysctl.conf:
+
+	kernel.sem=250 32000 100 128
+
+
+Network
+-------
+	sysctl -w net.core.rmem_default=262144
+	sysctl -w net.core.wmem_default=262144
+	sysctl -w net.core.rmem_max=262144
+	sysctl -w net.core.wmem_max=262144
+	sysctl -w net.ipv4.ip_local_port_range="1024 65000"
+
+
+To set it permanently add entries to /etc/sysctl.conf:
+
+	net.core.rmem_default=262144
+	net.core.wmem_default=262144
+	net.core.rmem_max=262144
+	net.core.wmem_max=262144
+	net.ipv4.ip_local_port_range=1024 65000
+
+Installation
+------------
+Debian:
+	dpkg -i oracle-xe-universal_10.2.0.1-1.0_i386.deb
+
+RPM:
+	rpm -ivh oracle-xe-univ-10.2.0.1-1.0.i386.rpm	
+
+Then configure:	
+	/etc/init.d/oracle-xe configure
+	
+Finally start:
+	/etc/init.d/oracle-xe start
+	

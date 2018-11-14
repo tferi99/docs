@@ -1,0 +1,1 @@
+- To refresh root node use InitShow() method of Nodes.

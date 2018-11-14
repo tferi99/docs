@@ -1,0 +1,40 @@
+Lotus Notes Server migration
+============================
+
+Data of Notes server can be migrated to another machine.
+
+Migration
+---------
+1. Install notes server.
+2. You have to copy the following files:
+	- Domino\notes.ini
+	- Domino\Data\*.id
+	- Domino\Data\names.nsf
+	- Domino\Data\mail\*.nsf
+
+3. You have to delete mail index files if exist.
+4. Server DNS names must be resolved on new machines (maybe in hosts).
+
+
+
+Additional changes
+------------------
+1. First time network function was not working.
+   I've changed the following entry in notes.ini, because network interface was not found:
+
+   LAN1ip=NETBIOS, 1, 15, 0
+
+	to
+
+   LAN1ip=NETBIOS, 0, 15, 0
+
+
+2. Changes by log:
+
+Log entry:
+	HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\PriorityControl\Win32PrioritySeparation
+	is currently set to 2. 
+	For better server performance, change the setting to 0 
+
+	Done.
+

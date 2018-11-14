@@ -1,0 +1,7 @@
+LILO problems:
+If you get only 'LI' or 'LIL' etc, during starting Linux with LILO, boot with a boot floppy rather, and add 'linear' option to your /etc/lilo.conf (+ run lilo).
+It can help in this problem.
+
+See also:
+	man lilo.conf
+

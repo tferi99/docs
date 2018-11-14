@@ -1,0 +1,39 @@
+tcpdump examples:
+-----------------
+tcpdump -i interface [-F filterfile]/[expression]
+
+Expression selects which packets will be dumped. If no expression is given, 
+all packets on the net will be dumped. Otherwise, only packets for which 
+expression is `true' will be dumped.
+
+	type: (1) host, (2) net, (3) port
+	direction: (1) src, (2) dst, (3) src or dst, (4) src and dst
+	protocol: (1) ether, (2) ip, (3) tcp, (4) udp, (5) arp, (6) rarp
+	logical operator: (1) and, (2) or, (3) not
+
+for example:
+	
+	(src host 134.0.0.115 and udp) or
+	(dst host 134.0.0.115 and udp)
+
+	
+	
+This capture UDP packets where source or destination 134.0.0.115.
+
+Tips
+----
+Dumping full packets to standard output:
+
+	tcpdump <filter> -w - -s 512
+
+For example:
+	
+	tcpdump src host index.hu and port 80 -w - -s 512
+	
+	
+
+
+See also: 
+	man tcpdump
+	examples: tcpdump
+	D:\doc\software\network\sniffer_linux\tcpdump.pdf 

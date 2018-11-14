@@ -1,0 +1,58 @@
+Installing ViaVoice Runtime
+---------------------------
+
+- Install and enable sound playing/recording featuresa
+
+- Install viavoice package
+
+- ViaVoice runtime readme in /usr/doc/packages/viavoice/rtreadme.txt
+
+- Create a ViaVoice user and enrollment calling by vvuseradm
+  User will be create in ~/viavoice/users. And set this user and
+  enrollment to default.
+
+NOTE:
+  Under SuSE there isn't vvsetenv script, but initialization will
+  be performed during login by /etc/profile.d/viavoice.sh (or .csh).
+  This's true for ViaVoice 1.0, but in 2.0 we have to call /usr/bin/vvsetenv
+  before using any ViaVoice program. (. vvsetenv)
+
+
+To create a ViaVoice user ID, the syntax is:
+   $ /usr/lib/ViaVoice/bin/vvuseradm -newuser -userid youruserid 
+   For example:
+   $ /usr/lib/ViaVoice/bin/vvuseradm -newuser -userid fred 
+To create a new enrollment ID, the syntax is:
+   $ /usr/lib/ViaVoice/bin/vvuseradm -newenrollid -userid youruserid -
+   enrollid yourenrollid 
+   For example:
+   $ /usr/lib/ViaVoice/bin/vvuseradm -newenrollid -userid fred -
+   enrollid fredeid 
+To make a ViaVoice user the default:
+   $ /usr/lib/ViaVoice/bin/vvuseradm -userid youruserid -enrollid yourenrollid -setdefault
+
+   Here is an example: 
+   $ /usr/lib/ViaVoice/bin/vvuseradm -userid fred -enrollid fredeid -setdefault
+
+- Run Audio Setup Guru (to adjust the microphone level). The Audio 
+   Setup Guru must be run in XWindows.
+   In an xterm, enter the following to set up your playback and 
+   microphone levels:
+
+        $ audiog 
+
+- You don't have to start ViaVoice engine, because it will be started automatically by client applications.
+
+- Log files you can find in ~/viavoice/temp directory.
+
+- You can dictate with xvoice.
+
+****************************************************************************
+Installing ViaVoice Outloud RTK
+-------------------------------
+
+- Install it with RPM.
+- Read /usr/doc/ViaVoiceOutloud/rtreadme.txt
+- An eci.ini is created during installation. An Outloud capable program needs this file to initialize connection to engine. It's been loiking for by ECIINI environment variable, or it has to be in the current directory.
+
+

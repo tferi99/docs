@@ -1,0 +1,4 @@
+Using VCL form in DLL
+=====================
+
+See: vcldll directory

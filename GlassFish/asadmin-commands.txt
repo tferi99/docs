@@ -1,0 +1,48 @@
+BASIC COMMANDS
+
+start glassfish                     asadmin start-domain domain1
+
+verify your server is running       http://localhost:8080/ (browse to this url)
+log in to admin console             http://localhost:4848/ (browse to this url)
+
+start the derby database server     asadmin start-database
+help, version 1                     asadmin help
+
+list domains                        asadmin list-domains
+start a domain                      asadmin start-domain --verbose=true domain8
+stop a domain                       asadmin stop-domain domain8
+
+delete a domain                     asadmin delete-domain domain8
+backup a domain                     asadmin backup-domain domain8
+
+change passwords                    asadmin change-admin-password
+                                    asadmin change-master-password
+
+restore a domain backup             asadmin restore-domain --filename        
+                                    /opt/dev/apps/Glassfish_2_ur2/domains/domain8/backups/sjsas_backup_v00001.zip domain8
+
+verify the domain.xml file          asadmin verify-domain-xml
+delete a database connection pool   asadmin delete-jdbc-connection-pool sample-mysql-poo
+
+JDBC
+
+create a jdbc resource              asadmin create-jdbc-resource --connectionpoolid sample-mysql-pool \
+                                    --host 127.0.0.1 --port 4849 --secure --user admin \
+                                    jdbc/sample-jdbc-resource
+
+delete a jdbc resource              asadmin delete-jdbc-resource jdbc/sample-jdbc-resource
+list all jdbc connection pools      asadmin list-jdbc-connection-pools
+list all jdbc resources             asadmin list-jdbc-resources
+
+CLUSTERS
+
+list clusters                       asadmin list-clusters
+delete a cluster                    asadmin delete-cluster cluster01
+start a cluster                     asadmin start-cluster cluster01
+stop a cluster                      asadmin stop-cluster cluster01
+
+NODE AGENTS
+
+list all node agents                asadmin list-node-agents
+delete a node agent                 asadmin delete-node-agent nodeAgent1
+stop a node agent                   asadmin stop-node-agent nodeAgent1

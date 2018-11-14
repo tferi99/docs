@@ -1,0 +1,957 @@
+====================
+Hibernate kick guide
+====================
+(by Ferenc Toth)
+
+
+1. Architecture
+1.1 Core interfaces
+1.2 Callback interfaces
+1.3 Types
+1.4 Extension interfaces
+2. Using
+2.1 Environments
+2.1.1 Transactions in managed and non-managed environments
+2.2 Specifying configuration options
+2.3 Obtaining a SessionFactory
+2.4 Obtaining a Session
+3. Working with POJOs
+4. Identifier (Primary key)
+4.1 Built-in identifier generator modules
+5. Basic properties and class mappings
+5.1 Equality
+5.2 Access strategies
+5.3 Controlling insertion and updates
+5.4 Naming conventions
+6. Advanced properties and class mappings
+6.1 Mapping class inheritance
+6.2 Associations
+6.2.1 Parent-child relationship
+7. The persistence lifecycle
+7.1 Transient state
+7.2 Persistent state
+7.2.1 Persistent object synchronization
+7.3 Detached state
+8. Using persistent manager
+8.1 Making an object persistent
+8.2 Updating the persistent state of a detached instance
+8.3 Retrieving a persistent object
+8.4 Updating a persistent object
+8.5 Making a persistent object transient
+8.6 Making a detached object transient
+9. Transitive persistence
+10. Retrieving data - queries
+10.1  Navigating the object graph
+10.2 Retrieving by identifier
+10.3 Using the Hibernate Query Language (HQL)
+10.4 Using the, Hibernate Criteria API
+10.5 Using native SQL queries
+10.5 Working woth queries
+10.5.1 Binding parameter
+10.5.2 Polymorphic queries
+10.5.3 Paging the result
+
+
+Pooling
+
+
+1. Architecture
+---------------
+The programming interfaces are the first thing you have to learn about Hibernate
+in order to use it in the persistence layer of your application.
+
+1.1 Core interfaces
+-------------------
+- Session interface
+	The Hibernate notion of a session is something between connection and transaction.
+	It may be easier to think of a session as a cache or collection of loaded objects
+	relating to a single unit of work.
+
+- SessionFactory interface
+	The application obtains Session instances from a SessionFactory.
+	There is typically a single SessionFactory for the
+	whole application—created during application initialization, for example. However,
+	if your application accesses multiple databases using Hibernate, you’ll need
+	a SessionFactory for each database.
+
+- Configuration interface
+	The Configuration object is used to configure and bootstrap Hibernate. The
+	application uses a Configuration instance to specify the location of mapping documents
+	and Hibernate-specific properties and then create the SessionFactory.
+
+- Transaction interface
+	A Transaction abstracts application code from the underlying transaction
+	implementation—which might be a JDBC transaction, a JTA UserTransaction,
+	or even a Common Object Request Broker Architecture (CORBA) transaction—
+	allowing the application to control transaction boundaries via a consistent API.
+
+- Query and Criteria interfaces
+	The Query interface allows you to perform queries against the database and control
+	how the query is executed. Queries are written in HQL or in the native SQL
+	dialect of your database.
+
+	The Criteria interface is very similar; it allows you to create and execute objectoriented
+	criteria queries.
+
+1.2 Callback interfaces
+-----------------------
+Callback interfaces allow the application to receive a notification when something
+interesting happens to an object—for example, when an object is loaded, saved,
+or deleted.
+
+1.3 Types
+---------
+A fundamental and very powerful element of the architecture is Hibernate’s
+notion of a Type. A Hibernate Type object maps a Java type to a database column
+type (actually, the type may span multiple columns). All persistent properties of
+persistent classes, including associations, have a corresponding Hibernate type.
+
+1.4 Extension interfaces
+------------------------
+Much of the functionality that Hibernate provides is configurable, allowing you to
+choose between certain built-in strategies. When the built-in strategies are insufficient,
+Hibernate will usually let you plug in your own custom implementation by
+implementing an interface. Extension points include:
+	¦ Primary key generation (IdentifierGenerator interface)
+	¦ SQL dialect support (Dialect abstract class)
+	¦ Caching strategies (Cache and CacheProvider interfaces)
+	¦ JDBC connection management (ConnectionProvider interface)
+	¦ Transaction management (TransactionFactory, Transaction, and TransactionManagerLookup	interfaces)
+	¦ ORM strategies (ClassPersister interface hierarchy)
+	¦ Property access strategies (PropertyAccessor interface)
+	¦ Proxy creation (ProxyFactory interface)
+
+
+2. Using
+--------
+
+2.1 Environments
+----------------
+Managed environment
+	Pools resources such as database connections and
+	allows transaction boundaries and security to be specified declaratively.
+	J2EE Application servers as JBoss, BEA WebLogic, IBM WebSphere.
+
+	A managed environment HANDLES CERTAIN CROSS-CUTTING CONCERNS, such as application
+	security (authorization and authentication), connection pooling, and transaction
+	management.
+
+Non-managed environment
+	Provides basic concurrency management via
+	thread pooling. A servlet container like Jetty or Tomcat provides a non-managed
+	server environment for Java web applications, or a stand-alone desktop
+	or command-line application.
+	The application itself manages database
+	connections and demarcates transaction boundaries.
+
+	In a non-managed environment, such as a servlet container, the application is
+	responsible for obtaining JDBC connections. Hibernate is part of the application,
+	so it’s responsible for getting these connections. Generally, it isn’t advisable 
+	to create a connectioneach time you want to interact with the database. 
+	Instead, Java applications should use a pool of JDBC connections. 
+	There are three reasons for using a pool:
+	- Acquiring a new connection is expensive.
+	- Maintaining many idle connections is expensive.
+	- Creating prepared statements is also expensive for some drivers.
+
+
+Hibernate attempts to ABSTRACT THE ENVIRONMENT in which it’s deployed. In the case
+of a non-managed environment, Hibernate handles transactions and JDBC connections
+(or delegates to application code that handles these concerns). In managed
+environments, Hibernate integrates with container-managed transactions and
+datasources.
+
+
+2.1.1 Transactions in managed and non-managed environments
+----------------------------------------------------------
+Java already has a standard transaction API, JTA, which is used to control transactions
+in a MANAGED ENVIRONMENT with J2EE. This is called CONTAINER-MANAGED transactions
+(CMT). If a JTA transaction manager is present, JDBC connections are
+enlisted with this manager and under its full control.
+
+This isn’t the case in a NONMANAGED ENVIRONMENT, where an application (or the pool) 
+manages the JDBC connections and JDBC transactions DIRECTLY.
+
+Since Hibernate needs to be PORTABLE across these environments, it
+defines an API for controlling transactions. The Hibernate Transaction interface
+abstracts the underlying JTA or JDBC transaction.
+This underlying transaction strategy is set with the property 
+
+	hibernate.connection.factory_class
+
+, and it can take one of the following two values:
+	- net.sf.hibernate.transaction.JDBCTransactionFactory delegates to direct
+	  JDBC transactions. This strategy should be used with a connection pool in a
+	  non-managed environment and is the default if no strategy is specified.
+
+	- net.sf.hibernate.transaction.JTATransactionFactory delegates to JTA.
+	  This is the correct strategy for CMT, where connections are enlisted with JTA.
+
+NOTE:
+Altough Tomcat isn’t a full application server; it’s just a servlet container, albeit a
+servlet container with some features usually found only in application
+servers. One of these features may be used with Hibernate: 
+The Tomcat CONNECTION POOL. Tomcat uses the DBCP connection pool internally but
+exposes it as a JNDI DATASOURCE, just like a real application server.
+Keep in mind that Tomcat DOESN’T SHIP WITH A TRANSACTION MANAGER.
+
+
+2.2 Specifying configuration options
+------------------------------------
+To specify configuration options, you may use any of the following techniques:
+	¦ Pass an instance of java.util.Properties to Configuration.setProperties().
+	¦ Set system properties using java -Dproperty=value.
+	¦ Place a file called hibernate.properties in the classpath.
+	¦ Include <property> elements in hibernate.cfg.xml in the classpath.
+
+
+2.3 Obtaining a SessionFactory
+------------------------------
+In most Hibernate applications, the SessionFactory should be instantiated ONCE
+during application initialization. The single instance should then be used by all
+code in a particular process.
+SessionFactory can be stored during application lifetime:
+- In a J2EE environment, a SessionFactory bound to JNDI
+- ServletContext
+- static final variable in a singleton
+- application scope IoC (Inversion of Control) framework component
+
+
+Example:
+	SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+
+	It gets configuration from hibernate.properties or hibernate.cfg.xml.
+
+2.4 Obtaining a Session
+-----------------------
+User provided JDBC connection:
+
+	java.sql.Connection conn = ...;
+	Session session = sessions.openSession(conn);
+	
+Hibernate provided JDBC connection:
+	
+	Properties into hibernate.properties or hibernate.cfg.xml, and
+
+	Session session = sessions.openSession();
+
+
+	
+3. Working with POJOs
+---------------------
+POJOs (Plain Old Java Objects) are the basic elements of business domain model
+managed by Hibernate.
+
+[3] main rules for POJO objects
+-----------------------------
+1. Declare accessors for persistent fields (bean property like).
+2. Implement a default constructor.
+3. Provide an identifier property (optional). It can be a simple primitive or wrapper type or a class for 
+	composite PKs.
+  
+   It's neccessary for the following functions:
+	- Cascaded updates (see "Lifecycle Objects")
+	- Session.saveOrUpdate()
+
+   We recommend you declare consistently-named identifier properties on persistent classes. We further recommend
+   that you use a nullable (ie. non-primitive) type.
+
+Other hints:
+- POJOs can be associated, but Hibernate doesn’t “manage” persistent associations. If you want to manipulate
+  an association, you must write exactly the same code you would write without Hibernate.
+- Hibernate can access directly instance variables to bypass operations (e.g. validations) in properties
+  (access="field")
+
+
+4. Identifier (Primary key)
+---------------------------
+Use SURROGATE KEYS (where key doesn't have a business meaning) instead of NATURAL KEYS.
+
+4.1 Built-in identifier generator modules
+-----------------------------------------
+There are a number of well-known approaches to surrogate key generation:
+
+increment
+	generates identifiers of type long, short or int that are unique only when no other process is inserting data
+	into the same table. Do not use in a cluster.
+identity
+	supports identity columns in DB2, MySQL, MS SQL Server, Sybase and HypersonicSQL. The returned
+	identifier is of type long, short or int.
+sequence
+	uses a sequence in DB2, PostgreSQL, Oracle, SAP DB, McKoi or a generator in Interbase. The returned
+	identifier is of type long, short or int
+hilo
+	uses a hi/lo algorithm to efficiently generate identifiers of type long, short or int, given a table and
+	column (by default hibernate_unique_key and next_hi respectively) as a source of hi values. The hi/lo algorithm
+	generates identifiers that are unique only for a particular database. Do not use this generator with
+	connections enlisted with JTA or with a user-supplied connection.
+seqhilo
+	uses a hi/lo algorithm to efficiently generate identifiers of type long, short or int, given a named database
+	sequence.
+uuid.hex
+	uses a 128-bit UUID algorithm to generate identifiers of type string, unique within a network (the IP address
+	is used). The UUID is encoded as a string of hexadecimal digits of length 32.
+uuid.string
+	uses the same UUID algorithm. The UUID is encoded a string of length 16 consisting of (any) ASCII characters.
+	Do not use with PostgreSQL.
+native
+	picks identity, sequence or hilo depending upon the capabilities of the underlying database.
+	assigned
+	lets the application to assign an identifier to the object before save() is called.
+foreign
+	uses the identifier of another associated object. Usually used in conjunction with a <one-to-one> primary
+	key association.
+
+
+NOTE:
+	For cross-platform development, the NATIVE strategy will choose from the identity, sequence and hilo
+	strategies, dependant upon the capabilities of the underlying database.
+
+
+5. Basic properties and class mappings
+--------------------------------------
+General notes:
+- Hibernate doesn’t require that accessor methods be declared public
+- DIRTY CHECKING: Hibernate automatically detects object state changes in order to synchronize 
+  the updated state with the database.
+  --> It’s usually completely safe to return a different object from the getter method to
+  the object passed by Hibernate to the setter. HIBERNATE WILL COMPARE THE OBJECTS
+  BY VALUE — NOT BY OBJECT IDENTITY — to determine if the property’s persistent state
+  needs to be updated.
+- However, there is one very important exception. COLLECTIONS ARE COMPARED BY IDENTITY!
+
+
+5.1 Equality
+------------
+Hibernate only guarantees JVM identity ( a == b , the default implementation of equals()) inside a single Session!
+You have to override the equals() and hashCode() methods if you intend to mix objects of persistent classes
+(e.g. in a Set).
+
+---> HIBERNATE PROVIDES TRANSACTION SCOPED IDENTITY. It guarantees that, in the
+     context of a single transaction, THERE IS ONLY ONE OBJECT INSTANCE that represents
+     a particular database row. (Actually, the Hibernate identity scope is the Session instance.)
+
+Hibernate automatically detects object state changes in order to synchronize the updated state with the database.
+It’s usually completely safe to return a different object from the getter method to the object passed by Hibernate 
+to the setter. Hibernate will compare the OBJECTS by VALUE — not by object identity—to determine if the property’s 
+persistent state needs to be updated. For example, the following getter method won’t result in
+unnecessary SQL UPDATEs:
+
+	public String getFirstname() {
+		return new String(firstname);
+	}
+
+However, there is one very important exception. COLLECTIONS are compared by IDENTITY!
+For a property mapped as a persistent collection, you should return exactly the
+SAME COLLECTION instance from the getter method as Hibernate passed to the setter
+method. If you don’t, Hibernate will update the database, even if no update is necessary,
+every time the session synchronizes state held in memory with the database.
+This kind of code should almost always be avoided in accessor methods:
+
+	public void setNames(List namesList) {
+		names = (String[]) namesList.toArray();
+	}
+	public List getNames() {
+		return Arrays.asList(names);
+	}
+
+5.2 Access strategies
+---------------------
+The access attribute allows you to specify how Hibernate should access property
+values of the POJO.
+
+- property (default)	: uses the property accessors (get/set method pair)
+- field			: The field strategy uses reflection to access the instance variable directly. 
+
+
+5.3 Controlling insertion and updates
+-------------------------------------
+For properties that map to columns, you can control whether they appear in the
+INSERT statement by using the insert attribute and whether they appear in the
+UPDATE statement by using the update attribute.
+
+
+- never will be written
+	<property name="name"
+		column="NAME"
+		type="string"
+		insert="false"
+		update="false"/>
+
+- complete class is immutable:
+
+	immutable="false"
+
+- controlling writing unmodified properties:
+
+	<class name="org.hibernate.auction.model.User"
+		dynamic-insert="true"
+		dynamic-update="true">
+		...
+	</class>	
+
+These are both class-level settings. Enabling either of these settings will cause
+Hibernate TO GENERATE SOME SQL AT RUNTIME, INSTEAD OF USING THE SQL CACHED AT
+STARTUP TIME. The performance cost is usually small. Furthermore, LEAVING OUT
+COLUMNS in an insert (and especially in an update) can occasionally IMPROVE
+PERFORMANCE IF YOUR TABLES DEFINE MANY COLUMNS.
+
+
+5.4 Naming conventions
+----------------------
+To provide automatical name conversions corresponding to a name convention
+implement NamingStrategy interface.
+
+	String classToTableName(String className);
+	String tableName(String tableName);
+	String columnName(String columnName);
+	String propertyToTableName(String className, String propertyName);
+	String propertyToColumnName(String propertyName);
+
+To activate a naming strategy:
+
+	Configuration cfg = new Configuration();
+	cfg.setNamingStrategy( new CENamingStrategy() );
+	SessionFactory sessionFactory = cfg.configure().buildSessionFactory();	
+
+
+6. Advanced properties and class mappings
+-----------------------------------------
+6.1 Mapping class inheritance
+-----------------------------
+- Table per concrete class - <class>
+	We could use exactly ONE TABLE FOR EACH (NON-ABSTRACT) CLASS. 
+	ALL PROPERTIES of a class, including inherited properties, could be MAPPED TO COLUMNS OF TABLES.
+
+	It discards polymorphism and inheritance relationships completely from the relational model.
+
+	Advantage: 
+		Simple to implement
+
+	Disadvantages:
+		Polymorphic queries (queries that return objects of all classes that match the interface
+		of the queried class) are problematic.A QUERY AGAINST THE SUPERCLASS must
+		be executed as several SQL SELECTs, ONE FOR EACH CONCRETE SUBCLASS (with union).
+
+- Table per class hierarchy
+	ONE table for whole class hierarchy with de-normalized records (contains unio of columns) + type discriminator column.
+	
+	Enable polymorphism by denormalizing the relational model and using a type discriminator column
+	to hold type information.
+
+	Disadvantages:
+		Columns for properties declared by subclasses MUST BE DECLARED TO BE NULLABLE. If your subclasses 
+		each define several non-nullable properties, the loss of NOT NULL constraints could be a serious 
+		problem from the point of view of data integrity.
+
+- Table per subclass
+	Represent “is a” (inheritance) relationships as “has a” (foreign key) relationships
+
+	Table generated for every subclass, and called SELECT with OUTER JOIN with inherited classes.
+
+	Disadvantages:
+		Furthermore, even though this mapping strategy is deceptively simple, our
+		experience is that performance may be unacceptable for complex class hierarchies.
+
+
+6.2 Associations
+-----------------
+You use properties to express associations between POJO
+classes, and you use accessor methods to navigate the object
+graph at runtime. 
+
+
+Association			JAVA implementation
+-----------			-------------------
+One-to-one, many-to-one		Reference
+
+One-to-many, many-to-many	Set of references (e.g. a HashSet)
+
+
+Let’s implement code for the one-to-many self-association of
+Category:
+
+	public class Category
+	{
+		private String name;
+		private Category parentCategory;
+		private Set childCategories = new HashSet();
+		public Category() { }
+
+
+		...
+	}
+
+
+6.2.1 Parent-child relationship
+-------------------------------
+If we ENABLE CASCADING DELETE, the association between 2 entities is called a
+parent/child relationship. In a parent/child relationship, the PARENT ENTITY IS 
+RESPONSIBLE FOR THE LIFECYCLE OF ITS ASSOCIATED CHILD ENTITIES.
+
+This is the same semantics as a COMPOSITION (using Hibernate components), but in 
+this case ONLY ENTITIES are involved; CHILD ENTITY ISN’T A VALUE TYPE.
+
+	<class
+		name="Item"
+		table="ITEM">
+		...
+		<set
+			name="bids"
+			inverse="true"
+			cascade="all-delete-orphan">				<------------ cascading delete
+			<key column="ITEM_ID"/>
+			<one-to-many class="Bid"/>
+		</set>
+	</class>
+
+
+We used cascade="all-delete-orphan" to indicate the following:
+- Any newly instantiated child BECOMES PERSISTENT if the child is REFERENCED BY A
+  PERSISTENT PARENT (as was also the case with cascade="save-update"). 
+- Any PERSISTENT CHILD SHOULD BE DELETED if it’s referenced by an parent when the 
+  parent is deleted.
+- Any PERSISTENT CHILD SHOULD BE DELETED if it’s removed from the bids collection
+  of a persistent parent. (Hibernate will assume that it was only referenced
+  by this parent and consider it an orphan.)
+
+
+7. The persistence lifecycle
+-----------------------------
+There are only 3 states in lifecycle:
+	- transient
+	- persistent
+	- detached
+
+
+                                  new 
+                     START ------------------> Transient --------------------------------
+                       |                       |    ^                                   |
+          get()        |                       |    |                                   |
+          load()       |         save()        |    | delete()                          | garbage
+          find()       |        saveOrUpdate() |    |                                   |
+          iterate()    |                       |    |                                   |
+          etc.         |                       |    |                                   |
+                       |                       v    |                                   v
+                       |--------------------> Persistent                                STOP
+                                               |    ^                                   ^
+				               |    |                                   |
+                                     evict()   |    | update()                          |
+                                     close()   |    | saveOrUpdate()                    | garbage
+                                     clear()   |    | lock()                            |
+				               |    |                                   |
+                                               v    |                                   |
+                                               Detached ---------------------------------
+
+7.1 Transient state
+-------------------
+In Hibernate, objects instantiated using the NEW operator AREN’T IMMEDIATELY PERSISTENT.
+Their state is TRANSIENT, which means they AREN’T ASSOCIATED WITH ANY DATABASE
+TABLE ROW.
+
+Hibernate considers all TRANSIENT instances to be NONTRANSACTIONAL.
+This means Hibernate doesn’t provide any rollback functionality for transient
+objects.
+
+To TRANSITION from TRANSIENT to persistent state requires 
+	- either a save() call to the persistence manager 
+	- or the creation of a REFERENCE FROM an already persistent instance.
+
+
+7.2 Persistent state
+--------------------
+A persistent instance is ANY INSTANCE WITH A DATABASE IDENTITY.
+That means a persistent instance HAS A PRIMARY KEY VALUE set as its DATABASE IDENTIFIER.
+
+Persistent instances are always ASSOCIATED WITH A SESSION and are TRANSACTIONAL.
+
+7.2.1 Persistent object synchronization
+---------------------------------------
+Persistent objects are synchronized with database. This might occur:
+
+- Persistent instances participate in transactions—their state is SYNCHRONIZED
+  with the database AT THE END OF THE TRANSACTION.
+
+- Hibernate might synchronize with the database BEFORE EXECUTION
+  OF A QUERY. This ensures that queries will be aware of changes made earlier
+  during the transaction.
+
+We call a persistent instance NEW if it has been ALLOCATED A PRIMARY KEY value but
+has not yet been inserted into the database. The new persistent instance will
+remain NEW UNTIL SYNCHRONIZATION occurs.
+
+
+7.3 Detached state
+------------------
+When a transaction completes, the persistent instances associated with the persistence
+manager still exist. In the case of Hibernate, however, these INSTANCES LOSE THEIR 
+ASSOCIATION WITH THE PERSISTENCE MANAGER when you close() the Session.
+
+Detached state means that 
+	- their state is no longer guaranteed to be synchronized with database state
+	- they’re no longer under the management of Hibernate
+
+HIBERNATE LETS YOU REUSE THESE INSTANCES IN A NEW TRANSACTION by reassociating them with 
+a new persistence manager. So you don't have to use DTO (value object) (anti!)pattern.
+You don’t usually wish to reattach the entire object graph in the second unit of
+of work; for performance (and other) reasons, it’s important that reassociation of
+detached instances be selective. HIBERNATE SUPPORTS SELECTIVE REASSOCIATION OF DETACHED
+INSTANCES.
+
+
+8. Using persistent manager
+---------------------------
+We’ll refer to the Persistence manager and the session interchangeably.
+
+So, how do you start using the session? At the beginning of a unit of work, a
+thread obtains an instance of Session from the application’s SessionFactory. The
+application might have multiple SessionFactorys if it accesses multiple datasources.
+But you should never create a new SessionFactory just to service a particular
+request—creation of a SessionFactory is extremely expensive. On the other
+hand, Session creation is extremely inexpensive; the Session doesn’t even obtain a
+JDBC Connection until a connection is required.
+
+
+8.1 Making an object persistent
+-------------------------------
+
+	User user = new User();					// creating a transient object
+	user.getName().setFirstname("John");
+	user.getName().setLastname("Doe");
+	Session session = sessions.openSession();
+	Transaction tx = session.beginTransaction();
+	session.save(user);					// making object peresistent
+	tx.commit();
+	session.close();
+
+A call to save() MAKES THE TRANSIENT INSTANCE of User PERSISTENT. It’s now associated
+with the current Session. However, NO SQL INSERT HAS YET BEEN EXECUTED. The
+Hibernate Session never executes any SQL statement until absolutely necessary.
+
+The changes made to persistent objects have to be SYNCHRONIZED with the database
+at some point. This happens when we commit() the Hibernate Transaction.
+
+NOTE:
+Note that it’s better (but not required) to fully initialize the User instance before
+associating it with the Session. The SQL INSERT statement contains the values that
+were held by the object at the point when save() was called. You can, of course, modify
+the object after calling save(), and your changes will be propagated to the database
+as an SQL UPDATE.
+So if you associate object with te session later (after initialization), 
+less SQL statement will be generated.
+
+
+8.2 Updating the persistent state of a detached instance
+--------------------------------------------------------
+Modifying the object AFTER THE SESSION IS CLOSED WILL HAVE NO EFFECT ON ITS PERSISTENT
+REPRESENTATION in the database. When the SESSION IS CLOSED, object becomes a
+DETACHED INSTANCE. It may be reassociated with a new Session by calling:
+	- update()
+	or
+	- lock()
+
+	user.setPassword("secret");
+	Session sessionTwo = sessions.openSession();		// new session
+	Transaction tx = sessionTwo.beginTransaction();
+	sessionTwo.update(user);				// reassociate
+	user.setUsername("jonny");
+	tx.commit();
+	sessionTwo.close();
+
+The only difference between update() and lock() that CHANGES MADE BEFORE THE CALL to lock() 
+aren’t propagated to the database; you only use lock() if you’re sure that the detached instance
+hasn’t been modified.
+
+
+8.3 Retrieving a persistent object
+----------------------------------
+This is the simplest kind of query: retrieval by identifier.
+
+	Session session = sessions.openSession();
+	Transaction tx = session.beginTransaction();
+	int userID = 1234;
+	User user = (User) session.get(User.class, new Long(userID));	// getting object
+	tx.commit();
+	session.close();
+
+
+If NO ROW with the given identifier value exists in the database, the get() RETURNS NULL.
+
+
+8.4 Updating a persistent object
+--------------------------------
+Persistent objects are associated with session.
+It can be modified, and its state will be synchronized with the database. This mechanism is called automatic
+dirty checking, which means Hibernate will track and save the changes you make to
+an object inside a session:
+
+	Session session = sessions.openSession();
+	Transaction tx = session.beginTransaction();
+	int userID = 1234;
+	User user = (User) session.get(User.class, new Long(userID));		// getting persistent object
+	user.setPassword("secret");						// simple modified 
+	tx.commit();
+	session.close();
+
+
+8.5 Making a persistent object transient
+----------------------------------------
+That means you delete object from the database:
+
+	Session session = sessions.openSession();
+	Transaction tx = session.beginTransaction();
+	int userID = 1234;
+	User user = (User) session.get(User.class, new Long(userID));
+	session.delete(user);
+	tx.commit();
+	session.close();
+
+
+8.6 Making a detached object transient
+--------------------------------------
+You can make a detached instance transient, deleting its persistent state
+from the database. This means YOU DON’T HAVE TO REATTACH (with update() or
+lock()) a detached instance to delete it from the database; you can directly delete
+a detached instance:
+
+	Session session = sessions.openSession();
+	Transaction tx = session.beginTransaction();
+	session.delete(user);
+	tx.commit();
+	session.close();
+
+
+9. Transitive persistence
+-------------------------
+Transitive persistence is a technique that allows you to propagate persistence to transient
+and DETACHED SUBGRAPHS AUTOMATICALLY.
+
+PERSISTENCE BY REACHABILITY means that if ANY INSTANCE BECOMES PERSISTENT when the application 
+creates an object REFERENCE to the instance FROM ANOTHER INSTANCE THAT IS ALREADY PERSISTENT.
+
+BY DEFAULT, HIBERNATE DOES NOT NAVIGATE AN ASSOCIATION when searching for transient
+or detached objects, so saving, deleting, or reattaching a Category won’t affect
+the child category objects. This is the opposite of the persistence-by-reachability
+default behavior. If, for a particular association, you wish to enable transitive persistence,
+you must override this default in the mapping metadata.
+
+You can map entity associations in metadata with the following attributes:
+
+- cascade="none"
+  the default, tells Hibernate to ignore the association.
+
+- cascade="save-update"
+  tells Hibernate to navigate the association when the
+  transaction is committed and when an object is passed to save() or
+  update() and save newly instantiated transient instances and persist changes to
+  detached instances.
+
+- cascade="delete"
+  tells Hibernate to navigate the association and delete persistent
+  instances when an object is passed to delete().
+
+- cascade="all"
+  means to cascade both save-update and delete, as well as
+  calls to evict and lock.
+
+- cascade="all-delete-orphan"
+  means the same as cascade="all" but, in addition,
+  Hibernate deletes any persistent entity instance that has been removed
+  (dereferenced) from the association (for example, from a collection).
+
+- cascade="delete-orphan" 
+  Hibernate will delete any persistent entity
+  instance that has been removed (dereferenced) from the association (for
+  example, from a collection).
+
+
+10. Retrieving data
+-------------------
+Hibernate provides the following ways to get objects out of the database:
+
+- Navigating the object graph, starting from an already loaded object
+
+- Retrieving by identifier, which is the most convenient and performant
+  method when the unique identifier value of an object is known.
+
+- Using the Hibernate Query Language (HQL), which is a full object-oriented
+  query language.
+  
+- Using the, Hibernate Criteria API.
+
+- Using native SQL queries, where Hibernate takes care of mapping the JDBC
+  result sets to graphs of persistent objects.  
+  
+10.1  Navigating the object graph
+---------------------------------
+You can navigate the object tree through object collections, fore  example:
+
+	aUser.getAddress().getCity()
+	
+	
+10.2 Retrieving by identifier
+-----------------------------
+
+Examples:	
+
+	User user = (User) session.get(User.class, userID);
+	User user = (User) session.load(User.class, userID);
+
+- If load() can’t find the object in the cache or database, an exception is
+  thrown. The load() method never returns null. The get() method returns
+  null if the object can’t be found.
+
+- The load() method may return a proxy instead of a real persistent instance.
+  A proxy is a placeholder that triggers the loading of the real object when it’s
+  accessed for the first time; we discuss proxies later in this section. On the
+  other hand, get() never returns a proxy.
+
+  
+10.3 Using the Hibernate Query Language (HQL)
+---------------------------------------------
+HQL isn’t a data-manipulation language like SQL, it’s used only for object retrieval.
+
+	Query q = session.createQuery("from User u where u.firstname = :fname");
+	q.setString("fname", "Max");
+	List result = q.list();
+
+	Query hqlQuery = session.createQuery("from User");
+	
+Features:
+- you can add PARAMETERS
+- you can RESTRICT RECORDS
+- you can RESTRICT FIELDS (report query)
+- ability to ORDER the results of the query
+- ability to PAGINATE the results
+- AGGREGATION with group by, having, and aggregate functions like sum, min,
+  and max.
+- outer joins when retrieving MULTIPLE OBJECTS PER ROW.
+- ability to call user-defined SQL functions
+- subqueries
+
+
+10.4 Using the, Hibernate Criteria API
+--------------------------------------
+The Hibernate query by criteria (QBC) API lets you build a query by manipulating criteria
+objects at runtime.
+
+- this approach lets you specify constraints DYNAMICALLY WITHOUT DIRECT STRING MANIPULATIONS
+- on the other hand, queries expressed as criteria are often LESS READABLE
+
+	Criteria criteria = session.createCriteria(User.class);
+	criteria.add( Expression.like("firstname", "Max") );
+	List result = criteria.list();
+
+
+
+	
+10.5 Using native SQL queries
+-----------------------------
+	Query sqlQuery = session.createSQLQuery("select {u.*} from USERS {u}", "u",	User.class);
+
+
+10.5 Working woth queries	
+-------------------------
+10.5.1 Binding parameter
+------------------------
+Here’s some code that you should NEVER write:
+
+	String queryString = "from Item i where i.description like '" + searchString + "'";
+	List result = session.createQuery(queryString).list();
+
+Never pass unchecked values from user input to the database!
+
+A malicious user can call a stored procedure by giving such a search string:
+
+	foo' and callSomeStoredProcedure() and 'bar' = 'bar
+	
+Hibernate supports JDBC-style positional parameters (indicated by ? in the query string) as well 
+as named parameters (indicated by the : prefix).
+
+	String queryString = "from Item item where item.description like :searchString";
+
+Yuo can bind arbitrary types:
+
+	- setString()
+	- setDate()
+	- setInteger()
+	- setTimestamp()
+	...
+	
+,and even classes
+	
+	session.createQuery("from Item item where item.seller = :seller")
+		.setEntity("seller", seller)
+		.list();
+		
+Or you can use generic method: setParameter()
+
+	String queryString = "from Item item "
+		+ "where item.seller=:seller and "
+		+ "item.description like :desc";
+	session.createQuery(queryString)
+		.setParameter( "seller", seller, Hibernate.entity(User.class) )
+		.setParameter( "desc", description, Hibernate.STRING )
+		.list();	
+
+
+10.5.2 Polymorphic queries
+--------------------------
+We described HQL as an object-oriented query language, so it should support polymorphic
+queries—that is, queries for instances of a class and all instances of its subclasses.
+
+Examples:
+
+	from java.lang.Object			: result all records from all mapped table
+
+Criteria queries also support polymorphism:
+
+	session.createCriteria(BillingDetails.class).list();
+
+10.5.3 Paging the result
+------------------------
+Both the Query and Criteria interfaces support this pagination of the query result:	
+	
+	Query query = ...
+	query.setFirstResult(0);
+	query.setMaxResults(10);
+	List results = query.list();
+
+	
+
+		
+#################################################################################################################
+Lifecycle Callbacks
+-------------------
+By implementing the interface Lifecycle:
+
+	onSave - called just before the object is saved or inserted
+	onUpdate - called just before an object is updated (when the object is passed to Session.update())
+	onDelete - called just before an object is deleted
+	onLoad - called just after an object is loaded
+
+	If onSave(), onUpdate() or onDelete() return true, the operation is silently vetoed. If a CallbackException
+	is thrown, the operation is vetoed and the exception is passed back to the application.
+
+
+Optimistic locking strategies
+-----------------------------
+If you enable dynamic-update, you will have a choice of optimistic locking strategies:
+	• version check the version/timestamp columns
+	• all check all columns
+	• dirty check the changed columns
+	• none do not use optimistic locking
+
+We very strongly recommend that you use version/timestamp columns for optimistic locking with Hibernate.
+This is the optimal strategy with respect to performance and is the only strategy that correctly handles modifications
+made outside of the session (ie. when Session.update() is used). Keep in mind that a version or
+timestamp property should never be null, no matter what unsaved-value strategy, or an instance will be detected
+as transient.
+
+
+
+Pooling
+-------
+- Set hibernate.c3p0.* to enable C3P0.
+- Set hibernate.dbcp.* to enable Apache DBCP.
+- Prepared statement caching is enabled (highly recommend) if hibernate.dbcp.ps.* (DBCP statement cache properties) are set.

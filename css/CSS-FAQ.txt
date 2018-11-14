@@ -1,0 +1,74 @@
+=======
+CSS FAQ
+=======
+
+Design tricks
+-------------
+- How to center a table horizontally?
+
+Selectors
+---------
+- Selector for a child on parent event
+- What happens when conflicts occur?
+
+Development
+-----------
+- How to build LESS to CSS with Grunt?
+
+
+-----------------------------------------------------------------------------------------------------------
+How to center a table horizontally?
+===================================
+If you want to center a non-full-width table in container, use left/right margins:
+
+	.centeredTable {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+-----------------------------------------------------------------------------------------------------------
+Selector for a child on parent event	
+====================================
+You can apply pseudo selector in arbitrary location of selector, e.g. fade in an icon on hover of parent div:
+
+	#tasks .thumbnail i {
+	  opacity: 0;
+	  transition: opacity 1s linear;
+	}
+	#tasks .thumbnail:hover i {
+	  opacity: 0.11;
+	}
+
+-----------------------------------------------------------------------------------------------------------
+What happens when conflicts occur?
+==================================
+There may be times when two or more declarations are applied to the same element. 
+It is also possible that there may be a conflict between them.
+
+1. Find all declarations whose selectors match a particular element.
+2. Sort these declarations by weight and origin
+3. Sort the selectors by specificity
+4. Sort by order specified
+
+If two rules have the same weight, origin and specificity, the one written lower down (later) 
+in the style sheet wins. 
+
+
+-----------------------------------------------------------------------------------------------------------
+How to build LESS to CSS with Grunt?
+====================================
+1. Install NodeJS
+2. Install Grunt
+3. Start Grunt in the project directory:
+
+	grunt watch
+	
+Grunt will listen to changes of LESS files in the project directory recursively
+and compiles into CSS automatically - with dependencies.
+	
+
+
+
+
+
+

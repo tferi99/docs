@@ -1,0 +1,4 @@
+Use 'to_date' function, for example:
+
+insert into tbl(datefld) values(to_date('1999.01.15.', 'yyyy.mm.dd');
+

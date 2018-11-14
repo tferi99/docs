@@ -1,0 +1,20 @@
+Signing application packages for deployment
+-------------------------------------------
+(from APress - Pro Android 2 (03-2010) (ATTiCA).pdf)
+
+1. Generating a Self-Signed Certificate Using the Keytool
+
+	keytool -genkey -v -keystore "FULL PATH OF release.keystore FILE FROM STEP 1"
+	-alias androidbook -storepass paxxword -keypass paxxword -keyalg RSA
+	-validity 14000
+	
+2. Using the Jarsigner Tool to Sign the .apk File
+
+	jarsigner -keystore "PATH TO YOUR release.keystore FILE" -storepass paxxword
+	-keypass paxxword "PATH TO YOUR APK FILE" androidbook
+	
+3. Aligning Your Application with zipalign
+
+	zipalign –v 4 infile.apk outfile.apk
+	
+4. Installing manually

@@ -1,0 +1,13 @@
+You can print shared library dependencies by calling ldd.
+
+If a program uses shared libraries, this libraries must be in the
+followings places:
+	- LD_LIBRARY_PATH contains path where programs search for shared libraries
+	- see /etc/ld.so.cache
+	- /lib /usr/lib
+
+You can list shared library dependencies by calling ldd.
+
+See also: man ldd, man ld.so
+
+

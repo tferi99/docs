@@ -1,0 +1,29 @@
+
+
+                         Es geht alles!
+
+                         1. Taskbar-Eintrag verstecken:
+                         // Aus der Taskleiste verstecken (immer)
+                         ShowWindow (Application.Handle, SW_HIDE);
+                         SetWindowLong(Application.Handle, GWL_EXSTYLE, 
+                         GetWindowLong(Application.Handle, GWL_EXSTYLE) 
+                         or WS_EX_TOOLWINDOW and not WS_EX_APPWINDOW);
+
+                         2. Aus dem Taskmanager verstecken
+                         RegisterServiceProcess (0, 1) = 1;
+
+                         Woher muﬂt du noch folgende Zeile einbinden:
+
+                         function RegisterServiceProcess(dwProcessID: 
+                         DWord; dwType: DWord): DWord; 
+                         stdcall; external 'kernel32.dll' 
+                         name 'RegisterServiceProcess';
+
+                         3. Taskbar verstecken
+                         ShowWindow (FindWindow('Shell_TrayWnd', Nil), 
+                         SW_HIDE);
+
+
+                         Alles klar?? Bei Fragen bitte per Mail an mich.
+
+                         Cu Screw ;-)

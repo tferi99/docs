@@ -1,0 +1,15 @@
+================================
+Howto synchronize time from NTP?
+================================
+
+- Use ntpdate, e.g:
+
+	ntpdate <server>
+	
+	ntpdate time.kfki.hu
+	
+See also:
+
+	man ntpdate
+	
+	

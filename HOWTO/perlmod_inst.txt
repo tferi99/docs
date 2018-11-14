@@ -1,0 +1,15 @@
+Installing Perl modules from CPAN
+=================================
+
+perl -MCPAN -e ’install "<modulename>"’
+
+
+Or you can access bundles in interactive way:
+
+     $ perl -MCPAN -e shell
+     cpan> b
+     ...
+     ... listing available bundles
+     ...
+     cpan> install DBI
+     cpan> install DBD::mysql 

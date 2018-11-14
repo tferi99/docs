@@ -1,0 +1,20 @@
+Changing window manager in Cygwin
+---------------------------------
+
+Old versions:
+
+	Edit /usr/X11R6/lib/X11/xinit/xinitrc, and replace tvw for example with fvwm2.
+
+Newer versions:
+
+	Edit /usr/X11R6/bin/startxwin.sh or/and /usr/X11R6/bin/startxwin.bat.
+
+	For internal window manager:
+		- add '-multiwindow' parameter to XWin command line (default).
+	For externalwindow manager: 
+		- remove '-multiwindow' parameter from XWin command line
+		- add window manager call (e.g. uncomment default twm call)
+
+		XWin -multiwindow -clipboard -silent-dup-error &
+
+

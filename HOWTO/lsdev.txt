@@ -1,0 +1,16 @@
+Howto list devices attached to a linux box?
+===========================================
+
+PnP ISA
+-------
+	pnpdump 
+
+You can redirect output intop a file, and isapnp will use this file.
+
+
+PCI
+---
+	lspci
+or
+	lspci -v
+

@@ -1,0 +1,62 @@
+==========================
+ACEGI Security quick guide
+==========================
+
+1. Features
+1.1 Authentication
+1.2 Authorization
+2. Major building blocks of Acegi Security
+
+*********************************************************************
+
+1. Features
+-----------
+
+1.1 Authentication
+------------------
+Checking user identification.
+
+At an authentication level, Acegi Security supports a wide range of authentication models.
+• HTTP BASIC authentication headers (an IEFT RFC-based standard)
+• HTTP Digest authentication headers (an IEFT RFC-based standard)
+• HTTP X.509 client certificate exchange (an IEFT RFC-based standard)
+• LDAP (a very common approach to cross-platform authentication needs, especially in large environments)
+• Form-based authentication (for simple user interface needs)
+• Computer Associates Siteminder
+• JA-SIG Central Authentication Service (otherwise known as CAS, which is a popular open source single
+sign on system)
+• Transparent authentication context propagation for Remote Method Invocation (RMI) and HttpInvoker (a
+Spring remoting protocol)
+• Automatic "remember-me" authentication (so you can tick a box to avoid re-authentication for a
+predetermined period of time)
+• Anonymous authentication (allowing every call to automatically assume a particular security identity)
+• Run-as authentication (which is useful if one call should proceed with a different security identity)
+• Java Authentication and Authorization Service (JAAS)
+• Container integration with JBoss, Jetty, Resin and Tomcat (so you can still use Container Manager
+Authentication if desired)
+• Your own authentication systems (see below)
+
+1.2 Authorization
+-----------------
+The process of deciding whether a principal is allowed to perform an action in your application.
+
+• authorizing web requests
+• authorizing methods can be invoked
+• authorizing access to individual domain object instances
+
+
+2. Major building blocks of Acegi Security
+------------------------------------------
+Just to recap, the major building blocks of Acegi Security are:
+• SecurityContextHolder, to provide any type access to the SecurityContext.
+• SecurityContext, to hold the Authentication and possibly request-specific security information.
+• HttpSessionContextIntegrationFilter, to store the SecurityContext in the HttpSession between
+web requests.
+• Authentication, to represent the principal in an Acegi Security-specific manner.
+• GrantedAuthority, to reflect the application-wide permissions granted to a principal.
+• UserDetails, to provide the necessary information to build an Authentication object from your
+application's DAOs.
+• UserDetailsService, to create a UserDetails when passed in a String-based username (or
+certificate ID or alike).
+
+

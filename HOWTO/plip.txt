@@ -1,0 +1,45 @@
+How to install PLIP ?
+---------------------
+- Enable PLIP in the kernel as module:
+  	set CONFIG_PLIP=m in .config file and build a new kernel.
+
+- Load necessary modules:
+	insmod parport
+	insmod parport_pc		: if not loaded (check with lsmod)
+
+In /proc/parport/0/irq must be 7 (or 5). This irq will be used by parallel port. If it isn't correct change it:
+	echo 7 > /proc/parport/0/irq
+
+	insmod plip
+
+We can check loaded moduls with lsmod or in /var/log/messages.
+
+- Install network interface:
+	ifconfig plip0 192.168.1.1 pointopoint 192.168.1.2 netmask 255.255.255.0 up
+
+  Check it:
+  	ping 192.168.1.1
+
+- Add to routing table:
+	route add -host 192.168.1.1 dev plip0
+
+Example (/u/tl/ins_plip):
+LOCAL_IP=192.168.1.1
+REMOTE_IP=192.168.1.2
+insmod parport
+insmod parport_pc
+# IRQ for parallel1 port
+echo 7 > /proc/parport/0/irq
+insmod plip
+# Installing IP
+ifconfig plip0 $LOCAL_IP pointopoint $REMOTE_IP netmask 255.255.255.0 up
+# Add router
+route add -net 134.0.0.0 netmask 255.255.255.0 dev plip0
+
+--------------------------------------------------------
+See also:
+	/usr/doc/howto/en/mini/PLIP.gz
+	/usr/doc/howto/en/PLIP-Install-HOWTO.gz
+	/u/tl/ins_plip
+
+

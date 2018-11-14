@@ -1,0 +1,18 @@
+===================
+Facebook auth HOWTO
+===================
+
+Facebook Platform uses the OAuth 2.0 protocol for authentication and authorization. 
+
+Prerequisities
+--------------
+Your application should be accessible directly by Facebook.
+
+
+
+1. Register Facebook application
+		Canvas Page		: here will users call your application (e.g. http://apps.facebook.com/proba/)
+		Canvas URL		: Facebook pulls the content for your app's canvas pages from this base URL.
+							FB redirects canvas page here.
+		
+2. 

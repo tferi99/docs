@@ -1,0 +1,13 @@
+About ipchains (firewall)
+
+On kernel 2.0 we can use ipfadm for packet filtering. After 2.1.102 there is a kernel service: IP chains.
+
+To configure IP chains call ipchains.
+By default there is 3 chains: input, forward, output.
+
+We can list chain rules by calling:
+	
+	ipchains -L
+
+
+

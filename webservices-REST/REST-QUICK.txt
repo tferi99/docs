@@ -1,0 +1,18 @@
+HTTP methods
+-------------
+GET		- read
+POST	- create (/update)
+PUT		- update (/insert)
+DELETE	- delete
+
+Method parameters
+-----------------
+When a resource method is invoked, parameters annotated with one of the extractor annotations
+seen previously are filled. 
+The value of a nonannotated parameter (called an ENTITY PARAMETER) is mapped
+from the request entity body and converted by an ENTITY PROVIDER.
+
+Methods may return void, Response, or another Java type. Response is used when additional
+metadata needs to be provided; for example, when you create a new customer, you might need to send
+back the URI of this customer.
+

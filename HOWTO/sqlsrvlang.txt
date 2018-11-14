@@ -1,0 +1,14 @@
+Az SQLServer-n‚l az az alapveto probl‚ma, hogy a szerver ‚s a kliens k”z”tti
+adat-forgalom nem nyelv-fggetlen m¢don t”rt‚nik.
+
+A nyelvi probl‚ma elsosorban akkor j”n elo, ha DateTime t¡pus£ adatokkal 
+akarunk adatb zis-muveleteket v‚gezni, ugyanis a d tumot sz”vegesen kldi a 
+kliens a szervernek, ‚s ez tartalmaz pl. h¢nap-neveket. A szerver a kapott 
+h¢napot ‚rtelmezi, a kapott h¢napnevet kikeresi a be ll¡tott nyelvnek 
+megfelelo h¢napnevek k”zl. Ha nincs benne, az adott muveletre d tumkonverzi¢s 
+hib t kld a kliensnek.
+
+
+
+
+

@@ -1,0 +1,90 @@
+=============
+Hibernate FAQ
+=============
+
+Configuration
+-------------
+- How to create database schema objects automatically?
+
+Errors
+------
+- Message : ERROR:  Relation "hibernate_unique_key" does not exist
+- Message: cannot simultaneously fetch multiple bags
+- Message: Could not unbind factory from JNDI
+
+Logging, debugging
+------------------
+- How to log SQL statements in Hibernate?
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Message : ERROR:  Relation "hibernate_unique_key" does not exist
+================================================================
+	org.springframework.jdbc.UncategorizedSQLException: (Hibernate operation): encountered SQLException [ERROR:  Relation "hibernate_unique_key" does not exist
+	]; nested exception is java.sql.SQLException: ERROR:  Relation "hibernate_unique_key" does not exist
+
+A:
+	You have to choose different hibernate.dialect for Hibernate 2.x and 3.x:
+
+	2.x:
+
+		net.sf.hibernate.dialect.PostgreSQLDialect
+
+	3.x:
+
+		org.hibernate.dialect.PostgreSQLDialect
+------------------------------------------------------------------------------------------------------------------------------
+How to log SQL statements in Hibernate?
+=======================================
+Method 1:
+	
+	The first is to simply enable SQL logging in the Hibernate configuration properties by setting the hibernate.show_sql property to true: 
+
+		<property name="hibernate.show_sql">true</property>
+	
+Method 2:
+	You can configure logging in log4j:
+	
+	## log hibernate prepared statements/SQL queries (equivalent to setting 'hibernate.show_sql' to 'true')
+	log4j.logger.org.hibernate.SQL=DEBUG
+	#log4j.additivity.org.hibernate.SQL=false
+	
+	# to log SQL parameters
+	log4j.logger.org.hibernate.type=TRACE
+	
+------------------------------------------------------------------------------------------------------------------------------
+How to create database schema objects automatically?
+====================================================
+Set paramater in hibernate.cfg.xml:
+
+	<property name="hbm2ddl.auto">update</property>
+
+hibernate.hbm2ddl.auto automatically validates or exports schema DDL to the database when the SessionFactory is created. 
+	
+Possible values are:
+	- validate: validate the schema, makes no changes to the database.
+	- update: update the schema.
+	- create: creates the schema, destroying previous data.
+	- create-drop: drop the schema at the end of the session.	
+	
+------------------------------------------------------------------------------------------------------------------------------
+Message: cannot simultaneously fetch multiple bags
+==================================================
+Maybe you want to use List for a collection. Lists need to add index column. 
+	
+Add @IndexColumn annotation to list, for example:
+
+	@IndexColumn(name = "idxDataInputParameters")
+	
+------------------------------------------------------------------------------------------------------------------------------
+Message: Could not unbind factory from JNDI
+===========================================
++ javax.naming.NoInitialContextException: Need to specify class name in environment or system property....
+
+Maybe you don't have a JNDI provider but you've specified name for session-factory in hibernate.cfg.xml:
+
+	<session-factory name="cica">
+
+Solution: remove name attribute.
+	
+

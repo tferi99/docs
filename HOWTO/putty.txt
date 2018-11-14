@@ -1,0 +1,29 @@
+==========
+PuTTY tips
+==========
+
+Exporting/importing session
+---------------------------
+If you want to copy Putty configuration from a Windows computer to another same version Windows computer, 
+here is what to do:
+On a model computer, configure Putty to your desire, save and test it to make sure it works the way you want it to.
+
+- Start/Run/regedit to run regedit tool
+
+- Browse to HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\SshHostKeys
+
+- Delete all values under this key EXCEPT the (Default) value
+
+- Right click on 
+
+		HKEY_CURRENT_USER\Software\SimonTatham
+		
+  and select Export, then save it as “setup-putty.reg” to a location that you want
+  
+- Copy setup-putty.reg and the Putty.exe files to a machine that you want to copy Putty configuration to
+
+- On this new computer, double click on setup-putty.reg to import Putty configuration
+
+- Upon successful configuration import, run Putty.exe. You should see all Putty configuration there. 
+  You can safely delete setup-putty.reg since you only need to run it ONCE on each new computer that 
+  you want to use Putty with tthe same configuration.

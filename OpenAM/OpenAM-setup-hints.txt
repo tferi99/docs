@@ -1,0 +1,38 @@
+==================================
+Hints to installation of OpenAM 13
+==================================
+
+These configuratiopn hints helps you setup a developmewnt lab environment:
+
+- Install Win or Debian 8
+
+	/opt/tomcat
+
+- Install Java7 JDK
+
+	/opt/java
+
+
+- Install Tomcat 7
+
+	TOMCAT/bin/catalina.sh:
+	
+		export JAVA_HOME=/opt/java
+		export JAVA_OPTS="-Xms512m -Xss4m -Xmx2048m -server -XX:PermSize=256m -XX:MaxPermSize=256m"
+
+	
+	TOMCAT/conf/tomcat-users.xml:
+	
+		<user username="admin" password="admin" roles="manager-gui,manager-status,manager-jmx"/>
+
+- put FQDN into /etc/hosts:
+
+		192.168.5.109           sp.example.com
+	
+	
+- call OpenAM
+
+	http://sp.example.com:8080/openam
+	
+	
+

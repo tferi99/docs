@@ -1,0 +1,12 @@
+How to distribute a software under GPL?
+---------------------------------------
+
+In short:
+	- you have to put a General Puiblic Lisence into install package
+	- make references to it
+
+You can find a sample GPL (COPYRIGHT) and a C source comment fragment 
+in /u/src/gnu_gpl directory.
+Please read COPYRIGHT text.
+
+

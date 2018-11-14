@@ -1,0 +1,149 @@
+=============
+Tomcat 4.1 QA
+=============
+
+Howto start Tomcat with displaying output?
+------------------------------------------
+
+Change starting of catalina.sh in startup.sh:
+
+original:
+	exec "$PRGDIR"/"$EXECUTABLE" start "$@"
+
+new:
+	exec "$PRGDIR"/"$EXECUTABLE" run "$@"
+
+'run' parameter acts to run Tomcat in the same in the foreground (see comments in catalina.sh).
+
+
+
+Howto shutdown Tomcat remotely?
+-------------------------------
+Send SHUTDOWN to port 8005 (it's contaned by <server> tag of server.xml).
+
+Howto register an application permanently
+
+#################################################################################
+
+Installing an application temporary
+-----------------------------------
+
+1. Create directory in 'webapps' directory.
+2. Call 
+	http://localhost:8080/manager/install?path=/appname&war=file:/appdir
+
+Where:
+	/appname : will be context pah of your new application
+	/appdir  : directory containing files/directories of application under context path
+
+For example:
+	http://localhost:8080/manager/install?path=/myapp&war=file:/d:/usr/myapp
+
+3. Call your new application:
+	http://localhost:8080/appname
+
+NOTE:
+	It installs application temporary. If you restart server, you will have to register
+	application again.
+
+
+See more:
+	manager-howto.html
+
+
+Installing an application permanently
+-------------------------------------
+Set the 'autoDeploy' property of 'Host' item to true (which is the default value).
+
+Create a context XML with registration information and put into 'webapps' directory of 
+Tomcat. Example for such an XML:
+
+<Context path="/test" docBase="d:/usr/tomcat/app" debug="0" privileged="true">
+  <!-- Link to the user database we will get roles from -->
+  <ResourceLink name="users" global="UserDatabase" type="org.apache.catalina.UserDatabase"/>
+</Context>
+
+
+Where:
+	path	: relative path of application in URL for calling it
+	docBase	: absolute or relative (to webapps) path of WAR file or directory that contains
+		  application directory uncompressed format.
+
+#################################################################################
+
+How to find generated .java and compiled .class?
+------------------------------------------------
+
+See under 'work' direcory.
+
+#################################################################################
+
+Tomcat settings for development/product
+---------------------------------------
+
+Development settings
+-------------------
+(see jasper-howto.html)
+
+Settings are in $CATALINA_BASE/conf/web.xml
+Toy can add a new initializtion parameter by inserting an 'init-param' XML tag, 
+for example:
+
+        <init-param>
+            <param-name>keepgenerated</param-name>
+            <param-value>false</param-value>
+        </init-param>
+
+
+
+Product settings
+----------------
+When using Jasper 2 in a production Tomcat server you should consider making the 
+following changes from the default configuration. 
+
+
+development 	- To enable background compilation of JSP pages set this to false. 
+compiler 	- The internal JVM javac compiler used by Ant has a known memory leak. 
+		  If you anticipate that JSP pages will get recompiled frequently 
+		  consider using an external compiler such as jikes. 
+
+#################################################################################
+
+Where sould I deploy JAVA classes and how to make possible to reload changed 
+----------------------------------------------------------------------------
+JAVA classes by Tomcat without restarting it?
+---------------------------------------------
+
+1. Set 'reloadable' parameter of 'Context' tag to 'true' in context XML.
+
+
+<Context 
+	path="/test" 
+	docBase="d:/usr/tomcat/app"
+	debug="0"
+	privileged="true"
+	reloadable="true"
+>
+
+  <!-- Link to the user database we will get roles from -->
+  <ResourceLink name="users" global="UserDatabase" type="org.apache.catalina.UserDatabase"/>
+
+</Context>
+
+
+
+2. Put your JAVA classes (uncompressed directories) into $APPHOME/WEB-INF/classes directory.
+   Put your JAR files into $APPHOME/WEB-INF/lib directory.
+
+   Classloader will find classes in this locations automatically.
+
+#################################################################################
+
+Howto change SDK?
+-----------------
+There can be ptroblem, if you uninstall/replace SDK under Tomcat, because start/shutdown
+shortcuts contains information about directory of SDK. 
+
+Change  shortcuts to fix this problem.
+
+#################################################################################

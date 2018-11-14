@@ -1,0 +1,44 @@
+==========
+Expect FAQ
+==========
+
+- How long is expect timeout?
+- Error: spawn id XXX not open"
+- Howto get script name?
+- Howto send Ctrl-C?
+
+--------------------------------------------------------------------------------------------------------------------------------
+How long is expect timeout?
+===========================
+- The  default  timeout  period  is  10 seconds
+
+- Setting:
+             
+	set  timeout  30".   
+	
+- An  infinite may  be designated by the value -1.  
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+Error: spawn id XXX not open"
+=============================
+You get this if spawned process already closed but you want to 'expect' it.
+E.g. calling expect in a loop and spawned process terminated.
+
+Use expect_before to fix it.
+
+--------------------------------------------------------------------------------------------------------------------------------
+Howto get script name?
+======================
+From 'argv0' variable.
+
+E.g:
+
+	send_user "Usage: $argv0 <host> <user> <password> <file> <destination directory>\n"
+
+--------------------------------------------------------------------------------------------------------------------------------
+Howto send Ctrl-C?
+==================
+send "\003"
+
+

@@ -1,0 +1,26 @@
+Settings for X Window manager of SuSE 9.1
+=========================================
+
+Enabling listening om port 6000 in SuSE 9.1
+-------------------------------------------
+SuSE9.1 starts the X-Server with the option "-nolisten tcp"
+
+Solution:
+In /etc/sysconfig/displaymanager set 
+
+DISPLAYMANAGER_XSERVER_TCP_PORT_6000_OPEN="yes"
+
+and xecute SuSEConfig and restart the X-Server (CTRL-ALT-BACKSPACE, or init 3 and init 5).
+
+
+Autostarting X without authentication
+-------------------------------------
+You can bypass login dialog
+
+In /etc/sysconfig/displaymanager set 
+
+	DISPLAYMANAGER_ROOT_LOGIN_REMOTE="yes"
+	DISPLAYMANAGER_AUTOLOGIN="root"
+
+and xecute SuSEConfig and restart the X-Server (CTRL-ALT-BACKSPACE, or init 3 and init 5).
+

@@ -1,0 +1,20 @@
+You can enable connecting to X server on another host, if you are 
+authenticated on this host.
+There is a list of authenticated hosts, you can list it with:
+
+	xhost
+
+You can add or remove entries by calling xhost by followings:
+
+	xhost +<host>
+	xhost -<host>
+
+If you are autheticated, then you can display X output of your application on another host this way:
+
+	<application> -display <host>:<display>
+
+fe.:	xclock -display 134.0.0.115:0
+
+See also: man xhost
+
+

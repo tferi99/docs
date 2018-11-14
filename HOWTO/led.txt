@@ -1,0 +1,8 @@
+How to set keyboard LEDs
+========================
+
+setleds [{+/-}num] [{+/-}caps] [{+/-}scroll]
+
+
+See more: 
+man setleds

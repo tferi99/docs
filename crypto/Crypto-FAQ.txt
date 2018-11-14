@@ -1,0 +1,36 @@
+==========
+Crypto FAQ
+==========
+
+
+ERC-20
+------
+- How to monitor tranfer of an ERC-20 wallet?
+- Howto view ETH balance
+- Howto view token balance
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+How to monitor tranfer of an ERC-20 wallet?
+===========================================
+
+	https://ethplorer.io/address/<WALLET_ADDRESS>
+	
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Howto view ETH balance
+======================
+- view in MEH
+OR
+- go here:
+
+	https://etherscan.io/address/<ADDRESS>
+
+	
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Howto view token balance
+========================
+- go here:
+
+	https://etherscan.io/address/<ADDRESS>
+	
+- view 'Token balance' dropdown
+	

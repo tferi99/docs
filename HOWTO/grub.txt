@@ -1,0 +1,87 @@
+Booting with grub
+=================
+
+Grub is Grand Unified Boot Loader.
+
+Creating GRUB boot floppy
+-------------------------
+
+	mke2fs /dev/fd0
+	mount /dev/fd0 /mnt/floppy
+	mkdir /mnt/floppy/boot
+	mkdir /mnt/floppy/boot/grub
+	cp /usr/share/grub/i386-pc/stage1 /mnt/floppy/boot/grub
+	cp /usr/share/grub/i386-pc/stage2 /mnt/floppy/boot/grub
+
+	Run grub, and in grub prompt:
+
+	grub> root (fd0)
+	grub> setup (fd0)
+	grub> quit
+
+This will boot a GRUB shell from floppy. 
+
+'stage1', 'stage2' files are boot images. The first "root" command told 
+GRUB where to look for its auxiliary files (stage1 and stage2). By default, 
+GRUB looks in the /boot/grub directory on the partition or disk you specify.
+Next, we typed the 'setup' command, which told GRUB to install the bootloader 
+on the boot record of our floppy; we'll look at this in more detail later.
+
+Booting from HD
+---------------
+1. Start GRUB by booting floppy generated above.
+
+2. Specify GRUB root particion:
+
+	root (		(press TAB)
+	root (hd0,	(press TAB)
+
+		Possible partitions are:
+		Partition num: 0, Filesystem type is ext2fs, partition type 0x83
+		Partition num: 1, Filesystem type unknown, partition type 0x82
+		Partition num: 2, Filesystem type unknown, partition type 0x7
+		Partition num: 4, Filesystem type is reiserfs, partition type 0x83
+		Partition num: 5, Filesystem type is reiserfs, partition type 0x83	
+
+	root (hd0, 4)
+
+3. Load kernel, for example:
+
+	kernel /boot/vmlinuz root=/dev/hda5
+
+Notice the "root=" kernel parameter, which is very important. It should point to the Linux
+partition that holds your root filesystem.
+
+4. Start boot
+
+	boot
+
+
+Boot methods
+------------
+GRUB has two distinct boot methods. One of the two is to load an
+operating system directly, and the other is to chain-load another boot
+loader which then will load an operating system actually. 
+
+Load another boot loader to boot unsupported operating systems
+--------------------------------------------------------------
+  1. Set GRUB's root device to the partition by the command
+     `rootnoverify' (*note rootnoverify::):
+
+          grub> rootnoverify (hd0,0)
+
+  2. Set the "active" flag in the partition using the command
+     `makeactive' :
+
+          grub> makeactive
+
+  3. Load the boot loader with the command `chainloader':
+
+          grub> chainloader +1
+
+     `+1' indicates that GRUB should read one sector from the start of
+     the partition. The complete description about this syntax can be
+     found in .
+
+  4. Run the command `boot'.
+

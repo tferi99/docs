@@ -1,0 +1,23 @@
+You can connect with Perl to several databases using DBD modules. This 
+modules are downloadable from any CPAN directory.
+
+DBD installation:
+- A C compiler must be installed on your operating system.
+- First you have to install DBI (database independent) mudul from Perl.
+  This is also downloadable from CPAN.
+  1. Uncompress DBI install file.
+  2. perl Makefile.pl : it creates C makefile
+  3. make (or nmake on Windows)
+  4. make install (or nmake install) : it copies created files to installation destination
+
+- Download the DBD modul for a specific database engine (Informix, Oracle, Sybase, SQL Server, MySql, Postgres, ODBC etc.)
+- Install it:
+  1. Uncompress DBD install file.
+  2. perl Makefile.pl : it creates C makefile
+  3. make (or nmake on Windows)
+  4. make install (or nmake install) : it copies created files to installation destination
+
+See also: 
+	man DBI
+	man DBD
+

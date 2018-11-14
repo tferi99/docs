@@ -1,0 +1,7 @@
+System resource meters
+======================
+
+Usable application to measure the amount of system resources:
+
+	xosview		
+	procmeter

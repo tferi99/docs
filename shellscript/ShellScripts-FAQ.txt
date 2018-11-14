@@ -1,0 +1,275 @@
+================
+ShellScripts-FAQ
+================
+
+General
+-------
+- How to process input options?
+- How to do calculations?
+
+Flow control
+------------
+- Looping
+
+Debug
+-----
+- How to debug a schellscript?
+
+Functions
+---------
+- Returning values from a function
+- ERROR: function not found
+
+Text processing
+---------------
+- How to split a line into words?
+
+File processing
+---------------
+- How to clean content of file?
+
+Redirection, pipes
+------------------
+- How to redirect both standard output and error into a file?
+
+Tools
+-----
+tar tips
+
+
+-------------------------------------------------------------------------------------------------
+How to debug a schellscript?
+============================
+-x option to debug a shell script
+
+Run a shell script with -x option.
+	$ bash -x script-name
+
+Use of set builtin command
+	Bash shell offers debugging options which can be turn on or off using set command.
+	=> set -x : Display commands and their arguments as they are executed.
+	=> set -v : Display shell input lines as they are read.
+	
+	For example:
+	
+		#!/bin/bash
+		clear
+		# turn on debug mode
+		set -x
+		for f in *
+		do
+		   file $f
+		done
+		# turn OFF debug mode
+		set +x
+		ls
+		# more commands	
+		
+
+-------------------------------------------------------------------------------------------------
+How to split a line into words?
+===============================
+
+	echo $FOO | { 
+		read first rest;
+		echo "$first and $rest";
+	}
+
+-------------------------------------------------------------------------------------------------
+How to clean content of file?	
+=============================
+To delete the contents of the file without removing the file itself or changing any of it's permissions
+
+	cat /dev/null > file
+
+-------------------------------------------------------------------------------------------------
+tar tips
+========
+- How to package files from different directory without going there?
+
+	Use -C option to go there internally, e.g:
+	
+		tar cvzf classes.tgz -C ../../war/WEB-INF classes
+		
+		
+-------------------------------------------------------------------------------------------------
+Returning values from a function
+================================
+1. using a global
+
+	function func1
+	{
+		calculated_value=$(echo 'cica')
+		eval "$1=$calculated_value"
+	}
+	
+	declare ret_var
+	func1 'ret_var'
+	echo $ret_var
+	
+2. capturing output
+
+	function func2
+	{
+		echo "result"
+	}
+	
+	ret_var=$(func2)
+	echo $ret_var
+
+-------------------------------------------------------------------------------------------------
+How to do calculations?
+=======================
+- expr <expression>			: evaluates an expression and prints result to standard output
+
+	x=`expr 5 + 6`
+	echo $x
+	11
+	
+- in Bash use ((...))
+
+	x=$(( 5 + 6 ))
+	echo $x
+	11
+
+	a=5
+	((a++))
+	((a++))
+	echo $a
+	7
+	
+	
+-------------------------------------------------------------------------------------------------
+How to process input options?
+=============================
+Use getopts:
+
+	#!/bin/bash
+
+	while getopts "123:" OPTION
+	do
+	  case $OPTION in
+		1)  echo "Uno"
+			;;
+		2)  echo "Dos"
+			;;
+		3)  echo "Tres: $OPTARG"
+			;;
+
+		# Unknown option. No need for an error, getopts informs
+		# the user itself.
+		\?) exit 1;;
+	  esac
+	done
+
+- put ":" after optional options
+
+If you want to use options with normal arguments and you want to check number of arguments
+call 'shift' to remove options from arguments before checking number of arguments.
+
+	DELETE_TARGET=0
+	options=0
+	while getopts "dxy" OPTION
+	do
+	  case $OPTION in
+		d)
+			DELETE_TARGET=1
+			((options++))
+			;;
+		x)
+			...
+			((options++))
+			;;
+		\?) exit 1;;
+	  esac
+	done 
+
+	for i in $(seq 1 $options)
+	do
+		shift
+	done
+
+	if [ $# -ne 7 ]
+	then
+		app=`basename $0`
+		echo "Usage: $app [-d] <host> <user> <password> <file> <destination directory> <to_user> <to_group>"
+		exit 1
+	fi
+	....
+
+-------------------------------------------------------------------------------------------------
+Looping
+=======
+- Looping on numeric sequeces:
+
+	for i in 1 2 3 4 5										-> 1 2 3 4 5
+	do
+		...
+	done
+	
+	
+	for i in 1 2 3 4 5; do echo $i; done
+	 
+	
+	for i in {1..5}
+	do
+		...
+	done
+
+	for i in $(seq 1 5)
+	do
+		...
+	done
+
+	With step:
+	
+	for i in {1..5..2}				{from..to..step}		-> 1 3 5
+	do
+		...
+	done
+	
+	for i in $(seq 1 2 5)
+	do
+		...
+	done
+	 
+	
+-------------------------------------------------------------------------------------------------
+How to redirect both standard output and error into a file?
+===========================================================
+Method 1:
+
+	yourcommand &>filename
+	
+	(redirects both stdout and stderr to filename).
+
+Method 2:
+
+	do_something 2>&1 | tee -a some_file
+	
+-------------------------------------------------------------------------------------------------
+ERROR: function not found
+=========================
+Possible cause:
+
+	Chances are that on your desktop you are not actually running under bash but rather dash or some other POSIX-compliant shell 
+	that does not recognize the function keyword. The function keyword is a bashism, a bash extension. POSIX syntax does not use function and mandates the use of parenthesis.
+
+Bash format:
+
+	function sayIt {   
+		echo "hello world"
+	}
+	
+POSIX format:
+
+	sayIt() {   
+		echo "hello world"
+	}
+	
+Fix:	
+
+	Try to use POSIX format.
+
+
+

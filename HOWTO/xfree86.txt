@@ -1,0 +1,19 @@
+Hints to XFree86 configuration
+==============================
+
+- X is a link to current server. Its location is:
+	/var/X11R6/bin/X
+	
+It generally is linked to /usr/X11R6/bin/XF86_... binary.
+
+- You can switch between video modes with 
+	CTRL-ALT-numeric+
+  and
+  	CTRL-ALT-numeric-
+These video modes are listed as Modes lines in Screen section of XF86Config/	
+
+- Some useful server flags:
+Here's some entries to insert into ServerFlags section of XF86Config:
+	DontZap	: to prevent user from CTRL-ALT-BACKSPACE
+	DontZoom : to prevent user fro changing resolution with CTRL-ALT-num+/-	
+	See more: man XF86Config

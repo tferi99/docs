@@ -1,0 +1,316 @@
+====================
+iptables mini  howto
+====================
+
+NOTE:
+	This short text file based on the following documents:
+		man iptables
+		Iptables Tutorial 1.1.19 (iptables-tutorial.html)
+
+
+Each table contains a number of built-in chains and may also contain user-defined chains.
+
+Each  chain is a list of rules which can match a set of packets.  Each rule specifies what to do with a packet that
+matches.  This is called a âtarget', which may be a jump to a user-defined chain in the same table.
+
+Rules
+-----
+
+A firewall rule specifies criteria for a packet, and a target.  If the packet does not match, the next rule in  the
+chain  is  the examined; if it does match, then the next rule is specified by the value of the target, which can be
+the name of a user-defined chain or one of the special values ACCEPT, DROP, QUEUE, or RETURN, etc.
+
+If the end of a built-in chain is reached or a rule in a built-in chain with
+target RETURN is matched, the target specified by the chain policy determines the fate of the packet.
+
+
+Tables
+------
+There are 3 tables, and tables have some chains:
+
+filter:
+  This is the default table (if no -t option is passed).  It contains the built-in chains 
+	INPUT (for packets  coming into the box itself), 
+	FORWARD (for packets being routed through the box), and 
+	OUTPUT (for locally-generated packets).
+
+nat:
+  This table is consulted when a packet that creates a new connection is encountered. It consists of
+  three  built-ins:  
+	PREROUTING  (for  altering  packets  as  soon  as they come in), 
+	OUTPUT (for altering locally-generated packets before routing), and 
+	POSTROUTING (for altering packets as they are about to go out).
+
+mangle:
+  This  table  is used for specialized packet alteration.
+  Until kernel 2.4.17 it had two built-in chains:
+	PREROUTING (for altering incoming packets before routing) and  
+	OUTPUT  (for  altering  locally-generated  packets  before  routing).   
+
+  Since  kernel 2.4.18, three other built-in chains are also supported: 
+	INPUT (for packets coming into the box itself), 
+	FORWARD (for altering packets being routed through  the  box),  and 
+	POSTROUTING (for altering packets as they are about to go out).
+
+
+
+Traversing of tables and chains
+-------------------------------
+
+1. Destination local host (our own machine)
+
+1	 	 		On the wire (e.g., Internet)	
+2	 	 		Comes in on the interface (e.g., eth0)	
+3	mangle	PREROUTING	This chain is normally used for mangling packets, i.e., changing TOS and so on.	
+4	nat	PREROUTING	This chain is used for DNAT mainly. Avoid filtering in this chain since it will be bypassed in certain cases.	
+5	 	 		Routing decision, i.e., is the packet destined for our local host or to be forwarded and where.	
+6	mangle	INPUT		At this point, the mangle INPUT chain is hit. We use this chain to mangle packets, after they have been routed, but before they are actually sent to the process on the machine.	
+7	filter	INPUT		This is where we do filtering for all incoming traffic destined for our local host. Note that all incoming packets destined for this host pass through this chain, no matter what interface or in which direction they came from.	
+8	 	 		Local process/application (i.e., server/client program)
+
+2. Source local host (our own machine)
+
+1	 	 		Local process/application (i.e., server/client program)	
+2	 	 		Routing decision. What source address to use, what outgoing interface to use, and other necessary information that needs to be gathered.	
+3	mangle	OUTPUT		This is where we mangle packets, it is suggested that you do not filter in this chain since it can have side effects.	
+4	nat	OUTPUT		This chain can be used to NAT outgoing packets from the firewall itself.	
+5	filter	OUTPUT		This is where we filter packets going out from the local host.	
+6	mangle	POSTROUTING	The POSTROUTING chain in the mangle table is mainly used when we want to do mangling on packets before they leave our host, but after the actual routing decisions. This chain will be hit by both packets just traversing the firewall, as well as packets created by the firewall itself.	
+7	nat	POSTROUTING	This is where we do SNAT as described earlier. It is suggested that you don't do filtering here since it can have side effects, and certain packets might slip through even though you set a default policy of DROP.	
+8	 	 		Goes out on some interface (e.g., eth0)	
+9	 	 		On the wire (e.g., Internet)
+
+3.  Forwarded packets
+
+1	 	 		On the wire (i.e., Internet)	
+2	 	 		Comes in on the interface (i.e., eth0)	
+3	mangle	PREROUTING	This chain is normally used for mangling packets, i.e., changing TOS and so on.	
+4	nat	PREROUTING	This chain is used for DNAT mainly. SNAT is done further on. Avoid filtering in this chain since it will be bypassed in certain cases.	
+5	 	 		Routing decision, i.e., is the packet destined for our local host or to be forwarded and where.	
+6	mangle	FORWARD		The packet is then sent on to the FORWARD chain of the mangle table. This can be used for very specific needs, where we want to mangle the packets after the initial routing decision, but before the last routing decision made just before the packet is sent out.	
+7	filter	FORWARD		The packet gets routed onto the FORWARD chain. Only forwarded packets go through here, and here we do all the filtering. Note that all traffic that's forwarded goes through here (not only in one direction), so you need to think about it when writing your rule-set.	
+8	mangle	POSTROUTING	This chain is used for specific types of packet mangling that we wish to take place after all kinds of routing decisions has been done, but still on this machine.	
+9	nat	POSTROUTING	This chain should first and foremost be used for SNAT. Avoid doing filtering here, since certain packets might pass this chain without ever hitting it. This is also where Masquerading is done.	
+10	 	 		Goes out on the outgoing interface (i.e., eth1).	
+11	 	 		Out on the wire again (i.e., LAN).
+
+
+Summary
+
+                          Network
+                             |
+                     mangle PREROUTING
+                             |
+                       nat PREROUTING
+                             |
+              local box <--- | ---> external box
+                             |
+mangle INPUT ---------- Routing decision -----------------|
+     |                                                    |
+filter INPUT (!!! FILTERING HERE !!!)               mangle FORWARD
+     |                                                    |
+local process                                       filter FORWARD (!!! FILTERING HERE !!!)
+     |                                                    |
+routing decision                                          |
+     |                                                    |
+mangle OUTPUT                                             |
+     |                                                    |
+nat OUTPUT                                                |
+     |                                                    |
+filter OUTPUT  (!!! FILTERING HERE !!!)                   |
+     |                                                    |
+     |-----------------------------------------------------
+                             |
+                      mangle POSTROUTING
+                             |
+                       nat POSTROUTING
+                             |
+                          Network                             
+
+
+Valid targets in tables
+-----------------------
+
+		mangle				nat				filter
+--------------------------------------------------------------------------------------
+ACCEPT		*				*				*
+--------------------------------------------------------------------------------------
+DNAT					PREROUTING,OUTPUT
+--------------------------------------------------------------------------------------
+DROP		*				*				*
+--------------------------------------------------------------------------------------
+LOG         *				*				*
+--------------------------------------------------------------------------------------
+MARK		*
+--------------------------------------------------------------------------------------
+MASQUERADE				 POSTROUTING
+--------------------------------------------------------------------------------------
+MIRROR	INPUT,FORWARD,PREROUTING	PREROUTING			INPUT,FORWARD
+--------------------------------------------------------------------------------------
+QUEUE		*				*				*
+--------------------------------------------------------------------------------------
+REDIRECT				PREROUTING,OUTPUT
+--------------------------------------------------------------------------------------
+REJECT	INPUT,FORWARD,OUTPUT		OUTPUT			INPUT,FORWARD,OUTPUT
+--------------------------------------------------------------------------------------
+RETURN		*				*				*
+--------------------------------------------------------------------------------------
+SNAT					POSTROUTING
+--------------------------------------------------------------------------------------
+TOS         *				*				*
+--------------------------------------------------------------------------------------
+TTL         *				*				*
+--------------------------------------------------------------------------------------
+ULOG		*				*				*
+--------------------------------------------------------------------------------------
+
+ACCEPT
+------
+As soon as the match specification for a packet has been fully satisfied, and we specify ACCEPT 
+as the target, the rule is accepted and will not continue traversing the current chain or any 
+other ones in the same table. 
+
+DNAT
+----
+The DNAT target is used to do Destination Network Address Translation, which means that it is used 
+to rewrite the Destination IP address of a packet. If a packet is matched, and this is the target 
+of the rule, the packet, and all subsequent packets in the same stream will be translated, and 
+then routed on to the correct device, host or network. This target can be extremely useful, for 
+example, when you have a host running your web server inside a LAN, but no real IP to give it 
+that will work on the Internet. You could then tell the firewall to forward all packets going to 
+its own HTTP port, on to the real web server within the LAN. We may also specify a whole range 
+of destination IP addresses, and the DNAT mechanism will choose the destination IP address at 
+random for each stream. Hence, we will be able to deal with a kind of load balancing by doing this.
+
+Example:
+	iptables -t nat -A PREROUTING -p tcp -d 15.45.23.67 --dport 80 -j DNAT --to-destination 192.168.1.1-192.168.1.10
+
+
+DROP
+----
+The DROP target does just what it says, it drops packets dead and will not carry out any further processing.
+
+LOG
+---
+he LOG target is specially designed for logging detailed information about packets. 
+
+MARK
+----
+The MARK target is used to set Netfilter mark values that are associated with specific 
+packets. This target is only valid in the mangle table, and will not work outside there.
+Note that the mark value is not set within the actual package, but is a value that is 
+associated within the kernel with the packet. In other words, you can not set a MARK for 
+a packet and then expect the MARK still to be there on another host. If this is what you 
+want, you will be better off with the TOS target which will mangle the TOS value in the 
+IP header.
+
+MASQUERADE
+----------
+The MASQUERADE target is used basically the same as the SNAT target, but it does not require 
+any --to-source option. The reason for this is that the MASQUERADE target was made to work with, 
+for example, dial-up connections, or DHCP connections, which gets dynamic IP addresses 
+when connecting to the network in question. This means that you should only use the MASQUERADE 
+target with dynamically assigned IP connections, which we don't know the actual address of at 
+all times. If you have a static IP connection, you should instead use the SNAT target.
+
+Example:
+	iptables -t nat -A POSTROUTING -p TCP -j MASQUERADE --to-ports 1024-31000
+
+MIRROR
+------
+The MIRROR target is used to invert the source and destination fields in the IP header, and then 
+to retransmit the packet. This can cause some really funny effects, and I'll bet that thanks to 
+this target not just one red faced cracker has cracked his own box by now. The effect of using 
+this target is stark, to say the least. Let's say we set up a MIRROR target for port 80 at 
+computer A. If host B were to come from yahoo.com, and try to access the HTTP server at host A, 
+the MIRROR target would return the yahoo host's own web page (since this is where it came from).
+
+Note that the MIRROR target is only valid within the INPUT, FORWARD and PREROUTING chains.
+
+QUEUE
+-----
+The QUEUE target is used to queue packets to User-land programs and applications. It is used in 
+conjunction with programs or utilities that are extraneous to iptables and may be used, for example, 
+with network accounting, or for specific and advanced applications which proxy or filter packets. 
+
+REDIRECT
+--------
+The REDIRECT target is used to redirect packets and streams to the machine itself. This means that 
+we could for example REDIRECT all packets destined for the HTTP ports to an HTTP proxy like squid, 
+on our own host. Locally generated packets are mapped to the 127.0.0.1 address. In other words, 
+this rewrites the destination address to our own host for packets that are forwarded, or 
+something alike. The REDIRECT target is extremely good to use when we want, for example, 
+transparent proxying, where the LAN hosts do not know about the proxy at all.
+
+Note that the REDIRECT target is only valid within the PREROUTING and OUTPUT chains of the nat table.
+
+Example:
+	iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
+
+REJECT 
+------
+The REJECT target works basically the same as the DROP target, but it also sends back an error 
+message to the host sending the packet that was blocked.
+
+REJECT target may only be called by the INPUT, FORWARD, and OUTPUT chains, else they won't work.
+
+RETURN
+------
+The RETURN target will cause the current packet to stop traveling through the chain where it hit
+the rule. If it is the subchain of another chain, the packet will continue to travel through the
+superior chains as if nothing had happened. If the chain is the main chain, for example the INPUT
+chain, the packet will have the default policy taken on it. The default policy is normally set to 
+ACCEPT, DROP or similar.
+
+SNAT
+----
+The SNAT target is used to do Source Network Address Translation, which means that this target will 
+rewrite the Source IP address in the IP header of the packet. This is what we want, for example, 
+when several hosts have to share an Internet connection.
+
+The SNAT target is only valid within the nat table, within the POSTROUTING chain.
+Example:
+	iptables -t nat -A POSTROUTING -p tcp -o eth0 -j SNAT --to-source 194.236.50.155-194.236.50.160:1024-32000
+
+TOS
+---
+The TOS target is used to set the Type of Service field within the IP header. The TOS field consists
+of 8 bits which are used to help in routing packets. This is one of the fields that can be used 
+directly within iproute2 and its subsystem for routing policies.
+
+TTL
+---
+The TTL target is used to modify the Time To Live field in the IP header. One useful application 
+of this is to change all Time To Live values to the same value on all outgoing packets. One reason 
+for doing this is if you have a bully ISP which don't allow you to have more than one machine 
+connected to the same Internet connection, and who actively pursue this. Setting all TTL values 
+to the same value, will effectively make it a little bit harder for them to notify that you are
+doing this. We may then reset the TTL value for all outgoing packets to a standardized value, 
+such as 64 as specified in Linux kernel.
+
+ULOG
+----
+The ULOG target is used to provide user-space logging of matching packets. If a packet is matched 
+and the ULOG target is set, the packet information is multicasted together with the whole packet 
+through a netlink socket. One or more user-space processes may then subscribe to various multicast 
+groups and receive the packet. 
+
+Matches
+-------
+Implicite matches:
+	- TCP matches
+	- UDP matches
+	- ICMP matches
+
+Explicite matches (specified with -m or --match):
+	- limit match
+	- MAC match
+	- mark match
+	- multiport match
+	- owner match
+	- state match
+	- TOS match
+	- TTL match
+
+
+

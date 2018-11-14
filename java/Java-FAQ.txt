@@ -1,0 +1,74 @@
+========
+Java FAQ
+========
+
+Passing parameters
+------------------
+- Howto get system properties?
+
+Annotations
+-----------
+- How to use @link in JavaDoc?
+- How to add annotations at runtime?
+
+Date/time
+---------
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+How to use @link in JavaDoc?
+============================
+
+	@link  package.class#member  label
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Howto get system properties?
+============================
+System properties can be specified in command line with -D:
+
+	java -D<par>=<val> <class>
+
+To get value use:
+
+	String val = System.getProperty(par)
+
+OR use Primitive Type wrapper classes:
+
+	T value = T.getT(par)
+	
+	e.g.
+	
+		Boolean b = Boolean.getBoolean(par);
+		
+
+		// integer
+		try {
+			String parName = Test.class.getName() + ".intValue";
+			intParam = Integer.getInteger(parName);
+		}
+		catch (Throwable t) {
+			// error and keep default
+			System.err.println("\tInteger Parameter format error -> keep default");
+		}
+
+
+		Call:
+		
+			java -cp bin -Dorg.ftoth.passingparams.Test.intValue=5 org.ftoth.passingparams.Test
+			
+			
+----------------------------------------------------------------------------------------------------------------------------------------
+How to add annotations at runtime?			
+==================================
+- Jdk doesn’t provide an addAnnotation method through reflection.
+- Sometimes we need to define annotation dynamically at runtime (example of jsr 303 validation annotations )
+- Add new behaviors to your classes 
+
+How? You can use Javassist.
+It is a class library for editing bytecodes in Java; it enables Java programs to define a new class at runtime and to modify a class file when the JVM loads it.
+
+SEE MORE:	
+	How to add Annotations at Runtime.pdf
+
+

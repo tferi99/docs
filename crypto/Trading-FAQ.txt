@@ -1,0 +1,23 @@
+===========
+Trading FAQ
+===========
+
+- What is a pip? 
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+What is a pip?
+==============
+A pip is the price move in a given exchange rate. Traders often use pips to reference gains, or losses.
+Since most major currency pairs are priced to 4 decimal places, the smallest change is that of the last 
+decimal point which is equivalent to 
+
+	1/100 of 1%, 
+	
+or one basis point.
+
+===> For currency pairs displayed to 4 decimal places, 1 pip = 0.0001
+
+
+
+

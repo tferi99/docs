@@ -1,0 +1,13 @@
+Other kernel tips
+=================
+
+To get runtime kernel parameters:
+
+	cat /proc/....
+
+or 
+
+	dmesg
+
+It prints or controls the kernel ring buffer.
+

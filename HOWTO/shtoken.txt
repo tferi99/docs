@@ -1,0 +1,18 @@
+Howto tokenize in bash?
+=======================
+
+Bash has a variable IFS (Internal Field Separator), that contains separator characters, which are used by identifying fields in a string.
+
+You can change it (it's preferable to save it before changing). For example listing fields of PATH variable:
+
+OLDIFS=$IFS
+IFS=":"
+for i in $PATH
+do
+	echo $i
+done
+
+See more:
+	man bash
+
+

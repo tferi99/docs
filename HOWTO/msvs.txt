@@ -1,0 +1,14 @@
+MS Visual Studio settings
+=========================
+
+- To set dependencies of projects in solution:
+
+	Solution Explorer/Right menu on Solution/Project dependencies...
+
+
+- To avoid compiling every project of solution during starting a project:
+
+	Tools/Options/Environment/Projects and Solutions/Build and Run Options
+
+	Set checkbox 'Only build startup projects and dependencies on Run'.
+

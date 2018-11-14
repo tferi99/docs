@@ -1,0 +1,159 @@
+==========
+Tomcat-FAQ
+==========
+
+- Howto configure SSL?
+- Howto setup remote debugging?
+- Howto disable weak ciphers in SSL?
+- Howto add more memory for Tomcat?
+- Howto hide port and context path with Apache WWW?
+- Some tips to configure connection pool
+
+------------------------------------------------------------------------------------------------------
+Howto configure SSL?
+====================
+1. Preparing the Certificate Keystore with self-signed certificate:
+
+	keytool -genkey -alias tomcat -keyalg RSA -validity 365 -dname "cn=Ferenc Toth, ou=Development, o=Abc Inc., c=HU" -storepass tomcat -keypass tomcat
+	
+2. OPTIONAL - Installing a Certificate from a Certificate Authority 
+   (optional, without this you have to add exception to browsers)
+
+	The keytool option ( -certreq ) creates a CSR file called certreq.csr that can be submitted to the CA
+	to get a certificate.
+	
+		keytool -certreq -keyalg RSA -alias tomcat -file certreq.csr
+		
+	Obtaining a certificate requires payment to the CA for the authentication services. However, some
+	CAs offer test certificates at no cost, although they are usually valid only for a limited time. To submit
+	the CSR, visit VeriSign ( www.verisign.com ), Thawte ( www.thawte.com ), or TrustCenter.de
+	( www.trustcenter.de ).	
+	
+	After you have the certificate from the CA, you must get the Chain Certificate (also called the Root
+	Certificate) from the CA. For VeriSign, this can be downloaded from the following site:
+
+		www.verisign.com/support/install/intermediate.html	
+	
+	The Chain Certificate is a self-signed certificate from the CA that contains its well-known public key. You
+	can view the contents of a certificate using the -printcert option:
+
+		keytool -printcert -file /path/to/certificate
+
+	This is good practice before importing a third-party certificate into the keystore. You then import the
+	Chain Certificate into the keystore:
+		
+		keytool -import -alias root -trustcacerts -file <filename_of_the_chain_certificate>
+		
+	Here, the <filename_of_the_chain_certificate> contains the Chain Certificate that you got from
+	the CA.
+	
+	Finally, you import the new certificate:
+
+		keytool -import -alias tomcat -trustcacerts -file <your_certificate_filename>		
+		
+		
+3. Uncomment SLL connector entry in server.xml, and specify
+    <Connector port="8443" maxHttpHeaderSize="8192"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" disableUploadTimeout="true"
+               acceptCount="100" scheme="https" secure="true"
+               clientAuth="false" sslProtocol="TLS" 
+			   keystorePass="tomcat"
+				/>
+	
+	
+	
+SEE ALSO:	
+------------------------------------------------------------------------------------------------------
+Howto setup remote debugging?
+=============================
+Call this way:
+	
+	catalina.sh jpda start
+
+This will set JPDA_TRANSPORT, JPDA_ADDRESS, JPDA_SUSPEND (so JPDA_OPTS) environment variables and uses 
+Java Platform Debugger Architecture (JPDA).
+
+
+------------------------------------------------------------------------------------------------------
+Howto disable weak ciphers in SSL?
+==================================
+Modify your SSL Connector container attribute inside server.xml:
+
+<Connector port="443" maxHttpHeaderSize="8192" address="192.168.1.1" enableLookups="false" disableUploadTimeout="true"
+	acceptCount="100" scheme="https" secure="true"
+	clientAuth="false" 
+	sslProtocol="SSL" 
+	ciphers="SSL_RSA_WITH_RC4_128_SHA, TLS_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_DSS_WITH_AES_128_CBC_SHA, SSL_RSA_WITH_3DES_EDE_CBC_SHA, SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA, SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA
+	keystoreFile="SomeDir/SomeFile.key" keystorePass="Poodle" truststoreFile="SomeDir/SomeFile.truststore" truststorePass="HomeRun"/>
+
+To test:
+
+	SSLScan
+
+
+-----------------------------------------------------------------------------------------------------
+Howto add more memory for Tomcat?
+=================================
+Add JDK options into catalina.bat (.sh)
+
+	JAVA_OPTS="-Xms512m -Xss4m -Xmx1024m -server -XX:PermSize=256m -XX:MaxPermSize=256m"
+	
+In eclipse you can add JDK options:
+
+	Tomcat/[General information]/-> Open launch configuration  ----> Edit launch configuration properties/[Arguments]/VM arguments
+
+-----------------------------------------------------------------------------------------------------
+Howto hide port and context path with Apache WWW?	
+=================================================
+Possible solution:
+- to hide port use mod_jk
+- to hide context path deploy your application as ROOT application into webapps
+
+	put JkMount into <VirtualHost>:
+	
+		JkMount /* lean_worker
+		
+	
+
+
+
+Other option to hide context is URL rewrite.
+
+
+------------------------------------------------------------------------------------------------------
+Some tips to configure connection pool
+======================================
+- To monitor connection pool use VisualVM. All pool parameters can be in MBeans (required to install MBeans extension):
+
+		MBEANS/Catalina/DataSource/<datasource specific path>
+		
+			Here you can monitor acive and idle connections in pool.
+			
+- Abandoned vs. evictable connections			
+
+	- "eviction" occurs when a database connection is unused by the application (idle in the pool) for a long enough period of time at which point it's discarded
+	
+	- "abandoned connection" refers to database connection that is still in use by an application after some period of time, usually long enough to indicate that the connection is leaking
+	
+	Eviction does not indicate a problem with your code (it's just that the application needs fewer connections after a burst of connections) 
+	but abandoned connections means that the application is holding on to a connection and is not returning to the pool.
+
+- To remove abandoned connection automatically:
+	context.xml:
+
+		- removeAbandoned = true – Flag to remove abandoned connections if they exceed the removeAbandonedTimeout. 
+			A connection is considered abandoned and eligible for removal if it has been in use longer than the 
+		
+		- removeAbandonedTimeout. This way db connections can be recovered from applications that fail to close a connection.
+		
+		- removeAbandonedTimeout = 54 – timeout in seconds before an abandoned(in use) connection can be removed. 
+			The value should be set to the longest running query your applications might have.
+	
+	
+	NOTE:
+		Pool sweeper is enabled, when:
+	
+			timeBetweenEvictionRunsMillis > 0 AND removeAbandoned=true AND removeAbandonedTimeout > 0 
+			
+			

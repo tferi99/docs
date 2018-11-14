@@ -1,0 +1,150 @@
+===========
+AppFuse FAQ
+===========
+
+Maven
+-----
+- How to use appfuse plugin?
+
+Configuration
+-------------
+- Using behind a proxy
+- How to create propject to AJP persistence?
+
+Database
+--------
+- How can I export my database using DbUnit?
+
+Source
+------
+- Where can sourced download from?
+
+------------------------------------------------------sing ------------------------------------------------------------
+How can I export my database using DbUnit?
+==========================================
+
+	mvn dbunit:export -Ddest=sample-data.xml
+
+------------------------------------------------------------------------------------------------------------------
+How to use appfuse plugin?
+==========================
+CRUD
+----
+To generate a model with DAO use:
+
+	mvn appfuse:gen-model
+	mvn appfuse:gen -Dentity=<entity> -DdisableInstallation=true
+
+
+Using this plugin, you can run the following command to generate CRUD screens/classes for a POJO:
+
+	mvn appfuse:gen -Dentity=Name
+
+If you don't specify the entity name, you're prompted for it. After generating the code, the plugin will install 
+it for you as well, unless you specify -DdisableInstallation=true. If you disable installation, you can install it using:
+
+	mvn appfuse:install -Dentity=Name
+
+To remove the installed artifacts, use:
+
+	mvn appfuse:remove -Dentity=Name
+
+	It removes:
+		- model
+		- entry from hibernate.cfg.xml
+		-
+	
+If your entity is not defined in hibernate.cfg.xml, it will be added. In a modular project, 
+these commands must be run in the "core" and "web" modules. The plugin is smart enough to figure out when 
+it should/should not generate stuff based on the packaging type (jar vs. war). 
+
+There's also a goal that allows you to generate model objects from database tables:
+
+	mvn appfuse:gen-model
+
+	It creates all model files from all database tables.
+	
+Once you've generated and installed the POJO, you can generated crud for it using the appfuse:gen command.	
+
+Templating
+----------	
+The FreeMarker templates that AMP uses to generate code are packaged in the plugin itself. Since version 2.0.2, 
+you can copy the code generation templates into your project using the following command:
+
+	appfuse:copy-templates	
+	
+Full-source
+-----------
+The good news is creating an "old style" project is now pretty easy. If you create a new project using 2.0-m5+, you can now use:
+
+	mvn appfuse:full-source
+
+This goal will convert your project to use all of AppFuse's source and remove all dependencies on AppFuse. 
+It will also refactor all package names and directories to match your project's groupId.
+
+Without going to 'full-source' mode some classes are in compiled form AppFuse JARs and project has dependencies
+to these JARs.
+
+See also: 
+	http://appfuse.org/display/APF/AppFuse+Maven+Plugin
+	
+
+------------------------------------------------------------------------------------------------------------------
+Where can sourced download from?
+================================
+Browse:
+
+	https://appfuse.dev.java.net/source/browse/appfuse/trunk
+	
+Checkout:		
+		
+	http://appfuse.dev.java.net/svn/appfuse/trunk
+	
+	
+Username:	quest
+PAssword:	(empty)
+	
+For example:
+
+	svn checkout https://appfuse.dev.java.net/svn/appfuse/trunk/ appfuse --username guest
+	
+------------------------------------------------------------------------------------------------------------------
+Using behind a proxy
+====================
+appfuse:full-source gets sources from SVN repository.
+
+The Subversion client can go through a proxy, if you configure it to do so. First, edit your "servers" configuration file 
+to indicate which proxy to use. The files location depends on your operating system. On Linux or Unix it is located in 
+the directory "~/.subversion". On Windows it is in "%APPDATA%\Subversion". 
+
+Example : Edit the 'servers' file and add something like :
+
+	[global]
+	http-proxy-host = your.proxy.name
+	http-proxy-port = 3128
+
+------------------------------------------------------------------------------------------------------------------
+How to create propject to AJP persistence?	
+==========================================
+1. Create a  project for hibernate.
+
+2. Changes in pom.xml:
+		- <dao.framework>hibernate</dao.framework> --> jpa
+			(in modular project in top level pom.xml)
+		- <implementation>annotationconfiguration</implementation> ---> jpaconfiguration
+			(in modular project in core/pom.xml)
+		- Delete the hibernate.cfg.xml
+		
+
+NOTE:
+	After creating Eclipse project check .project file. Add javabuilder entry if missing:
+	
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+	
+See also:
+		http://appfuse.org/display/APF/Using+JPA
+
+
+	

@@ -1,0 +1,18 @@
+===============
+Using Cygserver
+===============
+
+Installation
+------------
+1. Install cygrunsrv package
+
+2. Call cygserver-config
+
+	You can install Cyserver as service. 
+	
+3. 	export CYGWIN=server
+
+	The Cygserver services are used by Cygwin applications only if you set the environment
+	variable CYGWIN to contain the string "server". You must do this before
+	starting the application.
+

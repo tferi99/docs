@@ -1,0 +1,120 @@
+============
+iptables-FAQ
+============
+
+General
+-------
+- Model of iptables
+
+Basics
+------
+- Howto list rules?
+- Howto delete a rule?
+
+Advanced
+--------
+- Howto forward a port?
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Howto list rules?
+=================
+
+           1       *       1       *
+    table  --------- chain --------- rule
+
+
+Tables
+------
+Each table contains a number of built-in chains and may also contain user-defined chains.
+
+Chains
+------
+Each  chain is a list of rules which can match a set of packets.  Each rule specifies what to do with a packet that
+matches.  This is called a âtarget', which may be a jump to a user-defined chain in the same table.
+
+Rules
+-----
+A firewall rule specifies criteria for a packet, and a target.  If the packet does not match, the next rule in  the
+chain  is  the examined; if it does match, then the next rule is specified by the value of the target, which can be
+the name of a user-defined chain or one of the special values ACCEPT, DROP, QUEUE, or RETURN, etc.
+
+If the end of a built-in chain is reached or a rule in a built-in chain with
+target RETURN is matched, the target specified by the chain policy determines the fate of the packet.
+
+
+Tables
+------
+There are 3 tables, and tables have some chains:
+
+filter:
+  This is the default table (if no -t option is passed).  It contains the built-in chains 
+	INPUT (for packets  coming into the box itself), 
+	FORWARD (for packets being routed through the box), and 
+	OUTPUT (for locally-generated packets).
+
+nat:
+  This table is consulted when a packet that creates a new connection is encountered. It consists of
+  three  built-ins:  
+	PREROUTING  (for  altering  packets  as  soon  as they come in), 
+	OUTPUT (for altering locally-generated packets before routing), and 
+	POSTROUTING (for altering packets as they are about to go out).
+
+mangle:
+  This  table  is used for specialized packet alteration.
+  Until kernel 2.4.17 it had two built-in chains:
+	PREROUTING (for altering incoming packets before routing) and  
+	OUTPUT  (for  altering  locally-generated  packets  before  routing).   
+
+  Since  kernel 2.4.18, three other built-in chains are also supported: 
+	INPUT (for packets coming into the box itself), 
+	FORWARD (for altering packets being routed through  the  box),  and 
+	POSTROUTING (for altering packets as they are about to go out).
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Howto list rules?
+=================
+Method1:
+
+	iptables [-t table] -L [chain] [-v]
+	
+	By default 'filter' table is displayed.
+	
+	-v option shows additional information, e.g: bytes, target, in/out interface.
+	
+	e.g:
+		
+		iptables -L
+		iptables -L -t mangle 
+
+	
+		
+Method2:
+	List default save location:
+	
+		cat /etc/sysconfig/iptables
+		
+	but it lists only committed entries (by iptables-save).
+
+
+	
+-------------------------------------------------------------------------------------------------------------------------------------------
+Howto delete a rule?
+====================
+
+	iptables [-t table] -D chain rulenum
+	iptables [-t table] -D chain rule-specification
+			
+e.g:
+
+	iptables -t nat -D PREROUTING 4
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Port forwarding
+===============
+It sends HTTP packages to another host. It can hooks packages back to the original host, so you can use it for network
+traffic dumping:
+
+	iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 10.1.4.113:80
+

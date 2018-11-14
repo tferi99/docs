@@ -1,0 +1,6 @@
+Howto change keyboard language in X?
+====================================
+
+	setxkbmap <lang>
+
+	lang: us, hu, ...

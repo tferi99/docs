@@ -1,0 +1,13 @@
+Multi-screen in console or terminal
+===================================
+
+1. Use virtual screens from console
+   You can use 0-64 virtual screens in Linux, you can change them with
+   F1-F12 function keys or with chvt command.
+
+2. You can use separated screen in one console or terminal screen with
+   splitvt.
+   2. You can use separated screen in one console or terminal screen with
+      splitvt.
+
+

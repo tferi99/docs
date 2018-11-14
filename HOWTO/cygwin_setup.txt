@@ -1,0 +1,34 @@
+Setup kick-guide
+================
+
+Since the default value for each option is the logical choice for most installations,
+you can get a working minimal Cygwin environment installed by simply clicking the Next 
+button at each page.
+
+Package description can be found in setup.ini in downloaded package
+directory.
+
+Radio buttons in installation tool:
+
+	Keep		: currently installed packages
+	Prev		: packages in LAST stable version prior the current stable version
+	Curr		: current stable version (RECOMMENDED)
+	Exp		: experimental packages
+
+'View' button:
+
+	Category	: package groups
+	Full		: all packages
+	Partial		: packages that are currently set to install/reinstall/uninstall
+	Up To Date	: currently installed and 'up to date' packages
+	Not installed	: not installed and not selected to install
+
+Some useful tools to get information about installed system:
+
+	cygcheck -l		: list the contents of installed packages
+	cygcheck -s		: system information (system related environment variables, installed packages, etc.)
+
+See more:
+	user guide (cygwin-ug-net.pdf)
+	Tooltips in setup.exe
+

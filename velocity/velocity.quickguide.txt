@@ -1,0 +1,218 @@
+===================
+Velocity kick start
+===================
+
+The following rule of thumb may be useful to better understand how Velocity works: 
+
+- References begin with $ and are used to get something. 
+- Directives begin with # and are used to do something.
+- as only strings (text-based information) may be passed to variables
+- Velocity, which is modelled on the Bean specifications defined by Sun 
+  Microsystems, is case sensitive.
+- References to instance variables in a template are not resolved. 
+  Only references to the attribute equivalents of JavaBean getter/setter methods are resolved.
+
+In the example above, #set is used to assign a value to a variable. 
+The variable, $a, can then be used in the template to output "Velocity":
+
+	#set( $a = "Velocity" )
+
+Comments
+--------
+- ##		: this is a single line comment.
+- #* ... *#	: multi line comment.
+
+
+References
+----------
+There are three types of references in the VTL: 
+	- variables
+	- properties
+	- methods
+
+
+Variables
+---------
+The shorthand notation of a variable consists of a leading "$" 
+character followed by a VTL Identifier. For example:
+
+	$a
+
+When VTL references a variable, such as $foo, the variable can get its value 
+from:
+	- either a set directive in the template
+	- or from the Java code
+
+Properties
+----------
+The second flavor of VTL references are properties, and properties have a distinctive 
+format. The shorthand notation consists of a leading $ character followed a VTL Identifier, 
+followed by a dot character (".") and another VTL Identifier. For example: 
+
+	$customer.Address 
+
+It can have two meanings:
+
+	- Look in the hashtable identified as 'customer'
+	  and return the value associated with the key 'Address'.
+	- $customer.Address could be an abbreviated way of writing $customer.getAddress().
+
+Methods
+-------
+A method is defined in the Java code and is capable of doing something useful, 
+like running a calculation or arriving at a decision. For example:
+
+	$customer.getAddress()
+	$purchase.getTotal()
+	$page.setTitle( "My Home Page" )
+	$person.setAttributes( ["Strange", "Weird", "Excited"] )
+
+NOTE:
+VTL Properties can be used as a shorthand notation for VTL Methods. 
+The Property $customer.Address has the exact same effect as using the Method $customer.getAddress(). 
+It is generally preferable to use a Property when available. The main difference between Properties 
+and Methods is that you can specify a parameter list to a Method.
+
+Formal Reference Notation
+-------------------------
+There is also a formal notation for references, which is demonstrated below: 
+
+	${mudSlinger} 
+	${customer.Address} 
+	${purchase.getTotal()}
+
+It's usable to solve ambiguity (like in shell script), for example:
+
+	Jack is a ${vice}maniac.
+
+Quiet Reference Notation
+------------------------
+It put an empty string into output, when reference is uninitialized:
+
+
+	$!email
+
+
+If Velocity encounters a reference in your VTL template to $email, 
+it will search the Context for a corresponding value. If $email is not defined, 
+the output will be $email.
+
+
+Escape
+------
+\
+
+Some Java principles
+--------------------
+-  $foo.getBar() is the same as $foo.Bar
+-  $data.getUser("jon") is the same as $data.User("jon") 
+- $data.getRequest().getServerName() is the same as $data.Request.ServerName
+  and is the same as ${data.Request.ServerName}
+
+Directives
+----------
+#set 
+
+The #set directive is used for setting the value of a reference. 
+
+
+	#set($primate = "monkey")
+	#set($customer.Behavior = $primate)
+
+Left side can be:
+	- variable reference
+	- property reference
+
+Right side can be:
+	- Variable reference	#set( $monkey = $bill )
+	- String literal	#set( $monkey.Friend = "monica" )
+	- Property reference	#set( $monkey.Blame = $whitehouse.Leak )
+	- Method reference	#set( $monkey.Plan = $spindoctor.weave($web) ) 
+	- Number literal	#set( $monkey.Number = 123 ) 
+	- ArrayList		#set( $monkey.Say = ["Not", $my, "fault"] )
+
+
+When using the #set directive, string literals that are enclosed in double quote 
+characters will be parsed and rendered, as shown: 
+
+	#set( $directoryRoot = "www" ) #set( $templateName = "index.vm" ) #set( $template = "$directoryRoot/$templateName" ) $template 
+
+The output will be 
+
+	www/index.vm
+
+
+#if
+#elseif
+#else
+#end
+
+	#if( $foo ) <strong>Velocity!</strong> #end
+
+||	: logical OR
+!	: logincal NOT
+
+
+#foreach
+
+The #foreach element allows for looping. For example: 
+
+	<ul> #foreach( $product in $allProducts ) <li>$product</li> #end </ul>	
+
+The default name for the loop counter variable reference, which is specified in the 
+velocity.properties file, is 
+
+	$velocityCount
+	
+By default the counter starts at 1, but this can be set to either 0 or 1 in the 
+velocity.properties file. 
+Here's what the loop counter properties section of the velocity.properties file appears:
+
+#include
+
+The #include script element allows the template designer to import a local file:
+
+	#include( "one.txt" )
+	#include( "one.gif","two.txt","three.htm" )
+	#include( "greetings.txt", $seasonalstock )
+
+#parse
+
+The #parse script element allows the template designer to import a local file that contains VTL.
+
+
+#stop
+
+The #stop script element allows the template designer to stop the execution of the template 
+engine and return. 
+
+#macro
+
+The #macro script element allows template designers to define a repeated segment of a VTL template.
+
+	#macro( d ) <tr><td></td></tr> #end
+
+It defines 'd' macro. To call it:
+
+	#d()
+
+Math
+----
+Velocity has a handful of built-in mathematical functions that can be used in templates 
+with the set directive.
+
+	#set( $foo = $bar + 3 )
+	#set( $foo = $bar - 4 )
+	#set( $foo = $bar * 6 )
+	#set( $foo = $bar / 2 )
+
+
+Calling from Java
+-----------------
+
+	Velocity.init();
+	VelocityContext context = new VelocityContext();
+	context.put( "name", new String("Jane Doe") );
+	Template template = Velocity.getTemplate("account.vm");
+	StringWriter sw = new StringWriter();
+	template.merge( context, sw );

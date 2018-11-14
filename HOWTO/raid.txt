@@ -1,0 +1,9 @@
+RAID info
+=========
+
+You can create software RAID in SuSE by calling Yast.
+
+To get info about RAID see:
+
+	/proc/mdstat
+

@@ -1,0 +1,74 @@
+==========
+OpenDJ FAQ
+==========
+
+- What is OpenDJ?
+- How to access OpenDJ?
+- How to access connect to OpenDJ with an LDAP browser?
+- Special data entries
+
+
+---------------------------------------------------------------------------------------------------------------------------
+What is OpenDJ?
+===============
+OpenDJ is a directory server which implements a wide range of Lightweight Directory Access Protocol and related standards, including full compliance with LDAPv3 
+but also support for Directory Service Markup Language (DSMLv2).[1] Written in Java, OpenDJ offers multi-master replication, access control, and many extensions.
+
+OpenDJ began as a fork of OpenDS, an LDAP / DSML server which originated in 2005 as an internal project at Sun Microsystems.
+
+
+---------------------------------------------------------------------------------------------------------------------------
+How to access OpenDJ?
+=====================
+OpenDJ Control Panel can be started in 
+
+For windows:
+	
+	<HOME>/openam/opends/bat/control-panel.bat
+	
+For linux:
+
+	<HOME>/openam/opends/bin/control-panel
+
+
+With default installation of OpenAM, the passwords for amadmin and 
+
+	cn=Directory Manager (for embedded OpenDJ) 
+	
+are the same.
+
+---------------------------------------------------------------------------------------------------------------------------
+How to access connect to OpenDJ with an LDAP browser?
+=====================================================
+To get authentication information:
+
+- go to:
+
+	OpenAM/Top Level Realm/Authentication/Modules
+
+- choose LDAP module
+
+- get DNs:
+	- Base DN:		DN to Start User Search (e.g: dc=openam,dc=forgerock,dc=org)
+	- User DN:		Bind User DN (e.g: cn=Directory Manager)
+	
+- password is the same as OpenAM - by default
+
+For example:
+	host:	idp2.example.com:50389
+	Base DN: dc=openam,dc=forgerock,dc=org
+	Principal:	cn=Directory Manager
+	Password:	password (same as OpenAM)
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Special data entries
+====================
+- Users managed by OpenAM LDAP authentication module:
+	
+	uid=cica,ou=people,dc=openam,dc=forgerock,dc=org
+	
+	for user: cica
+
+
+

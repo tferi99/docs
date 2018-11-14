@@ -1,0 +1,11 @@
+
+Set default printer to a printer on remote host providing lpd:
+
+Edit row with 'lp' as first token in /etc/printcap:
+
+lp:rm=ntserver:hp6l
+
+In this example 'ntserver' is a Windown NT Server and 'hp6l' is a shared printer. You have to install and configure lpd to NT Server.
+
+After this settings you can print a text file directly calling by lpr.
+

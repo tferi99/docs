@@ -1,0 +1,77 @@
+========
+Riot FAQ
+========
+
+CMS
+---
+- How to add a new page type?
+- How to add cacheable and non-cacheable page types?
+
+Documentation, API
+------------------
+- How to get riot tag docs?
+
+-----------------------------------------------------------------------------------------------------------------------
+How to add a new page type?
+===========================
+- Add a page template (copy from existing one in WEB-INF/view/pages)
+
+	simple-test.ftl
+	
+- Add a page controller entry to setup.xml:
+
+    <bean id="simpleTestPageController" class="org.riotfamily.common.web.controller.CacheableViewController">
+        <property name="viewName" value="pages/simple-test.ftl" />
+    </bean>
+
+- Add a page type entry into default page controller (setup.xml):
+
+	<p:type name="simpletest" handler="simpleTestPageController">
+		<p:type-ref name="default" />
+	</p:type>
+		
+- Add a type reference entry (setup.xml):
+
+	<p:type-ref name="simpletest" />	
+	
+
+-----------------------------------------------------------------------------------------------------------------------
+How to add cacheable and non-cacheable page types?
+==================================================
+1st read:		How to add a new page type?
+
+For cacheable set controller type:				org.riotfamily.common.web.controller.CacheableViewController
+For non-cacheable set controller type:			org.riotfamily.common.web.controller.ConfigurableViewController
+
+For example:
+
+    <bean id="simpleTestPageController" class="org.riotfamily.common.web.controller.CacheableViewController">
+        <property name="viewName" value="pages/simpletest.ftl" />
+    </bean>
+
+    <bean id="loginPageController" class="org.riotfamily.common.web.controller.ConfigurableViewController">
+        <property name="viewName" value="pages/loginpage.ftl" />
+    </bean>
+
+-----------------------------------------------------------------------------------------------------------------------
+How to add a new content?
+=========================
+- Add an entity and page resolver
+	- inherit from ContentEntity
+	
+- Add a new list and entity page templates (copy from existing one in WEB-INF/view/pages)
+
+- add p:system-page entry to setup.xml (copy from existing one)
+
+- add entity management form entry to riot-servlet.xml
+
+- add entity form to forms.xml
+	
+
+-----------------------------------------------------------------------------------------------------------------------
+How to get riot tag docs?
+=========================
+Get .ftl files from Riot source and find macros.
+
+
+

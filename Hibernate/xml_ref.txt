@@ -1,0 +1,335 @@
+From Hibernate Reference 2.1.7
+==============================
+
+<hibernate-mapping
+	schema="schemaName" (1)
+	default-cascade="none|save-update" (2)
+	auto-import="true|false" (3)
+	package="package.name" (4)
+/>
+
+(1) schema (optional): The name of a database schema.
+(2) default-cascade (optional - defaults to none): A default cascade style.
+(3) auto-import (optional - defaults to true): Specifies whether we can use unqualified class names (of
+	classes in this mapping) in the query language.
+(4) package (optional): Specifies a package prefix to assume for unqualified class names in the mapping document.
+----------------------------------------------------------------------------------------------------
+<class
+	name="ClassName" (1)
+	table="tableName" (2)
+	discriminator-value="discriminator_value" (3)
+	mutable="true|false" (4)
+	schema="owner" (5)
+	proxy="ProxyInterface" (6)
+	dynamic-update="true|false" (7)
+	dynamic-insert="true|false" (8)
+	select-before-update="true|false" (9)
+	polymorphism="implicit|explicit" (10)
+	where="arbitrary sql where condition" (11)
+	persister="PersisterClass" (12)
+	batch-size="N" (13)
+	optimistic-lock="none|version|dirty|all" (14)
+	lazy="true|false" (15)
+/>
+
+(1) name: The fully qualified Java class name of the persistent class (or interface).
+(2) table: The name of its database table.
+(3) discriminator-value (optional - defaults to the class name): A value that distiguishes individual subclasses,
+	used for polymorphic behaviour. Acceptable values include null and not null.
+(4) mutable (optional, defaults to true): Specifies that instances of the class are (not) mutable.
+(5) schema (optional): Override the schema name specified by the root <hibernate-mapping> element.
+(6) proxy (optional): Specifies an interface to use for lazy initializing proxies. You may specify the name of
+	the class itself.
+(7) dynamic-update (optional, defaults to false): Specifies that UPDATE SQL should be generated at runtime
+	and contain only those columns whose values have changed.
+(8) dynamic-insert (optional, defaults to false): Specifies that INSERT SQL should be generated at runtime
+	and contain only the columns whose values are not null.
+(9) select-before-update (optional, defaults to false): Specifies that Hibernate should never perform an
+	SQL UPDATE unless it is certain that an object is actually modified. In certain cases (actually, only when a
+	transient object has been associated with a new session using update()), this means that Hibernate will
+	perform an extra SQL SELECT to determine if an UPDATE is actually required.
+(10) polymorphism (optional, defaults to implicit): Determines whether implicit or explicit query polymorphism
+	is used.
+(11) where (optional) specify an arbitrary SQL WHERE condition to be used when retrieving objects of this class
+(12) persister (optional): Specifies a custom ClassPersister.
+(13) batch-size (optional, defaults to 1) specify a "batch size" for fetching instances of this class by identifier.
+(14) optimistic-lock (optional, defaults to version): Determines the optimistic locking strategy.
+(15) lazy (optional): Setting lazy="true" is a shortcut equalivalent to specifying the name of the class itself
+	as the proxy interface.
+----------------------------------------------------------------------------------------------------
+<id
+	name="propertyName" (1)
+	type="typename" (2)
+	column="column_name" (3)
+	unsaved-value="any|none|null|id_value" (4)
+	access="field|property|ClassName"> (5)
+	<generator class="generatorClass"/>
+</id>
+
+(1) name (optional): The name of the identifier property.
+(2) type (optional): A name that indicates the Hibernate type.
+(3) column (optional - defaults to the property name): The name of the primary key column.
+(4) unsaved-value (optional - defaults to null): An identifier property value that indicates that an instance is
+	newly instantiated (unsaved), distinguishing it from transient instances that were saved or loaded in a previous
+	session.
+(5) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+----------------------------------------------------------------------------------------------------
+<composite-id
+	name="propertyName"
+	class="ClassName"
+	unsaved-value="any|none"
+	access="field|property|ClassName">
+	<key-property name="propertyName" type="typename" column="column_name"/>
+	<key-many-to-one name="propertyName class="ClassName" column="column_name"/>
+......
+</composite-id>
+
+• name (optional): A property of component type that holds the composite identifier (see next section).
+• class (optional - defaults to the property type determined by reflection): The component class used as a
+	composite identifier (see next section).
+• unsaved-value (optional - defaults to none): Indicates that transient instances should be considered newly
+	instantiated, if set to any.
+----------------------------------------------------------------------------------------------------
+<discriminator
+	column="discriminator_column" (1)
+	type="discriminator_type" (2)
+	force="true|false" (3)
+	insert="true|false" (4)
+/>
+
+(1) column (optional - defaults to class) the name of the discriminator column.
+(2) type (optional - defaults to string) a name that indicates the Hibernate type
+(3) force (optional - defaults to false) "force" Hibernate to specify allowed discriminator values even when
+	retrieving all instances of the root class.
+(4) insert (optional - defaults to true) set this to false if your discriminator column is also part of a mapped
+	composite identifier.
+----------------------------------------------------------------------------------------------------
+<version
+	column="version_column" (1)
+	name="propertyName" (2)
+	type="typename" (3)
+	access="field|property|ClassName" (4)
+	unsaved-value="null|negative|undefined" (5)
+/>
+
+(1) column (optional - defaults to the property name): The name of the column holding the version number.
+(2) name: The name of a property of the persistent class.
+(3) type (optional - defaults to integer): The type of the version number.
+(4) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+(5) unsaved-value (optional - defaults to undefined): A version property value that indicates that an instance
+	is newly instantiated (unsaved), distinguishing it from transient instances that were saved or loaded in a
+	previous session. (undefined specifies that the identifier property value should be used.)
+----------------------------------------------------------------------------------------------------
+<timestamp
+	column="timestamp_column" (1)
+	name="propertyName" (2)
+	access="field|property|ClassName" (3)
+	unsaved-value="null|undefined" (4)
+/>
+
+(1) column (optional - defaults to the property name): The name of a column holding the timestamp.
+(2) name: The name of a JavaBeans style property of Java type Date or Timestamp of the persistent class.
+(3) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+(4) unsaved-value (optional - defaults to null): A version property value that indicates that an instance is
+	newly instantiated (unsaved), distinguishing it from transient instances that were saved or loaded in a previous
+	session. (undefined specifies that the identifier property value should be used.)
+----------------------------------------------------------------------------------------------------
+<property
+	name="propertyName" (1)
+	column="column_name" (2)
+	type="typename" (3)
+	update="true|false" (4)
+	insert="true|false" (4)
+	formula="arbitrary SQL expression" (5)
+	access="field|property|ClassName" (6)
+/>
+
+(1) name: the name of the property, with an initial lowercase letter.
+(2) column (optional - defaults to the property name): the name of the mapped database table column.
+(3) type (optional): a name that indicates the Hibernate type.
+(4) update, insert (optional - defaults to true) : specifies that the mapped columns should be included in
+	SQL UPDATE and/or INSERT statements. Setting both to false allows a pure "derived" property whose
+	value is initialized from some other property that maps to the same colum(s) or by a trigger or other application.
+(5) formula (optional): an SQL expression that defines the value for a computed property. Computed properties
+	do not have a column mapping of their own.
+(6) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+----------------------------------------------------------------------------------------------------
+<many-to-one
+	name="propertyName" (1)
+	column="column_name" (2)
+	class="ClassName" (3)
+	cascade="all|none|save-update|delete" (4)
+	outer-join="true|false|auto" (5)
+	update="true|false" (6)
+	insert="true|false" (6)
+	property-ref="propertyNameFromAssociatedClass" (7)
+	access="field|property|ClassName" (8)
+	unique="true|false" (9)
+/>
+
+(1) name: The name of the property.
+(2) column (optional): The name of the column.
+(3) class (optional - defaults to the property type determined by reflection): The name of the associated
+	class.
+(4) cascade (optional): Specifies which operations should be cascaded from the parent object to the associated
+	object.
+(5) outer-join (optional - defaults to auto): enables outer-join fetching for this association when hibernate.
+	use_outer_join is set.
+(6) update, insert (optional - defaults to true) specifies that the mapped columns should be included in
+	SQL UPDATE and/or INSERT statements. Setting both to false allows a pure "derived" association whose
+	value is initialized from some other property that maps to the same colum(s) or by a trigger or other application.
+(7) property-ref: (optional) The name of a property of the associated class that is joined to this foreign key.
+	If not specified, the primary key of the associated class is used.
+(8) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+(9) unique (optional): Enable the DDL generation of a unique constraint for the foreign-key column.
+----------------------------------------------------------------------------------------------------
+<one-to-one
+	name="propertyName" (1)
+	class="ClassName" (2)
+	cascade="all|none|save-update|delete" (3)
+	constrained="true|false" (4)
+	outer-join="true|false|auto" (5)
+	property-ref="propertyNameFromAssociatedClass" (6)
+	access="field|property|ClassName" (7)
+/>
+
+(1) name: The name of the property.
+(2) class (optional - defaults to the property type determined by reflection): The name of the associated
+	class.
+(3) cascade (optional) specifies which operations should be cascaded from the parent object to the associated
+	object.
+(4) constrained (optional) specifies that a foreign key constraint on the primary key of the mapped table references
+	the table of the associated class. This option affects the order in which save() and delete() are
+	cascaded (and is also used by the schema export tool).
+(5) outer-join (optional - defaults to auto): Enable outer-join fetching for this association when hibernate.
+	use_outer_join is set.
+(6) property-ref: (optional) The name of a property of the associated class that is joined to the primary key
+	of this class. If not specified, the primary key of the associated class is used.
+(7) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+----------------------------------------------------------------------------------------------------
+<component
+	name="propertyName" (1)
+	class="className" (2)
+	insert="true|false" (3)
+	upate="true|false" (4)
+	access="field|property|ClassName"> (5)
+	<property ...../>
+	<many-to-one .... />
+	........
+</component>
+
+(1) name: The name of the property.
+(2) class (optional - defaults to the property type determined by reflection): The name of the component
+	(child) class.
+(3) insert: Do the mapped columns appear in SQL INSERTs?
+(4) update: Do the mapped columns appear in SQL UPDATEs?
+(5) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+----------------------------------------------------------------------------------------------------
+<subclass
+	name="ClassName" (1)
+	discriminator-value="discriminator_value" (2)
+	proxy="ProxyInterface" (3)
+	lazy="true|false" (4)
+	dynamic-update="true|false"
+	dynamic-insert="true|false">
+	<property .... />
+	.....
+</subclass>
+
+(1) name: The fully qualified class name of the subclass.
+(2) discriminator-value (optional - defaults to the class name): A value that distiguishes individual subclasses.
+(3) proxy (optional): Specifies a class or interface to use for lazy initializing proxies.
+(4) lazy (optional): Setting lazy="true" is a shortcut equalivalent to specifying the name of the class itself
+	as the proxy interface.
+----------------------------------------------------------------------------------------------------
+<joined-subclass
+	name="ClassName" (1)
+	proxy="ProxyInterface" (2)
+	lazy="true|false" (3)
+	dynamic-update="true|false"
+	dynamic-insert="true|false">
+	<key .... >
+	<property .... />
+	.....
+</joined-subclass>
+
+(1) name: The fully qualified class name of the subclass.
+(2) proxy (optional): Specifies a class or interface to use for lazy initializing proxies.
+(3) lazy (optional): Setting lazy="true" is a shortcut equalivalent to specifying the name of the class itself
+	as the proxy interface.
+----------------------------------------------------------------------------------------------------
+<import
+	class="ClassName" (1)
+	rename="ShortName" (2)
+/>
+
+(1) class: The fully qualified class name of of any Java class.
+(2) rename (optional - defaults to the unqualified class name): A name that may be used in the query language.
+----------------------------------------------------------------------------------------------------
+<any
+	name="propertyName" (1)
+	id-type="idtypename" (2)
+	meta-type="metatypename" (3)
+	cascade="none|all|save-update" (4)
+	access="field|property|ClassName" (5)
+	>
+	<meta-value ... />
+	<meta-value ... />
+	.....
+	<column .... />
+	<column .... />
+	.....
+</any>
+
+(1) name: the property name.
+(2) id-type: the identifier type.
+(3) meta-type (optional - defaults to class): a type that maps java.lang.Class to a single database column
+	or, alternatively, a type that is allowed for a discriminator mapping.
+(4) cascade (optional- defaults to none): the cascade style.
+(5) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+----------------------------------------------------------------------------------------------------
+<map
+	name="propertyName" (1)
+	table="table_name" (2)
+	schema="schema_name" (3)
+	lazy="true|false" (4)
+	inverse="true|false" (5)
+	cascade="all|none|save-update|delete|all-delete-orphan" (6)
+	sort="unsorted|natural|comparatorClass" (7)
+	order-by="column_name asc|desc" (8)
+	where="arbitrary sql where condition" (9)
+	outer-join="true|false|auto" (10)
+	batch-size="N" (11)
+	access="field|property|ClassName" (12)
+>
+	<key .... />
+	<index .... />
+	<element .... />
+</map>
+
+(1) name the collection property name
+(2) table (optional - defaults to property name) the name of the collection table (not used for one-to-many
+	associations)
+(3) schema (optional) the name of a table schema to override the schema declared on the root element
+(4) lazy (optional - defaults to false) enable lazy initialization (not used for arrays)
+(5) inverse (optional - defaults to false) mark this collection as the "inverse" end of a bidirectional association
+(6) cascade (optional - defaults to none) enable operations to cascade to child entities
+(7) sort (optional) specify a sorted collection with natural sort order, or a given comparator class
+(8) order-by (optional, JDK1.4 only) specify a table column (or columns) that define the iteration order of
+	the Map, Set or bag, together with an optional asc or desc
+(9) where (optional) specify an arbitrary SQL WHERE condition to be used when retrieving or removing the
+	collection (useful if the collection should contain only a subset of the available data)
+(10) outer-join (optional) specify that the collection should be fetched by outer join, whenever possible. Only
+	one collection may be fetched by outer join per SQL SELECT.
+(11) batch-size (optional, defaults to 1) specify a "batch size" for lazily fetching instances of this collection.
+(12) access (optional - defaults to property): The strategy Hibernate should use for accessing the property
+	value.
+----------------------------------------------------------------------------------------------------

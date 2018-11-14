@@ -1,0 +1,10 @@
+Howto change creation date of a file?
+=====================================
+
+touch <target file> -d <date>
+touch <target file> -r <reference file>
+etc.
+
+See more:
+	man touch
+

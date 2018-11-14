@@ -1,0 +1,66 @@
+=========================================
+Howto install OpenWRT to ASUS WL-500gp v2
+=========================================
+
+Read before install
+-------------------
+Current images are:
+	- openwrt-brcm-2.4-squashfs.trx		: with kernel 2.4, works fine
+	- openwrt-brcm47xx-squashfs.trx		: with kernel 2.6, unfortunately WIFI hangs ASUS routers
+
+Firmware
+--------
+- power off
+- press 'restore' while power on
+- pwr LED flashing
+- ping 192.168.1.1
+- tftp -i -v 192.168.1.1 PUT openwrt-brcm-2.4-squashfs.trx
+- After this, wait for the PWR LED to stop flashing and the device to reboot. 
+
+	For some reason though, the device doesn't reboot after flashing. Just wait 5 minutes, unplug the power and reconnect. 
+	After a while (1-2 minutes), the WLAN LED should light and OpenWRT is up and running.
+
+- telnet 192.168.1.1
+- call 'passwd' to specify root password
+ (this will disable telnet and enable SSH)
+
+Packages
+--------
+You can use opkg or LuCI.
+
+	opkg
+	----
+	opkg update
+	opkg list
+	opkg list-installed
+
+	LuCI
+	----
+	Call menu Overview/LuCI components.
+
+
+Recommended packages for kernel 2.4
+-----------------------------------
+USB:
+	- kmod-usb-core 
+	- kmod-usb2 
+	- kmod-usb-storage
+	- kmod-usb-uhci (for USB 1.1)
+Filesystems:	
+	- kmod-fs-vfat
+	- kmod-fs-ext2
+	- kmod-fs-ext3
+	- kmod-fs-ntfs	
+Tools:
+- mc
+- fdisk
+- vsftpd				: FTP server
+- mount-utils			: (if missing)
+- block-mount			: for creating /etc/fstab from UCI
+
+Other settings
+--------------
+touch /etc/config/fstab				: for displaying 'Mount points' menu in Luci.
+
+ 
+

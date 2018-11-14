@@ -1,0 +1,7 @@
+
+How to read a password in sh ?
+==============================
+/bin/stty cbreak -echo </dev/tty >/dev/tty 2>&1
+read password
+/bin/stty -cbreak echo </dev/tty >/dev/tty 2>&1
+

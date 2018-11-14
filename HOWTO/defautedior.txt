@@ -1,0 +1,10 @@
+Changing the Default Crontab Editor
+===================================
+If you would like to use a different editor for standard tools (e.g. crontab),
+set EDITOR environment variable.
+
+For example:
+
+	export EDITOR=`which vi`
+	
+	

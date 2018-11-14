@@ -1,0 +1,11 @@
+Starting MySQL in SuSE during startup automatically
+===================================================
+After installation of MySQL an entry's generated in /etc/rc.config:
+
+START_MYSQL
+
+You have to set it to "yes".
+
+
+
+

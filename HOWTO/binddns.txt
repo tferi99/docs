@@ -1,0 +1,33 @@
+Using BIND (DNS)
+================
+
+Tracing of resolving DNS names
+-----c-------------------------
+
+Get DNS result in non-recursive mode step by step bouncing through DNS servers.
+First issue:
+
+		dig +norec +noques +nostats +nocmd <host name>
+
+This will get DNS information for specified host from your DNS server. 
+If this lists contains an 'ANSWER SECTION', there will you found the desired address.
+Otherwise you have to bounce to another server listed in 'AUTHORITY SECTION'.
+
+		dig +norec +noques +nostats +nocmd <host name> @<another server from aut-sect>
+
+
+You have to repeate this until an 'ANSWER SECTION' has been provided.
+
+
+
+
+Dumping server data
+-------------------
+
+Send SIGINT to named. It will create named_dump.db file in named working directory.
+
+(/var/named or /var/tmp or /var/tmp/named).
+
+
+It contains cached entries as well, so you have restart named to get your own entries.
+

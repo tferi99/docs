@@ -1,0 +1,16 @@
+How to prevent a child process from being a zombie?
+===================================================
+
+When a child process exits, it will be a zombie until parent process calls a wait() or a waitpid(). So if we don't call a wait() in parent child will be zombie.
+When a parent exits earlier than child, the child will be adopted by init. So init will be responsible for cleaning up child.
+
+Zombie is a process table entry about a dead process to hold its exit status. It don't consume other resources, but it reserves one process entry, that can make trouble by running out the process table.
+
+To prevent this we can do the followings:
+1. Call wait() or waitpid() in parent.
+2. If you don't want to wait, you can handle SIGCHLD signal and you can call waitpid() or wait3().
+3. Call for twice, so child will be adopted by init.
+
+
+
+

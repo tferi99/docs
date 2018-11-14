@@ -1,0 +1,6 @@
+How to debug shell scripts?
+
+1. Insert echo commands to display variables.
+2. Use -x option of sh to display called commands of scrips. Variables has been changed are displayed as well.
+
+

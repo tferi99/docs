@@ -1,0 +1,143 @@
+Shorewall 3.x kick start
+========================
+
+1. Checking iproute/iproute2 has been installed:
+
+	# winch ip
+	/sbin/ip
+
+2. Installing from rpm.
+
+3. Creating zones by editing /etc/shorewall/zones. For example:
+
+
+	#ZONE   TYPE        OPTIONS     IN          OUT
+	#                   OPTIONS         OPTIONS
+	fw  firewall
+	net ipv4
+	loc ipv4
+	#LAST LINE - ADD YOUR ENTRIES ABOVE THIS ONE - DO NOT REMOVE
+
+
+There entries creates 3 zones:
+	fw	: for firewall (myself)
+	net	: internet
+	loc	: local LAN
+
+4. Creating default behavior of packages by creating policies:
+
+	#SOURCE     DEST        POLICY      LOG     LIMIT:BURST
+	#                       LEVEL
+	net         all         DROP        info
+	loc         net         ACCEPT
+	all         all         REJECT      info
+	#LAST LINE -- DO NOT REMOVE
+
+For each connection request entering the firewall, the request is first checked against the 
+/etc/shorewall/rules file. If no rule in that file matches the connection request then the 
+first policy in /etc/shorewall/policy that matches the request is applied after the request 
+is passed to the appropriate common action (if any).
+
+Policies prescribe connection level behavior. Shorewall is built on top of the Netfilter kernel facility. 
+Netfilter implements a connection tracking function that allows what is often referred to as stateful 
+inspection of packets. This stateful property allows firewall rules to be defined in terms of CONNECTIONS 
+rather than in terms of PACKETS. 
+
+These entries do the followings:
+	- allow all connection requests from your local network to the internet
+
+	- drop (ignore) all connection requests from the internet to your firewall or local network and log a message 
+	  at the info level (here is a description of log levels).
+
+	- reject all other connection requests and log a message at the info level. When a request 
+	  is rejected, the firewall will return an RST (if the protocol is TCP) or an ICMP 
+	  port-unreachable packet for other protocols.
+
+
+5. To assign zones with physical interfaces edit /etc/shorewall/interfaces file:
+
+	#ZONE   INTERFACE   BROADCAST   OPTIONS
+	net     eth0        detect      norfc1918
+	loc     eth1        detect
+	#LAST LINE -- ADD YOUR ENTRIES BEFORE THIS ONE -- DO NOT REMOVE
+
+	
+	That means eth0 is interface to the internet, and eth1 is to local network.
+
+	'norfc1918' option provides anti spoofing funcionality (it drops every packets whiach are non-routable among public 
+	Internet machines - see RFC 1918):
+
+		10.0.0.0    - 10.255.255.255
+		172.16.0.0  - 172.31.255.255
+		192.168.0.0 - 192.168.255.255
+
+
+
+6. If your frirewall is a router, set IP_FORWARDING=On in /etc/shorewall/shorewall.conf .
+
+7. For internal machines with RFC 1918 addresses from which you want to access Internet you 
+   can specify SNAT or dinamic NAT (Masquarading).
+
+
+   SNAT is configured in Shorewall using the /etc/shorewall/masq file:
+
+	#INTERFACE     SUBNET               ADDRESS
+	eth0           192.168.201.0/29     192.0.2.176
+
+8. DNAT provides a way to allow connections from the internet to internal servers.
+
+Suppose that your daughter wants to run a web server on her system “Local 3”. 
+You could allow connections to the internet to her server by adding the following 
+entry in /etc/shorewall/rules:
+
+	#ACTION  SOURCE  DEST               PROTO  DEST    SOURCE    ORIGINAL
+	#                                          PORT(S) PORT(S)   DEST
+	DNAT     net     loc:192.168.201.4  tcp    www
+
+
+9. Add rules to extend default policies.
+
+   For example enabling SSH from internet to firewall (/etc/shorewall/rules):
+
+	#ACTION  SOURCE          DEST               PROTO  DEST		COMMENTS 
+	#                                           PORT(S)
+	ACCEPT   loc             dmz                tcp    ssh		#SSH to the DMZ
+	ACCEPT   net             $FW                tcp    ssh		#SSH to the
+							  		#Firewall
+
+
+10. Check files:
+
+	shorewall check
+
+
+11. Start anf try
+
+	shorewall start
+
+12. Another safe way to try your configuration:
+
+	- there is a working configuration
+	- copy into another directory
+	- 
+
+
+Usable tools
+------------
+Calculating network subnet addresses:
+
+	ipcalc { <address>/<vlsm> | <address> <netmask> }
+
+
+	For example:
+
+	vmw:/etc/shorewall # shorewall ipcalc 192.168.0.234/24
+	   WARNING: Shorewall startup is disabled. To enable startup, set STARTUP_ENABLED=Yes in /etc/shorewall/shorewall.conf
+	   CIDR=192.168.0.234/24
+	   NETMASK=255.255.255.0
+	   NETWORK=192.168.0.0
+	   BROADCAST=192.168.0.255
+
+Information queries:
+
+	shorewall show connections		(same as 'cat /proc/net/ip_conntrack')

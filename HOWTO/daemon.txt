@@ -1,0 +1,259 @@
+
+How to run a program as a daemon?
+=================================
+
+Here are the steps to become a daemon:
+
+1. `fork()' so the parent can exit, this returns control to the command
+line or shell invoking your program.  This step is required so that
+the new process is guaranteed not to be a process group leader. The
+next step, `setsid()', fails if you're a process group leader.
+
+2. `setsid()' to become a process group and session group leader. Since a
+controlling terminal is associated with a session, and this new
+session has not yet acquired a controlling terminal our process now
+has no controlling terminal, which is a Good Thing for daemons.
+
+3. `fork()' again so the parent, (the session group leader), can exit.
+This means that we, as a non-session group leader, can never regain a
+controlling terminal.
+
+4. `chdir("/")' to ensure that our process doesn't keep any directory in
+use. Failure to do this could make it so that an administrator
+couldn't unmount a filesystem, because it was our current directory.
+
+[Equivalently, we could change to any directory containing files
+important to the daemon's operation.]
+
+5. `umask(0)' so that we have complete control over the permissions of
+anything we write. We don't know what umask we may have inherited.
+
+[This step is optional]
+
+6. `close()' fds 0, 1, and 2. This releases the standard in, out, and
+error we inherited from our parent process. We have no way of knowing
+where these fds might have been redirected to. Note that many daemons
+use `sysconf()' to determine the limit `_SC_OPEN_MAX'.  `_SC_OPEN_MAX'
+tells you the maximun open files/process. Then in a loop, the daemon
+can close all possible file descriptors. You have to decide if you
+need to do this or not.  If you think that there might be
+file-descriptors open you should close them, since there's a limit on
+number of concurrent file descriptors.
+
+7. Establish new open descriptors for stdin, stdout and stderr. Even if
+you don't plan to use them, it is still a good idea to have them open.
+The precise handling of these is a matter of taste; if you have a
+logfile, for example, you might wish to open it as stdout or stderr,
+and open `/dev/null' as stdin; alternatively, you could open
+`/dev/console' as stderr and/or stdout, and `/dev/null' as stdin, or
+any other combination that makes sense for your particular daemon.
+
+Almost none of this is necessary (or advisable) if your daemon is being
+started by `inetd'.  In that case, stdin, stdout and stderr are all set up
+for you to refer to the network connection, and the `fork()'s and session
+manipulation should *not* be done (to avoid confusing `inetd').  Only the
+`chdir()' and `umask()' steps remain as useful.
+
+
+Example daemon utility functions
+================================
+
+     #include <unistd.h>
+     #include <stdlib.h>
+     #include <fcntl.h>
+     #include <signal.h>
+     #include <sys/types.h>
+     #include <sys/wait.h>
+     #include <errno.h>
+     
+     /* closeall() -- close all FDs >= a specified value */
+     
+     void closeall(int fd)
+     {
+         int fdlimit = sysconf(_SC_OPEN_MAX);
+     
+         while (fd < fdlimit)
+           close(fd++);
+     }
+     
+     /* daemon() - detach process from user and disappear into the background
+      * returns -1 on failure, but you can't do much except exit in that case
+      * since we may already have forked. This is based on the BSD version,
+      * so the caller is responsible for things like the umask, etc.
+      */
+     
+     /* believed to work on all Posix systems */
+     
+     int daemon(int nochdir, int noclose)
+     {
+         switch (fork())
+         {
+             case 0:  break;
+             case -1: return -1;
+             default: _exit(0);          /* exit the original process */
+         }
+     
+         if (setsid() < 0)               /* shoudn't fail */
+           return -1;
+     
+         /* dyke out this switch if you want to acquire a control tty in */
+         /* the future -- not normally advisable for daemons */
+     
+         switch (fork())
+         {
+             case 0:  break;
+             case -1: return -1;
+             default: _exit(0);
+         }
+     
+         if (!nochdir)
+           chdir("/");
+     
+         if (!noclose)
+         {
+             closeall(0);
+             open("/dev/null",O_RDWR);
+             dup(0); dup(0);
+         }
+     
+         return 0;
+     }
+     
+     /* fork2() -- like fork, but the new process is immediately orphaned
+      *            (won't leave a zombie when it exits)
+      * Returns 1 to the parent, not any meaningful pid.
+      * The parent cannot wait() for the new process (it's unrelated).
+      */
+     
+     /* This version assumes that you *haven't* caught or ignored SIGCHLD. */
+     /* If you have, then you should just be using fork() instead anyway.  */
+     
+     int fork2()
+     {
+         pid_t pid;
+         int rc;
+         int status;
+     
+         if (!(pid = fork()))
+         {
+             switch (fork())
+             {
+               case 0:  return 0;
+               case -1: _exit(errno);    /* assumes all errnos are <256 */
+               default: _exit(0);
+             }
+         }
+     
+         if (pid < 0 || waitpid(pid,&status,0) < 0)
+           return -1;
+     
+         if (WIFEXITED(status))
+           if (WEXITSTATUS(status) == 0)
+             return 1;
+           else
+             errno = WEXITSTATUS(status);
+         else
+           errno = EINTR;  /* well, sort of :-) */
+     
+         return -1;
+     }
+
+An example of using the above functions:
+
+     #include <sys/types.h>
+     #include <sys/socket.h>
+     #include <netinet/in.h>
+     #include <stdio.h>
+     #include <stdlib.h>
+     #include <syslog.h>
+     #include <errno.h>
+     
+     int daemon(int,int);
+     int fork2(void);
+     void closeall(int);
+     
+     #define TCP_PORT 8888
+     
+     void errexit(const char *str)
+     {
+         syslog(LOG_INFO, "%s failed: %d (%m)", str, errno);
+         exit(1);
+     }
+     
+     void errreport(const char *str)
+     {
+         syslog(LOG_INFO, "%s failed: %d (%m)", str, errno);
+     }
+     
+     /* the actual child process is here. */
+     
+     void run_child(int sock)
+     {
+         FILE *in = fdopen(sock,"r");
+         FILE *out = fdopen(sock,"w");
+         int ch;
+     
+         setvbuf(in, NULL, _IOFBF, 1024);
+         setvbuf(out, NULL, _IOLBF, 1024);
+     
+         while ((ch = fgetc(in)) != EOF)
+           fputc(toupper(ch), out);
+     
+         fclose(out);
+     }
+     
+     /* This is the daemon's main work -- listen for connections and spawn */
+     
+     void process()
+     {
+         struct sockaddr_in addr;
+         int addrlen = sizeof(addr);
+         int sock = socket(AF_INET, SOCK_STREAM, 0);
+         int flag = 1;
+         int rc = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
+                             &flag, sizeof(flag));
+     
+         if (rc < 0)
+           errexit("setsockopt");
+     
+         addr.sin_family = AF_INET;
+         addr.sin_port = htons(TCP_PORT);
+         addr.sin_addr.s_addr = INADDR_ANY;
+     
+         rc = bind(sock, (struct sockaddr *) &addr, addrlen);
+         if (rc < 0)
+           errexit("bind");
+     
+         rc = listen(sock, 5);
+         if (rc < 0)
+           errexit("listen");
+     
+         for (;;)
+         {
+             rc = accept(sock, (struct sockaddr *) &addr, &addrlen);
+     
+             if (rc >= 0)
+               switch (fork2())
+               {
+                 case 0:  close(sock); run_child(rc); _exit(0);
+                 case -1: errreport("fork2"); close(rc); break;
+                 default: close(rc);
+               }
+         }
+     }
+     
+     int main()
+     {
+         if (daemon(0,0) < 0)
+         {
+             perror("daemon");
+             exit(2);
+         }
+     
+         openlog("test", LOG_PID, LOG_DAEMON);
+     
+         process();
+     
+         return 0;
+     }
+

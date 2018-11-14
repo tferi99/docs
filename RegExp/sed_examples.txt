@@ -1,0 +1,26 @@
+It gets numeric fields of IP addresses:
+
+sed -n '
+/^[ \t]*[^#]/ {
+	/^[ ]*[^1]/d
+	s/\([0-9]*\)\.\([0-9]*\)\.\([0-9]\)*\.\([0-9]\)*/1:\1 2:\2 3:\3 4:\4 -> /
+	p
+}
+' /etc/hosts
+
+
+NOTE:
+	To get any part of replacement use \(...\) and to refer to Nth substring use \N.
+
+--------------------------------------------------------------------------------------
+Getting the replaced part of string use &:
+
+sed -n '
+/^[ \t]*[^#]/ {
+	/^[ ]*[^1]/d
+	s/[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*/[&]/
+	p
+}
+' /etc/hosts
+
+It delimits ip addresses in a hosts file with [...] .

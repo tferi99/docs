@@ -1,0 +1,115 @@
+========
+Idea FAQ
+========
+
+Configuration
+-------------
+- Some nice custom keys
+- How to set allocated heap of Idea?
+- How to start 64bit version?
+- How to add code template fragments to Java?
+- How to maximize the editor?
+
+Templates
+---------
+- How to change generated Java header of new classes?
+
+Editor
+------
+- How to change line separator?
+- How to use clipboard history?
+
+Tomcat
+------
+- How to add memory JVM options for Tomcat?
+
+Maven
+-----
+- How to run a WEB application with Jetty and Maven?
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+Some nice custom keys
+=====================
+Ctrl-m		: Hide all tool windows
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to set allocated heap of Idea?
+==================================
+Change settings in:
+
+	IDEA_DIR\bin\idea.exe.vmoptions
+	
+	
+If you have 32 bit version and get this error during startup:
+
+	The JVM could not be started.  The maximum heap size (-Xmx) might be too large or 
+	an antivirus or firewall tool could block the execution. 
+	
+OS limitation is 2G and total process memory is not just the heap size.
+Choose a smaller value.
+
+See also:
+	How to start 64bit version?
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to start 64bit version?
+===========================
+In Windows starting shortcut points to 32bit version by default. But there is 64bit version, too: idea64.exe .
+Change shortcut.
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to change generated Java header of new classes?
+===================================================
+SETTINGS/File templates/[Includes]
+
+Here is a default 'File Header' entry. Change it.
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to add code template fragments to Java?
+===========================================
+Like 'ss' (Section Separator)
+
+- Go to SETTINGS/Live Templates/[Other]
+- '+' and specify values
+- Specify where you want to apply (link under fields)
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to change line separator?
+=============================
+IDEA/Settings/Code Style/General/[Line separator]
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to use clipboard history?
+=============================
+Call history:
+
+	Ctrl-Shift-V
+	
+Configure number of entries:	
+
+	Settings/IDE Settings/Editor/[Limits]/MAximum number of contents to keep in clipboard
+	
+--------------------------------------------------------------------------------------------------------------------------------
+How to add memory JVM options for Tomcat?	
+=========================================
+Run/Debug Configuration / VM options
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to run a WEB application with Jetty and Maven?
+==================================================
+If you have a Maven project and it can be launched with Maven Jetty plugin you can launch it with Idea, too.
+
+- Choose jetty:run from [Maven Projects]/Plugins
+- Right mouse/Run OR Debug
+
+NOTE:
+You can save this command into 'Run/Debug Configuration' with RightMouse/Create...
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to maximize the editor?
+===========================
+Set 'Hide All Tool Windows' action to Ctrl-M (Eclipse style)
+

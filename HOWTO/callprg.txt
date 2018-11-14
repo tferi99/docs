@@ -1,0 +1,12 @@
+How to call an interactive program from a shell script?
+
+The main problem is that shell script catch the standard input and we can't use any interactive program called from this script.
+
+Solution:
+We have to tie the standard input of shell script to called program.
+for example we can call ed this way:
+
+	ed -p '*' $* <&0
+
+$* contains is all of parameters of shell script
+

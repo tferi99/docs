@@ -1,0 +1,37 @@
+Q: How to call administration on Magnolia public instance?
+
+A: URL: http://<host:port>/magnoliaPublic/.magnolia/adminCentral.html
+
+	You can use this application to set server configration parameters (e.g. mail server).
+---------------------------------------------------------------------------------------
+Q: How to set default main server?
+
+A: Config/Server node defaultMailServer attribute.
+   You have to set this entry in magnolia public machines one by one. 
+   DON'T ACTIVAT Config/Server from author.
+---------------------------------------------------------------------------------------
+Q: How to configure log4j?
+
+A: magnoliaAuthor/WEB-INF/lib/magnolia-2.1.5.jar contains a log4j.xml .
+   You can override it in:
+
+		magnoliaAuthor/WEB-INF/config/default/log4j.xml 
+
+	OR you have to remove XML from JAR.
+	
+---------------------------------------------------------------------------------------
+Q: How can you activate class reloading from WEB-INF/classes and WEB-INF/lib?
+
+A: Put a context XML into conf/Catalina/localhost/magnoliaAuthor.xml
+
+	<Context 
+		path="/magnoliaAuthor" 
+		debug="0"
+		privileged="true"
+		reloadable="true">
+	</Context>
+
+	
+This will be reload classes, but UNFORTUNATELY it shuts down magnolia and reloads whole stuff :((((
+(repository, magnolia).
+---------------------------------------------------------------------------------------

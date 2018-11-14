@@ -1,0 +1,436 @@
+======
+ZK FAQ
+======
+
+General
+-------
+What are implicite objects of ZK?
+How to access servlet container elements?
+
+i18n
+----
+- How to use texts from text resource?
+
+Validation
+----------
+- Possible development pattern for validation
+- How to add custom constraint?
+- How to customize constraint message?
+- How to fill a field with no-valid data during initialization?
+- How to validate combobox?
+- How to validate a component which cannot have constraint?
+- How to call multiple constraint and custom constraint together?
+ 
+Events
+------
+- Usable implicite objects as event handler parameters
+- Howto pass String parameter to event handler in ZUL?
+
+GUI
+---
+- How to create a link (anchor)?
+- How to stretch a Listbox dynamically?
+- How to create a live list?
+
+Data binding
+------------
+- How can field values reload from bound bean?
+
+Security
+--------
+- Howto add Spring Security
+
+Spring
+------
+- How to access spring beans from ZULs?
+
+Design
+------
+- Howto create dynamic CSS?
+
+JavaScript
+----------
+- How to call JavaScript from ZK?
+
+
+--------------------------------------------------------------------------------------------------------------
+What are implicite objects of ZK?
+---------------------------------
+application	: The Web application.
+applicationScope: A map of attributes defined in the web application. It is the same as the getAttributes method in the org.zkoss.zk.ui.WebApp interface.
+arg			: The arg argument passed to the createComponents method in the org.zkoss.zk.ui.Executions class. It is never null.
+				Notice that arg is available only when creating the components for the included page (the first argument of createComponents). On the other hand, all events, including onCreate, are processed later. Thus, if you want to access arg in the onCreate's listener, use the getArg method of the org.zkoss.zk.ui.event.CreateEvent class.
+				It is the same as self.desktop.execution.arg.
+componentScope	: A map of attributes defined in the component. It is the same as the getAttributes method in the org.zkoss.zk.ui.Component interface.
+desktop		: The desktop. It is the same as self.desktop.
+desktopScope	: A map of attributes defined in the desktop. It is the same as the getAttributes method in the org.zkoss.zk.ui.Desktop interface.
+each		: The current item of the collection being iterated, when ZK evaluates an iterative element. An iterative element is an element with the forEach attribute.
+event		: The current event. Available for the event listener only.
+execution	: The current execution.
+forEachStatus	: The status of an iteration. ZK exposes the information relative to the iteration taking place when evaluating the iterative element.
+page		: The page. It is the same as self.page.
+pageScope	: A map of attributes defined in the page. It is the same as the getAttributes method in the org.zkoss.zk.ui.Page interface.
+requestScope	: A map of attributes defined in the request. It is the same as the getAttributes method in the org.zkoss.zk.ui.Execution interface.
+self		: The component itself.
+session		: The session.
+sessionScope	: A map of attributes defined in the session. It is the same as the getAttributes method in the org.zkoss.zk.ui.Session interface.
+spaceOwner	: The space owner of this component. It is the same as self.spaceOwner.
+spaceScope	: A map of attributes defined in the ID space containing this component.
+
+
+--------------------------------------------------------------------------------------------------------------
+How to use texts from text resource?
+------------------------------------
+Put your entries into 
+
+	 webroot/WEB-INF/i3-label_language_COUNTRY.properties
+	 
+For example:
+
+	 i3-label.properties			: dafault
+	 i3-label_en_US.properties		: english
+	 
+
+	IMPORTANT NOTE: These files are not regular Java property files! These are UTF8 files.
+	
+
+	# ----- login -------
+	app.username=username:
+	app.password=password:
+	app.login=login
+	
+Getting in ZUL:
+
+	<label value="${c:l('app.username')}"  />
+
+From Java:
+
+	public static String getTxtRes(String key)
+	{
+		String value = Labels.getLabel(key);
+		if (value == null) {
+			return "?" + key + "?";
+		}
+		return value;
+	}
+	
+--------------------------------------------------------------------------------------------------------------
+Possible development pattern for validation
+-------------------------------------------
+1. Add a constraint, this will be check the field when it lose the mouse focus.
+
+2. Before saving values you have to check fields manually. There is no framework solution to prevent data to be saved into model.
+	To trigger validation before save call a validate() method where you try get data all of validated fields. 
+	Method getValue() throws WrongValueException if a constraint failed.
+
+3. If you have custom validation (e.g. to validate multiple dependent fields) you also have to throw WrongValueException from 
+	custom validation. This will store validation message into error box next to invalida component
+
+	void save() {
+		// validation
+		txtName.getValue();
+		if (dbox.getValue() <= dbox2.getValue()) {
+			throw new WrongValueException(dbox, "Value 1 must be greater than value 2");
+		}
+		
+		// calling backend
+		service.save();
+	}
+
+--------------------------------------------------------------------------------------------------------------
+How to add custom constraint?
+-----------------------------
+You can use regular expressions as validation constraint:
+
+	<textbox id="firstName" constraint="/.[a-zA-Z]+/" /></row>
+
+Add comma separated list of constraints, if a field have more than one.
+
+You can write your cistom constraint in Java, too.
+
+
+--------------------------------------------------------------------------------------------------------------
+How to call multiple constraint and custom constraint together?
+---------------------------------------------------------------
+- Write a public class inherited from SimpleConstraint
+- Override constructor with single String argument, where this String contains a comma
+	separated list of other constraints:
+
+	public class DivideBy1000Constraint extends SimpleConstraint 
+	{
+		public DivideBy1000Constraint(String otherConstraints) {
+			super(otherConstraints);
+		}
+	}
+	
+- You will be able to add this constraint from Java ort from zscript:
+
+	<zscript>
+		Constraint divide1000 = new ese.gui.web.constraint.DivideBy1000Constraint("no empty, no negative");
+	</zscript>
+		...
+	<doublebox ... constraint="${divide1000}" />
+	
+	
+--------------------------------------------------------------------------------------------------------------
+How to customize constraint message?
+------------------------------------
+
+If you prefer to display a customized message instead of the default one, you could amend the
+constraint with colon followed by the message you want to display, for example: 
+
+	<textbox constraint="/.+@.+\.[a-z]+/: e-mail address only"/>
+	
+You can get message from resource file:
+
+	<textbox id="name" constraint="/^[a-z][a-z]$/:${c:l('listTasks.lblVehicleId')}"/>
+	
+Or you can even get the whole constraint from resource file, for example a translated
+'no empty' constraint:
+
+	i3-label.properties:
+		
+		constraintNoEmpty = no empty:This is a mandatory field
+		
+	ZUL:
+
+		<textbox id="newCascoTable" constraint="${c:l('constraintNoEmpty')}"/>
+		
+
+--------------------------------------------------------------------------------------------------------------
+How to fill a field with no-valid data during initialization?
+-------------------------------------------------------------
+If you have a mandatory field and you try to fill it with an empty value during rendering this way, 
+you will get a validation error message:
+
+	<textbox id="fld" constraint="no empty" value="${winTest.vo.data}"/>
+
+Solution, use rawValue instead. This won't be validated:
+
+	<textbox id="fld" constraint="no empty" rawValue="${winTest.vo.data}"/>
+		
+
+--------------------------------------------------------------------------------------------------------------
+How to validate a component  which cannot have constraint?
+----------------------------------------------------------
+You can validate a component which cannot use constraint this way:
+
+	if(cmbTaskType.getSelectedItem() == null || cmbTaskType.getSelectedItem().getValue() == null){
+		 throw new WrongValueException(cmbTaskType, winEditPrice.getTxtRes("validChooseOne"));
+	}
+	
+--------------------------------------------------------------------------------------------------------------	
+Usable implicite objects as event handler parameters
+----------------------------------------------------
+Use there implicite objects in event handlers:
+
+	self 	: target object
+	event	: current event
+	
+--------------------------------------------------------------------------------------------------------------	
+How to create a link (anchor)?	
+------------------------------
+
+- For external target use <h:a>
+
+	<zk xmlns="http://www.zkoss.org/2005/zul"
+		xmlns:h="http://www.w3.org/1999/xhtml" 
+		xmlns:zk="http://www.zkoss.org/2005/zk"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+		<h:a href="http://index.hu" target="_blank">index</h:a>
+		
+	</zk>
+	
+
+- For internal target use <toolbarbutton> out of a <toolbar>
+
+	<toolbarbutton label="Call a Java func" onClick="winTaskDetail.onFunction()"/>
+	
+--------------------------------------------------------------------------------------------------------------		
+Howto pass String parameter to event handler in ZUL?
+----------------------------------------------------
+Use "&quot;", for example:
+
+	<menuitem label="Hello world" onClick="loadPage(&quot;helloworld.zul&quot;)"/>
+	
+--------------------------------------------------------------------------------------------------------------			
+How can field values reload from bound bean?
+--------------------------------------------
+Call:
+
+	binder.loadAll();
+	
+zscript to refresh field values if any bound bean value changed by not-bound component.
+
+The same action from Java:
+
+	DataBinder.loadAll()
+
+--------------------------------------------------------------------------------------------------------------			
+Howto add Spring Security
+-------------------------
+1. Add Spring configuration to web.xml
+
+2. Add Spring configuration files into WEB-INF
+
+3. Add Thread local issue configuration to zk.xml
+
+	EITHER
+	
+		<system-config>
+			<disable-event-thread/>
+		</system-config>
+		
+		In this case modal dialog NOT SUPPORTED!
+		
+		
+	OR
+
+		<listener>
+			<description>ThreadLocal Synchronization Listener</description>
+			<listener-class>org.zkoss.zkplus.util.ThreadLocalListener</listener-class>
+		</listener>
+
+		<preference>
+			<name>ThreadLocal</name>
+			<value>
+				 org.springframework.security.context.ThreadLocalSecurityContextHolderStrategy=contextHolder
+			</value>
+		</preference>	
+
+See also:	
+		http://docs.zkoss.org/wiki/Making_Spring_Security_Work_with_ZK
+
+--------------------------------------------------------------------------------------------------------------			
+How to stretch a Listbox dynamically?
+-------------------------------------
+Set fixedLayout="true", e.g:
+
+		<listbox height="100%" width="100%" fixedLayout="true"  vflex="true">
+			<listhead>
+				<listheader label="1" sort="auto" width="30%"/>
+				<listheader label="2" sort="auto" width="70%"/>
+			</listhead>
+			<listitem>
+				<listcell label="1234567890 1.1"></listcell>
+				<listcell label="1234567890 1.2"></listcell>
+			</listitem>
+			<listitem>
+				<listcell label="1234567890 1.1"></listcell>
+				<listcell label="1234567890 1.2"></listcell>
+			</listitem>
+			.....
+	</listbox>
+	
+--------------------------------------------------------------------------------------------------------------			
+How to create a live list?
+--------------------------
+Add 'model' attribute to Listbox or Grid, and implement a ListData for data source.
+
+
+	<window title="Live list" border="normal" mode="overlapped" width="300px" height="300px" sizable="true">
+		<zscript><![CDATA[
+			String[] data = new String[300];
+			for(int j=0; j<data.length; ++j) {
+				data[j] = "option "+j;
+			}
+			ListModel strset = new SimpleListModel(data);
+			]]></zscript>
+
+		<listbox width="100%" height="100%" model="${strset}" fixedLayout="true" vflex="true">
+			<listhead>
+				<listheader label="Head"/>
+			</listhead>
+		</listbox>
+	</window>
+
+	
+--------------------------------------------------------------------------------------------------------------			
+How to access servlet container elements?	
+-----------------------------------------
+		HttpServletRequest rq = (HttpServletRequest)Executions.getCurrent().getNativeRequest();
+		HttpServletResponse res = (HttpServletResponse)Executions.getCurrent().getNativeResponse();
+		HttpSession sess = (HttpSession)Executions.getCurrent().getDesktop().getSession().getNativeSession();
+	
+--------------------------------------------------------------------------------------------------------------			
+Howto create dynamic CSS?
+-------------------------
+Put your code into a DSP file and register DSP interpreter servlet.
+
+Example DSP:
+
+	groupbox.css.dsp
+	----------------
+	<%@ taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" %> 
+	<c:set var="ImgUrl" value="${c:encodeURL('/images')}" scope="request" />
+
+	.z-groupbox .open-false, .z-groupbox .open-true {
+		background: url("${ImgUrl}/arrow.png") no-repeat right 0;   
+
+
+Configuration (web.xml):
+
+	<servlet>
+		<servlet-name>dspLoader</servlet-name>
+		<servlet-class>org.zkoss.web.servlet.dsp.InterpreterServlet</servlet-class>
+		<init-param>
+			<param-name>class-resource</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>dspLoader</servlet-name>
+		<url-pattern>*.dsp</url-pattern>
+	</servlet-mapping>
+	
+	
+--------------------------------------------------------------------------------------------------------------			
+How to access spring beans from ZULs?
+-------------------------------------
+Per XULs solution - add the following to ZULs where you want to access Sprign beans:
+
+	<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+or global solution:
+
+Create a SerializableUiFactory where you add DelegatingVariableResolver to pages, and add it to zk.xml:
+
+	JAVA
+	----
+
+	public class SpringDelegatingVariableResolverSerializableUiFactory extends SerializableUiFactory
+	{
+		@Override
+		public Page newPage(RequestInfo ri, PageDefinition pagedef, String path)
+		{
+			Page newPage = super.newPage(ri, pagedef, path);
+			newPage.addVariableResolver(new DelegatingVariableResolver());
+			return newPage;
+		}
+
+		@Override
+		public Page newPage(RequestInfo ri, Richlet richlet, String path)
+		{
+			Page newPage = super.newPage(ri, richlet, path);
+			newPage.addVariableResolver(new DelegatingVariableResolver());
+			return newPage;
+		}
+	}
+
+	zk.xml
+	------
+	<!-- system-wide Spring variable resolver -->
+	<system-config>
+		<ui-factory-class>com.generali.web.util.SpringDelegatingVariableResolverSerializableUiFactory</ui-factory-class>
+	</system-config>
+	
+	
+	
+	
+
+
+	
+	

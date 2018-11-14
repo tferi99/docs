@@ -1,0 +1,26 @@
+SSH tricks
+==========
+
+X11
+---
+ssh -X <host>
+
+	X11 forwarding. You have to start ssh in a local XTerm, and remote programs will be 
+	displayed in local X. In addition, protocoll is encrypted!
+	
+
+
+Speeding up transfer
+--------------------
+
+ssh -C <host>
+
+	Compressing data transfer.
+
+
+ssh -c blowfish
+
+	Blowfish is a faster cipher.
+
+
+	

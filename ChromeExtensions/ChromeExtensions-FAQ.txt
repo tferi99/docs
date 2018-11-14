@@ -1,0 +1,75 @@
+====================
+ChromeExtensions FAQ
+====================
+
+Basics
+------
+- Architectural elements
+
+Development
+-----------
+- How to get URL of current tab?
+- chrome.* API
+
+Errors
+------
+- Uncaught TypeError: Cannot read property 'getSelected' of undefined 
+
+
+
+------------------------------------------------------------------------------------------------------
+Architectural elements
+======================
+- background page:	background.html
+
+		Many extensions have a background page, an invisible page that holds the main logic of the extension.
+		For example, a browser action can have a popup, which is implemented by an HTML file. Any extension 
+		can have an options page, which lets users customize how the extension works. 
+		And finally, you can use 
+						- tabs.create
+						- window.open()							
+		to display any other HTML files that are in the extension.
+	
+- UI pages:
+
+	Extensions can contain ordinary HTML pages that display the extension's UI. For example
+	
+- Content scripts:	contentscript.js
+
+	A content script is some JavaScript that executes in the context of a page that's been loaded into the browser.
+	Think of a content script as part of that loaded page.
+
+	
+------------------------------------------------------------------------------------------------------
+chrome.* API
+============
+To access to all the APIs that web pages and apps can use, extensions can also use Chrome-only APIs (often called chrome.* APIs).
+Most methods in the chrome.* APIs are ASYNCHRONOUS: they return immediately.
+
+
+
+	
+------------------------------------------------------------------------------------------------------
+How to get URL of current tab?
+==============================
+
+chrome.tabs.getSelected(null, function(tab) {
+	url = tab.url;
+}
+
+
+------------------------------------------------------------------------------------------------------
+Uncaught TypeError: Cannot read property 'getSelected' of undefined 
+===================================================================
+A content script running in the context of the website rather than the extension context. 
+As a result it cannot use all of the chrome API (like chrome.tabs).
+
+In order to get the current website URL from inside the website context, you can use window.location.href. You can also get the query string using window.location.search.
+ So no need to query chrome.tabs here.
+
+Something in the lines of
+
+	var tabURL = window.location.href;
+	var queryString = window.location.search;
+	
+	

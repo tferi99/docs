@@ -1,0 +1,6 @@
+Bot messages are writen in logfile:
+
+/var/log/boot.msg
+	or
+call dmesg command.
+

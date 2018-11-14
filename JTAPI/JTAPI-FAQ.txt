@@ -1,0 +1,36 @@
+==========
+JTAPI FAQ
+==========
+
+- Steps of call
+
+-----------------------------------------------------------------------------------------------------------
+Steps of call
+=============
+Connect
+-------
+- Getting provider
+
+Call
+----
+	- initialize()
+		Originator
+			- originatorAddress <- AddressObserver
+			- originatorAddress <- CallControlCallObserver
+			- originatorAddress.terminal[0] <- TerminalObserver
+		
+		Receiver
+			- receiverAddress <- AddressObserver
+			- receiverAddress <- CallControlCallObserver
+			- receiverAddress.terminal[0] <- TerminalObserver
+	
+	- start()
+		Originator
+			loop in thread -> 
+				wait
+				makeCall
+					- create Call
+					- call.connect(srcAddress.getTerminals()[0], srcAddress, destAddress)
+				
+		Receiver
+			

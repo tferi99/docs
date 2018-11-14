@@ -1,0 +1,14 @@
+Creating Linux boot floppy on SuSE
+----------------------------------
+
+Creating boot disk:
+	 fdformat /dev/fd0u1440
+	 Insert CD1
+	 mount /cdrom (mount -tiso9660 /dev/cdrom /cdrom)
+	 cd /cdrom/disks
+	 dd if=./bootdisk of=/dev/fd0 bs=8k
+
+
+Creating an empty filesysytem on floppy:
+	mkfs.minix -c /dev/fd0 1440
+	

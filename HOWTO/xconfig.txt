@@ -1,0 +1,7 @@
+
+How can you have multiple X configuration?
+
+Configuration file for X (XFree86) is /etc/XF86Config.
+
+You have simple copy this file on an another name and modify it manually or with any tool (e.g. sax, XF86Setup)
+

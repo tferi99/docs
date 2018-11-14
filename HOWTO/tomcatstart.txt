@@ -1,0 +1,8 @@
+How to start Tomcat 4.1.x in the current console
+================================================
+
+By default tomcat is running into the background, so console output is invisible.
+You can starttomcat in the current window, if you startcatalina.sh with 'run' 
+instead of 'start' parameter.
+
+The most simple is editing startup.sh.

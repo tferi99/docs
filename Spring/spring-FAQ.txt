@@ -1,0 +1,516 @@
+==========
+Spring FAQ
+==========
+
+Core
+----
+- How to handle application events?
+
+Context
+-------
+- Accessing Spring-ApplicationContext in WEB applications
+- Access the Spring-ApplicationContext from everywhere in your Application
+- Howto scan multiple base package for beans?
+- How to use profiles?
+- Retrieving the servlet context path from a Spring bean
+
+Annotations
+-----------
+SEE:	spring-annotations-FAQ.txt
+
+Transactions
+------------
+- How to change default transactional strategy?
+- Entities Not Persisting - Spring + Hibernate + JPA
+
+Test
+----
+- How can you change transactioanl behavior of AbstractTransactionalJUnit4SpringContextTests?
+
+Troubleshooting
+---------------
+- Message: cvc-complex-type.2.4.c: The matching wildcard is strict, but no declaration can be found for element 'aop:config'
+
+JDBC
+----
+- Howto log SQL statements from JDBC template?
+- Query patterns
+
+Spring MVC
+----------
+- About Spring MVC application context
+- Adding parameters to Spring MVC handler methods
+- How to map requests to controllers with MVC?
+- How to pass parameters to MVC controller handler methods?	
+- Error 406 with REST request
+- How to access request/response from a controller method?
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+How to handle application events?
+=======================================================
+If you want a bean to respond to application events, whether published by another bean or by the container, all you need to do is implement the
+org.springframework.context.ApplicationListener interface.
+
+onApplicationEvent() method will be called back by the container.
+
+------------------------------------------------------------------------------------------------------------------------------
+Accessing Spring-ApplicationContext in WEB applications
+=======================================================
+Use WebApplicationContextUtils:
+
+	public static ApplicationContext getRootApplicationContext(ServletContext sctx)
+	{
+		return WebApplicationContextUtils.getRequiredWebApplicationContext(sctx); 
+	}
+	
+If you want to access from EVERYWHERE, see: "Access the Spring-ApplicationContext from everywhere in your Application".
+
+------------------------------------------------------------------------------------------------------------------------------
+Access the Spring-ApplicationContext from everywhere in your Application
+========================================================================
+A bean which implements the 
+	
+	ApplicationContextAware
+	
+interface and is deployed into the context, will be called back on creation of the bean, 
+using the interface’s setApplicationContext(…) method, and provided with a reference to the context, 
+which may be stored for later interaction with the context.
+
+SpringApplicationContextProvider.java
+-------------------------------------
+
+	package com.generali.util;
+
+	import org.springframework.beans.BeansException;
+	import org.springframework.context.*;
+
+	public class SpringApplicationContextProvider implements ApplicationContextAware
+	{  
+		  
+		public void setApplicationContext(ApplicationContext ctx) throws BeansException {  
+			// Wiring the ApplicationContext into a static method  
+			SpringApplicationContextHolder.setApplicationContext(ctx);  
+		}  
+	}
+
+
+SpringApplicationContextHolder.java
+-----------------------------------	
+	package com.generali.util;
+
+	import org.springframework.context.ApplicationContext;
+
+	public class SpringApplicationContextHolder
+	{
+		private static ApplicationContext ctx;
+
+		/**
+		 * Injected from the class "SpringApplicationContextProvider" which is
+		 * automatically loaded during Spring-Initialization.
+		 */
+		public static void setApplicationContext(ApplicationContext applicationContext)
+		{
+			ctx = applicationContext;
+		}
+
+		/**
+		 * Get access to the Spring ApplicationContext from everywhere in your
+		 * Application.
+		 * 
+		 * @return
+		 */
+		public static ApplicationContext getApplicationContext()
+		{
+			return ctx;
+		}
+	}
+	
+Spring config
+-------------
+	<bean id="contextApplicationContextProvider" class="com.generali.util.SpringApplicationContextProvider"/>
+
+Usage
+-----	
+	
+	ctx = SpringApplicationContextHolder.getApplicationContext();
+	
+------------------------------------------------------------------------------------------------------------------------------
+How can you change transactioanl behavior of AbstractTransactionalJUnit4SpringContextTests?
+===========================================================================================
+By default transactions will be rollbacked at the end of test cases.
+
+To commit transactions add this class level annotation:
+
+	@TransactionConfiguration(defaultRollback = false)
+	
+To specify this at method level:
+
+	@Rollback(false)
+
+------------------------------------------------------------------------------------------------------------------------------
+How to change default transactional strategy?
+=============================================
+Spring transactions are rolled back automatically after throwing RuntimeException/Error, 
+but not on checked exceptions. If you want to change this behavior, add classes to 'rollback-for'
+argument of <tx:method>.
+
+For example:
+
+    <tx:advice id="txAdvice">
+        <tx:attributes>
+            <tx:method name="*" 
+            	rollback-for="com.infinica.webfrontend.core.exception.Core2ServiceException"/>
+        </tx:attributes>
+    </tx:advice>
+	
+	<aop:config>
+        <aop:advisor id="managerTx" advice-ref="txAdvice" pointcut="execution(* *..service.*Service.*(..))" order="2"/>
+    </aop:config>
+    
+------------------------------------------------------------------------------------------------------------------------------
+Howto scan multiple base package for beans?
+===========================================
+Method 1:
+
+	Add multiple base-package in comma separatred list:
+	
+		<context:annotation-config />
+		<context:component-scan base-package="com.andtek.andphone.acd, com.andtek.andphone.core"/>
+
+Method 2:
+
+	Use filter:
+	
+	<context:annotation-config />
+	<context:component-scan base-package="com.andtek.andphone">
+		<context:include-filter type="regex" expression="(acd|core)\..*" />
+	</context:component-scan>
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Message: cvc-complex-type.2.4.c: The matching wildcard is strict, but no declaration can be found for element 'aop:config'
+==========================================================================================================================
+Possible reason 1: missing JARs
+
+	- Spring JARs
+	- aopalliance.jar
+	
+Possible reason 1: bad XML schema configuration	
+
+	Each namespace URI should be followed by its XSD location:
+	
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Howto log SQL statements from JDBC template?
+============================================
+Set log level of log4j.logger.org.springframework.jdbc.core.
+
+	DEBUG	:	SQL statements
+	TRACE	:	SQL statements + parameters
+
+E.g. in log4j:	
+
+	log4j.logger.org.springframework.jdbc.core=DEBUG
+	
+------------------------------------------------------------------------------------------------------------------------------
+Query patterns	
+==============
+	
+1. Bean row mapper when field names are the same as bean properties:
+
+	List<AcdClassificationDataVO> result = jdbcTemplate.query(sql, params, new BeanPropertyRowMapper<AcdClassificationDataVO>());
+
+2. Custom row mapper when properties are different than field names:
+
+	List<AcdClassificationDataVO> result = jdbcTemplate.query(sql, params, new AcdClassificationDataRowMapper());
+
+------------------------------------------------------------------------------------------------------------------------------
+Entities Not Persisting - Spring + Hibernate + JPA
+==================================================
+If you have a DispatcherServlet abd it has the same conponent scan root path as application context 
+the problem can be the following:
+
+<tx:annotation-driven/> only looks for @Transactional on beans in the same application context it is defined in. 
+This means that, if you put <tx:annotation-driven/> in a WebApplicationContext for a DispatcherServlet, it only checks for @Transactional 
+beans in your controllers, and not your services. See Section 15.2 of reference, “The DispatcherServlet” for more information.
+
+So change component-scan of servlets to point only to controllers (sevlets):
+
+myServlet.xml
+	<context:annotation-config /> 
+	<context:component-scan base-package="com.myDomain.servlets" /> 
+
+config.xml
+	<context:annotation-config /> 
+	<context:component-scan base-package="com.myDomain.dao" /> 
+	<context:component-scan base-package="com.myDomain.services" /> 
+	
+------------------------------------------------------------------------------------------------------------------------------
+About Spring MVC application context
+====================================
+As detailed in Section 5.14, “Additional Capabilities of the ApplicationContext”,
+ApplicationContext instances in Spring can be scoped. In the Web MVC framework, each
+DispatcherServlet has its own WebApplicationContext, which inherits all the beans already
+defined in the root WebApplicationContext. These inherited beans can be overridden in the servletspecific
+scope, and you can define new scope-specific beans local to a given Servlet instance.
+
+- SpringMVC uses one special ApplicationContext: WebApplicationContext in web application.  
+	- WebApplicationContext is the extension of ApplicationContext. 
+	- It has ServletContext and and beans in WebApplicationContext can access ServletContext if they implement the interface ServletContextAware
+- In Spring ApplicationContext can be hierarchical.  
+	- One ApplicationContext can have multiple child ApplicationContext and can only have one parent.   
+	- Beans in child ApplicationContext can access the beans in parent.
+- In SpringMVC each DispatcherServlet has one WebApplicationContext.   
+	- So there may be more than WebApplicationContext if the web application has multiple DispatcherServlet. 
+	- By default Spring always look for the ApplicationContext: your_dispatcherservlet_name-servlet.xml. 
+	- These DispatcherServlet related WebApplicationContext should have MVC-specific configurations.   
+	- Other non MVC-specific configuration such as the beans for service or persistence layer should be in root WebApplicationContext.
+- Bootstrapping
+	- In SpringMVC the root WebApplicationContext is bootstrapped by using ContextLoadListener specified as Listener in web.xml.
+	- MVC specific WebApplicationContext is loaded for each of DispatcherServlet. It is defined in each of servlet in web.xml. 
+		The below is an example of configuration for a DispatcherServelt where a child WebApplicationContext is specified.
+
+	
+	
+------------------------------------------------------------------------------------------------------------------------------
+Adding parameters to Spring MVC handler methods
+===============================================
+Spring 3 deprecates the org.springframework.web.servlet.mvc.Controller hierarchy, 
+so we will not cover these interfaces and classes here. Spring 3 controllers are generally POJOs.
+	
+One of our favorite things about Spring Web MVC is the tremendous
+flexibility it provides around handler method parameters and return values: if
+you want to expose an HttpServletRequest to a handler method, just declare the
+parameter, and it’s automatically provided to the method. If you don’t want it, leave it
+out.
+	
+------------------------------------------------------------------------------------------------------------------------------
+How to map requests to controllers with MVC?	
+============================================
+DispatcherServlet knows where to find this file configuration by using a convention.
+The location convention is 
+
+	/WEB-INF/[servlet-name]-servlet.xml
+	
+	
+1. Binding by bean name
+- First you define the controller:
+
+	<bean name="/roster/*" class="com.springinpractice.ch03.web.RosterController"/>
+
+- The controller name specifies the requests (pattern) that the RosterController services.	
+
+	@Controller
+	public final class RosterController {
+		private List<Member> members = new ArrayList<Member>();
+		...		
+		
+		@RequestMapping
+		public void list(Model model) {
+			model.addAttribute(members);
+		}
+		
+		@RequestMapping
+		public void member(@RequestParam("id") Integer id, Model model) {
+			model.addAttribute(members.get(id));
+		}
+	}
+	
+- Requests are mapped to handler methods by path. For example these are all map to the list() method. 
+
+	/roster/list
+	/roster/list.do
+	/roster/list.html 
+	
+	
+------------------------------------------------------------------------------------------------------------------------------
+How to pass parameters to MVC controller handler methods?	
+=========================================================
+You declare whatever you’d like to have, within certain bounds of course ;)
+
+- Model
+	You declare a Model parameter, which means Spring will automatically pass you a Model object (essentially it functions as a
+	Map, even though it doesn’t implement that interface). Anything you put on the Model will be available to the JSP as a JSP 
+	expression language (EL) variable.
+
+		private List<Member> members = new ArrayList<Member>();
+		
+		@RequestMapping
+		public void list(Model model) {
+			model.addAttribute(members);
+		}
+	
+	Name to the attribute, so Spring will automatically generate the name by convention.
+	Here, because the type is List<Member>, the generated name is memberList. You’ll be able
+	to access it from your JSP using ${memberList}.
+	
+- Annotated parameters (use @RequestParam, @RequestHeader, @PathVariable, and more), e.g:
+
+		@RequestMapping
+		public void member(@RequestParam("id") Integer id, Model model) {
+			model.addAttribute(members.get(id));
+		}	
+	
+------------------------------------------------------------------------------------------------------------------------------
+How to map rendered view to request with MVC?	
+=============================================
+See MVC configuration above ('How to map requests to controllers with MVC?')	.
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/WEB-INF/jsp/"
+		p:suffix=".jsp"/>
+
+- Default by convention
+	convention that automatically
+translates the request URL to a logical view name. Because the request URL for
+the list() method is /roster/list[.*], the view name according to the convention will
+be list.
+	
+You also define a ViewResolver C, which allows you to convert logical view names to views.
+
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" 
+		p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
+
+------------------------------------------------------------------------------------------------------------------------------
+How to use profiles?
+====================
+Spring 3.1 now includes support for the long awaited environment aware feature called profiles.
+
+
+<beans profiles="dev,qa">
+	<bean id="dataSource" class="..."/>
+	<bean id="messagingProvider" class="..."/>
+</beans>
+
+Specifying current profile
+--------------------------
+1. Programmatic
+	
+	<context-param>
+		<param-name>contextInitializerClasses</param-name>
+		<param-value>com.gordondickens.springthreeone.services.CloudApplicationContextInitializer</param-value>
+	</context-param>
+	
+	
+	package com.gordondickens.springthreeone.services;
+	import org.cloudfoundry.runtime.env.CloudEnvironment;
+	import org.slf4j.Logger;
+	import org.slf4j.LoggerFactory;
+	import org.springframework.context.ApplicationContextInitializer;
+	import org.springframework.context.ConfigurableApplicationContext;
+
+	public class CloudApplicationContextInitializer implements
+		ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+		private static final Logger logger = LoggerFactory
+		.getLogger(CloudApplicationContextInitializer.class);
+
+		@Override
+		public void initialize(ConfigurableApplicationContext applicationContext) {
+			CloudEnvironment env = new CloudEnvironment();
+			if (env.getInstanceInfo() != null) {
+				logger.info("Application running in cloud. API '{}'",
+				env.getCloudApiUri());
+				applicationContext.getEnvironment().setActiveProfiles("cloud");
+				applicationContext.refresh();
+			} else {
+				logger.info("Application running local");
+				applicationContext.getEnvironment().setActiveProfiles("dev");
+			}
+		}
+	}
+
+2. Annotation Support for JavaConfig
+
+package com.gordondickens.springthreeone.configuration;
+ 
+import com.gordondickens.springthreeone.SimpleBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+ 
+	@Configuration
+	@Profile("dev")
+	public class AppConfig {
+		@Bean
+		public SimpleBean simpleBean() {
+			SimpleBean simpleBean = new SimpleBean();
+			simpleBean.setMyString("Ripped Pants");
+			return simpleBean;
+		}
+	}	
+	
+	
+3. Declarative Configuration in WEB.XML
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/app-config.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>spring.profiles.active</param-name>
+		<param-value>DOUBLEUPMINT</param-value>
+	</context-param>
+	
+	
+Troubleshooting:
+	If we put a single <bean> declaration (or other declaration) at BELOW any nested <beans> tags we will get the exception 
+	
+		org.xml.sax.SAXParseException: cvc-complex-type.2.4.a: Invalid content was found starting with element 'bean'.
+	
+	Put such content ABOVE <beans> tags.
+	
+
+------------------------------------------------------------------------------------------------------------------------------
+Retrieving the servlet context path from a Spring bean		
+======================================================
+If you use a ServletContainer >= 2.5 you can use the following code to get the ContextPath:
+
+	@Autowired
+    private ServletContext servletContext;
+	
+------------------------------------------------------------------------------------------------------------------------------
+Error 406 with REST request
+===========================
+Possible solution:
+
+	Add JSON JARs to dependencies, e.g:
+	
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>1.9.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.12</version>
+        </dependency>
+
+		
+------------------------------------------------------------------------------------------------------------------------------
+How to access request/response from a controller method?
+========================================================
+Just add them to the method arguments and Spring will pass them automatically:
+
+    @RequestMapping(value="/languages", method = RequestMethod.GET)
+    @ResponseBody
+    public List<String> getLanguages(HttpServletRequest request)
+    {
+        String path = request.getSession().getServletContext().getRealPath("/WEB-INF/classes");
+	}
+	
+
+	

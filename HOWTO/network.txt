@@ -1,0 +1,10 @@
+We can use to get queries about network using netstat.
+
+To get 
+	routing table			: netstat -nr
+							  route
+	interface statistics	: netstat -i
+	connections				: netstat -ta
+							
+							: -c continous
+

@@ -1,0 +1,37 @@
+===========
+Eclipse FAQ
+===========
+
+UI
+--
+- How to show current method in a breadcrumb?
+
+Debug, trace
+------------
+- Howto get debug information for Eclipse?
+- Why can't I set up a breakpoint in eclipse?
+
+--------------------------------------------------------------------------------------------------
+How to show current method in a breadcrumb?
+===========================================
+Use key:	Show in Breadcumb (Alt-Shift-B)
+
+
+--------------------------------------------------------------------------------------------------
+Howto get debug information for Eclipse?
+========================================
+Add -debug command line option to display console for eclipse.
+
+
+--------------------------------------------------------------------------------------------------
+Why can't I set up a breakpoint in eclipse?
+===========================================
+For some odd reason, I can't use breakpoints in my eclipse project. 
+All breakpoints that I set have a diagonal line on them, above the dot in the respective line.
+
+You probably pressed "Skip All Breakpoints" in the Breakpoint view (Ctrl-Alt-B).
+
+Press it again!
+
+
+

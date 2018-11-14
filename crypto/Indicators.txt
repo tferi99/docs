@@ -1,0 +1,69 @@
+
+1) Trendkövetõ indikátorok:
+	- MA - moving avarages
+	- MACD - Moving Average Convergence Divergence
+	- TRIX – Triple Exponential
+
+2) Változással egy idõben jelzõ indikátorok:
+	- RSI – Relative Strength Index
+	- Stochastic
+
+*************************************************** TRENDKÖVETÕ ***************************************************
+
+------------------------------------------------------------------------------------------------------------------------------
+MA - moving avarages
+====================
+Mozgó átlagok
+
+- egyszerû (SMA): egyes tagok kiszámításánál ugyanolyan súllyal szerepel minden érték
+
+- exponenciális (EMA): idõben a jelenhez közelebb álló adatok nagyobb súllya szerepelnek
+
+	EMA = (Legutolsó ár x X%)+(elõzõ napi mozgóátlag x (100–X%))
+
+- súlyozott mozgóátlag (WMA): súlyozott mozgóátlag esetén pedig meghatározhatjuk, hogy a régebbi adatok milyen súllyal szerepeljenek a kalkulációban, 
+	azaz nem exponenciálisan emelkednek. 
+	Kiszámítása Y1, Y2, Y3, Y4 árfolyamértékek esetén:
+
+		WMA = (1xY1+2xY2+3xY3+4xY4)/(1+2+3+4)
+
+
+Jelzések:
+	– Ha a rövid távú mozgóátlag alulról metszi a hosszú távút, akkor emelkedõ trendre lehet számítani (vételi jelzés).
+	– Ha a rövid távú mozgóátlag felülrõl lefelé halad át a hosszú távún, akkor valószínûleg csökkenõ trend fog következni (eladási jelzés).
+	– Ha az árfolyam görbéje a mozgóátlagok alá esik, akkor csökkenõ trend vagy korrekció várható (eladási jelzés).
+	– Ha az árfolyamgörbéje a mozgóátlagok fölé emelkedik, akkor emelkedõ trend vagy korrekció várható (vételi jelzés).
+
+
+------------------------------------------------------------------------------------------------------------------------------
+MACD - Moving Average Convergence Divergence
+============================================
+
+Az MACD indikátor egy külön görbén leképezi nekünk a két exponenciális mozgóátlag közti távolságot. 
+Gyakorlatilag pontosan ugyanazokat a jelzéseket adja, mint amit a mozgóátlagok keresztezése esetén megbeszéltünk.
+
+2 görbe (macd, signal) + 1 histogram (indikátor):
+- gorbe-1: 		macd = fast_ema - slow_ema
+- gorbe-2: 		signal = sma(macd)
+- histogram:	macd - signal
+
+Jelzések:
+	- Amennyiben az MACD indikátor vonala a nulla vonal fölött található, akkor emelkedõ trend alakul ki. 
+		Ilyenkor elsõsorban long pozíciókban kell gondolkodnunk.
+	- Ha az MACD indikátor vonala a nulla vonal alatt található, akkor csökkenõ trend veszi kezdetét, 
+		és ebben az esetben pedig short pozíció nyitása a célszerû.
+		
+------------------------------------------------------------------------------------------------------------------------------
+TRIX – Triple Exponential
+=========================
+Elsõsorban trendben mozgó árfolyamok esetén lehet alkalmazni, mivel oldalazásban nem ad megbízható jelzést. 
+A TRIX vonalából és a nulla vonalból áll. 3 exponenciálisan súlyozott mozgóátlagból alakul ki a mutató.
+
+
+A TRIX esetében se feledkezzünk meg róla, hogy oldalazó piacon nagyon sok téves jelet ad.
+	
+
+------------------------------------------------------------------------------------------------------------------------------
+RSI – Relative Strength Index
+=============================
+	

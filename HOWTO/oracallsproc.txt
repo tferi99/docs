@@ -1,0 +1,12 @@
+Calling stored procedure from Oracle SQL/PLUS
+=============================================
+
+Example:
+
+	variable num number;
+	variable txt varchar2(255);
+	execute EL5_PACKAGE_PALLET.SP_TRAILER_CLOSE(101, 142, '111', :num, :txt);
+
+	print num;
+	print txt;
+

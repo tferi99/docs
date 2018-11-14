@@ -1,0 +1,10 @@
+How to change starting console of X ?
+
+As we can read from 'console' man page, X finds the first unused tty, so we have to modify inittab. For example if we want to run X on tty12, we have to add ttys from tty1-tty11, and call 'init Q' or restart.
+
+But syslogd uses also a TTY, so we have to add TTY entries to /etc/inittab
+from tty1-tty10 and modify /etc/syslogd.conf to write log to /dev/tty11.
+
+
+
+

@@ -1,0 +1,216 @@
+===========
+OpenWRT FAQ
+===========
+
+Administration
+--------------
+- Howto add a new user?
+- Howto enable cron?
+- Howto read/write system log?
+- Howto add automount entries?
+- Activating fstab
+- Howto use DDNS?
+- What is UCI?
+
+Installation, packages
+----------------------
+- Some opkg tips
+- Error during calling opkg: "Could not obtain administrative lock"
+- Howto install FTP server?
+- Howto install SFTP server?
+
+Filesystem
+----------
+- How to format a disk (e.g. pen-drive)?
+- How to list USB disks and partitions
+- Mount points
+
+Services
+--------
+- How to use torrent server?
+- How to switch ON/OFF wifi?
+
+
+--------------------------------------------------------------------------------------------------------
+Mount Points
+============
+/ 
+	this is your entire root filesystem, it comprises /rom and /overlay. 
+	
+/rom 
+	contains all the basic files, like busybox, dropbear or iptables including default configuration files. Does not contain the kernel. 
+	Files in this directory are on the SqashFS partition, and thus cannot be deleted. But, because we use mini_fo filesystem, so called 
+	overlay-whiteout-symlinks can be created on the JFFS2 partition.
+	
+/overlay 
+	is the writable part of the file system that gets merged with /rom to create a uniform /-tree. It contains anything that was written to the router after installation, 
+	e.g. changed configuration files, additional packages installed with opkg, etc. It is formated with JFFS2.
+
+Tip:
+	IGNORE /rom AND /overlay AND USE EXCLUSIVELY / FOR YOUR DAILY ROUTINES!
+
+SEE ALSO:
+
+		http://wiki.openwrt.org/doc/techref/flash.layout#filesystems
+
+--------------------------------------------------------------------------------------------------------
+Howto install FTP server?
+=========================
+opkg install vsftpd
+ln -s /etc/init.d/vsftpd /etc/init.d/S50vsftpd
+
+--------------------------------------------------------------------------------------------------------
+Howto install SFTP server?
+==========================
+opkg install openssh-sftp-server
+
+--------------------------------------------------------------------------------------------------------
+Howto add a new user?
+=====================
+Simply add a new /etc/passwd entry.
+
+--------------------------------------------------------------------------------------------------------
+Some opkg tips
+==============
+opkg list                    	: List available packages and descriptions
+opkg list_installed          	: List all and only the installed packages and description
+opkg install [-d dest] <pkg> 	: Download and install <pkg> (and dependencies)
+opkg files <pkg>				: List all files belonging to installed <pkg>
+
+SEE ALSO:
+	http://wiki.openwrt.org/doc/techref/opkg
+
+--------------------------------------------------------------------------------------------------------
+Howto enable cron?
+==================
+Set NVRAM entry:
+
+	cron_enable="1"
+	
+You can also do this in XWrt:
+
+	System/Cron
+	
+--------------------------------------------------------------------------------------------------------	
+Howto read/write system log?
+============================
+Reading:
+
+	logread			
+	logread -f			: continous
+
+
+Writing:
+
+	echo "message | logger [-t tag]
+	
+
+--------------------------------------------------------------------------------------------------------
+Error during calling opkg: "Could not obtain administrative lock"
+=================================================================
+Maybe previous call left a lock there:
+	
+	/usr/lib/opkg/lock
+	
+And kill all opkg processes.
+
+--------------------------------------------------------------------------------------------------------
+How to format a disk (e.g. pen-drive)?	
+======================================
+1. 'e2fsprogs' package has to be installed first
+
+2. Call  mkfs.ext2 <device>, e.g:
+
+	 mkfs.ext2 /dev/scsi/host1/bus0/target0/lun0/part1
+
+--------------------------------------------------------------------------------------------------------
+How to use torrent server?
+============================
+1. Install dctcs package (see also: http://yodctcs.googlepages.com/home2)
+
+2. Configure (/etc/dctcs.conf)
+
+3. Start server:
+
+	/etc/init.d/dctcs start
+	
+4. Browse WEB GUI:
+
+		http://192.168.1.1:18000
+	
+	WARNING: You cannot login in Opera, use another browser (e.g. FireFox).
+	
+
+--------------------------------------------------------------------------------------------------------
+How to list USB disks and partitions?
+=====================================
+ls /proc/scsi
+ls /dev/discs/
+
+
+--------------------------------------------------------------------------------------------------------
+How to switch ON/OFF wifi?
+==========================
+ON:		wifi
+OFF:	wifi down
+
+--------------------------------------------------------------------------------------------------------
+Howto add automount entries?
+============================
+Automount entries are /etc/fstab, but it generated by UCI. UCI configuration file is /etc/config/fstab .
+
+You can maintain it in LuCI under System/Mount points menu. If you don't have it create /etc/config/fstab,
+and it will be displayed.
+
+--------------------------------------------------------------------------------------------------------
+Activating fstab
+================
+1. Install 'block-mount'
+
+2. /etc/init.d/fstab enable
+
+3. /etc/init.d/fstab start
+
+--------------------------------------------------------------------------------------------------------
+What is UCI?
+============
+- UCI is 'Unified Configuration Interface'
+
+- Human readable/writable
+
+- Based on typed sections, containing option/value pairs, lists
+
+- Config split by packages: 
+
+	/etc/config/<package>
+
+SEE ALSO:
+	http://wiki.openwrt.org/doc/techref/uci
+	
+--------------------------------------------------------------------------------------------------------
+Howto use DDNS?
+===============
+Install an configure:		luci-app-ddns
+
+Available services and update URLs can be check here:	/usr/lib/ddns/services
+
+Notes for freedns.afraid.org
+----------------------------
+Is services file you can find this:
+
+	#freedns.afraid.org is weird, you just need an update code, for which we use the password variable
+	"freedns.afraid.org"    "http://freedns.afraid.org/dynamic/update.php?[PASSWORD]"
+
+so it enough to specify update code in 'password' field. Other fiels are not relevant.
+
+You can get update code here:
+
+	http://freedns.afraid.org/dynamic/
+	
+Get update code from 'Wget script'.
+
+If you want to change code call 'Rotate Authentication Token' in this page.
+
+	
+
+

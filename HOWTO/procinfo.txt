@@ -1,0 +1,164 @@
+============
+Process info
+============
+
+To get info about running processes:
+
+	ps ax
+	
+To get detailed info about a running process cat files under /proc/<pid>:
+
+		cmdline			: command line
+		environ		
+		maps			: used shared libfraries
+		status			: running status (state, memory, etc)
+
+
+		
+Identify processes using files or sockets:		fuser 
+Examples:
+
+	fuser -n tcp <port>		: processes use a TCP port
+	
+	fuser -km /home 		: kills all processes accessing the file system /home in any way.
+
+	if fuser -s /dev/ttyS1; then :; else something; fi 
+							: invokes something if no other process is using /dev/ttyS1.
+
+	fuser telnet/tcp 		: shows all processes at the (local) TELNET port.	
+
+	
+Getting info about running 	processes:	pgrep
+
+	pgrep -u postgres -l '.*'			: list all processes owned by postgres user
+	
+	
+
+How to read process table?
+==========================
+
+     #include <stdio.h>
+     #include <procinfo.h>
+     
+     int getprocs(struct procsinfo *, int, struct fdsinfo *,
+                  int, pid_t *, int);
+     
+     pid_t getpidbyname(char *name, pid_t *nextPid)
+     {
+       struct procsinfo  pi;
+       pid_t             retval = (pid_t) -1;
+       pid_t             pid;
+     
+       pid = *nextPid;
+     
+       while(1)
+       {
+         if(getprocs(&pi, sizeof pi, 0, 0, &pid, 1) != 1)
+           break;
+     
+         if(!strcmp(name, pi.pi_comm))
+         {
+           retval = pi.pi_pid;
+           *nextPid = pid;
+           break;
+         }
+       }
+     
+       return retval;
+     }
+     
+     int main(int argc, char *argv[])
+     {
+       int   curArg;
+       pid_t pid;
+       pid_t nextPid;
+     
+       if(argc == 1)
+       {
+         printf("syntax: %s <program> [program ...]\n",argv[0]);
+         exit(1);
+       }
+     
+       for(curArg = 1; curArg < argc; curArg++)
+       {
+         printf("Process IDs for %s\n", argv[curArg]);
+     
+         for(nextPid = 0, pid = 0; pid != -1; )
+           if((pid = getpidbyname(argv[curArg], &nextPid)) != -1)
+             printf("\t%d\n", pid);
+       }
+     }
+
+Reading the process table using popen and ps
+============================================
+
+     #include <stdio.h>      /* FILE, sprintf, fgets, puts */
+     #include <stdlib.h>     /* atoi, exit, EXIT_SUCCESS */
+     #include <string.h>     /* strtok, strcmp */
+     #include <sys/types.h>  /* pid_t */
+     #include <sys/wait.h>   /* WIFEXITED, WEXITSTATUS */
+     
+     char *procname(pid_t pid)
+     {
+        static char line[133], command[80], *linep, *token, *cmd;
+        FILE *fp;
+        int status;
+     
+        if (0 == pid) return (char *)0;
+     
+        sprintf(command, "ps -p %d 2>/dev/null", pid);
+        fp = popen(command, "r");
+        if ((FILE *)0 == fp) return (char *)0;
+     
+        /* read the header line */
+        if ((char *)0 == fgets(line, sizeof line, fp))
+        {
+           pclose(fp);
+           return (char *)0;
+        }
+     
+        /* figure out where the command name is from the column headings.
+         * (BSD-ish machines put the COMMAND in the 5th column, while SysV
+         * seems to put CMD or COMMAND in the 4th column.)
+         */
+        for (linep = line; ; linep = (char *)0)
+        {
+           if ((char *)0 == (token = strtok(linep, " \t\n")))
+           {
+              pclose(fp);
+              return (char *)0;
+           }
+           if (0 == strcmp("COMMAND", token) || 0 == strcmp("CMD", token))
+           { /*  we found the COMMAND column */
+              cmd = token;
+              break;
+           }
+        }
+     
+        /* read the ps(1) output line */
+        if ((char *)0 == fgets(line, sizeof line, fp))
+        {
+           pclose(fp);
+           return (char *)0;
+        }
+     
+        /* grab the "word" underneath the command heading... */
+        if ((char *)0 == (token = strtok(cmd, " \t\n")))
+        {
+           pclose(fp);
+           return (char *)0;
+        }
+     
+        status = pclose(fp);
+        if (!WIFEXITED(status) || 0 != WEXITSTATUS(status))
+          return (char *)0;
+     
+        return token;
+     }
+     
+     int main(int argc, char *argv[])
+     {
+        puts(procname(atoi(argv[1])));
+        exit(EXIT_SUCCESS);
+     }
+

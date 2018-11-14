@@ -1,0 +1,10 @@
+Xybernaut MA IV Linux settings
+==============================
+
+Setting up X
+------------
+- call XF86Setup
+- set PS/2 mouse to /dev/psaux
+- set VGA16 server with NeoMagic or generic card (first)
+- set 640x480/16 (first - it must be run)
+

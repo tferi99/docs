@@ -1,0 +1,7 @@
+How to debug under Linux ?
+
+Compile with -ggdb option to insert GDB debug information into executable.
+
+Debuggers:
+	gdb
+	ddd (debuger under KDE, cool :))

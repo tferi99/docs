@@ -1,0 +1,8 @@
+How can you specify, what does give finger about an user ?
+
+You have to create a .plan file into user's home directory. The contain of
+this file will be provided, if somebody asks information about user by 
+finger (finger user@host).
+
+
+

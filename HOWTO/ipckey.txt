@@ -1,0 +1,9 @@
+How to create a unique Sys V IPC key?
+=====================================
+
+Call ftok(), this generates a key from inod entry of a file (or directory).
+The file must be existing.
+
+See also:
+	man ftok
+	

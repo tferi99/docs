@@ -1,0 +1,6 @@
+You can determine the current runlevel with 'runlevel'.
+
+You can set default runlevel in /etc/inittab.
+
+See more:
+	man runlevel

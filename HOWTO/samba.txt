@@ -1,0 +1,107 @@
+=========
+Samba-FAQ
+=========
+
+- Samba server
+- Samba client
+
+
+-------------------------------------------------------------------------------------------------------
+Samba server
+============
+
+As root:
+- install:
+
+	apt-get install samba
+
+- add user:
+
+	smbpasswd -a <user>
+	
+	e.g:
+	
+		smbpasswd -a root
+	
+	Users are normal UNIX OS users, they have to have suitable rights to shared directories (RW).
+	
+- configure, add mount point:
+
+	mkdir ~/shared
+	vi /etc/samba/smb.conf
+	
+	Add this section:
+		[shared]
+		path = /root/shared
+		valid users =  root
+		available = yes
+		read only = no
+		browsable = yes
+		public = yes
+		writable = yes
+		printable = no
+		create mask = 0664
+		directory mask = 02775
+		security mask = 0664
+		directory security mask = 02775
+	 
+- restart samba:
+
+	/etc/init.d/samba restart
+  OR
+	service smbd restart
+  OR 
+	systemctl restart samba
+
+- on Windows add network drive:
+
+	\\HOST\shared
+	
+
+-------------------------------------------------------------------------------------------------------
+Samba client
+============
+
+                (Share name)  (password)   (IP)      (Workgrp) (User on remote)
+  smbclient \\\\ntserver\\c_cd kalman -I 134.0.0.115   -W xinfo    -U kalman
+
+  Domain=[XINFO] OS=[Windows NT 4.0] Server=[NT LAN Manager 4.0]
+  smb: \> h
+  ls             dir            du             lcd            cd
+  pwd            get            mget           put            mput
+  rename         more           mask           del            open
+  rm             mkdir          md             rmdir          rd
+  prompt         recurse        translate      lowercase      print
+  printmode      queue          cancel         quit           q
+  exit           newer          archive        tar            blocksize
+  tarmode        setmode        help           ?              !
+
+  It is similar to 'ftp'
+
+SAMBA MOUNT
+
+	smbmount  //192.168.5.113/andphone_record /mnt/ftoth/andphone_record -o username=ftoth,rw
+
+              (Share name)   (mount point)   (IP)       (Workgrp) (User on remote)
+	smbmount \\\\ntserver\\c_cd    /mnt/nt/ -I 134.0.0.115 -W xinfo -U kalman
+
+ It will ask a password after enter.
+ Password:
+
+ If we missed the password, we have to smbumount at first, and after to try smbmount again.
+
+If we would like to give password automatically, use the following form to user name:
+
+	user%password
+
+smbmount \\\\ntserver\\c_cd    /mnt/nt/ -I 134.0.0.115 -W xinfo -U kalman%kalman
+
+SAMBA UMOUNT
+ smbumount /mnt/nt/
+
+See also:
+	/u/tl/smnt
+	/u/tl/sumnt
+	/u/tl/shares
+	man smbclient, smbmount, smb...
+	

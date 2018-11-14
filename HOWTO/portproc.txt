@@ -1,0 +1,20 @@
+Listing processes using ports
+=============================
+
+Windows
+-------
+
+fport
+
+Linux
+-----
+
+lsof | grep <port>
+
+netstat -anp
+
+You can use this script as well:
+
+	echo "Open Ports:" ; netstat -anp | grep LISTEN | grep tcp | awk  '{print $4, "\t", $7}' | more
+	
+	

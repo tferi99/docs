@@ -1,0 +1,107 @@
+======================
+Linux filesystem howto
+======================
+
+1. Hard disk devices
+2. Partitioning, formatting
+3. Getting information
+4. Other tools
+
+Hard disk devices
+-----------------
+ATA:		hda		: primary master
+			hdb		: primary slave
+			hdc		: secondary master
+			hdd		: secondary slave
+
+			
+SATA:		sda
+			sdb
+			...
+			
+
+2. Partitioning, formatting
+---------------------------
+List partitions:
+
+	fdisk -l
+
+Create partition:			
+
+	fdisk <disk device>		
+			
+	and follow help (m button).
+
+	
+	REBOOT AFTER CREATING PARTITION TO RELOAD PARTITION TABLE FOR KERNEL (init 6).
+	
+Create block device, if it doesn't exist:
+
+	mknod <device> b <major> <minor>
+	
+	for example:
+		
+		mknod /dev/sdb2 b 8, 18
+	
+	TIPP: see ownership, access rights, major and minor of  existing devices
+
+	
+Formatting:
+
+	mke2fs <device>				: ext2
+	mkfs.ext3 <device>			: ext3
+	
+	See: /sbin/mkfs.* for available filesystems.
+	 
+Checking:
+
+	fsck <device>		: In actuality, fsck is simply a front-end for the various file system checkers (fsck.fstype) available under Linux. 
+	
+	e2fsck <device>		: check a Linux ext2/ext3 file system
+	e2fsck -c <device>	: running badblocks during checking
+	
+	
+	
+
+3. Getting information
+----------------------
+To get used spaces:
+
+	du -sh		(info only about this location, human readable)
+
+To get free spaces:
+
+	df -k
+	
+To get filesystem types:
+	
+	df -T
+	
+To get mounted filesystems:
+
+	mount
+	
+List of partitions:
+	
+	fdisk -l[u]			(-u : give sizes in sectors instead of cylinders)
+
+Dumping partition info:
+
+	cat /proc/partitions
+	
+To get type of filesystem:
+
+	fsck -N <device>
+	
+To get detailed information about filesystem (e.g. to get size of inodes):
+	
+	tune2fs -l <device>
+	
+	It lists the contents of the filesystem superblock.
+	
+4. Other tools
+--------------
+parted			: to manipulate existing partitions (e.g. resizing, moving)
+badblocks		: search a device for bad blocks
+
+

@@ -1,0 +1,15 @@
+============
+Windows tips
+============
+
+Q: How to enable hibernate??
+
+A: Start button -> Control Panel -> Power Options -> Hibernate tab -> 
+	-> check Enable hibernate support box -> Apply/OK -> reboot.
+	
+---------------------------------------------------------------------------------------------	
+
+Q: Howto refresh  Group Policies settings?
+
+A:  gpupdate /force  (+reboot)
+

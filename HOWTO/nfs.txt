@@ -1,0 +1,20 @@
+NSF Kickstart
+=============
+
+NFS server entries are in /etc/exports.
+
+	For example:
+
+		/mnt/fileserver/        *(ro,insecure,all_squash,sync)
+
+
+Mount exported filesystem in client side:
+
+	Add the folowing entry to /etc/fstab, and call 'mount /mnt/super_nfs'
+
+		super.ceg:/mnt/fileserver /mnt/super_nfs  nfs defaults 0 0
+
+	or call mount with the following parameters:
+
+		 mount -t nfs super.ceg:/mnt/fileserver  /mnt/super_nfs
+

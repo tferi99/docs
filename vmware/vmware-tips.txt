@@ -1,0 +1,107 @@
+===========
+vmWare tips
+===========
+
+Config
+------
+- Adding IDE/SCSI drives
+- SVGA driver
+- Network configuration
+
+Troubleshooting
+---------------
+- VMWare Image Clone Problem: eth0 Renamed As eth1
+
+---------------------------------------------------------------------------------------------------------------------------------------------	
+Adding IDE/SCSI drives
+======================
+You can specify type of disk in Advanced dialog during adding a new disk drive.
+
+---------------------------------------------------------------------------------------------------------------------------------------------	
+SVGA driver
+===========
+To install SVGA driver you have to install VMWare Tools.
+- boot up your operating system in VMWare
+- call 'Settings/VMWare Tools Install...' menu
+  Installation will be started automatically or installation disk will be mounted as
+  CD-ROM.
+
+---------------------------------------------------------------------------------------------------------------------------------------------	
+Network configuration
+=====================
+Bridged network:
+	- you need (at least) 2 network card
+	- set IP address of card2 to any free address in your network (or leave it empty)
+	- install network driver in virtual machine
+	- set IP address of card2 to any free address in your network, that is 
+	  DIFFERENT to IP address of card2, but it is in your network
+	
+	You will have a real, separated network address for your virtual network card.
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------------------	
+VMWare Image Clone Problem: eth0 Renamed As eth1
+================================================
+If you move a vmWare image to a different machine and you have a bridged physical network adapter, 
+MAC address will be changed.
+
+The problem is that config file and generated udev rule file consist inconsistent MAC address.
+- UDEV will contain a new entry for eth1 which contains the real MAC.
+
+So:
+
+
+Method0:
+	- Right-click the virtual machine and Click Edit Settings.
+
+	- Click Network adapter and click 'Advanced'
+		- Generate a new one
+		- Note this MAC
+
+	- Power on the Linux virtual machine.
+
+	- Open a console and log in as root.
+
+	- Edit /etc/sysconfig/network-scripts/ifcfg-eth0 and change MAC
+		
+
+	- Edit /etc/udev/rules.d/70-persistent-net.rules
+
+		NOTE: Remove duplications, sometimes your new MAC will be generate a new entry (e.g. for eth1)
+		
+	- ifup-eth0 or restart
+
+
+Method1:
+
+	- Get real MAC from /etc/udev/rules.d/70-persistent-net.rules (which assigned to eth1).
+	
+	- Device names are persisted into udev rule file
+
+		/etc/udev/rules.d/70-persistent-net.rules
+
+		This file contains device name and MAC address, too.
+		DELETE IT.
+		
+
+	- Network interface script also contains MAC address.
+
+		/etc/sysconfig/network-scripts/ifcfg-eth0
+		
+		Change HWADDR to the new MAC.
+		
+	
+	- Reboot.
+
+Method 2:
+
+	- Get real MAC from /etc/udev/rules.d/70-persistent-net.rules (which assigned to eth1).
+
+	- Delete entry for eth0 and rename eth1 to eth0 in other entry.
+	
+	- Write real MAC into 
+		
+		/etc/sysconfig/network-scripts/ifcfg-eth0
+	
+	
+	

@@ -1,0 +1,18 @@
+Installing Oracle 8.1.6 client
+------------------------------
+
+- installation can be started from X
+- after installation you have to set ORACLE_HOME, for example:
+ 
+		ORACLE_HOME=/opt/oracle/OraHome1
+		export ORACLE_HOME
+
+- than you can call SQLPLus, for example:
+
+		$ORACLE_HOME/bin/sqlplus el5adm/el5adm@ora8.ceg
+
+, where parameters:
+
+		sqlplus <user>/<password>@<TNS name>
+
+		

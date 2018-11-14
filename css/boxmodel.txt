@@ -1,0 +1,74 @@
+Properties
+----------
+Normal document flow, where:
+	- float: none
+	- position: static or relative
+
+*
+	inherit
+	
+display
+	block
+	inline
+	...
+	
+position
+	absolute	: absolute positioned - RELATIVE to the direct PARENT BLOCK
+	fixed		: absolute positioned - RELATIVE to the initial containing block - VIEWPORT
+	relative	: RELATIVE to the position of NORMAL FLOW
+	static		: no positioned (normal flow) - the properties top, right, bottom, left, and z-index are ignored for static boxes
+	
+float
+	none
+	left
+	right
+	
+clear			: which side of element does not allow floating box
+	none		: 
+	left
+	right
+	both
+	
+overflow
+	auto		: scrollbar(s) when necessary, but it doesn’t show scrollbars unless the content overflows
+	hidden		: hidden causes content that overflows the element’s box to be clipped (no scrolling)
+	scroll		: clips overflowing content, just like hidden, but provides a scrolling mechanism so that the overflow can be accessed
+	visible		: visible allows overflowing content, it will be rendered OUTSIDE the element’s box
+
+	
+clip
+	shape
+	auto
+	
+Containing box
+--------------
+The containing block for any other element box is determined by the value of the
+position property for that element.
+
+position: static (the default) or relative
+	Containing block is formed by the edge of the content box of the nearest ancestor
+	element whose display property value is one of:
+		- block
+		- inline-block
+		- list-item
+		- run-in 
+		- table
+		- table-cell
+	
+position: absolute
+	Containing block is the nearest positioned ancestor.
+	In other words, the nearest ancestor whose position property:
+		- absolute
+		- fixed
+		- relative. 
+		
+	The containing block is formed by the padding edge of that ancestor.
+	
+position: fixed
+	Containing block is the viewport for continuous media) or the page box (for paged media).	
+	
+	
+	
+	
+	
+	

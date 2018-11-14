@@ -1,0 +1,14 @@
+Sudo mini-howto
+===============
+sudo allows a permitted user to execute a command as the superuser or another user, as specified in the sudoers
+file (/etc/sudoer)
+
+To list what can be called with sudo by the current user:
+
+	sudo -l
+
+
+
+See also:
+	man sudo
+	man sudoers

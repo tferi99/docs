@@ -1,0 +1,10 @@
+
+man -l file		: to local file
+man -f key		: to list all manual for this key
+man -w key		: to print physical location of manual file
+man -T lj4 key | lpr	: to print manual page to a default HP Laser Jet 4 compatible printer (see man groff, /u/tl/manprint)
+man -t 			: to format a man page for printing (to postscript by default)
+
+
+You can find all of man topics in /usr/man/whatis file.
+

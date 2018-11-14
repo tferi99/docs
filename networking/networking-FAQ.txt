@@ -1,0 +1,29 @@
+- How traceroute does work?
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How traceroute does work?
+=========================
+Traceroute works by increasing the "time-to-live" value of each successive batch of packets sent. 
+The first three packets sent have a time-to-live (TTL) value of one (implying that they are not forwarded by the next router and make only a single hop). 
+The next three packets have a TTL value of 2, and so on. 
+
+When a packet passes through a host, normally the host decrements the TTL value by one, and forwards the packet to the next host. 
+When a packet with a TTL of one reaches a host, the host discards the packet and sends an ICMP time exceeded (type 11) packet to the sender. 
+The traceroute utility uses these returning packets to produce a list of hosts that the packets have traversed en route to the destination. 
+The three timestamp values returned for each host along the path are the delay (aka latency) values typically in milliseconds (ms) 
+for each packet in the batch. If a packet does not return within the expected timeout window, a star (asterisk) is traditionally printed. 
+
+Traceroute may not list the real hosts. It indicates that the first host is at one hop, the second host at two hops, etc. 
+IP does not guarantee that all the packets take the same route. Also note that if the host at hop number N does not reply, the hop will be skipped in the output.
+
+Unix:
+	On modern Unix and Linux-based operating systems, the traceroute utility by default uses UDP datagrams with destination ports number from 33434 to 33534. 
+Windows:	
+	The traceroute utility usually has an option to specify use of ICMP echo request (type 8) instead, as used by the Windows tracert utility. 
+	
+If you have a firewall and if you want traceroute to work from both machines (Unix/Linux and Windows) you will need to allow both protocols inbound 
+through your firewall (UDP with ports from 33434 to 33534 and ICMP type 8).
+
+There are also traceroute implementations that use TCP packets, such as tcptraceroute or Layer Four Trace. pathping is a utility introduced with 
+Windows NT that combines ping and traceroute functionality. mtr (My traceroute) is an enhanced version of ICMP traceroute which is available for 
+Unix and Windows systems. All implementations of traceroute rely on ICMP (type 11) packets being sent to the originator.

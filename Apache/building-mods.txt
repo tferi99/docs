@@ -1,0 +1,32 @@
+Szia!
+
+Röviden: apxs2 –c mod_include.c
+
+Hosszan:
+
+A /var/chroot/qs-dev alá raktam egy chrootot amiben ugyanaz van mint amiben most a rendszer fut. Az init.d könyvtárat átneveztem nehogy elinduljon benne valami csomagtelepítéskor, úgyhogy azt ne keresd. (egyébként sem kell abban semmi ilyet indítani) Felraktam devel csomagokat amik kellenek csomagkészítéshez, modulfordításhoz stb.
+
+„chroot /var/chroot/qs-dev” parancs bedob a chrootba, ilyenkor _DEVEL_ lesz a promptban, hogy meg tudd különböztetni. Ctrl-D simán visszadob a chrootból kintre. A teljes chroot tartalmát látod a /var/chroot/qs-dev/ alatt, innen fogod tudni majd a ketto között mozgatni a kérdéses modulokat. Ha valami miatt mégis belül akarsz indítani valamit, akkor viszont szólj nehogy kavarodás legyen belole.
+
+Chrooton belül:
+
+-	A forrásokat lehetoleg a /usr/src alatt tárold
+-	mod_include fordítás a következo módon lehetséges:
+o	cd /usr/src (hogy ide jöjjön majd a forrás)
+o	apt-get source apache2
+o	megkeresed a filter modulo kozott a mod_include-ot
+o	apxs2 –c mod_include.c
+o	libs könyvtár környékén megtalálod az so filet.
+-	mod_jk fordítás a következo módon:
+o	cd /usr/src (hogy ide töltodjön a mod-jk forrás)
+o	apt-get source libapache2-mod-jk 
+o	native könyvtárban ott a forrás
+?	./configure --with-apxs=/usr/bin/apxs2
+?	make
+?	.so filet viheted
+
+Ha csomagot kell belole gyártani akkor szólj. Ami fontos, hogy a normál rendszerben semmiképp se cseréld le a libc6 és libc6-i386 csomagokat arra amire frissíteni szeretné esetleg.
+
+Hirtelen ennyi, ha kérdésed van (lehet így félálomban nem sikerült túl értelmesen leírnom a dolgokat) akkor telefonon elérsz kb 10-tol.
+
+wolphie

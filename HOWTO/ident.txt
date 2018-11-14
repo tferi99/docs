@@ -1,0 +1,28 @@
+About ident
+===========
+
+'ident' or 'auth' is a TCP based service on port 113. You can query identification informations from the server about other TCP connections between you and server (server is the box which provides 113 for you).
+
+For example A machine opens a telnet on your B machine. You can query owner of telnet connection, if identd (ident daemon) is running on A.
+
+Connect to port 113 of A (for example with telnet):
+
+	telnet A 113
+
+Send a query request:
+	<port on server>,<port on client>
+
+You can get server port by 'netstat -a' (for example A calls your port 23 from port 1028), so request:
+
+	1028,23
+
+The information returned will be something this:
+
+	1028 , 23 : USERID : UNIX: root
+
+The last field contains owner of connection.
+
+See more: RFC1413
+
+
+	

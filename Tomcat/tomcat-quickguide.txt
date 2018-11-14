@@ -1,0 +1,66 @@
+======================
+Tomcat 5.x quick guide
+======================
+
+Deployment
+----------
+Context descriptor:
+	A Context XML descriptor is a FRAGMENT of XML data which contains a valid Context element which would normally be found in 
+	the main server configuration file (conf/server.xml), and allows easy and automated manipulation of web applications by the
+	various management tools available in Tomcat. For a given host, the Context descriptors are located in 
+
+		$CATALINA_HOME/conf/[enginename]/[hostname]/foo.xml.
+
+
+	- Context descriptors allow defining:
+		- namign resources
+		- session manager configuration
+		- etc.
+		
+	- docBase specified in the Context element can refer to:
+		- directory which will be created when the .WAR is expanded
+		- .WAR itself
+		- other external directory
+		
+	- Context path comes from:
+		- name of WAR
+		- 'path' property of <Context> tag in context descriptor
+		
+	NOTE: Note that while THE NAME OF THE FILE IS NOT TIED to the webapp name.
+	
+
+Datasource
+----------
+<Resource name="jdbc/myoracle" auth="Container"
+              type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
+              url="jdbc:oracle:thin:@127.0.0.1:1521:mysid"
+              username="scott" password="tiger" maxActive="20" maxIdle="10"
+              maxWait="-1"/> 
+		  
+Copy the JDBC jar to $CATALINA_HOME/common/lib. The jars need to be in this directory in order for DBCP's Classloader to 
+find them. This has to be done regardless of which configuration step you take next.		  
+		  
+See also:
+	http://localhost:8080/tomcat-docs/jndi-datasource-examples-howto.html
+	
+	
+Memory setting
+--------------
+	-Xms512m 
+	-Xss1m 
+	-Xmx800m 
+	-server 
+	-XX:PermSize=128m 
+	-XX:MaxPermSize=256m 
+	
+
+An example running process:
+
+	/opt/java/jre/bin/java -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager 
+		-Djava.util.logging.config.file=/opt/tomcat/conf/logging.properties 
+		-Xms512m -Xss1m -Xmx800m -server -verbose 
+		-XX:+BackgroundCompilation 
+		-XX:PermSize=128m -XX:MaxPermSize=256m 
+		-Djava.endorsed.dirs=/opt/tomcat/common/endorsed 
+		-classpath :/opt/tomcat/bin/bootstrap.jar:/opt/tomcat/bin/commons-logging-api.jar 
+		-Dcatalina.base=/opt/tomcat -Dcatalina.home=/opt/tomcat -Djava.io.tmpdir=/opt/tomcat/temp org.apache.catalina.startup.Bootstrap start

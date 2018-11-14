@@ -1,0 +1,22 @@
+================
+JDBC-Realm-HOWTO
+================
+
+DDLs
+----
+INSERT INTO sample_user (id, email, lang, password, full_name, registration_time, status, username, version)
+  VALUES ((SELECT nextval('sample_user_id_seq')), 'borcsokj@sch.bme.hu', 'hu', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', 'Börcsök József', now(), 1, 'JoeB', 1);
+
+INSERT INTO sample_group (id, description, groupname, version) VALUES ((SELECT nextval('sample_group_id_seq')), 'Registered users', 'registered', 1);
+INSERT INTO sample_group (id, description, groupname, version) VALUES ((SELECT nextval('sample_group_id_seq')), 'Administrators', 'admin', 1);
+
+INSERT INTO sample_usergroup (group_id, user_id) (SELECT g.id, u.id FROM sample_user u, sample_group g);
+
+CREATE VIEW sample_view_usergroup AS SELECT username, groupname FROM sample_usergroup ug JOIN sample_user u ON ug.user_id = u.id JOIN sample_group g ON ug.group_id = g.id  WHERE u.status = 1;
+
+Registration into Glassfish
+---------------------------
+$AS_HOME/bin/asadmin --host $AS_HOST --port $AS_ADMIN_PORT --user $AS_ADMIN_USER --passwordfile $AS_PASSWORD_FILE create-auth-realm --classname com.sun.enterprise.security.auth.realm.jdbc.JDBCRealm 
+	--property jaas-context=jdbcRealm:datasource-jndi=jdbc/samples:user-table=sample_user:user-name-column=username:password-column=password:group-table=sample_view_usergroup:group-name-column=groupname:digest-algorithm=SHA-1 sampleRealm
+	
+	

@@ -1,0 +1,39 @@
+=============
+BackTrack-FAQ
+=============
+
+Networking
+----------
+- Howto activate networking?
+- Howto start SSH server?
+
+Tools
+-----
+- How to use Midnight Commander in live instance?
+
+---------------------------------------------------------------------------------------------------------
+Howto activate networking?
+==========================
+By default only base networking is activated (local loopback). To activate additional interfaces call:
+
+	/etc/init.d/network start
+	
+---------------------------------------------------------------------------------------------------------	
+Howto start SSH server?	
+=======================
+Before first start:
+
+	sshd-generate
+	
+than:
+
+	/etc/init.d/ssh start
+	
+
+---------------------------------------------------------------------------------------------------------	
+How to use Midnight Commander in live instance?
+===============================================
+MC has not been installed by default so:
+
+	apt-get install mc
+	

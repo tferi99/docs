@@ -1,0 +1,824 @@
+=============
+Maven 2/3 FAQ
+=============
+
+Plugins
+-------
+- How to run maven lifecycle phases/goals?
+- How do I determine what version of a plugin I am using?
+- How to list all goals available for a certain plugin?
+
+Projects
+--------
+- How to create projects?
+- How to create JSF/JPA capable WEB application with Eclipse project?
+- How to start execution from a specified project of a multi-module project?
+
+Dependencies
+------------
+- How to parent project found?
+- How to print dependency tree of a project?
+
+JAVA compiler
+-------------
+- How to specify JDK version?
+
+Resources
+---------
+- Using resources.
+- How to add and filter External Web Resources?
+- How to use parameters from properties file in maven project?
+- How to use a global property file in multi-module project?
+
+Packaging
+---------
+- Howto add JARs to dependencies from local filesystem?
+- How to copy created artifacts into external location after build?
+- How to create WAR by extending WAR?
+- How can I create an executable jar with dependencies using Maven?
+
+Repositories
+------------
+- Where are central repositories?
+
+Testing
+-------
+- Howto skip JUnit tests?
+- Where can you find test reports?
+
+Troubleshooting
+---------------
+- How to get tip to solve build errors?	
+- Error:  The plugin '...' does not exist or no valid version could be found
+- Error messaage during buid java.lang.NullPointerException
+- How to fix error “Updating Maven Project”. Unsupported IClasspathEntry kind=4?
+
+Execution
+---------
+- How to execute Java class from Maven?
+- How to execute a WEB application with Jetty?
+
+---------------------------------------------------------------------------------------------------------------
+How to run maven lifecycle phases/goals?
+========================================
+1. Invoke a lifecycle phase, e.g. 
+
+	mvn install
+
+	This runs the lifecycle phase install and all its predecessor phases like compile and test.
+	
+2. Invoke a plugin goal via the plugin prefix, e.g. 
+
+	mvn compiler:compile
+
+	Eventually, the plugin prefix translates to a group id and artifact id of a plugin. Maven resolves plugin prefixes 
+	by first looking at the plugins of the current project's POM and next by checking the metadata of user-defined plugin groups.
+	
+3. Invoke a plugin goal via the versionless plugin coordinates, e.g. 
+
+	mvn org.apache.maven.plugins:maven-compiler-plugin:compile
+
+	To resolve the plugin version, Maven will first check the project's POM and fallback to the latest release 
+	version of the plugin that was deployed to the configured plugin repositories.
+	
+4. Invoke a plugin goal via the fully qualified plugin coordinates, e.g. 
+
+	mvn org.apache.maven.plugins:maven-compiler-plugin:2.0.2:compile
+
+You can freely mix all of these styles within a single command line but you have to specify at least one goal/phase 
+to get Maven going. 
+
+Alternatively, you can define a default goal in your POM as shown below:
+
+	<project>
+	  ...
+	  <build>
+		<defaultGoal>install</defaultGoal>
+		...
+	  </build>
+	  ...
+	</project>
+
+---------------------------------------------------------------------------------------------------------------
+Using resources
+===============
+
+The rule employed by Maven is that all directories or files placed within the 
+
+	src/main/resources 
+	
+	directory are packaged in your artifact (JAR/WAR/etc.) WITH THE EXACT SAME STRUCTURE, starting 
+	at the base of the artifact.
+
+	You can filter resources. That means variable expression will be evaluated form properties specified
+	in pom.xml or in external property file (see more below.)
+
+---------------------------------------------------------------------------------------------------------------
+Howto add JARs to dependencies from local filesystem?
+=====================================================
+
+Set scope to 'system' and add a system path to JAR:
+
+		...
+		<dependency>
+			<groupId>acegi-security</groupId>
+			<artifactId>acegi-security</artifactId>
+			<version>1.0.3</version>
+			<type>jar</type>
+			<scope>system</scope>
+			<systemPath>
+				${basedir}/WebContent/WEB-INF/lib/acegi-security-1.0.3.jar
+			</systemPath>
+		</dependency>
+		...
+		
+---------------------------------------------------------------------------------------------------------------
+How to copy created artifacts into external location after build?
+=================================================================
+Insert an ANT copy at the end of build section for goal 'install', for example:
+
+	<build>
+		<plugins>
+			...
+			<!-- FToth - copying artifact into webapp -->
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>install</id>
+						<phase>install</phase>
+						<configuration>
+							<tasks>
+								<property name="webproject.webinf.dir" value="../../webapp/WebContent/WEB-INF"/>
+								<copy todir="${webproject.webinf.dir}/lib">
+								<fileset dir="./target" includes="*.jar"/>
+							</copy>
+							</tasks>
+						</configuration>
+						<goals>
+						<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+---------------------------------------------------------------------------------------------------------------
+How to add and filter External Web Resources?
+=============================================
+
+The default resource directory for all maven2 projects is src/main/resources which will end up in target/classes and in 
+	WEB-INF/classes in the war. The directory structure will be preserved in the process.
+	The war plugin is also capable of including resources not found in the default resource 
+	directory through the webResources parameter of the war plugin.
+	
+	
+	<project>
+	  [...]
+	  <build>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-war-plugin</artifactId>
+	        <version>2.0</version>
+	        <configuration>
+	          <webResources>
+	            <resource>
+	              <!-- this is relative to the pom.xml directory -->
+	              <directory>resource2</directory>
+	            </resource>
+	          </webResources>
+	         </configuration>
+	       </plugin>
+	    </plugins>
+	  </build>
+	  [...]  
+	</project>	
+	
+	
+	Inclusion/Exclusion for webResources
+	------------------------------------
+	[...]
+	    <configuration>
+	      <webResources>
+	        <resource>
+	          <!-- this is relative to the pom.xml directory -->
+	          <directory>resource2/</directory>
+	          <!-- the list has a default value of ** -->
+	          <includes>
+	             <include>image2/*.jpg</include>
+	          <includes>          
+	          <!-- there's no default value for this -->
+	          <excludes>
+	             <exclude>**/*.jpg</exlude>
+	          </excludes>
+	        </resource>
+	      </webResources>
+	    </configuration>  
+	  [...]	
+	  
+	  See more: 	  
+		- "D:/doc/software/tools/Maven2/war-plugin/Maven War Plugin - Adding and Filtering External Web Resources.mht" 
+		- http://maven.apache.org/plugins/maven-war-plugin/
+
+		
+---------------------------------------------------------------------------------------------------------------
+How to specify JDK version?
+===========================
+
+You can specify these javac options for maven-compiler-plugin:
+
+  -source <release>          Provide source compatibility with specified release
+  -target <release>          Generate class files for specific VM version
+
+Sometimes when you may need to compile a certain project TO A DIFFERENT VERSION THAN WHAT YOU ARE CURRENTLY USING. 
+	The javac can accept such command using -source and -target. The Compiler Plugin can also be configured to provide these 
+	options during compilation.
+
+	For example, if you want to enable assertions (-source 1.4) and also want the compiled classes to be compatible with JVM 1.4 
+	(-target 1.4), you can then put:
+	
+	<project>
+	  [...]
+	  <build>
+	    [...]
+	    <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-compiler-plugin</artifactId>
+	        <configuration>
+	          <source>1.4</source>
+	          <target>1.4</target>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+	    [...]
+	  </build>
+	  [...]
+	</project>
+	
+---------------------------------------------------------------------------------------------------------------
+Howto skip JUnit tests?
+=======================
+If you absolutely must, you can also use the maven.test.skip property to skip COMPILING the tests. 
+maven.test.skip is honored by Surefire, Failsafe and the Compiler Plugin.
+
+	mvn -Dmaven.test.skip=true install
+
+To skip RUNNING the tests for a particular project, you configure the skip parameter:
+
+		<project>
+			...
+			<build>
+			...
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+			...
+			</build>
+			...
+		</project>
+OR
+
+	mvn install -DskipTests
+	
+See also:
+http://maven.apache.org/plugins/maven-surefire-plugin/examples/skipping-test.html
+----------------------------------------------------------------------------------------------------------------------------
+Where can you find test reports?
+================================
+If you are running test in a Maven2 project, your test reports will be generated under:
+
+	<project>/target/surefire-reports
+
+----------------------------------------------------------------------------------------------------------------------------
+How to use parameters from properties file in maven project?
+============================================================
+There are two configuration function
+
+
+	1. Filters
+	----------
+	If you wants to process parameter expressions in resource files you can use filtering.
+	Filters are processed during copying resource files.
+
+	Use <filters> tag in POM to specify properties file to load and enable filtering for resources.
+
+		For example:
+		
+			POM fragment:
+			
+				<!-- by FToth -->
+				<filters>
+					<filter>filter.properties</filter>
+				</filters>
+				
+		        <resources>
+
+					<!-- by FToth -->
+		            <resource>
+		                <directory>src/resources</directory>
+						<filtering>true</filtering> 
+		            </resource>  			
+		        </resources>
+				
+			filter.properties:
+				
+				i18n.language=hu
+				i18n.country=HU
+			
+			core/src/resources/proba.properties:
+			
+				language=${i18n.language}
+				country=${i18n.country}
+
+				MailServer=mail.proba.hu
+				MailPort=25
+
+			result file in JAR/WAR:
+			
+				language=hu
+				country=HU
+
+				MailServer=mail.proba.hu
+				MailPort=25
+
+	2. Specifying maven project properties from external properties file
+	--------------------------------------------------------------------
+	Maven1 was able to load project properties from external file (project.properties).
+	But Maven2 DOESN'T support this by default, Maven2 stores the whole project in pom.xml .
+	
+	By default if you want to use different property sets during builds you can use profiles.
+	In some case this is not a good solution, because there are redundant information.
+	
+	The only solution to load external properties file calling custom plugin. There is a 
+	plugin (Maven Properties Plugin) to perform this.
+	
+	Usage:
+	
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>properties-maven-plugin</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<executions>
+				<execution>
+					<phase>initialize</phase>
+					<goals>
+					<goal>read-project-properties</goal>
+					</goals>
+					<configuration>
+						<files>
+							<file>pom.properties</file>
+						</files>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>				
+	
+	This will load properties from pom.properties into Project properties collection in phase 'initialize'.
+	
+	
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to use a global property file in multi-module project for profiles?	
+=======================================================================
+You can load parameters from propety as you can see in previous topic.
+
+Requirement here: we want place global properties into a single file into root 
+project. Every module project is under root and there is only a single level 
+under root.
+
+In this case add a 'filters' tag to each profiles and get filter file from 
+the parent directory (child projects will use filters but property file is in root project). 
+Like this:
+
+        <profile>
+			<id>product_oracle</id>
+			<build>
+				<filters>
+					<!-- relative path from child projects -->
+					<filter>../product_oracle.properties</filter>
+				</filters>			
+			</build>
+			...
+		<profile>
+
+
+
+----------------------------------------------------------------------------------------------------------------------------
+How do I determine what version of a plugin I am using?
+=======================================================	
+You can use the Maven Help Plugin's describe goal. For example, to find out the version of the properties-maven-plugin plugin:
+
+	mvn -Dplugin=properties help:describe
+	
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to list all goals available for a certain plugin?
+=====================================================	
+We can use the describe goal of maven-projecthelp-plugin to list the goals available, see sample syntax below. 
+
+	mvn projecthelp:describe -Dplugin=org.codehaus.mojo:properties-maven-plugin -Dfull=true
+	
+	
+----------------------------------------------------------------------------------------------------------------------------
+Error:  The plugin '...' does not exist or no valid version could be found
+==========================================================================	
+With -X the following DEBUG messages generated:
+
+	[DEBUG] Using defaults for missing POM org.codehaus.mojo:properties-maven-plugin:pom:LATEST
+	[DEBUG] properties-maven-plugin: using locally installed snapshot
+	[DEBUG] Artifact not found - using stub model: Unable to determine the release version
+
+	org.codehaus.mojo:properties-maven-plugin:pom:RELEASE
+
+Remote repo
+-----------
+Maven cannot resolve plugin and cannot load. Possible reason of problem a corrupted or bad metadata.
+Try delete the whole plugin directory or specific plugin directory from local repository and download again.
+Plugin directrory is under:
+
+	$HOME/.m2/repository/org/apache/maven/plugins 
+
+Local repo
+----------
+If you install a plugin into local repository and you get this error from bad local metadata.
+
+Local metadata file for a plugin:
+
+	$M2_REPO/groupID/artifactID/maven-metadata-local.xml
+	
+1. Try to fix problem by specifying latest of release tag.
+	
+For example:
+
+	<?xml version="1.0" encoding="UTF-8"?><metadata>
+	  <groupId>org.codehaus.mojo</groupId>
+	  <artifactId>properties-maven-plugin</artifactId>
+	  <version>1.0</version>
+	  <versioning>
+									<----- <latest>1.0</latest>
+											OR
+											<release>1.0</release>
+	    <versions>
+	      <version>1.0</version>
+	    </versions>
+	    <lastUpdated>20080229221124</lastUpdated>
+	  </versioning>
+	</metadata>		
+		
+2. Other workaround can be to deploy plugin from source code.
+		
+----------------------------------------------------------------------------------------------------------------------------		
+Error messaage during buid java.lang.NullPointerException
+=========================================================
+	java.lang.NullPointerException
+			at org.apache.maven.plugin.surefire.SurefirePlugin.constructSurefireBooter(SurefirePlugin.java:594)
+			at org.apache.maven.plugin.surefire.SurefirePlugin.execute(SurefirePlugin.java:391)
+			...
+			
+When you have test sources, but neither JUnit nor TestNG defined as a dependency, instead of a warning 
+	(which I believe was previous behavior), the following error is given.
+	
+	Solution: Add JUnit dependency.
+	
+	
+----------------------------------------------------------------------------------------------------------------------------		
+How to create projects?
+=======================
+
+	mvn archetype:create 
+		-DgroupId=<your project's group id>
+		-DartifactId=<your project's artifact id>
+		[-DarchetypeArtifactId=<archetype ID>]
+	
+	
+Most important archetypes are:
+
+Project Template (Archetype)				Purpose
+----------------------------                -------
+maven-archetype-archetype					Create your own project template (archetype).
+maven-archetype-j2ee-simple					Creates a J2EE project (EAR), with directories and subprojects for the EJBs, servlets, etc.
+maven-archetype-mojo						Create your own Maven 2 plugins.
+maven-archetype-quickstart					Simple Java project, suitable for JAR generation. Maven 2 default.
+maven-archetype-site						Documentation-only site, with examples in several formats. You can run this archetype on 
+											top of an existing Maven 2 project to add integrated documentation.
+maven-archetype-webapp						Creates a web application project (WAR), with a simple Hello World JSP.
+	
+For example creating a WEB application:
+
+
+	mvn archetype:create -DgroupId=com.mysite.myproject -DartifactId=my-webapp -DarchetypeArtifactId=maven-archetype-webapp
+	
+
+----------------------------------------------------------------------------------------------------------------------------		
+Where are central repositories?
+===============================
+	
+	http://repo1.maven.org/maven2/org/
+	
+----------------------------------------------------------------------------------------------------------------------------		
+How to create WAR by extending WAR?
+===================================
+Use overlay function of maven-war-plugin.
+	- Add dependency to source WAR
+	- 
+
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	  <modelVersion>4.0.0</modelVersion>
+	  <groupId>org.ftoth</groupId>
+	  <artifactId>orbeon-xforms-test</artifactId>
+	  <packaging>war</packaging>
+	  <version>1.0-SNAPSHOT</version>
+	  <name>orbeon-xforms-test Maven Webapp</name>
+	  <url>http://maven.apache.org</url>
+	  <dependencies>
+	  <dependency> 
+		  <groupId>org.orbeon.webapp</groupId>
+		  <artifactId>orbeon</artifactId>
+		  <version>3.7.1</version>
+		  <type>war</type>
+		</dependency> 
+	  </dependencies>
+	  
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<finalName>orbeon-xforms-test</finalName>
+	<plugins>
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-war-plugin</artifactId>
+			<configuration>
+			  <overlays>
+				<overlay>
+				  <groupId>org.orbeon.webapp</groupId>
+				  <artifactId>orbeon</artifactId>
+				</overlay>
+			  </overlays>
+			</configuration>
+		   </plugin>
+		</plugins>
+		</build>   
+	</project>
+
+----------------------------------------------------------------------------------------------------------------------------		
+How to create JSF/JPA capable WEB application with Eclipse project?
+===================================================================
+1. Create maven project
+
+	Generate maven project:
+		
+			mvn archetype:generate
+			
+		- Choose maven-archetype-webapp (currently 101)
+		- specify project parameters
+	
+2. Create Eclipse project for WTP
+
+	Note:
+	For JSF project you need Java 5 or higher and dynamic WEB module 2.5 or higher.
+	
+	- Change Java version to 6 (5 or higher) in POM:
+		
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+		
+	- Prepare facet for WEB 2.5
+	
+		There is a WTP limitation. You cannot change the facet version of Web,
+		Ear, Ejb (and probably JCA) projects.
+		Make sure you have a 2.5 web.xml in src\main\webapp\WEB-INF. It's the
+		most important part, as the web project facet is based on it.
+		
+		- Create an empty dummy dynamic WEB project with WEB 2.5 module.
+		- Get web.xml from there
+
+	- Create Eclipse project:
+	
+		mvn eclipse:eclipse -Dwtpversion=2.0
+
+	- Import project into Eclipse and check facet versions. If dynamic WEB facet is still 2.4, change it to 
+		2.5 in .settings/org.eclipse.wst.common.project.facet.core.xml .
+		
+3. Adding JSF capability:
+	- Specify application runtime in 'Runtimes' tab of facets.
+	- Add JSF facet
+
+	
+----------------------------------------------------------------------------------------------------------------------------		
+How to execute Java class from Maven?	
+=====================================
+3 ways to run Java main from Maven:
+
+1) Running from Command line
+----------------------------
+Without arguments:
+
+	mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main"  
+	
+With arguments:
+
+	mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main" -Dexec.args="arg0 arg1 arg2"  
+	
+With runtime dependencies in the CLASSPATH:
+
+	mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main" -Dexec.classpathScope=runtime  
+	
+2) Running in a phase in pom.xml
+--------------------------------
+	<build>  
+	 <plugins>  
+	  <plugin>  
+	   <groupId>org.codehaus.mojo</groupId>  
+	   <artifactId>exec-maven-plugin</artifactId>  
+	   <version>1.1.1</version>  
+	   <executions>  
+		<execution>  
+		 <phase>test</phase>  
+		 <goals>  
+		  <goal>java</goal>  
+		 </goals>  
+		 <configuration>  
+		  <mainClass>com.vineetmanohar.module.CodeGenerator</mainClass>  
+		  <arguments>  
+		   <argument>arg0</argument>  
+		   <argument>arg1</argument>  
+		  </arguments>  
+		 </configuration>  
+		</execution>  
+	   </executions>  
+	  </plugin>  
+	 </plugins>  
+	</build>  
+	
+and	
+	mvn test
+	
+3) Running in a profile in pom.xml
+----------------------------------
+<profiles>  
+ <profile>  
+  <id>code-generator</id>  
+  <build>  
+   <plugins>  
+    <plugin>  
+     <groupId>org.codehaus.mojo</groupId>  
+     <artifactId>exec-maven-plugin</artifactId>  
+     <version>1.1.1</version>  
+     <executions>  
+      <execution>  
+       <phase>test</phase>  
+       <goals>  
+        <goal>java</goal>  
+       </goals>  
+       <configuration>  
+        <mainClass>com.vineetmanohar.module.CodeGenerator</mainClass>  
+        <arguments>  
+         <argument>arg0</argument>  
+         <argument>arg1</argument>  
+        </arguments>  
+       </configuration>  
+      </execution>  
+     </executions>  
+    </plugin>  
+   </plugins>  
+  </build>  
+ </profile>  
+</profiles>  
+
+and
+
+	mvn test -Pcode-generator  
+
+----------------------------------------------------------------------------------------------------------------------------		
+How to execute a WEB application with Jetty?
+============================================
+mvn jetty:run
+	
+----------------------------------------------------------------------------------------------------------------------------		
+How to parent project found?
+============================
+1. local repository
+2. parent directory (../pom.xml)
+3. localtion can be specified by relativePath property:
+
+	<project>
+		<parent>
+			<groupId>org.sonatype.mavenbook</groupId>
+			<artifactId>a-parent</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<relativePath>../a-parent/pom.xml</relativePath>
+		</parent>
+		<artifactId>project-a</artifactId>
+	</project>
+
+----------------------------------------------------------------------------------------------------------------------------		
+How to start execution from a specified project of a multi-module project?
+==========================================================================
+Use -ef option:
+
+	mvn -rf <module>
+	
+	
+----------------------------------------------------------------------------------------------------------------------------		
+How to get tip to solve build errors?	
+=====================================
+If you get an error during maven build you can get some hints if
+you looks for [Help X] URL, e.g.:
+
+	[INFO] Scanning for projects...
+	[ERROR] The build could not read 1 project -> [Help 1]
+	[ERROR]
+	[ERROR]   The project com.qualysoft.riskanalysis:riskanalysis-web:1.0 (D:\usr\riskanalysis_mkb\src\web\pom.xml) has 1 error
+	[ERROR]     'dependencies.dependency.version' for com.qualysoft:mkb-config:zip is missing. @ line 168, column 17
+	[ERROR]
+	[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+	[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+	[ERROR]
+	[ERROR] For more information about the errors and possible solutions, please read the following articles:
+	[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/ProjectBuildingException						<---------------- LOOK HERE!
+
+Follow instuction found in this page, maybe it helps.
+
+----------------------------------------------------------------------------------------------------------------------------		
+How to fix error “Updating Maven Project”. Unsupported IClasspathEntry kind=4?
+==============================================================================
+Try:
+	- If you have import project into the eclipse 4, please delete it.
+	- In maven consol, run: mvn eclipse:clean
+	- In Eclipse 4: File -> Import -> Maven -> Existing Maven Projects
+
+
+----------------------------------------------------------------------------------------------------------------------------		
+How can I create an executable jar with dependencies using Maven?
+=================================================================
+Use maven-assembly-plugin:
+
+	Create assembly.xml
+			
+		<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+				  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+			<id>with-dependencies</id>
+			<formats>
+				<format>jar</format>
+			</formats>
+			
+			<files>
+			</files>
+			
+			<includeBaseDirectory>false</includeBaseDirectory>
+			<dependencySets>
+				<dependencySet>
+					<outputDirectory>/</outputDirectory>
+					<useProjectArtifact>true</useProjectArtifact>
+					<unpack>true</unpack>
+					<scope>runtime</scope>
+				</dependencySet>
+			</dependencySets>
+		</assembly>
+	
+
+	Put into pom.xml:
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<finalName>timetrackerclient</finalName>
+					<descriptor>assembly.xml</descriptor>
+					<archive>
+						<manifest>
+							<mainClass>com.andtek.timetracker.TimeTrackerClient</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+
+	and call:
+	
+		call mvn clean install -Dmaven.test.skip=true assembly:single
+
+	
+----------------------------------------------------------------------------------------------------------------------------		
+How to print dependency tree of a project?	
+==========================================
+
+	mvn dependency:tree

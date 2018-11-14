@@ -1,0 +1,12 @@
+How to send authenticate information with an URL?
+=================================================
+
+protocol://user:password@host:port/path
+
+For example:
+
+	ftp://xinfo:123xin@ftp.sednet.hu/pub
+
+
+See also: RFC1738
+

@@ -1,0 +1,14 @@
+CVS tips
+========
+
+To set user privilegs
+---------------------
+If 'writers' file doesn't exist in CVSROOT directory, everybody has write access.
+If exists, users in this file can write.
+
+To set user password
+--------------------
+Generate password with crypt.pl and write into CVSROOT/passwd.
+You can use settpasswd script (see: D:\inst\cvs\scripts\setpassword).
+
+

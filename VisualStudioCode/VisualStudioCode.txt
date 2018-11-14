@@ -1,0 +1,144 @@
+====================
+VisualStudioCode FAQ
+====================
+Config
+------
+- Configuration parameters
+
+Debug
+-----
+- How to debug server side JS with VSCode?
+- How to debug client side JS with VSCode and Chrome?
+- How to debug client and server side JS with VSCode?
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+Configuration parameters
+========================
+- AutoSave on focus change:
+
+    "files.autoSave": "onFocusChange",
+	
+- Tab on indentation for all files:	
+    "editor.insertSpaces": false,
+    "editor.detectIndentation": false
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------
+How to debug server side JS with VSCode?
+========================================
+You can debug server side JS from NodeJS application with VSCode simply.
+It does not require any addons.
+
+Configuration for debugging is in:
+
+	<PROJECT_DIR>/.vscode/launch.json
+	
+First it does not exits yet. 
+
+- Installed NodeJS is required.
+- Open project folder in VSCode
+- On first start:
+	- Switch to debug page, debug method combo still empty (No Configurations)
+	- Start debug to create launch.json
+	- Select 'Node.js' environment, it will create configuration and now you are able choose a debug mode.
+- Debug mode:
+	- Launch: it will launcs Node.js, for this set entry point JS in launch.json/configurations/program, e.g:
+
+				"program": "${workspaceRoot}/server.js",
+				
+	- Attach to a process: if your project is running in Node.js runtime you can attact debugger to is.
+		During start debugger you can choose process to attach.
+	
+Troubleshooting
+---------------
+Color of status bar will be orange in debug.
+You can put breakpoints into SERVER SIDE JSs.
+
+!!!!!!! Client side JS cannot be debugged this way. !!!!!!!
+SEE: How to debug client side JS with VSCode and Chrome?
+
+------------------------------------------------------------------------------------------------------------------------------------------
+How to debug client side JS with VSCode and Chrome?
+===================================================
+With VSCode 
+- Install 'Debugger for Chrome' extension into VSCode
+- Start chrome with this CL parameter:
+
+	 --remote-debugging-port=9222
+	 
+- During 1st start Create 'Chrome' debug, it will create
+	
+	<PROJECT_DIR>/.vscode/launch.json
+
+- Change confuration, specify url and change webRoot to point to root of static files. E.g:
+
+	launch.json:
+	
+		"configurations": [
+        {
+            "name": "Attach to Chrome, with sourcemaps",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9222,
+            "sourceMaps": false,
+            "url": "http://localhost:3000/",
+            "webRoot": "${workspaceRoot}/public",
+            "diagnosticLogging": true
+        },
+		....
+
+	
+- Switch OFF Chrome DevTool before debug.
+
+- Start debugger with 'Attach to Chrome...' mode.
+		
+	
+Troubleshooting
+---------------
+Sometimes breakpoints cannot be activated and fired. 
+- Check Chrome process if opening port 9222
+- add this configuration variable:
+
+	"diagnosticLogging": true
+	
+	It will dump detailed log to debug console during attaching debugger. All JS files contain breakpoint should be resolved.
+	
+- 	MESSAGE: ›Warning: Found more than one valid target page. Attaching to the first one. Available pages:....
+
+	You have to specify url of application otherwise debugger won't be able to identify endpoint. E.g:
+		
+		"url": "http://localhost:3000/",
+
+	Check if debugger attached to the propert chrome debug endpoint. 
+	If it cannot identify endpoint (by URL) and there are more endpoints it will choose the 1st one!
+		
+	Available endpoints can be listed by:
+		http://localhost:9222/
+		OR
+		http://localhost:9222/json
+		
+- MESSAGE:	>Paths.setBP: No target url cached for client path: .... , waiting for target script to be loaded.
+	
+	Debugger cannot find JS file contains a breakpoint.
+	
+	Set webRoot configuration variable pointing to root directory:
+	
+		"webRoot": "${workspaceRoot}/public",
+	
+- If configuration is correct:
+	- you will get message:   ›Paths.setBP: Resolved ...js
+	- Breakpoints will be fired
+	- Client side console log will be sent to debug console of VSCode.
+	
+	
+------------------------------------------------------------------------------------------------------------------------------------------
+How to debug client and server side JS with VSCode?		
+===================================================
+To launch.json you can add multiple debug confgurations created before. 
+See above hot to create launch.json .
+
+You cannot debug client side (Chrome) and server side (NodeJS) JS scripts in the same time.
+
+

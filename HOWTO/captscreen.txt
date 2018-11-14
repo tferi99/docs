@@ -1,0 +1,16 @@
+Capturing character based screen
+================================
+You can capture screen with:
+
+	setterm -dump
+
+It creates a screen.dump file.
+Or call:
+
+	setterm -dump -file <filename>
+
+Or:
+	cat /dev/vcsN 
+
+	to dump contains of a virtual screen device, where N is the index.
+

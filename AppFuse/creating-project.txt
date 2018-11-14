@@ -1,0 +1,39 @@
+Steps of preparing this project
+-------------------------------
+
+1. mvn archetype:generate -B -DarchetypeGroupId=org.appfuse.archetypes -DarchetypeArtifactId=appfuse-core 
+	-DarchetypeVersion=2.0.2 -DgroupId=org.ftoth -DartifactId=appfusetest
+	
+2. Creating database/appfusetest for HSQL database
+
+3. Modifying database settings in pom.xml (for PostgreSQL).
+	- copying properties from profile 'postgresql' to default settings
+
+4. Add dependency for PostgreSQL driver:
+
+     <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>8.1-407.jdbc3</version>
+     </dependency>
+		
+5. Start postgreSQL and create database in PostgreSQL:
+
+		create database appfusetest;
+		
+6. mvn -P prod install
+
+		This will create configuration files for production (but to create initial environment as well).
+		
+7. Change AppFuse from "embedded mode" to full-source mode by running 
+
+		mvn appfuse:full-source
+
+		
+8. mvn install
+
+9. Create eclipse project files
+
+	mvn eclipse:eclipse
+
+	

@@ -1,0 +1,7 @@
+If you would fill a TStringList in Borland C++ Builder (BCB), you must end
+every row of file with CR.
+If you don't put CR at the end of last row of file, TStringList will cut the
+last character of last value. It supposes CR at end of every row, and it cuts
+it automatically. THIS IS A BUG !!!
+
+

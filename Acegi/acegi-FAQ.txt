@@ -1,0 +1,238 @@
+=========
+Acegi FAQ
+=========
+
+LDAP
+----
+- PartialResultException thrown during authentication from LDAP LdapAuthenticationProvider
+
+Troubleshooting
+---------------
+- MalformedURLException during creating InitialDirContext
+
+Misc
+----
+- Handling session timeout
+
+
+*************************************************************************************************************************************
+PartialResultException thrown during authentication from LDAP LdapAuthenticationProvider
+========================================================================================
+If you get a log like this:
+
+	***|DEBUG|org.acegisecurity.providers.ldap.LdapAuthenticationProvider|Retrieving user test
+	***|DEBUG|org.acegisecurity.ldap.DefaultInitialDirContextFactory|Creating InitialDirContext with environment {java.naming.provider.url=ldap://10.1.4.128:389/DC=sharepoint,DC=local, java.naming.factory.initial=com.sun.jndi.ldap.LdapCtxFactory, java.naming.security.principal=CN=Ferenc Toth,CN=Users,DC=sharepoint,DC=local, com.sun.jndi.ldap.connect.pool=true, java.naming.security.authentication=simple, java.naming.security.credentials=******, java.naming.referral=follow}
+	***|DEBUG|org.acegisecurity.ldap.search.FilterBasedLdapUserSearch|Searching for user 'test', in context javax.naming.directory.InitialDirContext@1479ef9, with user search [ searchFilter: '(sAMAccountName={0})', searchBase: '', scope: subtreesearchTimeLimit: 0derefLinkFlag: true ]
+	***|DEBUG|org.acegisecurity.ldap.DefaultInitialDirContextFactory|Creating InitialDirContext with environment {java.naming.provider.url=ldap://10.1.4.128:389/DC=sharepoint,DC=local, java.naming.factory.initial=com.sun.jndi.ldap.LdapCtxFactory, java.naming.security.principal=CN=Ferenc Toth,CN=Users,DC=sharepoint,DC=local, com.sun.jndi.ldap.connect.pool=true, java.naming.security.authentication=simple, java.naming.security.credentials=******, java.naming.referral=follow}
+	***|DEBUG|org.acegisecurity.ui.webapp.AuthenticationProcessingFilter|Updated SecurityContextHolder to contain null Authentication
+	***|DEBUG|org.acegisecurity.ui.webapp.AuthenticationProcessingFilter|Authentication request failed: org.acegisecurity.AuthenticationServiceException: LdapCallback;null; nested exception is javax.naming.PartialResultException: null; nested exception is org.acegisecurity.ldap.LdapDataAccessException: LdapCallback;null; nested exception is javax.naming.PartialResultException: null
+	***|DEBUG|org.acegisecurity.context.HttpSessionContextIntegrationFilter|SecurityContextHolder set to new context, as request processing completed
+
+You can see the real problem if you debug Acegi Security with source code.
+Put a breakpoint into 
+	
+	LdapTemplate.execute()
+	
+into catch:
+
+		.....
+        } catch (NamingException exception) {
+>>>>>   	throw exceptionTranslator.translate("LdapCallback", exception);
+        } finally {
+		....
+
+and examine original exception:
+	
+		java.net.UnknownHostException: sharepoint.local
+	
+	
+Configuration of initialDirContextFactory was in this case:
+
+	<bean id="initialDirContextFactory"
+	      class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+	      <constructor-arg
+	         value="ldap://10.1.4.128:389/DC=sharepoint,DC=local"/>
+	      <property name="managerDn">
+	...
+	...
+	
+You can see that LDAP server was called with IP address and base DN contains DC nodes.
+but Acegi (or rather LDAP client library) looks for LDAP server using DC 
+(domain component fields - so IP name instead of IP address).
+
+Solution: DON'T USE IP ADDRESS IN LDAP CONFIGURATION.
+
+	<bean id="initialDirContextFactory"
+	      class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+	      <constructor-arg
+	         value="ldap://sharepoint.local:389/DC=sharepoint,DC=local"/>
+	      <property name="managerDn">
+	
+
+--------------------------------------------------------------------------------------------------------------------------
+PartialResultException thrown during authentication from LDAP LdapAuthenticationProvider
+========================================================================================
+If you get a log like this:
+
+***|DEBUG|org.acegisecurity.ui.webapp.AuthenticationProcessingFilter|Authentication request failed: 
+		org.acegisecurity.AuthenticationServiceException: LdapCallback;[LDAP: error code 32 
+		- 0000208D: NameErr: DSID-031001CD, problem 2001 (NO_OBJECT), data 0, best match of:
+	'DC=sharepoint,DC=local'
+
+Possible reason is that you have specified a searchBase or groupSearchBase and it points to 
+an invalid node.
+
+IMPORTANT is that searchBase and groupSearchBase is RELATIVE to baseDn specfided in initialDirContextFactory.
+
+
+	<bean id="initialDirContextFactory"
+      class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+      <constructor-arg
+         value="ldap://sharepoint.local:389/DC=sharepoint,DC=local" />
+		....
+		....		
+		....
+   </bean>
+
+
+	<bean id="userSearch" class="org.acegisecurity.ldap.search.FilterBasedLdapUserSearch">
+		<constructor-arg index="0">
+			<value>CN=Users</value>					<========== CHECK THIS!!!
+		</constructor-arg>
+		....
+		....		
+		....
+	</bean>
+
+	<bean id="ldapAuthoritiesPopulator" class="org.acegisecurity.providers.ldap.populator.DefaultLdapAuthoritiesPopulator">
+	  <constructor-arg ref="initialDirContextFactory" />
+	  <constructor-arg value="CN=Users" />			<========== CHECK THIS!!!
+		....
+		....		
+		....
+	</bean> 
+
+--------------------------------------------------------------------------------------------------------------------------
+MalformedURLException during creating InitialDirContext
+=======================================================
+Error in log:
+	
+***|DEBUG|org.acegisecurity.ldap.DefaultInitialDirContextFactory|Creating InitialDirContext with environment {java.naming.provider.url=
+      		ldap://sharepoint.local:389/DC=sharepoint,DC=local
+      	, java.naming.factory.initial=com.sun.jndi.ldap.LdapCtxFactory, java.naming.security.principal=CN=Valaki Odon,OU=Risk Test,DC=sharepoint,DC=local, com.sun.jndi.ldap.connect.pool=true, java.naming.security.authentication=simple, java.naming.security.credentials=******, java.naming.referral=follow}
+***|DEBUG|org.acegisecurity.ui.webapp.AuthenticationProcessingFilter|Updated SecurityContextHolder to contain null Authentication
+***|DEBUG|org.acegisecurity.ui.webapp.AuthenticationProcessingFilter|Authentication request failed: 
+	org.acegisecurity.AuthenticationServiceException: Failed to obtain InitialDirContext due to unexpected exception; 
+	nested exception is javax.naming.NamingException: 
+	Cannot parse url: 	 [Root exception is java.net.MalformedURLException: Invalid URI: 	]; 
+	nested exception is org.acegisecurity.ldap.LdapDataAccessException: 
+	Failed to obtain InitialDirContext due to unexpected exception; 
+	nested exception is javax.naming.NamingException: 
+	Cannot parse url: 	 [Root exception is java.net.MalformedURLException: Invalid URI: 	]
+
+Possible reason:
+	
+	<bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+      <constructor-arg>
+      	<value>
+      		<![CDATA[ldap://sharepoint.local:389/DC=sharepoint,DC=local]]>
+      	</value> 
+	   </constructor-arg>
+	   ...
+	   ...
+	   ...
+   </bean>
+	
+Value of constructor-arg of DefaultInitialDirContextFactory contains extra newlines, and Acegi doesn't 
+remove them. 
+
+Fix:
+Value tag MUST BE written in a SINGLE row.
+Or use this format:
+	
+	<constructor-arg value="ldap://sharepoint.local:389/DC=sharepoint,DC=local" />
+		
+
+--------------------------------------------------------------------------------------------------------------------------
+Root DNs must be the same when using multiple URLs		
+=======================================================
+
+Exception:
+ 
+java.lang.IllegalArgumentException: Root DNs must be the same when using multiple URLs
+	at org.acegisecurity.ldap.DefaultInitialDirContextFactory.setProviderUrl(DefaultInitialDirContextFactory.java:147)
+	at org.acegisecurity.ldap.DefaultInitialDirContextFactory.<init>(DefaultInitialDirContextFactory.java:120)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:494)
+			
+Possible reason: 
+Constructor of DefaultInitialDirContextFactory initialized with an URL containing spaces, 
+e.g. like this:
+
+	<bean id="initialDirContextFactory" class="org.acegisecurity.ldap.DefaultInitialDirContextFactory">
+      <constructor-arg value="ldap://sharepoint.local:389/OU=Risk Test,DC=sharepoint,DC=local" />
+		...
+		...
+	</bean>
+	
+Reason:
+
+	Looking at the Acegi code, this error appears to be raised when multiple URLs are passed to the 
+	context factory with different root DNs. The Acegi method takes a single string as parameter, 
+	and splits it on whitespace to detect multiple URLs. We pass the LDAP URL concatenated with 
+	the LDAP root DN provided in the Pulse UI to this method. I wonder then, is there any whitespace
+	in either of these configuration values? This could be causing the problem.	
+	
+Fix:	Don't use white spaces in rootDN URL.
+
+	In this example you can remove OU, and add 
+	
+		- searchBase to userSearch 
+		- groupSearchBase to ldapAuthoritiesPopulator
+
+		
+--------------------------------------------------------------------------------------------------------------------------
+Handling session timeout
+========================
+If your pages are protected (accessing not allowed by anonymous), you can jump to a login page
+if session expired, since there is no valid principal (logged user) in session.
+
+	<bean id="exceptionTranslationFilter"
+		class="org.acegisecurity.ui.ExceptionTranslationFilter">
+		<property name="authenticationEntryPoint">
+			<ref bean="formLoginAuthenticationEntryPoint" />
+		</property>
+	</bean>
+
+	<bean id="formLoginAuthenticationEntryPoint"
+		class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+		<property name="loginFormUrl">
+			<value>/pages/login.html</value>
+		</property>
+		<property name="forceHttps">
+			<value>false</value>
+		</property>
+	</bean>
+
+If you wants to force redirecting ALWAYS to the same page after login
+- use form authentication
+- set defaultTargetUrl (application will be redirected here if you call login form directly, so login form hasn't been called by 
+	accessing restricted resource)
+- set alwaysUseDefaultTargetUrl="true", this way it will be always redirected to defaultTargetUrl
+
+	<bean id="formAuthenticationProcessingFilter"
+		class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
+			....
+		<property name="defaultTargetUrl">
+			<value>/pages/main.html</value>
+		</property>
+		<property name="alwaysUseDefaultTargetUrl">
+			<value>true</value>
+		</property>
+	</bean>
+
+
+
+

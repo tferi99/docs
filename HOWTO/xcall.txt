@@ -1,0 +1,41 @@
+If you want to call X programs from another host, then first you have to
+enable to the another host to use your X server. This you can perform
+by calling:
+
+	xhost + <another host>
+
+This setting you should do after every system restarting.
+
+Then you have to telnet to another host, and on the another host call the 
+needed program with target display parameter:
+
+	<program> -display <your host>:0
+
+There is a method to simplify this tasks:
+For example your IP address is 134.0.0.113, and the address of another
+host is 134.0.0.165.
+1. Insert the following row into your .xinitrc :
+
+	xhost + 134.0.0.165
+
+2. If you specify default display by setting DISPLAY environment variable,
+so you don't need specify -display parameter at calling an X programm.
+You can do this in a central initialization file on another host, for example 
+in .profile of user where you will telnet by the following:
+	
+	if [ "$DISPLAY" = "tferi:0.0" ]
+	then
+	  DISPLAY="134.0.0.113:0.0"
+	fi
+
+, where 'tferi' is your machine name. DISPLAY variable will be set to your
+IP address.  This address resolution necessary when there isn't another address resolution service (hosts, DNS).
+
+After this you have to telnet into another host, and simple call the needed
+X programm.
+
+To enable connection to everybody run:
+
+	xhost +
+
+

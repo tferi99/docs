@@ -1,0 +1,698 @@
+==============
+JavaScript FAQ
+==============
+
+Installation
+------------
+- How to install a JS package?
+
+Variables
+---------
+- Variable scopes
+- How to get the type of variable?
+- How to perform explicit type conversion?
+- Checking if a variable exists
+
+Functions
+---------
+- JavaScript function declaration ambiguity
+- JS arrow functions
+
+Arrays
+------
+- How to iterate over array elements?
+	
+OO
+--
+- How to create an object?
+- Example code about variable scopes in OO
+- How to add static method to a 'class'?
+- How to dump an object?
+- How to get reference to global object?
+- How to access object properties?
+- General rules about OO
+- Inheritance in JavaScript
+- How to define prototypes?	
+- How to enumerate object properties?
+
+Tips
+----
+- Howto call a function asynchronously by timer?
+
+Debug, log, trace
+-----------------
+- How to log to (Firebug) JS console
+- How to make colorized log messages?
+- How to monitor JS events?
+- How to add breakpoint to JS programmatically?
+- How to print stack trace into console?
+- How to print an object into console?
+
+GENERAL NOTE FOR EXAMPLES:
+	>>> this means FireBug script console prompt
+	No prompt sign means output of command.
+
+	
+------------------------------------------------------------------------------------------------
+How to install a JS package?	
+============================
+Use Bower:
+
+	bower install <package>[#<version>]
+
+SEE MORE:
+		Bower/Bower.FAQ.txt
+------------------------------------------------------------------------------------------------
+Variable scopes	
+===============
+JavaScript variables can belong to the 
+	- local or
+	- global scope
+
+- local
+		function f() {
+			var a = 5;		// inside a function
+			console.log(a);
+		}
+	
+	Lifecycle of local variables
+		
+- global
+	var a = 5;		// outside a function
+	function f() {
+		console.log(a);
+	}
+	
+NOTE:	
+	Variables created WITHOUT THE KEYWORD var, ARE ALWAYS GLOBAL, even if they are created 
+	inside a function.	
+
+NOTE:	
+	there is no block scope
+	
+		var a = 1;
+
+		function four() {
+			if (true) {
+				var a = 4;
+			}
+			alert(a); // alerts '4', not the global value of '1'
+		}
+
+- There is a 3rd scope of variables: closure
+
+	A closure is a function having access to the parent scope, even after the parent function has closed.
+
+		var add = (function () {
+			var counter = 0;
+			return function () {return counter += 1;}
+		})();
+
+		add();
+		add();
+		add();
+
+	A function can access variables from any parent scopes.
+	Here a self-calling anonymous function returns an inner function which uses a local variable from a parent 
+	function. Inner function will be assigned to a global reference.
+	
+	So here we have a closure where closed local variable behaves like a private variable which can 
+	be accessed only by inner function.
+	
+------------------------------------------------------------------------------------------------
+General rules about OO
+======================
+- To access own properties from an object use 'this', e.g.:
+        var Cat = {
+            sound:"sounds/cat.ogg",
+            say: function() {
+                playSound(this.sound);
+                console.log('meow');
+            }
+        };
+		
+	Withouth this you access a global variable.
+	
+- Global variables:
+
+        this.globalName = 'animal';
+        var globalName = 'animal2';
+
+	'var' creates a variable into the local scope. Scope is function based and NOT BLOCK BASED. 
+	Using 'this' in global scope creates the same variable.
+	
+- To get an object constructor use:
+
+		obj.constructor
+		
+	Constructor of literal objects is:		Object()
+
+- Functions are also objects
+	- Constructor of a function is Function().
+	- Functions also have a 'length' property, which contains the number of parameters the function accepts.
+	- If you call a function with 'new' it will be a constructor. In this case 'this' points to the new object.
+		Otherwise it points to the global object.
+	- Functions have 'prototype' property
+
+------------------------------------------------------------------------------------------------
+Example code about variable scopes in OO	
+========================================
+	'use strict';
+
+	var cica = 'Cirmi';        // global variable
+
+	var Test = function() {
+		this.num = 4;            // object property
+
+		this.meow = cica + ' nyavog';
+
+		this.eszik = function() {
+			// This has a different meaning if
+			// you call this method as a constructor.
+			// In this case a new object created from this 
+			// method and this.num is undefined.
+			var s = cica + ' eszik ' + this.num + ' egeret';
+			console.debug('eszik: ' + s);
+			return s;
+		}
+
+		this.eszikAsContructor = function() {
+			var e = new this.eszik();
+			alert(e);
+		}
+	};
+
+	console.info(new Test().eszik());
+	new Test().eszikAsContructor();
+	
+	>> eszik: Cirmi eszik 4 egeret
+	>> eszik: Cirmi eszik undefined egeret
+	
+	
+If you call a function and it contains a 'this'	it points to the current object.
+If you call the same method as constructor 'this' will point to the new created object.
+	
+------------------------------------------------------------------------------------------------
+Inheritance in JavaScript	
+=========================
+- Inheritance is prototype based. Constructor method has prototype object. 
+- Every function has 'prototype' property - so constructors, too.
+- If you add anything to PROTOTYPE OF A CONSTRUCTOR it will be inherited by objects instantiated using this constructor.
+- Prototype object will be bound to new instantiated object BY REFERENCE (!!!).
+	That means prototype contains shared properties among instances. If you add own properties in constructor or later (e.g. owerriding prototype) 
+	new - instance level - properties will be created.
+- If object already instantiated and you replace the prototype itself OLD OBJECTS PRESERVE THE OLD PROTOTYPE since prototype object
+	bound to instantiated object by reference!
+- JS 'classes' have properties added in constructor or later (own properties) and prototype properties.
+- The own property takes precedence over the prototype's, so you can override prototype property with own property.
+- You can activate prototype property by removing own property.
+- Prototypes can be chained to build inheritance chains (see more: How to define prototypes?)
+	
+	// DROP THIS CODE INTO FIREBUG CONSOLE
+	// base constructor
+	function Animal(name)
+	{
+		this.name = name;
+		this.size = 5;   
+	};
+	// with prototype
+	Animal.prototype.color = 'red';
+	Animal.prototype.say = function(id) {
+		return "[" + id + "] " + this.name + ": size(" + this.size + "), color("+ this.color + ")";
+	};
+
+	cat = new Animal('Cirmi');
+	console.log(cat.say(1));						//>>> [1] Cirmi: size(5), color(red)
+	
+	// prototype inherited by reference
+	Animal.prototype.color = 'gray';	
+	console.log(cat.say(2));						//>>> [2] Cirmi: size(5), color(gray)
+
+	// but you can replace the whole prototype 
+	Animal.prototype = {
+		color: 'white',
+		size: 0,
+		say: function(id){
+			return "[" + id + "] " + this.name + ": size(" + this.size + "), color("+ this.color + ") !!! OTHER !!!";
+		}
+	};
+
+	// dog uses the new prototype
+	dog=new Animal('dog');
+	console.log(dog.say(3));						//>>> [3] dog: size(5), color(white) !!! OTHER !!!
+	// but cat still have old prototype 
+	console.log(cat.say(4));						//>>> [4] Cirmi: size(5), color(gray)
+
+	// adding existing property to prototype, won't be active because own property has precedence over the prototype's
+	Animal.prototype.size = 100;
+	console.log(dog.say(5));						//>>> [5] dog: size(5), color(white) !!! OTHER !!!
+
+	// but what if we remove own property, property from prototype will be active
+	delete dog.size;
+	console.log(dog.say(6));						//>>>[6] dog: size(100), color(white) !!! OTHER !!!
+		
+	
+------------------------------------------------------------------------------------------------
+How to define prototypes?	
+=========================
+Here is base constructor:
+	function Animal()
+	{
+		this.color = 'white';
+		this.size = 5;   
+	}
+	
+Method1:
+	Animal.prototype.weight = 10;
+	Animal.prototype.teeths = 32;
+	Animal.prototype.says = function() {...}
+	
+Method2:
+	Animal.prototype = {
+		weight: 10,
+		teeths: 32,
+		says: function(what) {
+			alert(what);
+		}
+	};
+
+!!! WARNING !!!
+Method2 replaces the whole prototype, so objects created before won't inherit propeorties from here 
+since prototype reference still points to old one.
+
+Prototype chains provides inheritance chains:
+	
+	dog.constructor.prototype.constructor
+	
+	// DROP THIS CODE INTO FIREBUG CONSOLE
+	// base constructor
+	function Animal(name)
+	{
+		this.name = name;
+		this.size = 5;   
+	};
+	// with prototype
+	Animal.prototype.color = 'red';
+	Animal.prototype.say = function(id) {
+		return "[" + id + "] " + this.name + ": size(" + this.size + "), color("+ this.color + ")";
+	};
+	Animal.prototype.showOwner = function(id) {
+		return "[" + id + "] " + this.name + "'s owner is " + this.owner;
+	};
+
+	cat = new Animal('Cirmi');
+	console.log(cat.say(1));						//>>> [1] Cirmi: size(5), color(red)
+	console.log(cat.showOwner(2));					//>>> [2] Cirmi's owner is undefined
+
+	// child constructor
+	function Dog(name) {
+		this.name = name;
+		this.color = 'brawn';
+	}
+	Dog.prototype = new Animal();			// dog prototype instantiated from Animal
+	dog = new Dog('Bodri');
+	console.log(dog.say(3));						//>>> [3] Bodri: size(5), color(brawn)
+
+	// adding owner property to Dog class
+	Dog.prototype.owner = "Pista bacsi";
+	console.log(cat.showOwner(4));					//>>> [4] Cirmi's owner is undefined
+	console.log(dog.showOwner(5));					//>>> [5] Bodri's owner is Pista bacsi
+
+
+
+
+
+------------------------------------------------------------------------------------------------
+How to get the type of variable?
+================================
+Use 'typeof'
+	
+E.g:
+		>>> typeof 3
+		number
+
+------------------------------------------------------------------------------------------------
+How to create an object?		
+========================
+1. An object literal is a comma-separated list of colon-separated name:value pairs, enclosed within curly braces.
+
+	var point = {x : 10, y : 10};
+
+2. With 'new' and constructor method:
+	- The new operator creates and initializes a new object. 
+	- The new keyword must be followed by a function invocation. 
+	- If a constructor has a return value and it's an object this object will be returned, otherwise 'this'.
+	- A function used in this way is called a constructor and serves to initialize a newly created object.
+		'this' points to new object in the body of method.
+		
+		// constructor
+		function Cica(name, email) {
+			if (!(this instanceof Cica)) {
+				throw new Error("Don't call constuctor directly");
+			}
+
+			this.name = name;
+			this.email = email;
+
+			this.onFeed = function(food) {
+				...
+			}
+		}
+		
+		// using 
+		var c = new Cica('Cirmi');
+		n = c.name;
+		c.onFeed('milk');
+		
+		
+	NOTE: Drawback of this solution that members declared in constructor functions will be instantiated on every 'new'.
+		Better is using prototype.
+		
+3. Prototype
+	- Every JavaScript object has a second JavaScript object associated with it: prototype
+	- The object inherits properties from the prototype.
+	- An object’s prototype attribute specifies the object from which it inherits properties. 
+	- The prototype attribute is set when an object is created.
+	
+	Notes:
+	- All objects created by object literals have the same prototype object:	Object.prototype
+	- Objects created with new use the value of the prototype property of their constructor function as their prototype.
+	- And objects created with Object.create() use the first argument to that function (which may be null) as their prototype.
+	
+4. Object.create(...)
+	ECMAScript 5 defines a method, Object.create(), that creates a new object, 
+	using its first argument as the prototype of that object.
+	
+		var o1 = Object.create({x:1, y:2});
+		
+	
+------------------------------------------------------------------------------------------------
+How to add static method to a 'class'?
+======================================
+Because there is no real class it's not supported directly.
+You can simulate static members if you add members to thje constructor class.
+
+
+	// constructor
+	function Cica(name, email) {
+		...
+	}
+	Cica.getVersion = function() {
+		...
+	}
+	
+	// using
+	var v = Cica.getVersion();
+
+		
+------------------------------------------------------------------------------------------------
+How to dump an object?
+======================
+Simply browse an object in FireBug script console by typing name of variable:
+
+	>>> dlgSubjectViewer
+	Object { id="dlgSubjectViewer", cfg={...}, jqId="#dlgSubjectViewer", more...}
+	
+Then you will be able browse object clicking output link.
+
+------------------------------------------------------------------------------------------------
+How to get reference to global object?
+======================================
+The global object is a regular JavaScript object that serves a very important purpose: the properties of this object are the globally
+defined symbols that are available to a JavaScript program.
+
+To get a reference:
+
+	var g = this;		// refer to the global object
+	
+NOTE:
+In client-side JavaScript, the Window object serves as the global object. This global Window object has a self-referential
+window property that can be used to refer to the global object.	
+
+------------------------------------------------------------------------------------------------
+How to perform explicit type conversion?
+========================================
+The simplest way to perform an explicit type conversion is to use the Boolean(), Number(), String(), or Object() functions:
+
+	Number("3") // => 3
+	String(false) // => "false" Or false.toString()
+	Boolean([]) // => true
+	Object(3) // => new Number(3)
+
+------------------------------------------------------------------------------------------------
+How to access object properties?
+================================
+	expression . identifier
+	expression [ expression ]
+
+E.g.:
+	var abc = {cat : 'Cirmi'}';
+	alert(abc.cat);
+	alert(abc['cat']);		// same
+	
+	// now you can add new properties
+	abc.dog = 'Bodri';
+
+------------------------------------------------------------------------------------------------
+How to log to (Firebug) JS console
+==================================
+console.log(message) 
+
+console.debug(), console.info(), console.warn(), console.error()
+
+Formatted:
+	console.log("message %s other %d", str, num) 
+
+------------------------------------------------------------------------------------------------
+Checking if a variable exists
+=============================
+Method 1:
+	if (typeof v == 'undefined') {
+		return;
+	}
+
+Method 2:
+	if (v) {
+		return;
+	}
+	
+	You can use a reference as a boolean expression. It's true if defined.
+------------------------------------------------------------------------------------------------
+How to enumerate object properties?	
+===================================
+var dog = new Dog();
+for (var prop in dog) {
+    console.log(prop + ' = ' + dog[prop]);
+}	
+
+More sophisticated solution:
+
+ObjectTools.js:
+
+	var ObjectTools = {};
+
+	ObjectTools.objectDump = function(o) {
+			console.log("-----------------------------");
+			ObjectTools.objectDumpSimple(o);
+			console.log("-----------------------------");
+		};
+		
+	ObjectTools.objectDumpSimple = function(o, indent) {
+		if (typeof indent == 'undefined') {
+			indent = "";
+		}
+		
+		for (var prop in o) {
+			var t = typeof o[prop];
+			if (t == 'object') {
+				var s = prop + " : object";
+				console.log(indent + s);
+				ObjectTools.objectDumpSimple(o[prop], indent + "    ");
+			}
+			else {
+				var s = indent + prop + "=" + o[prop] + " (" + t + ")";
+				console.log(s);
+			}
+		}
+	};
+
+Usage:	
+
+	var c = {cica: "aqadadads", num:5, obj:{a:1, b:2, c:3, obj2:{x:121212, y:'sdfsfsds'}}};
+	ObjectTools.objectDump(c);
+
+------------------------------------------------------------------------------------------------
+How to make colorized log messages?
+===================================
+var consoleStyling = 'background: #0f0; color: #fff; font-weight: bold;';
+console.log('%c A colorful message', consoleStyling);
+
+------------------------------------------------------------------------------------------------
+How to iterate over array elements?
+===================================
+Method 1:
+
+	for (var i in languages) {
+		if (languages[i].name == lang) {
+			return true;
+		}
+	}
+
+	Where key is an index.
+	
+Method 2:
+
+	found = languages.foreach(l) {
+		if (languages[i].name == lang) {
+			// do something with language
+		}
+	}
+	
+	
+	NOTE, that you cannot return from callback, so it will always iterate over every items.
+
+------------------------------------------------------------------------------------------------
+How to monitor JS events?
+=========================
+Method 1 - bind event handler and create log:
+
+
+	$("body").bind("click mousedown", function(e) {
+		console.log(e);
+	});	
+
+	
+Method 2 - activate event monitor:
+
+	monitorEvents(<component>, 'event type')							: event type
+	monitorEvents(<component>, ['event1', 'event2', ..., 'eventN'])		: array of event names
+	
+	monitorEvents($0, 'mouse')					: monitoring mouse events of the selected component
+	monitorEvents(document.body, 'mouse')		: monitoring mouse events of the whole document
+	
+	Possible events:
+
+		Event types:
+			
+			mouse key touch control
+		
+		Event names:
+		
+			mouse:  "mousedown", "mouseup", "click", "dblclick", "mousemove", "mouseover", "mouseout", "mousewheel" 
+			key: "keydown", "keyup", "keypress", "textInput"
+			touch:  "touchstart", "touchmove", "touchend", "touchcancel"
+			control:  "resize", "scroll", "zoom", "focus", "blur", "select", "change", "submit", "reset"
+			no arguments: all of the above + "load", "unload", "abort", "error", "select", "change", "submit", "reset", "focus", "blur", "resize", "scroll", "search", "devicemotion", "deviceorientation"
+		
+	Inactivating monitoring:
+
+		unmonitorEvents(document.body)
+		
+
+Method 3 (FireBug):
+
+	Select element on HTML page / right mouse / Log events
+	
+	
+------------------------------------------------------------------------------------------------
+Howto call a function asynchronously by timer?	
+==============================================
+Use setTimeout(func, delay-msecs):
+
+	setTimeout(function() {
+		// code to call
+		codeToCall();
+	}, 3000);
+
+NOTE: if you want to call a single function from timer it also should be put into function with no arguments.
+
+
+------------------------------------------------------------------------------------------------
+How to add breakpoint to JS programmatically?
+=============================================
+Put this into JS:
+
+	debugger;
+	
+If a JS debugger is opened in your browser it will be stopped here.
+You can add conditional breakpoints easily this way ;)
+
+------------------------------------------------------------------------------------------------
+How to print stack trace into console?
+======================================
+Use console.trace(...):
+
+	console.trace('balhblah...');
+	
+	
+------------------------------------------------------------------------------------------------
+How to print an object into console?	
+====================================
+When you print an object with console.log(obj) it would reflect the state of the object at the point in time when you later
+expand them (in the Console).
+
+To capture the state of an object when it was logged, you can obtain a
+JavaScript Object Notation (JSON), so use this:
+
+	console.log(JSON.parse(JSON.stringify(obj)));
+	
+	
+------------------------------------------------------------------------------------------------
+JavaScript function declaration ambiguity
+=========================================
+
+	sayHello(); // alerts 'Hello World'
+
+	function sayHello(){
+
+		alert('Hello World');
+
+	};
+
+
+
+	sayGoodbye(); // throws error. sayGoodbye is not a function
+
+	var sayGoodbye = function() {
+
+		alert('Goodbye World');
+
+	};
+
+Why? 
+	In reality, nothing is actually wrong with using either style, and they both work. 
+	Second one is an assignment of an anonyous function to a reference. Variable cannot be used before definition.
+	Only the first one is an actual function declaration and JavaScript interpreter knows to fetch the functions when it needs them, 
+	even if they aren't declared until further parts in your code.
+
+
+------------------------------------------------------------------------------------------------
+JS arrow functions
+==================
+An arrow function expression has a shorter syntax compared to function expressions.
+
+Basic Syntax
+-------------
+(param1, param2, …, paramN) => { statements }
+(param1, param2, …, paramN) => expression
+         // equivalent to:  => { return expression; }
+
+// Parentheses are optional when there's only one parameter:
+(singleParam) => { statements }
+singleParam => { statements }
+
+// A function with no parameters requires parentheses:
+() => { statements }
+
+Advanced Syntax
+---------------
+// Parenthesize the body to return an object literal expression:
+params => ({foo: bar})
+
+// Rest parameters and default parameters are supported
+(param1, param2, ...rest) => { statements }
+(param1 = defaultValue1, param2, …, paramN = defaultValueN) => { statements }
+
+// Destructuring within the parameter list is also supported
+var f = ([a, b] = [1, 2], {x: c} = {x: a + b}) => a + b + c;
+f();  // 6

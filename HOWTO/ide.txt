@@ -1,0 +1,13 @@
+IDE tips for Linux
+==================
+
+***************************************************************************
+RHIDE - it's a Borland 3x like developer environment
+-----
+- to save defauld settings create a 'rhide' project next to the executable
+  (maybe in /usr/local/bin) by:
+  
+  		rhide rhide
+- call 'System' menu by pressing Alt-Space
+
+

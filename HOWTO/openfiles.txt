@@ -1,0 +1,6 @@
+How can you list of open files?
+
+	lsof - list of open files
+
+See also: man lsof
+

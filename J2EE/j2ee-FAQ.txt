@@ -1,0 +1,30 @@
+===========
+Java EE FAQ
+===========
+
+Transactions
+------------
+- TransactionAttributes and Scope
+
+-----------------------------------------------------------------------------------------------
+TransactionAttributes and Scope
+===============================
+Transaction Attribute 		Client’sTransaction 	Business Method’sTransaction
+Required                    None                    T2 
+                            T1                      T1
+							
+RequiresNew                 None                    T2
+                            T1                      T2
+							
+Mandatory                   None                    Error	
+                            T1                      T1
+							
+NotSupported                None                    None
+                            T1                      None
+
+
+Supports                    None                    None
+                            T1                      T1
+							
+Never                       None                    None
+                            T1                      Error

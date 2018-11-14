@@ -1,0 +1,14 @@
+How to add TTY to Linux ?
+
+1. Add tty entry to /etc/inittab, for example:
+	5:123:respawn:/sbin/mingetty tty5
+
+2. If you want to login as root from this new TTY, yoy have to add this tty to 
+	/etc/securetty
+
+
+
+
+
+
+

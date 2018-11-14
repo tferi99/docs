@@ -1,0 +1,18 @@
+How to page Ocale queries?
+==========================
+
+select * from (
+	select t1.*, ROWNUM rn from (
+		<QUERY>
+	) t1
+) where rn between <START> and <END>
+
+For example:
+	
+	select * from (
+		select t1.*, ROWNUM rn from (
+			select * from table where blah = 2 order by thing1, thing2
+		) t1
+	) where rn between 101 and 150
+	
+	

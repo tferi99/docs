@@ -1,0 +1,14 @@
+Using SuSE 8.1 without any mouse
+--------------------------------
+
+The problem is: SuSE 8.1 always scans for hardware at boot time, and there isn't any mouse 
+plugged into the box, it call yast2, and boot process is interrupted.
+
+Solution:
+	Edit /usr/sbin/hwbootscan, and comment mouse section.
+
+		#neededchanged=`/usr/sbin/hwscan --mouse`
+		#if [ -n "$neededchanged" ] ; then
+		#   /sbin/yast2 mouse reprobe
+		#fi
+

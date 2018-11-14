@@ -1,0 +1,135 @@
+Installation steps for ASUS WL-500g Deluxe
+
+1. Download OpenWRT firmware image:
+
+	current version: openwrt-brcm-2.4-squashfs.trx
+	
+2. Install firmware image ("d:\doc\software\tools_and_languages\openwrt\Asus WL-500g Deluxe\OpenWrtDocs_Hardware_Asus_WL500GD - OpenWrt.mht"):
+	- power off
+	- press reset while power on
+	- pwr LED flashing
+	- ping 192.168.1.1
+	- tftp -i -v 192.168.1.1 PUT XXXXXX.trx
+	- After this, wait for the PWR LED to stop flashing and the device to reboot. 
+	
+		For some reason though, the device doesn't reboot after flashing. Just wait 5 minutes, unplug the power and reconnect. 
+		After a while (1-2 minutes), the WLAN LED should light and OpenWRT is up and running.
+	
+	- telnet 192.168.1.1
+	- call 'passwd' to specify root password
+	 (this will disable telnet and enable SSH)
+	
+3. Refresh list of packages	:
+		opkg update
+
+
+4. To configure system call LuCI WEB:
+
+	http://192.168.1.1
+	
+5. Install USB packages:
+		opkg install kmod-usb-storage kmod-usb2 kmod-fs-ext2 kmod-fs-vfat kmod-usb-uhci
+
+6. Plug-in USB storage(s) and add mount points to /etc/fstab.
+
+	WARNING: In Kamikaze /etc/fstab is an auto generated file, please use uci to set static filesystems
+
+	so add it in LuCI (web), for example:
+	
+		(x)	/dev/scsi/host0/bus0/target0/lun0/part1 /opt    ext2    defaults 
+		
+		
+7. Create RC script to mount external drives:
+
+	echo "mount /opt" > /etc/init.d/mountexternal
+	chmod +x /etc/init.d/mountexternal
+	ln -s /etc/init.d/mountexternal /etc/rc.d/S49mountexternal
+
+8. Add to /etc/opkg.conf:
+
+		dest opt /opt
+		option overlay_root /opt
+		
+	add to /etc/profile:
+	
+		export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin
+		export LD_LIBRARY_PATH=/lib:/usr/lib:/opt/lib:/opt/usr/lib	
+
+9. Install packages:
+	
+		opkg update
+	
+		opkg install libncurses
+		opkg install libpcap
+		opkg -d opt install iftop
+		opkg -d opt install mc
+		opkg install vsftpd
+		opkg install luci-app-ddns
+		
+		reboot
+		
+	NOTE: If you dont install libncurses into root filesystem it won't fond termcap and you will get "Error opening terminal: xterm"
+			error.
+
+10. Configure modules:
+
+	vsftp:
+	
+		ln -s /opt/etc/init.d/vsftpd /etc/rc.d/S60vsftpd
+		
+	dyndns:		LucyWEB:/Services/Dynamic DNS
+
+		Go to the menu Services / Dynamic DNS. Adjust your settings. The package supports dyndns.org, changeip.com, zoneedit.com, 
+		no-ip.com, and freedns.afraid.org . 
+		Please note that if you specify a force update interval less then 28 hours (the default is 72 hours), then dyndns.org will ban you. 
+	
+		 option 'service_name' 'dyndns.org'
+				option 'check_unit' 'minutes'
+				option 'domain' 'tferi.homeip.net'
+				option 'username' 'tferi99'
+				option 'password' '.....'
+				option 'enabled' '1'
+				option 'force_interval' '30'
+				option 'force_unit' 'hours'
+				option 'ip_source' 'interface'
+				option 'ip_interface' 'eth0.1'
+				option 'check_interval' '15'
+
+	
+	ntpclient script (/opt/bin/timesync.sh):
+			
+				HOST=time.kfki.hu
+				ntpclient -c 1 -s -h $HOST
+
+	
+11. Add crontab entries
+
+	e.g /etc/crontab/root
+	
+		* * * * * /opt/bin/crontest.sh
+		0 * * * * /opt/bin/timesync.sh
+		
+	More sophisticated method:
+
+		"software\tools_and_languages\openwrt\tutorials\macsat.com - OpenWrt _ Olegs Firmware - OpenWRT Crontab Tutorial.mht" 			
+
+12. Time synchronization
+
+	/usr/sbin/rdate 128.138.140.44
+	
+	
+	I wrote a script to call it (/opt/bin/timesync.sh). It can be called by crontab.
+	
+13. Fix IP addresses
+
+		- LucyWEB:/Network/DHCP
+		- Add static leases
+		
+14. Torrent client
+	- install
+		opkg install uclibcxx
+		opkg -d opt install ctorrent
+		opkg -d opt install dctcs_0.7.2-2-809_mipsel.ipk
+		
+	- configure
+		mv /opt/etc/

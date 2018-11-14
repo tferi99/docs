@@ -1,0 +1,50 @@
+Installing and configuring PCMCIA on SuSE Linux  for Xybernaut MA IV
+====================================================================
+
+- query pcmcia package with rpm, if not installed you have to install it first
+(read /usr/dor/howto/../PCMCIA... about necessary kernel settings)
+- query type of PCMCIA card with 'probe' or 'probe -m'
+  MAIV conatins a i82365 compatible Ricoh card
+- generally you can start pcmcia service with starter script 
+  (/etc/rc.d/pcmcia start)
+- present time I can't start PCMCIA automatically. If I try it it hangs 
+  up OS. I start my starter script manually instead (start_pcmcia). 
+
+  probe -m         # only displaying type of card
+  insmod /lib/modules/2.2.13/pcmcia/pcmcia_core.o       # general core module
+  insmod /lib/modules/2.2.13/pcmcia/i82365.o irq_mode=1 setup_time=3 cmd_time=6 hold_time=1       # module for i82365 card with settings
+  insmod /lib/modules/2.2.13/pcmcia/ds.o
+  cardmgr    # card manager
+
+  I found necessary settings for i82365.o with Ricoh card in 'man i82365'.
+
+  However, this script contains the same commands, it works. I tried to start
+  PCMCIA automatically during startup, I set variables in /etc/rc.config:
+
+  !!! If it doesn't work, try to plug in card to another slot !!!
+  
+  START_PCMCIA="yes"
+  PCMCIA="i82365"		# type of card
+  PCMCIA_PCIC_OPTS="irq_mode=1 setup_time=3 cmd_time=6 hold_time=1"
+
+  By this settings run same commands contained my start_pcmcia script, but it 
+  doesn't work. I don't know yet why.
+
+  Whether PCMCIA base modules started properly you can check with
+	 cat /proc/devices
+  It has to contain pcmcia entry.
+
+- /etc/pcmcia contains scripts for starting specific services. 
+  *.opts files contain options for scripts, we have to edit them. For 
+  example I had to set IPADDR and BROADCAST values and call
+
+  	/etc/pcmcia/network start eth0
+
+  to start network service on eth0. We don't need additional settings, 
+  this script starts all of necessary commands (ifconfig, route, ...). 
+  It's a similar script as /etc/rc.d/network.
+
+
+
+
+

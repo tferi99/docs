@@ -1,0 +1,290 @@
+About makefile
+==============
+
+Makefile contains rules about what and when make has to do.
+
+A rule:
+
+target(s): [dependency(ies)][;command]
+	[command(s)]
+
+!!! It's very important to insert at least one TAB before commands !!!
+
+- If target is a file, commands will be called if any dependency has been 
+changed.
+
+- Make begins processing at the first rule, not starts with '.'. This is the default goal.
+
+- It's not necessary giving commands for individual C sources, because make finds out the necessary rules and commands. It's enough only specify object targets and .h dependencies. For example:
+	prg.o:	prg.h common.h
+
+This can be processed by an implicite rule.
+
+- You can group targets by a single (or more) dependency:
+	prg.o common.o help.o:	common.h help.h
+	
+- If a rune doesn't hane any dependency, it cannot be called implicite. It's a 'phony target'. It can be called only by specifying it explicite when calling make. For example
+	clean:
+		rm *.o
+	
+	Calling:
+		make clean	
+
+- You can include into makefile using 'include'. If a file isn't specified with a full path, it will be searched in:
+	- current direcory
+	- direcories specified by -I or --include-dir
+	- global include directories (e.g. /usr/include ...)
+You can ignore missing include files with -include (instead of include).
+
+- You can simulate running of make by -t:
+	make -t
+It only touches dependency files and creates empty target files.
+
+- You can use wildcards in filenames (*?~)
+
+- Variables with wildchars aren't processed immediately, only when using. For example:
+	obj=*.o
+'obj' contains *.o instead of a list of files. So you cannot compile all of C sources with the followings:
+	obj=*.o
+	prg: $(obj)
+		cc -o prg $(obj)
+, because there isn't any object file first, so make gives an error: how to make *.o ?
+So you have to generate object names from source names using patsubst and wildcad functions:
+	obj=$(patsubst %.c,%.o,$(wildchard %.c)
+	prg: $(obj)
+		cc -o prg $(obj)
+
+- Search for dependencies:
+	- current directory
+	- directories by VPATH variable (separated by :)
+	- vpath directive: vpath pattern directory
+	  For example:
+	  	vpath %.h /u/icludes
+
+	  Note: % is matching any sequence of zero or more characters
+	  
+- It's reasonable to specify .PHONY for phony rules, for example:
+	.PHONY: clean
+	clean:
+		rm *.o
+
+Without this 'clean' rule can work when you create a 'clean' file by accident.
+
+- You can list changed files with an empty terget file:
+	lsch: a.c b.c a.h
+		ls $?
+		touch lsch
+
+- You can generate dependencies for C CPP files automatically:
+	cc -M p.c	can generate the following:
+
+	p.o:	p.c p.h common.h
+
+
+- Echoing:	@ supresses echoing commands.
+
+- Ignoring errors:		make -i / make --ignore-errors
+
+- Calling in a specific directory:	
+		cd subdir && make
+	or	
+		make -C subdir
+
+It can be used for calling make recursive.For recursive call you have to use $(MAKE) variable instead of calling 'make' directly, when you use a special version of make (not the first in the path), so this way the top-level make will call by recursive invocations.
+		cd subdir && $(MAKE)
+	or	
+		$(MAKE) -C subdir
+
+
+
+
+
+Quick Reference
+---------------
+
+
+This appendix summarizes the directives, text manipulation functions, and special variables which GNU make understands. See section Special Built-in Target
+Names, section Catalogue of Implicit Rules, and section Summary of Options, for other summaries. 
+
+Here is a summary of the directives GNU make recognizes: 
+
+define variable 
+endef 
+     Define a multi-line, recursively-expanded variable.
+     See section Defining Canned Command Sequences. 
+ifdef variable 
+ifndef variable 
+ifeq (a,b) 
+ifeq "a" "b" 
+ifeq 'a' 'b' 
+ifneq (a,b) 
+ifneq "a" "b" 
+ifneq 'a' 'b' 
+else 
+endif 
+     Conditionally evaluate part of the makefile.
+     See section Conditional Parts of Makefiles. 
+include file 
+     Include another makefile.
+     See section Including Other Makefiles. 
+override variable = value 
+override variable := value 
+override variable += value 
+override define variable 
+endef 
+     Define a variable, overriding any previous definition, even one from the command line.
+     See section The override Directive. 
+export 
+     Tell make to export all variables to child processes by default.
+     See section Communicating Variables to a Sub-make. 
+export variable 
+export variable = value 
+export variable := value 
+export variable += value 
+unexport variable 
+     Tell make whether or not to export a particular variable to child processes.
+     See section Communicating Variables to a Sub-make. 
+vpath pattern path 
+     Specify a search path for files matching a `%' pattern.
+     See section The vpath Directive. 
+vpath pattern 
+     Remove all search paths previously specified for pattern. 
+vpath 
+     Remove all search paths previously specified in any vpath directive. 
+
+Here is a summary of the text manipulation functions (see section Functions for Transforming Text): 
+
+$(subst from,to,text) 
+     Replace from with to in text.
+     See section Functions for String Substitution and Analysis. 
+$(patsubst pattern,replacement,text) 
+     Replace words matching pattern with replacement in text.
+     See section Functions for String Substitution and Analysis. 
+$(strip string) 
+     Remove excess whitespace characters from string.
+     See section Functions for String Substitution and Analysis. 
+$(findstring find,text) 
+     Locate find in text.
+     See section Functions for String Substitution and Analysis. 
+$(filter pattern...,text) 
+     Select words in text that match one of the pattern words.
+     See section Functions for String Substitution and Analysis. 
+$(filter-out pattern...,text) 
+     Select words in text that do not match any of the pattern words.
+     See section Functions for String Substitution and Analysis. 
+$(sort list) 
+     Sort the words in list lexicographically, removing duplicates.
+     See section Functions for String Substitution and Analysis. 
+$(dir names...) 
+     Extract the directory part of each file name.
+     See section Functions for File Names. 
+$(notdir names...) 
+     Extract the non-directory part of each file name.
+     See section Functions for File Names. 
+$(suffix names...) 
+     Extract the suffix (the last `.' and following characters) of each file name.
+     See section Functions for File Names. 
+$(basename names...) 
+     Extract the base name (name without suffix) of each file name.
+     See section Functions for File Names. 
+$(addsuffix suffix,names...) 
+     Append suffix to each word in names.
+     See section Functions for File Names. 
+$(addprefix prefix,names...) 
+     Prepend prefix to each word in names.
+     See section Functions for File Names. 
+$(join list1,list2) 
+     Join two parallel lists of words.
+     See section Functions for File Names. 
+$(word n,text) 
+     Extract the nth word (one-origin) of text.
+     See section Functions for File Names. 
+$(words text) 
+     Count the number of words in text.
+     See section Functions for File Names. 
+$(firstword names...) 
+     Extract the first word of names.
+     See section Functions for File Names. 
+$(wildcard pattern...) 
+     Find file names matching a shell file name pattern (not a `%' pattern).
+     See section The Function wildcard. 
+$(shell command) 
+     Execute a shell command and return its output.
+     See section The shell Function. 
+$(origin variable) 
+     Return a string describing how the make variable variable was defined.
+     See section The origin Function. 
+$(foreach var,words,text) 
+     Evaluate text with var bound to each word in words, and concatenate the results.
+     See section The foreach Function. 
+
+Here is a summary of the automatic variables. See section Automatic Variables, for full information. 
+
+$@ The file name of the target. 
+$% The target member name, when the target is an archive member. 
+$< The name of the first dependency. 
+$? The names of all the dependencies that are newer than the target, with spaces between them. For dependencies which are archive members, only the member
+     named is used (see section Using make to Update Archive Files). 
+$^ 
+$+ The names of all the dependencies, with spaces between them. For dependencies which are archive members, only the member named is used (see section
+     Using make to Update Archive Files). The value of $^ omits duplicate dependencies, while $+ retains them and preserves their order. 
+$* The stem with which an implicit rule matches (see section How Patterns Match). 
+$(@D) 
+$(@F) 
+     The directory part and the file-within-directory part of $@. 
+$(*D) 
+$(*F) 
+     The directory part and the file-within-directory part of $*. 
+$(%D) 
+$(%F) 
+     The directory part and the file-within-directory part of $%. 
+$(<D) 
+$(<F) 
+     The directory part and the file-within-directory part of $<. 
+$(^D) 
+$(^F) 
+     The directory part and the file-within-directory part of $^. 
+$(+D) 
+$(+F) 
+     The directory part and the file-within-directory part of $+. 
+$(?D) 
+$(?F) 
+     The directory part and the file-within-directory part of $?. 
+
+These variables are used specially by GNU make: 
+
+MAKEFILES 
+     Makefiles to be read on every invocation of make.
+     See section The Variable MAKEFILES. 
+VPATH 
+     Directory search path for files not found in the current directory.
+     See section VPATH: Search Path for All Dependencies. 
+SHELL 
+     The name of the system default command interpreter, usually `/bin/sh'. You can set SHELL in the makefile to change the shell used to run commands. See
+     section Command Execution. 
+MAKESHELL 
+     On MS-DOS only, the name of the command interpreter that is to be used by make. This value takes precedence over the value of SHELL. See section
+     Command Execution. 
+MAKE The name with which make was invoked. Using this variable in commands has special meaning. See section How the MAKE Variable Works. 
+MAKELEVEL 
+     The number of levels of recursion (sub-makes).
+     See section Communicating Variables to a Sub-make. 
+MAKEFLAGS 
+     The flags given to make. You can set this in the environment or a makefile to set flags.
+     See section Communicating Options to a Sub-make. 
+MAKECMDGOALS 
+     The targets given to make on the command line. Setting this variable has no effect on the operation of make.
+     See section Arguments to Specify the Goals. 
+CURDIR 
+     Set to the pathname of the current working directory (after all -C options are processed, if any). Setting this variable has no effect on the operation of make.
+     See section Recursive Use of make. 
+SUFFIXES 
+     The default list of suffixes before make reads any makefiles. 
+
+
+
+
+See also:
+	man make
+	/u1/doc/make/html/index.html (GNU Make 3.77 manual)
+

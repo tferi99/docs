@@ -1,0 +1,32 @@
+Kernel linking:
+
+1. cd /usr/src/linux (...)
+
+You can find default kernel parameters in .config file using by 'make config'.
+
+2. make config (or make xconfig from X)
+3. make dep
+4. make clean
+5. make bzImage
+
+'make' will display where the new kernel will be created.
+
+Copy the new kernel into /boot in a different name then current kernel.
+Make a new entry in /etc/lilo.conf to make possible to start new kernel.
+After then you have to call
+		lilo
+, to reinstall LILO by the new lilo.conf .
+!!! It's important, because a checksum will be generated about kernels by lilo.
+
+6. If you have configured some parts as modules, you have to compile these
+   modules as well by entering:
+   		make modules
+7. To install modules into the appropriate directory:
+		make modules_install
+
+		
+8. You can clean disk after conpilation by entering:
+		make clean
+		
+   in /usr/src/linux directory.
+

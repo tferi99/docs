@@ -1,0 +1,50 @@
+Router settings
+
+Requirements:
+	- installed networks
+	- router tables
+	- enabling IP forwarding
+
+
+To list network interfaces:
+	
+	ifconfig
+
+
+To list routing table:
+
+	route
+
+An example from an output of route:
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.0.0     *               255.255.255.0   U     0      0        0 eth1
+134.0.0.0       *               255.255.0.0     U     0      0        0 eth0
+loopback        *               255.0.0.0       U     0      0        0 lo
+default         134.0.0.115     0.0.0.0         UG    0      0        0 eth0
+
+We can see destination networks (e.g. 192.168.0.0 - 255.255.255.0), and the interfaces (eth1) that provide routes for packages going to hosts of these networks.
+
+All package for network 192.168.0.0. goes through the interface eth1.
+If the destination of a package isn't in any network of routing table, it goes to default destination (134.0.0.115).
+
+If we would like to be possible package routing for exernal sources, we have to enable IP forwarding. 
+
+In elder kernel we have to set CONFIG_IP_FORWARD parameter to 'yes', and recompile the kernel.
+
+For kernels newer then 2.1.102 we can issue the following command:
+
+	echo "1" > /proc/sys/net/ipv4/ip_forward
+
+In SuSE we can set it in /etc/rc/config:
+
+	IP_FORWARD=yes
+
+During booting /sbin/init.d/boot will call the command above.
+
+We can detect IP forwarding by reading /proc/sys/nete/ipv4/ip_forward.
+
+On client machines we have to set our router as (default) gateway, if they want to send packages to hosts on the other network.
+
+

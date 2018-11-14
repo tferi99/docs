@@ -1,0 +1,12 @@
+Howto check in shell whether a file is creatable?
+=================================================
+
+Try to
+
+	cat /dev/null >> file
+	
+and check exit status. For example:
+
+  if cat /dev/null >> example.txt; then
+  	...
+

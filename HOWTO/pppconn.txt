@@ -1,0 +1,18 @@
+How to establish connection simple to PPP server under Linux ? 
+
+1. Installing modem
+	- You can check modem with minicom.
+
+2. PPP connection tools under Linux (KDE):
+	- wvdial
+	- kppp (better, you can specify more parameters)
+
+Note to 'kppp':
+	If connection isn't successful, try to set 'Login script' parameters,
+	add 'Pause=3' to script.
+
+Tested configurations:
+	- to NT Server - with CHAP
+	- to ISP (Sednet) - with PAP
+
+

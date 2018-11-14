@@ -1,0 +1,114 @@
+===============
+TradingView FAQ
+===============
+
+Basics
+------
+- What is name of the symbol 
+- More important variables
+- Resolution
+
+Draw/paint
+----------
+- Howto paint background?
+
+Calculations
+------------
+- Howto get the number of bars since a condition?
+- Candle values
+
+Pine
+----
+- How to get diagram ID?
+- How to get current resolution of TradingView?
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+More important variables
+========================
+ticker:		the value of the current symbol name without an exchange prefix, for example ‘BTCEUR’
+
+tickerid:	name with an exchange prefix, for example, ‘COINBASE:BTCEUR’
+
+period:		current resolution
+
+	a = security(tickerid, period, low, lookahead=barmerge.lookahead_off)
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------
+What is name of the symbol
+==========================
+Symbol name:
+	COINBASE:BTCEUR
+
+The name of the symbol can be set using two variants: with a prefix that shows the exchange (or data provider) or without it. 
+For example: “NYSE:IBM”, “BATS:IBM” or“IBM”. 
+
+Without prefix:
+	In the case of using the name of a symbol without an exchange prefix, the exchange selected by default is BATS. 
+	
+Current symbol name is assigned to ‘ticker’ and ‘tickerid’ built-in variables. 
+The variable ‘ticker’ contains the value of the symbol name without an exchange prefix, for example ‘BTCEUR’. 
+The variable ‘tickerid’ is a symbol name with an exchange prefix, for example, ‘COINBASE:BTCEUR’, ‘NASDAQ:MSFT’. 
+
+It’s recommended to use ‘tickerid’ to avoid possible ambiguity in the indicator’s displayed values of data taken from different exchanges.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Resolution
+==========
+- It's a string.
+- Intraday resolution:	number of minutes
+- The lowest resolution is ‘minute’ which is set by the literal "1"
+- Bigger units: D, W, M  (and can be multiplied: 2D, 5W, 2M)
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Howto get the number of bars since a condition?
+===============================================
+Use:		barssince
+
+Example:
+	// get number of bars since last green bar
+	barssince(close >= open)
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Howto paint background?
+=======================
+	
+----------------------------------------------------------------------------------------------------------------------------------------
+Candle values
+=============
+
+open
+close
+high
+low
+
+----------------------------------------------------------------------------------------------------------------------------------------
+How to get diagram ID?
+======================
+security(symbol, ...)
+
+This method expect 'symbol' which a unique name of a diagram
+
+To get diagram details click on small down arrow (triangle) in the right side of diagram label and choose 'Symbol info' 
+from context menu.
+
+----------------------------------------------------------------------------------------------------------------------------------------
+How to get current resolution of TradingView?
+=============================================
+security(symbol, resolution, expression, gaps, lookahead) → series[integer]
+
+	security() requires resolution which can be: M, D or number of minutes, etc.
+	It provides a series of diagram values (or a calculated expression) with the stated resolution.
+	
+But what if you want to specify always the current resolution?
+Use 'period' variable:
+
+	ethEur = security("COINBASE:ETHEUR", period, close)
+
+	
+	

@@ -1,0 +1,194 @@
+===========
+Cygwin FAQ
+===========
+
+Config/setup
+------------
+- Message: Your group is currently "mkgroup"
+- Installing cygrunserver
+- What is Cygserver?
+- Installing sshd
+
+Administration
+--------------
+- How to get version information?
+- How to get system information?
+
+Tips
+----
+- Sending mail
+- Important locations
+
+Troubleshooting
+---------------
+- 'Unable to access jar file' from a Cygwin Bash Script
+- Unable to delete directories, files created by Cygwin
+
+-----------------------------------------------------------------------------------------------
+Important locations
+==============
+Documentations:
+	- /usr/shar/doc/*
+	- /usr/shar/doc/Cygwin/*
+
+
+---------------------------------------------------------------------------------------------------------------
+How to get version information?		
+===============================
+uname -srv
+
+---------------------------------------------------------------------------------------------------------------
+How to get system information?
+==============================
+cygcheck -s
+
+---------------------------------------------------------------------------------------------------------------
+'Unable to access jar file' from a Cygwin Bash Script
+=====================================================
+It's a silly incompatibility between Cygwin and normal Windows applications. Because it's a Windows JRE, 
+the java executable has no idea how to use a Cygwin path.
+
+For example /cygdrive/d is unknown path for Windows JRE.
+
+Fix:
+	Convert Cygwin path into real Windows path this way:
+	
+		cygpath -wp <path>
+		
+
+---------------------------------------------------------------------------------------------------------------
+Message: Your group is currently "mkgroup"
+=====================================================
+At the first start you may get the following message:		
+			
+	Your group is currently "mkgroup".  This indicates that neither
+	your gid nor your pgsid (primary group associated with your SID)
+	is in /etc/group.
+
+	The /etc/group (and possibly /etc/passwd) files should be rebuilt.
+	See the man pages for mkpasswd and mkgroup then, for example, run
+
+	mkpasswd -l [-d] > /etc/passwd
+	mkgroup  -l [-d] > /etc/group
+
+Steps are:
+- Connect to domain if you are a domain member (use VPN if necessary) and use -d option:
+		
+		mkpasswd -l [-d] > /etc/passwd
+		mkgroup  -l [-d] > /etc/group
+
+Connected to domain it may take a few minutes.
+
+List of users and groups can be enormous. You can remove unnecessary entries.
+
+---------------------------------------------------------------------------------------------------------------
+Sending mail
+============
+Install ssmtp (e.g. with a mail client: mutt, pine)
+
+See also:
+	/usr/share/doc/Cygwin/ssmtp-*.README
+
+---------------------------------------------------------------------------------------------------------------	
+Installing cygrunserver
+=======================
+What is cygrunsrv?
+	cygrunsrv is an implementation of an NT/W2K service starter, similar to Microsoft's INSTSRV and SRVANY programs, or the FireDaemon program.
+	However, cygrunsrv is a cygwin program itself, so it obviously supports Cygwin applications better.
+
+Install 'cygrunserver' package with Cygwin installer.
+
+
+---------------------------------------------------------------------------------------------------------------	
+What is Cygserver?
+==================
+
+Cygserver is a program which is designed to run as a background service. 
+
+It provides Cygwin applications with services which require security arbitration or which need to persist while no other cygwin application is running.
+Newer versions of Cygwin provide IPC functions by cygserver (see above).
+
+At the first call initalize Cyserver:
+
+	cygserver-config
+
+This can install Cygserver as service. Start Cyserver before starting Postgres.
+
+The Cygserver services are used by Cygwin applications only if you set the environment
+variable CYGWIN to contain the string "server". You must do this before
+starting the application.
+
+	export CYGWIN=server
+
+		
+-----------------------------------------------------------------------------------------------
+Installing sshd
+===============
+- Install 'openssh' package
+
+- Call this AS ADMINISTRATOR (!!!!!!!!!!!!!!!!!!!!!!!!):
+	
+	ssh-host-config -y
+	
+	Should privilege separation be used? (yes/no)
+
+		Privilege separation is a technique to make the sshd service more secure. 
+		Privilege separation splits the sshd service in two computer processes, 
+		one process runs as "root" (SYSTEM) and the other process runs as a lower-privileged user account, 
+		typically this account is created as a user called "sshd".
+
+		This technique makes the pre-authentication attack on the system much harder.
+
+	Do you want to install sshd as service? yes
+
+	When the script stops and asks you for "environment variable CYGWIN=" your answer is 
+
+		ntsec tty
+
+		ntsec is an environment variable used by cygwin to instruct cygwin to use Windows' 
+		security rules for controlling users' access to files and other operating system facilities.
+		
+		tty is an environment variable used by cygwin to make it work properly with editors
+		such as pico and nano
+
+		Without it (the default case), you won't be able to insert characters.	
+	
+- To start:
+	
+	cygrunsrv -S sshd	
+
+	It starts:		/usr/sbin/sshd -D
+	
+- Troubleshouting:
+
+	/usr/sbin/sshd -D -dd
+	
+- Fixing some problems:
+
+	Segmentation fault during ssh-host-config
+	-----------------------------------------
+	ssh-keygen drops segmantation fault during ssh-host-config.
+
+	Steps:
+		- Run Cygwin as Administrator
+		- There are 4 ssh-keygen, run these 4 commands again manually
+		- Set owner of generated key pairs to SYSTEM:Administrators
+		- Copy generated keypairs into /etc
+		- run again ssh-host-config
+		
+SEE ALSO:
+	CYGWIN/usr/share/doc/Cygwin/openssh.README
+			
+		
+-----------------------------------------------------------------------------------------------
+Unable to delete directories, files created by Cygwin		
+=====================================================
+Sometimes there is permission issue with files created by Cygwin. 
+In this case try this:
+
+	takeown /r /f DRIVE:\PATH
+
+	icacls DRIVE:\PATH /grant USERNAME:F /T			(optinal)
+	
+
+		

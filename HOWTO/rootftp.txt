@@ -1,0 +1,7 @@
+
+To enable call FTP as `root` on SuSE 6.1
+
+Comment out 'root' entry from /etc/ftpusers
+
+ 
+

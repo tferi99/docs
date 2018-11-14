@@ -1,0 +1,63 @@
+All registry settings for Windows File Protection/System File Checker
+are located in the following registry key:
+
+HKEY LOCAL MACHINE\SOFTWARE\Microsoft\WindowsNT\CurrentVersion\Winlogon
+
+MORE INFORMATION
+By default, only users with Administrator or System rights can modify
+these settings.
+
+Registry Values
+SFCDisable (REG DWORD)
+0 = enabled (default)
+1 = disabled, prompt at boot to re-enable
+2 = disabled at next boot only, no prompt to re-enable
+4 = enabled, with popups disabled
+
+NOTE: For options 1 and 2: Both of these options require a kernel
+debugger to be hooked up for those options to become useable. If a
+kernel debugger is not hooked up, Windows File Protection is not
+disabled.
+SFCScan (REG DWORD)
+0 = do not scan protected files at boot (default)
+1 = scan protected files at every boot
+2 = scan protected files once
+SFCQuota (REG DWORD)
+n = size (in megabytes) of dllcache quota (default is 0xffffffff or
+approximately 300 MB)
+FFFFFFFF = cache all protected system files on the local hard disk
+SFCDllCacheDir (REG EXPAND SZ)
+Path = local or network location of dllcache folder (default is
+%SystemRoot%\System32)
+
+NOTE: Network shares for the dllcache directory are no longer supported.
+
+SFCShowProgress (REG DWORD)
+0 = System File Checker progress meter is not displayed (default)
+1 = System File Checker progress meter is displayed
+
+NOTE: The Windows 2000 source files location information is stored in
+the following registry location and can be modified to point to the
+drive letter of a volume that has an I386 flat folder of the
+installation files
+ 
+HKEY LOCAL MACHINE\Software\Microsoft\Windows\CurrentVersion\Setup\Source
+Path:REG SZ:<drive letter>:
+
+  and
+
+  HKEY LOCAL MACHINE\Software\Microsoft\WindowsNT\
+	CurrentVersion\SourcePath:REG SZ:<drive letter>:
+
+where drive letter is the appropriate drive letter.
+
+Example:
+
+If the I386 directory is at C:\I386, the SourcePath value would be C:\.
+
+If the I386 directory is at E:\Directory\I386, the SourcePath value
+would be E:\Directory.
+
+After you restart the computer, WFP and SFC /SCANNOW uses the new source
+path instead of prompting for the Windows 2000 installation CD-ROM.
+

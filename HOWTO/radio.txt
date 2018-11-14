@@ -1,0 +1,36 @@
+Using SoundForte16 Radio Tuner Card
+-----------------------------------
+
+SF16 is a radio tuner card, my card is integrated with a ISA PnP SoundBlaster 16 card.
+
+There are two ways:
+
+1. 2.2.x kernel supports Video4Linux, and there are many programs use this interface. To install it maybe you have to recompile kernel.
+You have to enable the following kernel configuration variables (make xconfig):
+	Character devices/Video4Linux/Video for Linux -> y
+	Character devices/Video4Linux/SF16FMI -> y (with a fix port setting) or m
+
+Video4Linux has a device for tuner cands: /dev/radio. This device is used by programs supported by Video4Linux.
+
+I couldn't configure this method properly yet, because /dev/radio wasn't correct.
+
+2. Direct using by radio program.
+This program's been developed directly for SF16 cards.
+To use it you have to compile it. Source file is: radio-2.0-3.src.rpm
+
+Before creating Makefile you have to generate a /etc/isapnp.conf file with entries for SF16 card (irq, io). Than you have to call runme_first to create Makefile.
+
+Running:	radio
+See also:	radio -h
+
+There is a tool with simple user interface to make using easier:
+			radii
+
+, it reads ~/.xradiorc configuration file that can storage 10 radio stations.
+
+
+
+
+
+
+

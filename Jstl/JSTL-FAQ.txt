@@ -1,0 +1,133 @@
+=========
+JSTL FAQ
+=========
+
+Quick
+-----
+1. Intro
+2. Components
+3. Scoped Variables
+4. Accessing variables from JSTL/JSP/JAVA
+
+Versions
+--------
+
+Troubleshooting
+---------------
+- Expressions are not evaluated
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+1. Intro
+--------
+JavaServer Pages Standard Tag Library (JSTL) is a standard tag library that 
+can be used in JavaServer Pages (JSP).
+
+2. Components
+-------------
+The Four Components of JSTL:
+
+Component					URI									Prefix
+---------					---									------ 
+Core						http://java.sun.com/jstl/core		c
+XML Processing				http://java.sun.com/jstl/xml		x
+I18N Formatting 			http://java.sun.com/jstl/fmt		fmt
+Relational DB Access (SQL)	http://java.sun.com/jstl/sql		sql
+ 
+
+3. Scoped Variables
+-------------------
+Most JSTL tags operate on scoped variables. You create JSTL variables by using the set command. 
+A typical set command is shown here:
+
+	<c:set var="variableName" value="the value"/>
+
+JSTL and scriptlet code support four different levels of scope—the same four levels of scope that JSP provides. 
+These four levels are:
+
+Variable Scopes Scope			Description							Overhead			Storage
+---------------------			-----------							--------			-------
+Page							For the current page				Very low			
+Request							For the current request				Low
+Session							For the current session				High
+Application						Accessible everywhere				Low
+ 
+4. Accessing variables from JSTL/JSP/JAVA
+-----------------------------------------
+JSTL							JSP							JAVA
+----							---							----
+page scope variable				page scope bean				pageContect.getAttribute("...")
+request scope variable			request scope bean			request.getAttribute("...")
+session scope variable			session scope bean			session.getAttribute("...")
+application scope variable		application scope bean		servletContext.getAttribute("...")
+
+ 
+5. Collections
+--------------
+The following types of classes often form collections in JSTL:
+
+	- Any class that implements the java.util.Collection interface
+	- Arrays of objects or primitive data types
+	- Any class that implements the java.util.Iterator interface
+	- Any class that implements the java.util.Enumeration interface
+	- Any class that implements the java.util.Map interface
+	- Comma-delineated strings (java.lang.String)
+
+---
+FAQ
+---
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Versions
+========
+
+
+1.0: composed of two JAR files jstl.jar (the API) and standard.jar (the impl). 
+	Taglib URI has no /jsp in path like http://java.sun.com/jstl/core and the prototype version has the library name suffixed with _rt like http://java.sun.com/jstl/core_rt. 
+	Came along with and requires at minimum Servlet 2.3 / JSP 1.2. It is at end of life, do not use it any more.
+
+
+1.1: composed of same JAR files as 1.0. 
+	Taglib URI includes /jsp in the path like http://java.sun.com/jsp/jstl/core. Came along with and requires at minimum Servlet 2.4 / JSP 2.0. Downloadable here.
+
+
+1.2: composed of one JAR file jstl-1.2.jar (bundled API+impl) and has same taglib URI as 1.1. 
+	Came along with Servlet 2.5 / JSP 2.1 but works at Servlet 2.4 / JSP 2.0 as well. Downloadable here.
+
+
+1.2.1: composed of two JAR files javax.servlet.jsp.jstl-api-1.2.1 (the API) and javax.servlet.jsp.jstl-1.2.1.jar (the impl) and has same taglib URI as 1.1. 
+	Came along with Servlet 3.0 / JSP 2.2 but works at Servlet 2.5 / JSP 2.1 and Servlet 2.4 / JSP 2.0 as well. Downloadable here and here.
+
+
+Facelets: Facelets, the successor of JSP, has among the provided taglibs a selected subset of JSTL 1.2 core and the full set of JSTL 1.2 functions builtin. 
+	This requires a minimum of JSTL 1.2. For Facelets 1.x the XML namespace URI is http://java.sun.com/jstl/core 
+	and for Facelets 2.x the XML namespace URI is http://java.sun.com/jsp/jstl/core with (confusingly!) the /jsp part.
+
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Expressions are not evaluated
+=============================
+In short Servlet API 2.3 or before uses JSTL 1.0. If you have URL pointing to higher version JSTL, expressions
+won't be extracted.
+
+In your original post, you stated that you were using the version 2.3 web.xml. By default, when using this, EL is *not* 
+evaluated in JSPs for backwards compatibility. Therefore, any EL evaluation you 
+were getting was from your JSTL tags, which would have to be version 1.0 since 
+version 1.1 doesn't actually evaluate EL, but rather relies on the JSP EL 
+evaluator. First, I'd recommend upgrading to JSTL 1.1 since it's made to work 
+with JSP 2.0. THEN YOU'LL HAVE TO UPGRADE TO THE 2.4 web.xml. There *may* be 
+other ways to enable EL, but I haven't researched those and this way is pretty simple.
+	
+So upgrage version n web.xml to higher, for example 2.5 (supported by Tomcat 6 or higher):
+	
+	<?xml version="1.0" encoding="UTF-8"?>
+		<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+		<display-name>Archetype Created Web Application</display-name>
+		....
+	</web-app>
+
+	
+	

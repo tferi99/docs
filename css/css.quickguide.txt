@@ -1,0 +1,370 @@
+==============
+CSS Kick Guide
+==============
+
+1. Basic rules
+1.1 Selectors
+1.1.1 Element selectors
+1.2 Declaration
+2. Grouping
+2.1 Grouping Selectors
+2.1.1 The universal selector
+2.3 Grouping Declarations
+3. Class and ID Selectors
+3.1 Class selectors
+3.1.1 Multiple Classes
+3.2 ID Selectors
+3.3 Attribute Selectors
+3.4 Pseudo-Classes and Pseudo-Elements
+4. Using Document Structure
+4.1 Descendant Selectors
+4.2 Selecting Children
+4.3 Selecting Adjacent Sibling Elements
+5. Structure and the Cascade
+5.1 Specificity
+5.2 Inheritance
+
+
+
+
+
+1. Basic rules
+--------------
+Structure of a rule:
+
+	<selector> {<declaration1>; <declaration1>; ... <declarationN>}
+
+Example:
+
+	h2 {color: gray;}
+
+
+1.1 Selectors
+--------------
+
+1.1.1 Element selectors
+-----------------------
+The ELEMENTS of the document serve as the most basic selectors.
+
+In XML, a selector could be anything since XML allows for the creation of new markup languages 
+that can have just about anything as AN ELEMENT NAME.
+
+In HTML the selector will generally be one of the many HTML elements such as p, h3, em, a, or 
+even html itself. 
+
+Example:
+
+	html {color: black;}
+	h1 {color: gray;}
+	h2 {color: silver;}
+
+
+1.2 Declaration
+---------------
+
+The declaration block contains one or more declarations. 
+A declaration is always formatted as a property followed by a colon and then a value followed by a semicolon. 
+The colon and semicolon can be followed by zero or more spaces. 
+
+	<name>:<value>;
+
+If you use either an incorrect property or value in a declaration, the whole thing WILL BE IGNORED.
+For example in CSS for HTML:
+
+
+	brain-size: 2cm;	/* unknown property */
+	color: ultraviolet;	/* unknown value */
+
+
+2. Grouping
+-----------
+
+2.1 Grouping Selectors
+----------------------
+You can apply selector grouping if you want the same style to apply to multiple elements.
+
+Before:
+	h1 {color: purple;}
+	h2 {color: purple;}
+	h3 {color: purple;}
+	h4 {color: purple;}
+
+After:
+	h1, h2, h3, h4 {color: purple;}
+
+
+2.1.1 The universal selector
+----------------------------
+CSS2 introduced a new simple selector called the universal selector, displayed as an asterisk (*). 
+
+	* {color: red;}
+
+
+2.3 Grouping Declarations
+-------------------------
+
+Before:
+
+	h1 {font: 18px Helvetica;}
+	h1 {color: purple;}
+	h1 {background: aqua;}
+
+
+After:
+	
+	h1 {font: 18px Helvetica; color: purple; background: aqua;}
+
+
+
+3. Class and ID Selectors
+-------------------------
+In addition to raw document elements, there are two other types of selectors: 
+
+	- class selectors 
+	- ID selectors
+	
+, which let you assign styles in a way that is INDEPENDENT OF DOCUMENT ELEMENTS. 
+
+
+3.1 Class selectors
+-------------------
+In order to associate the styles of a class selector with an element, you must assign a 
+"class" attribute to the appropriate value. For example:
+
+	<span class="warning">the possibility ... </span>. 
+
+Class is preceded by a period (.) and can be joined with a simple selector:
+
+	span.warning {font-weight: bold;}
+
+General class selector:
+
+	*.warning {font-weight: bold;}
+	or
+	.warning {font-weight: bold;}
+
+
+3.1.1 Multiple Classes
+----------------------
+It's possible to have a space-separated list of words in a single class value, if you want to 
+associate element with more classes:
+
+	<span class="warning urgent">the possibility ... </span>. 
+
+	.warning {font-weight: bold;}
+	.urgent {font-style: italic;}
+	.warning.urgent {background: silver;}
+
+Declarations will be aggregated: so text in example will be displayed in bold, italic and 
+silver bacground.
+
+
+3.2 ID Selectors
+----------------
+In some ways, ID selectors are similar to class selectors, but there are a few crucial differences. 
+	- ID selectors are preceded by an octothorpe (#)
+	- ID selectors refer to values found in id attributes
+
+For example:
+
+	*#lead-para {font-weight: bold;}
+
+This is a general element selector with 'lead-para' ID selector.
+
+
+3.3 Attribute Selectors
+-----------------------
+If you want to select elements that have a certain attribute, regardless of the attribute's value, 
+you can use a simple attribute selector. For example:
+
+	h1[class] {color: silver;}
+
+
+	<h1 class="hoopla">Hello</h1>
+	<h1 class="severe">Serenity</h1>
+	<h1 class="fancy">Fooling</h1>
+
+Content color of elements where 'class' property has been specified will be silver.
+
+Selection Based on Exact Attribute Value:
+
+	a[href="http://www.css-discuss.org/about.html"] {font-weight: bold;}
+
+
+3.3 Pseudo-Classes and Pseudo-Elements
+--------------------------------------
+These selectors let you assign styles to structures that don't necessarily exist in the document, 
+or to phantom classes that are inferred BY THE STATE OF CERTAIN ELEMENTS, or even by the state of 
+the document itself.
+
+CSS2.1 defines two PSEUDO-CLASSES that apply ONLY TO HYPERLINKS:
+
+	:link		: Refers to any anchor that is a hyperlink (i.e., has an href attribute) and points 
+				  to an address that has not been visited. Note that some browsers may incorrectly 
+				  interpret :link to refer to any hyperlink, visited or unvisited.
+
+	:visited	: Refers to any anchor that is a hyperlink to an already visited address.
+ 
+
+Example:
+	a {color: blue;}
+
+	a:visited {color: red;}
+
+
+CSS2.1 defines three PSEUDO-CLASSES that can change a document's appearance as a result of user behavior:
+
+	
+	:focus		: Refers to any element that currently has the input focus—i.e., can accept keyboard 
+				  input or be activated in some way.
+ 
+	:hover		: Refers to any element over which the mouse pointer is placed—e.g., a hyperlink over 
+				  which the mouse pointer is hovering.
+
+	:active		: Refers to any element that has been activated by user input—e.g., a hyperlink on which 
+				  a user is clicking during the time the mouse button is held down.
+ 
+
+NOTE:
+	IE supports 'hover' only for anchors.
+ 
+ 
+
+4. Using Document Structure
+---------------------------
+Much of the power of CSS is based on the parent-child relationship of elements.
+
+
+4.1 Descendant Selectors
+------------------------
+(also known as contextual selectors)
+Defining descendant selectors is the act of creating rules that operate in certain STRUCTURAL CIRCUMSTANCES but not others. 
+
+In a descendant selector, the selector side of a rule is composed of two or more space-separated selectors. 
+The space between the selectors is an example of a COMBINATOR. Each space combinator can be translated as 
+"found within," "which is part of," or "that is a descendant of," but only if you read the selector right to left. 
+
+Descendant souldn't be a DIRECT CHILD of container element. The only demand is that it has to be IN the container.
+
+Example:
+
+	h1 em {color: gray;}
+
+
+	<h1>Meerkat <em>Central</em></h1>
+
+
+4.2 Selecting Children
+----------------------
+In some cases, you don't want to select an arbitrarily descended element; rather, you want to narrow your 
+range to select an element that is a (direct) child of another element.
+
+Example:
+
+	h1 > strong {color: red;}
+
+	<h1>This is <strong>very</strong> important.</h1>
+	<h1>This is <em>really <strong>very</strong></em> important.</h1>
+
+
+4.3 Selecting Adjacent Sibling Elements
+---------------------------------------
+To select an element that IMMEDIATELY FOLLOWS ANOTHER ELEMENT WITH THE SAME PARENT, you use the ADJACENT-SIBLING combinator, 
+represented as a plus symbol (+). Like the child combinator, the symbol can be surrounded by whitespace at the author's discretion.
+
+Let's say you want to style the paragraph immediately after a heading:
+
+	h1 + p {margin-top: 0;}
+
+
+
+5. Structure and the Cascade
+----------------------------
+
+5.1 Specificity
+---------------
+Let's consider the following rules. Assume that each rule will match the same element:
+
+	h1 {color: red;}
+	body h1 {color: green;}
+
+
+
+Obviously, ONLY ONE of the two rules can win out.
+
+Specifity calculation rules:
+- For every ID attribute value given in the selector, add 0,1,0,0.
+- For every class attribute value, attribute selection, or pseudo-class given in the selection, add 0,0,1,0.
+- For every element and pseudo-element given in the selector, add 0,0,0,1. CSS2 contradicted itself 
+  as to whether pseudo-elements had any specificity at all, but CSS2.1 makes it clear that they do, and this is where they belong.
+- Combinators and the universal selector do not contribute anything to the specificity (more on these values later).
+
+
+	h1 {color: red;}  /* 0,0,0,1 */
+	body h1 {color: green;}  /* 0,0,0,2  (winner)*/
+
+Special cases:
+- The universal selector does not contribute to the specificity of a selector. In other words, it has a specificity of 0,0,0,0 .
+- First zero is RESERVED for inline style declarations, which trump any other declaration's specificity (1,0,0,0)
+
+
+5.2 Inheritance
+---------------
+Inheritance is the mechanism by which some property values are passed on FROM AN ELEMENT TO ITS DESCENDANTS.
+
+Both the ordinary h1 text and the em text are colored gray because the em element inherits the value of color:
+
+	h1 {color: gray;}
+
+	<h1>Meerkat <em>Central</em></h1>
+
+
+5.3 The Cascade
+---------------
+User agent :
+	is another term for a browser. Browsers have default styles built
+	into them that will render an HTML page a certain way whether there are
+	styles attached to it or not.
+	
+Author styles:
+	are the style sheets attached to the HTML file either externally
+	via a link or @import, or embedded at the document level in the <head>.
+	
+User styles:
+	are a set of styles established by the user for his particular
+	browser. This may be the case if a user is sight impaired or has any other
+	disability that needs accommodating for on a consistent basis.
+
+	
+What happens when two rules of equal specificity apply to the same element? 
+How does the browser resolve the conflict? For example, say you have the following rules:
+
+	h1 {color: red;}
+	h1 {color: blue;}
+ 
+
+CSS is based on a method of causing styles to cascade together made possible BY COMBINING INHERITANCE AND SPECIFICITY. 
+The cascade rules for CSS2.1 are simple enough:
+
+1.  FIND all declarations that contain a selector that matches a given element.
+
+2. Sort by origin
+	SORT by explicit weight all declarations applying to the element. Those rules marked !important are given higher weight than those that are not. 
+	Also SORT by origin all declarations applying to a given element. There are three origins: 
+	author, reader, and user agent. 
+	Under normal circumstances, the author's styles win out over the reader's styles. 
+	!important reader styles are stronger than any other styles, including !important author styles. 
+	Both author and reader styles override the user agent's default styles.
+
+3. Sort by specificity
+	SORT by specificity all declarations applying to a given element. 
+	Those elements with a higher specificity have more weight than those with lower specificity.
+
+4. Sort by order (appearance)
+	SORT by order all declarations applying to a given element. THE LATER A DECLARATION APPEARS in the style sheet or document, 
+	THE MORE WEIGHT IT IS GIVEN. 
+	Declarations that appear in an imported style sheet are considered to come before all declarations 
+	within the style sheet that imports them.
+
+
+

@@ -1,0 +1,21 @@
+How can you start a program automatically during system init/cleanup ?
+
+For more about  run level changing (and starting/cleanup) read man page of 'init'.
+
+On starting/stopping init calls /sbin/init.d/rc with the new running level as parameter (see /etc/inittab).
+For every run level there are scripts that called automatically during staring/stopping Linux. These scripts are in /etc/rc.d/rcN.d (symlink to /sbin/init.d), where N is the desired runlevel.
+
+If you would like to call a program automatically on a given runlevel starting, you simply have to put a script into the appropriate directory. With the name of script you have to follow the following convention:
+
+	S|K<N><name>
+
+	- S : starting script, K : script called by shutting down
+	- N : specifies the calling order of several scripts
+	- name : an arbitrary name to specify the function of this script
+
+	For example:
+		S123Something, K155MyServer
+
+
+
+

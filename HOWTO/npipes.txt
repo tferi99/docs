@@ -1,0 +1,26 @@
+
+How can you use named pipes ?
+
+Named pipes are pipes that can be used by separated processes to communicate to each other. They are physically pipes, but we can see them as files.
+
+If a process reads from a name pipe file, and somebody writes into this file, the written data will be read by reader process.
+
+To create a named pipe:
+	
+	mknod /tmp/testpipe p
+or
+	mkfifo a=rw /tmp/testpipe
+
+To read a named pipe bind this file simply to the standard input of a process:
+
+	cat /tmp/testpipe
+
+Writing is simailar:
+
+	echo alma > /tmp/testpipe
+
+You can find samples about named an general pipes in /u/c_src/ipc/pipe? directories.
+See also:
+	man pages: pipe, popen, mknod, mkfifo
+	example: crpipe, wrpipe, rdpipe
+

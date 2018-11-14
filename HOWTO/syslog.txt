@@ -1,0 +1,30 @@
+You can specify system log parameters in /etc/syslog.conf.
+
+In this file can you set parametes of displayed log as well.
+
+In short about /etc/syslog:
+A record consits of 2 fields (separator can be one or more spaces or tabs):
+
+		selector action
+
+SELECTORS
+'selector' consists of 2 fields separated by '.':
+	
+		facility.priority
+
+Facility can be:
+	auth, auth-prinv, cron, daemon, kern, lpr, mail, mark, news, security, 
+	syslog, user, uucp, local0 - 7
+Priority:
+	debug, info, notice, warning, warn, err, error, crit, alert, emerg, 
+	panic
+Can be both fields:
+	* - for all values
+
+- You can specify more facilities separated by ','.
+- You can specify more selectors separator by ';'.
+
+ACTIONS
+Regular file	: a file with full pathname beginning with ';'
+Named pipe		: name of pipe file prepending with '|'
+

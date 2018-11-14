@@ -1,0 +1,37 @@
+JBoss tips
+==========
+
+Application deployment
+----------------------
+There are 3 configuration directory:
+
+	- minimal
+	- default
+	- all
+
+depends on provided services.
+
+
+EAR:
+
+	- Copy ear into server/<configuration>/deploy
+
+
+Lib:
+
+	- Copy ear into server/<configuration>/lib
+
+
+Data source:
+
+	- Copy a sample XML from docs/examples/jca into server/<configuration>/deploy (e.g)
+	- Change
+
+--------------------------------------------------------------------------------------------------------------
+
+Logging
+-------
+Log files generaqted into:
+
+	server/<configuration>/log
+

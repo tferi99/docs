@@ -1,0 +1,10 @@
+How to print CD covers?
+=======================
+
+Size:
+	fronti	: 120 x 120 mm
+	back	: 150 x 118 (150 = 138 + 2 * 6.5)
+
+You can resize and print pictures for example with Adobe Photoshot 5.5.
+
+

@@ -1,0 +1,35 @@
+How to login into desktop linux without password?
+=================================================
+
+1. LILO
+	Get names of bootable systems by pressing TAB.
+	a. boot: <name> S
+	b. boot: <name> single
+
+	Some system may ask for root password for single user mode (e.g. SuSe 6.3)
+  
+	b. boot: <name> init=/bin/bash
+
+To prevent your linux from logging in by anybody through LILO, do the followings:
+	a. Set permissions of /etc/lilo.conf to 600.
+	b. Put the following lines into /etc/lilo.conf:
+			restricted
+			password=<password>
+
+	c. Call lilo.
+
+
+2. With boot disk:
+	a. Boot you system from a linux boot disk (with recovery floppy FS).
+	b. Mount your harddisk.
+
+
+
+If you cannot write some files on your / FS, because the filesystem was mounted in readonly mode, you can remount it:
+
+	mount -n -w -o remount /
+
+
+
+
+

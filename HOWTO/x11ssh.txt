@@ -1,0 +1,74 @@
+X11 forwarding through SSH
+==========================
+
+- Install X Server (Cygwin/X, Xming)
+
+- Login into remote machine using SSH
+
+
+	You can run remote X application on your local X server in secure mode. 
+	Yuo have to call X through SSH client.
+	
+	Command line:
+
+		ssh -X -C -l <user> <host>
+
+		-X : enabling X forwarding
+		-C : enabling compression (recommended for slow connection)
+	
+	PuTTY:
+		Enable X11 forwarding:
+			- Connection/SSH/X11/[X11 forwarding]
+				- Enable X11 forwarding	: 	set
+				- X display location:		localhost:0
+		
+	
+	
+	This SSH connection will forward your local X server port to remote machine.
+	SSH daemon will set DISPLAY environment variable, so X applications will
+	find X server.
+
+- To establish X11 forward (maybe) XAUTH has to be installed on the remote (X client) side.
+
+- On caller side you should authorize remote client with xhost.
+
+
+Troubleshooting
+---------------
+- Check X server port. 
+
+	port = 6000 + display_index
+
+- 	Sometimes you get this message during SSH connection (e.g. in PuTTY event log):
+
+		No xauth program, cannot forward ...
+	
+	'xauth' not installed on remote side. In this case DISPLAY won't be set during connection. Install 'xauth' into remote side.	
+	
+- Cannot open display (on client)
+	Display not specified neither in command line nor in DISPLAY environment variable.
+	
+	If application knows '-display' or '--display', use it, e.g:
+
+		wireshark --display=192.168.5.113:0
+		
+	or set environment variable:
+	
+		export DISPLAY=192.168.5.113:0
+	
+- Xlib: No protocol specified
+
+	 Sometimes you cannot connect to the local X server, e.g. after su to another
+	 user. In this situation you have to add local host to X access control list:
+
+	Cygwin/X or linux:
+	 
+		xhost + [<host>]			: access to a host 
+		
+		xhost +						: access to anybody - NOT SECURE!!!
+	
+	Xming:
+	
+		Call xming with -ac 
+
+apt-get install libxtst6

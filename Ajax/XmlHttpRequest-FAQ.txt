@@ -1,0 +1,11 @@
+==================
+XmlHttpRequest FAQ
+==================
+
+- Header fields
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Header fields
+=============
+
+X-Requested-With = XMLHttpRequest  				: Tells server that this call is made for ajax purposes.

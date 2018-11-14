@@ -1,0 +1,30 @@
+=================
+XP Backup/Restore
+=================
+
+Backup scripts are stored in 
+
+	"C:\Documents and Settings\$USER\Local Settings\Application Data\Microsoft\Windows NT\NTBackup\data\*.bks"
+
+
+Creating backup script
+----------------------
+1. Call 'Backup Utility for Windows' (%SystemRoot%\system32\ntbackup.exe or Start/Programs/Accesories/System Tools/Backup).
+2. On 'Backup' tab you can specify files to backup, and save script (Job/Save selections).
+
+
+NOTES:
+- You can load and modify existing backup scripts as well.
+- You view list of files to backup in backup script files (*.bks).
+
+
+
+Scheduling backup
+-----------------
+1. After saving a new backup script or loading an old one, press 'StartBackup' button on 'Backup' tab.
+2. Press 'Schedule...' button on the right side.
+3. Specify account for the task.
+4. Set schedule time
+
+   NOTE: I've tried my own user account but it cannot work since it is in Administrators group, so finally
+         I've set 'administrator' for this task.

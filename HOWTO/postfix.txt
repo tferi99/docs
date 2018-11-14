@@ -1,0 +1,23 @@
+Configuring Postfix
+===================
+Configuration files are in:	
+		
+		/etc/postfix
+
+Text files have to be compiled with
+
+		postmap <file>
+		
+
+
+Overriding sender email address
+-------------------------------
+Add entry to sender_canonical:
+
+	pattern address
+
+Examples:
+
+root@cvs.ceg	cvs.veszprem@qualysoft.hu
+@cvs.ceg	cvs.veszprem@qualysoft.hu
+

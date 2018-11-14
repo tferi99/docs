@@ -1,0 +1,95 @@
+Dialogs, templates
+------------------
+A dialog defines the model - in MVC.
+While the dialog defines which properties you want to collect and
+store in the repository, the template defines which of these will be 
+rendered as output – and how.
+
+
+
+Page template
+-------------
+1. Create a new content node under 
+
+	Config/modules/templating/Templates[/<user defined folder>]
+
+2. Create new node data into node:
+
+	visible		true								Boolean
+	name		quickstart							String
+	path		/templates/jsp[/<user defined folder>]/<node name>/main.jsp	String
+	type		jsp								String
+
+
+,where
+
+visible		Show this template in the list of page templates.
+		Admin templates generally set this property to
+		false.
+
+name		Template name. It will be stored with each page
+		to define how the content is rendered. 
+
+path		The location of this page's starting template
+		(which in turn may include further JSP's, see
+		below)
+type		Template type (currently jsp or servlet)
+
+title		It shows up in the template dropdown menu that
+		lets you select which template a page is using.
+
+3. Creating page template JSP:
+
+	/templates/jsp[/<user defined folder>]/<node name>/main.jsp
+
+
+
+Adding custom property and author control
+-----------------------------------------
+NOTE:
+	Author and public Magnolia instance is determined by
+	the property Config: 
+	
+		/server/admin  (true/false)
+
+To define and use custom page properties we need to:
+1. Create a custom dialog and define the desired custom property
+2. Define a paragraph pointing to (1)
+3. Adapt the page template pointing to (2) and displaying the custom
+property
+
+Which dialog is displayed when we click on the page-properties button? 
+A paragraph definition maps a template to a dialog.
+
+1. Config dialog
+   Dialog will specify properties are stored in repository.
+
+	- Config/modules/templating/dialogs[/<user defined folder>]
+	- New content node for dialog. That means you have to create a 
+	  node tree for dialog tabs with properties.
+	  Easiest way can be if you copy an existing dialog node and 
+	  change it.
+	- Add your custom property data nodes to tab nodes.
+
+		Data in property data node:
+		- controlType
+		- description
+		- label
+		- name
+		- type
+
+2. Paragraph pointing to dialog
+	- Copy a paragraph from sample into
+
+		/modules/templating/Paragraphs/<user defined folder>]/<my paragraph>
+	
+	- change properties:
+		- decription
+		- dialogPath
+		- name
+		- title
+		- type
+
+3. Call 
+
+	<cms:mainBar paragraph="quickstartPageProperties"/>

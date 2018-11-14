@@ -1,0 +1,18 @@
+========================
+Using tcpdump in Windows
+========================
+
+Use WinDump: its a tcpdump for Windows.
+Parameters are the same as parameters of tcpdump.
+
+Listing interfaces:
+
+	WinDump –D
+	
+	
+See also:
+
+	"D:\inst\network\sniffer\WinDump\doc\WinDump Manual.htm" 
+	"D:\inst\network\sniffer\WinDump\doc\WinDump Frequently Asked Questions.htm"
+	D:\doc\software\network\sniffer_linux\tcpdump.pdf 
+	

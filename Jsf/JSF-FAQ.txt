@@ -1,0 +1,1622 @@
+=======
+JSF FAQ
+=======
+
+Core functions
+-----------------
+- How to access J2EE elements?
+- How to get value maps populated by JSF?
+- How to access JSF elements?
+
+Configuration
+-------------
+Where you can place faces configuration?
+
+Lifecycle
+---------
+- What steps are in JSF lifecycle?
+- How does 'immediate' work?
+
+I18N
+----
+- How to set default locale?
+- How to get locale information in Java?
+- How to get text resources?
+- Text resources not displayed
+- How to set locale in runtime?
+- How to use text resources with parameters?
+
+Managed beans
+-------------
+- How to access managed beans from JAVA code?
+- How to initialize managed beans during page load?
+- @SessionScoped bean re-instantiated
+
+Value Binding 
+-------------
+- The Syntax of Value Binding Expressions
+- Predefined Objects in the Value Binding Expression Language
+- Resolving variables
+- How can I bind methods?
+- How to pass parameters to method/value expressions?
+- How to access Spring beans from JSF?
+- Validation error in Eclipse on valid facelet when calling action method with parameter
+- How to cancel and reload a form?
+
+Navigation
+----------
+- Types of navigation
+- Why redirection?
+- Using from-action
+- Navigation algorythm\
+- How to navigate programmatically?
+
+Events
+------
+- How do work event listeners?
+- How to register event listeners?
+- Howto change action behavior by user interface properties?
+- How to find a component for an event?
+- How to submit form on changing a value?
+- How to add booelan value to <f:setPropertyActionListener?>
+- 4 ways to pass parameter from JSF page to backing bean
+- Order of event handlers
+- How to add multiple action listener to a button to call into basking bean?
+
+
+Design, components
+------------------
+- How to insert JavaScript into JSF code?
+- How to put multiple componencts into table facets?
+- How to customize a cell of <h:panelGrid>?
+- How to generate context-relative path for HTML elements?
+- How to get a component by ID?
+- How to add and use custom attributes of a component?
+- Handling a colon in an element ID in a CSS selector
+
+Validation, conversion
+----------------------
+- How you can validate in JSF?
+- How to customize validation messages?
+- Conversion Error because of missing converter (null Converter)
+- Does checkbox support using converter?
+- How specify runtime properties for converterts?
+- How to validate model level information?
+- Validating Relationships between Multiple Components
+- Date is displayed wrong (decrease 1 day)
+- How to validate multiple fields?
+- How to access old value during validation?
+- How to use converter with selectOneMenu?
+
+JavaScript
+----------------------
+- How to submit a JSF form from JavaScript?
+
+Troubleshooting
+---------------
+- I have encoding problem in JSF forms
+-  Component ID ... has already been found in the view.
+-------------------------------------------------------------------------------------------------
+What steps are in JSF lifecycle?
+================================
+(See jsf-lifecycle.jpg)
+
+Behind the Scenes
+-----------------
+1. Building component tree
+- We'll start at the point when the browser first connects to http://localhost:8080/login/index.faces. 
+- The JSF servlet initializes the JSF code and reads the index.jsp page. 
+- That page contains tags such as f:form and h:inputText. Each tag has an associated tag handler class. 
+	When the page is read, the tag handlers are executed. 
+- The JSF tag handlers collaborate with each other to build a component tree.
+
+2. Rendering, encoding
+- Next, the HTML page is rendered. All text that is not a JSF tag is simply passed through. 
+	So tags are converted to HTML. 
+	
+	THIS PROCESS IS CALLED ENCODING. The renderer of the UIInput object asks the 
+	framework to look up the unique ID and the current value of the expressions. 
+	user.name. By default, ID strings (such as _id0:_id1) are assigned by the framework.
+	The encoded page is sent to the browser, and the browser displays it in the usual way.
+	
+3.Decoding Requests
+- After the page is displayed in the browser, the user fills in the form fields and clicks the submit button. 
+	The browser sends the form data back to the web server, formatted as a "POST request." 
+	This is a special format, defined as part of the HTTP protocol. The POST request contains the URL of the form,
+	as well as the form data.
+
+- Next, the JSF framework gives EACH COMPONENT A CHANCE TO INSPECT THAT HASH TABLE, A PROCESS CALLED DECODING. 
+	Each component decides on its own how to interpret the form data.
+
+
+LifeCycle
+---------
+
+The Restore View 
+	The Restore View phase RETRIEVES THE COMPONENT TREE FOR THE REQUESTED PAGE if it was displayed previously 
+	or CONSTRUCTS A NEW COMPONENT TREE if it is displayed for the first time. 
+	
+	If the page was displayed previously, all components are set to their prior state. 
+	This means that JSF automatically retains form information. 
+	
+Apply Request Values 	
+	In this phase, the JSF implementation iterates over the component objects in the component tree. 
+	EACH COMPONENT OBJECT checks which request values belong to it and stores them.
+
+Process Validations	
+	In the Process Validations phase, the submitted string values are first converted to "local values," 
+	which can be objects of any type. When you design a JSF page, you can attach validators that perform 
+	correctness checks on the local values. 
+	
+	If validation passes, the JSF life cycle proceeds normally. 
+	However, when conversion or validation errors occur, the JSF implementation invokes the RENDER RESPONSE 
+	PHASE DIRECTLY, redisplaying the current page so that the user has another chance to provide correct inputs.
+
+	After the converters and validators have done their work, it is assumed that it is safe to update the model data. 
+	
+Update Model
+	During the Update Model phase, the local (converted and validated) values are used to update the 
+	(managed) beans that are wired to the components.
+
+Invoke Application
+	The action method of the button or link component that caused the form submission is executed (e.g by method expressions). 
+	That method can carry out arbitrary application processing. It returns an OUTCOME STRING THAT IS PASSED TO THE NAVIGATION 
+	HANDLER. The navigation handler looks up the next page.
+
+	The Invoke Application phase invokes action listeners and actions, IN THAT ORDER, for command components. 
+	
+Render Response 
+	Finally, the Render Response phase ENCODES THE RESPONSE AND SENDS IT TO THE BROWSER. When a user submits a form, 
+	clicks on a link, or otherwise generates a new request, the cycle starts anew.
+
+
+-------------------------------------------------------------------------------------------------
+How does 'immediate' work?
+==========================
+If immediate=true on a component it will be processed during 'Apply Request' phase.
+
+- Immedite flag can be set on command components and input components, too. That means all components of current form where immediate=true
+	will be processed, other components are ignored.
+	
+- MODEL WON'T BE UPDATED.
+
+- If immediate=true on a
+
+	>> command component (e.g. commandButton) which called:
+	
+		during 'Apply Request' phase event handler of this component will be called.
+		
+	>> input component (e.g. inputText)
+
+		during 'Apply Request' phase validator will be called on NEW value but model won't be updated with this value.
+
+- After processing components with 'immediate=true' (after 'Apply Request' phase) JSF steps into 'Render Response' phase.
+
+
+Assume that you have a page with a button and a field for entering the quantity of a book in a shopping cart. If both the button’s and the field’s 
+immediate attributes are set to true, the new value of the field will be available for any processing associated with the event that is generated 
+when the button is clicked. 
+The event associated with the button and the event, validation, and conversion associated with the field are all handled during the APPLY REQUEST VALUES phase.
+
+-------------------------------------------------------------------------------------------------
+How to access managed beans from JAVA code?
+===========================================
+If the bean already exists, you can access it like any session-scoped attribute:
+
+	org.test.TestBean x = (org.test.TestBean) request.getSession().getAttribute("testBean");
+
+If the managed bean hasn't been created yet, this code wouldn't trigger its creation -- instead, getAttribute will 
+return a null reference. 
+
+To access a managed bean, triggering its creation when needed:
+
+
+DEPRACATED:
+	FacesContext context = FacesContext.getCurrentInstance();
+	ValueBinding binding = context.getApplication().createValueBinding("#{" + name + "}");
+	String name = (String) binding.getValue(context);
+
+Valid:	
+	FacesContext fc = FacesContext.getCurrentInstance();
+	ValueExpression ve = fc.getApplication().getExpressionFactory().createValueExpression(fc.getELContext(),"#{" + name + "}", Object.class);
+	return ve.getValue(fc.getELContext());		
+	
+	
+-------------------------------------------------------------------------------------------------
+How to set default locale?
+==========================
+ <faces-config>
+   <application>
+      <locale-config>
+         <default-locale>en</default-locale>
+         <supported-locale>de</supported-locale>
+      </locale-config>
+  </application>
+ </faces-config>
+
+-------------------------------------------------------------------------------------------------
+- How to get locale information in Java?
+========================================
+Defautl locale and supported locales:
+
+	FacesContext context = FacesContext.getCurrentInstance(); 
+	context.getApplication().getDefaultLocale(); 
+	context.getApplication().getSupportedLocales();
+
+OR
+	context.getViewRoot().getLocale();
+
+
+------------------------------------------------------------------------------------------------- 
+How to set locale in runtime?
+=============================
+One possibility to set an own locale for the pages is to define the locale attribute inside the f:view Tag.
+This can be done as hard coded string or as locale attribute of an bean. 
+
+	<f:view locale="en">
+OR
+	<f:view locale="#{user.locale}">
+OR
+	UIViewRoot viewRoot = FacesContext.getCurrentInstance().getViewRoot();
+	viewRoot.setLocale(new Locale("hu"));
+
+But my preferred solution is to use an custom ViewHandler, which extends the JSF ViewHandler or the Facelets ViewHandler. 
+Only thing to use this class is to register it in the faces config file. 
+
+	<application>
+		<view-handler>de.icoding.CustomViewHandler</view-handler>
+	</application>	
+
+In order to set the locale for all pages after own conditions, just overwrite the method calculateLocale. 
+For example: 
+
+	public Locale calculateLocale(FacesContext context)
+	{
+		String path = null;
+		path = context.getExternalContext().getRequestServletPath();
+		if (path.indexOf("/de/") > 0) {
+			return Locale.GERMAN;
+		}
+		else {
+			return Locale.ENGLISH;
+		}
+	}	
+	
+	
+-------------------------------------------------------------------------------------------------
+The Syntax of Value Binding Expressions
+=======================================
+That is, the following three expressions all have the same meaning:
+
+	a.b
+	a["b"]
+	a['b']
+
+Use single quotes in value binding expressions if you delimit attributes 
+with double quotes: 
+
+	value="#{user['password']}". 
+	
+Alternatively, you can switch single and double quotes: 
+
+	value='#{user["password"]}'.
+
+Indexed proerties:
+	Unfortunately, value bindings do not work for indexed properties. If p is an 
+	indexed property of a bean b and i is an integer, then b.p[i] does not access 
+	the ith value of the property. It is simply a syntax error. This deficiency is 
+	inherited from the JSTL expression language.
+	
+-------------------------------------------------------------------------------------------------
+Predefined Objects in the Value Binding Expression Language	
+===========================================================
+
+Variable Name	Meaning
+-------------	-------
+header		 	: a Map of HTTP header parameters, containing only the first value for each name
+ 
+headerValues 	: a Map of HTTP header parameters, yielding a String[]array of all values for a given name
+ 
+param			: a Map of HTTP request parameters, containing only the first value for each name
+ 
+paramValues		: a Map of HTTP request parameters, yielding a String[]array of all values for a given name
+ 
+cookie			: a Map of the cookie names and values of the current request
+ 
+initParam		: a Map of the initialization parameters of this web application. Initialization parameters are discussed in Chapter 10.
+ 
+requestScope	: a Map of all request scope attributes
+ 
+sessionScope	: a Map of all session scope attributes
+ 
+applicationScope	: a Map of all application scope attributes
+ 
+facesContext	: The FacesContext instance of this request.
+ 
+view			: The UIViewRoot instance of this request. 
+ 
+-------------------------------------------------------------------------------------------------
+Resolving variables
+===================
+
+1. If the initial term is not one of the predefined objects, the JSF implementation looks for it 
+	in the 
+	- request
+	- session
+	- application 
+	scopes, in that order. Those scopes are map objects that are managed by the servlet container. 
+	For example, when you define a managed bean, its name and value are added to the appropriate scope map.
+
+2. Finally, if the name is still not found, it is passed to the VariableResolver of the JSF application. 
+	The default variable resolver looks up managed-bean elements in a configuration resource, 
+	typically the faces-config.xml file.
+	In this case it calls the default constructor of the class of managed bean. Next, it adds an association 
+	to the appropriate scope map. Finally, it returns the object as the result of the lookup.
+
+	When the term user needs to be resolved again in the same scope, it is located in the scope map.
+
+-------------------------------------------------------------------------------------------------
+How can I bind methods?
+=======================
+A method binding expression denotes an object together with a method that can be applied to it.
+
+For example, here is a typical use of a method binding expression.
+
+	<h:commandButton action="#{user.checkPassword}"/>
+
+In our example, the command button component will call user.checkPassword() and pass the 
+returned string to the navigation handler.
+
+Four component attributes can take a method binding expression:
+	- action
+	- validator
+	- actionListener
+	- valueChangeListener
+
+
+-------------------------------------------------------------------------------------------------
+Types of navigation
+===================
+Static navigation:
+
+	<h:commandButton label="Login" action="login"/>
+
+	<navigation-rule>
+		<from-view-id>/index.jsp</from-view-id>
+		<navigation-case>
+			<from-outcome>login</from-outcome>
+			<to-view-id>/welcome.jsp</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+Dynamic navigation:
+
+	<h:commandButton label="Login" action="#{loginController.verifyUser}"/>
+
+	String verifyUser() {
+		if (...)
+			return "success";
+		else
+			return "failure";
+	}
+
+	NOTE: An action method may return null to indicate that the same page should be redisplayed.
+
+-------------------------------------------------------------------------------------------------
+Why redirection?
+================
+
+	navigation-case>
+	   <from-outcome>success</from-outcome>
+	   <to-view-id>/success.jsp</to-view-id>
+	   <redirect/>
+	</navigation-case>
+
+If you add a redirect element after to-view-id, then the JSP container terminates the current request 
+and sends an HTTP redirect to the client. 
+
+- Redirecting the page is slower than forwarding because another round trip to the browser is involved. 
+- However, the redirection gives the browser a chance to update its address field.
+	WITHOUT REDIRECTION, THE ORIGINAL URL IS UNCHANGED WHEN THE USER MOVES FROM THE 
+	ONE PAGE TO ANOTHER.
+
+TIPP: Use the redirect element for pages that the user might want to bookmark.
+
+	
+-------------------------------------------------------------------------------------------------
+Using from-action	
+=================
+To differentiate between the two navigation cases, you can use a from-action element. 
+E.g if you have two separate actions with the same action string, or two action method references 
+that return the same action string.
+	
+	<navigation-case>
+	  <from-action>#{quiz.answerAction}</from-action>
+	  <from-outcome>again</from-outcome>
+	  <to-view-id>/again.jsp</to-view-id>
+	</navigation-case>
+	<navigation-case>
+	  <from-action>#{quiz.startOverAction}</from-action>
+	  <from-outcome>again</from-outcome>
+	  <to-view-id>/index.jsp</to-view-id>
+	</navigation-case>
+
+NOTE: The navigation handler DOES NOT INVOKE THE METHOD inside the #{...} delimiters. 
+The method has been invoked before the navigation handler kicks in. 
+
+-------------------------------------------------------------------------------------------------
+Navigation algorythm
+====================
+The algorithm has three inputs:
+1. The outcome, that is, the value of an action attribute or the string resulting from the 
+	invocation of a method reference.
+2. The view ID of the current view
+3. The action, that is, the literal value of the action attribute in the component that 
+	triggered the navigation.
+
+
+The first of two phases is to find the matching navigation-rule, following these steps:
+	- If the outcome is null, return immediately and redisplay the current page.
+	- Merge all navigation rules with the same from-view-id value.
+	- Try to find a navigation rule whose from-view-id value matches the view ID exactly. 
+		If such a rule exists, take it.
+	- Consider all navigation rules whose from-view-id values end with a wildcard suffix, 
+		such as secure. For each such rule, check whether the prefix (after removing the *) 
+		is identical to the corresponding prefix of the view ID. If there are matching rules, 
+		take the one with the longest matching prefix.
+	- If there is a rule without a from-view-id, take it.
+	- If there is no match at all, redisplay the current page.
+
+The second of two phases is to consider all navigation-case elements in the matching navigation 
+rule (which may consist of several merged navigation-rule elements with matching from-view-id.values).
+	- Follow these steps to find the matching case.
+	- If a case has both matching from-outcome and from-action, take it.
+	- Otherwise, if a case has matching from-outcome and no from-action, take it.
+	- Otherwise, if a case has matching from-action and no from-outcome, take it.
+	- Otherwise, if there is a case with neither from-outcome or from-action, take it.
+	- If there is no match at all, redisplay the current page.
+
+-------------------------------------------------------------------------------------------------
+How to find a component for an event?
+=====================================
+You can also use component identifiers to get a component reference in your Java code. 
+For example, you could access the component by name in a listener:
+
+	UIComponent component = event.getComponent().findComponent("name");
+
+-------------------------------------------------------------------------------------------------
+How do work event listeners?
+============================
+Registering listener:
+
+	<h:commandButton action="#{bean.action}" actionListener="#{bean.listener}".../
+	
+The Invoke Application phase invokes action listeners and actions, in that order, for command components. 
+So the JSF implementation will INVOKE THE BEAN'S LISTENER METHOD FOLLOWED BY THE ACTION METHOD.
+
+Starting with the Apply Request Values phases, EVENTS CAN BE CREATED AND PLACED ON AN EVENT QUEUE DURING 
+EACH LIFE-CYCLE PHASE. After those phases, the JSF implementation BROADCASTS queued events to registered 
+listeners. 
+
+Event listeners can affect the JSF life cycle in one of three ways: 
+	1. Let the life cycle proceed normally; 
+	2. Call FacesContext.renderResponse() to skip the rest of the life cycle up to Render Response; 
+	3. Call FacesContext.responseComplete() to skip the rest of the life cycle entirely. 
+
+-------------------------------------------------------------------------------------------------
+How to register event listeners?
+================================
+Value Change Events:
+
+	Fired by input components after their new value has been validated.
+
+
+	<h:selectOneMenu value="#{form.country}" onchange="submit()"
+		valueChangeListener="#{form.countryChanged}">
+		<f:selectItems value="#{form.countryNames}"/>
+	</h:selectOneMenu>
+
+	OR 
+	
+	<h:selectOneMenu value="#{form.country}" onchange="submit()">
+	    <f:valueChangeListener type="com.corejsf.CountryListener"/>
+	    <f:selectItems value="#{form.countryNames}"/>
+	</h:selectOneMenu>
+
+Action Events:
+	Action events are fired by command components when the component is activated. 
+	Action events are fired during the Invoke Application phase, near the end of the life cycle.
+
+
+	<h:commandLink actionListener="#{bean.linkActivated}">
+
+	OR
+	
+	<h:commandButton image="mountrushmore.jpg" action="#{rushmore.act}">
+		// global object
+		<f:actionListener type="com.corejsf.RushmoreListener"/>
+		// member of a managed bean
+		<f:actionListener binding="#{manegedBean.rushMoreListener}"/>
+	</h:commandButton>
+
+
+The difference between the values specified for the ...Listener attribute and the 
+f:...Listener tag. The former specifies a METHOD BINDING, whereas the latter specifies 
+a JAVA CLASS. In case class you have to buid class implements ...Listener interface
+(e.g ValueChangeListener, ActionListener).
+	
+Second method allows you to register more listeners, for example:
+
+	<h:commandButton image="mountrushmore.jpg" action="#{rushmore.act}">
+	    <f:actionListener type="com.corejsf.RushmoreListener"/>
+	    <f:actionListener type="com.corejsf.ActionLogger"/>
+		<f:actionListener binding="#{manegedBean.rushMoreListener}"/>
+	</h:commandButton>
+
+
+-------------------------------------------------------------------------------------------------
+Howto change action behavior by user interface properties?	
+==========================================================
+It's important to distinguish between action listeners and actions:
+	- Actions are designed for business logic and participate in navigation handling
+	- Action listeners typically perform user interface logic and DO NOT PARTICIPATE IN NAVIGATION HANDLING.
+
+So you can provide aditional information for actions from action listener handlers (e.g. changing outcome
+by mouse click position). THE ACTION CANNOT ACCESS THE CLIENT ID OF THE COMPONENT that fired the event, 
+information that is necessary for extraction of mouse click coordinates from the request parameters. 
+
+BECAUSE THE ACTION KNOWS NOTHING ABOUT THE USER INTERFACE, we must add an action listener to the mix to implement 
+the required behavior.
+	
+	
+-------------------------------------------------------------------------------------------------
+How to access J2EE elements?
+============================
+ExternalContext has methods to get servlet resources.
+
+Getting current request:
+	FacesContext fctx = FacesContext.getCurrentIctxnstance();
+	HttpServletRequest request = (HttpServletRequest)fctx.getExternalContext().getRequest();
+
+Getting session:
+	FacesContext fctx = FacesContext.getCurrentInstance();
+	HttpSession sess = (HttpSession)fctx.getExternalContext().getSession(false);
+	
+Getting servlet context:
+	FacesContext fctx = FacesContext.getCurrentInstance();
+	HttpSession sess = (HttpSession)fctx.getExternalContext().getSession(false);
+	ServletContext ctx = sess.getServletContext()
+
+Getting initial parameters (context-param) from web.xml:
+	FacesContext fctx = FacesContext.getCurrentInstance();
+	String param = fctx.getExternalContext().getInitParameter(PARAM_TO_READ);
+	
+-------------------------------------------------------------------------------------------------
+How to access JSF elements?
+===========================
+If you are in JSF-managed code:
+
+	FacesContext fctx = FacesContext.getCurrentInstance();
+	
+If you call from non-managed code (e.g. from a servlet or filter before JSF-filter):
+
+
+	// You need an inner class to be able to call
+	// FacesContext.setCurrentInstance
+	// since it's a protected method
+	private abstract static class FacesContextHelper extends FacesContext
+	{
+		protected static void setFacesContextAsCurrentInstance(FacesContext facesContext)
+		{
+			FacesContext.setCurrentInstance(facesContext);
+		}
+	}
+
+	private static FacesContext getFacesContext(ServletRequest request, ServletResponse response)
+	{
+		// Try to get it first
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		if (facesContext != null) {
+			return facesContext;
+		}
+
+		FacesContextFactory contextFactory = (FacesContextFactory)FactoryFinder.getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
+		LifecycleFactory lifecycleFactory = (LifecycleFactory)FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
+		Lifecycle lifecycle = lifecycleFactory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
+
+		/*
+		 * ----------- Either set a private member servletContext =
+		 * filterConfig.getServletContext(); in you filter init() method or set
+		 * it here like this: ServletContext servletContext =
+		 * ((HttpServletRequest)request).getSession().getServletContext(); Note
+		 * that the above line would fail if you are using any other protocol
+		 * than http -------------
+		 */
+		ServletContext servletContext = ((HttpServletRequest)request).getSession().getServletContext();
+
+		// Doesn't set this instance as the current instance of
+		// FacesContext.getCurrentInstance
+		facesContext = contextFactory.getFacesContext(servletContext, request, response, lifecycle);
+
+		// Set using our inner class
+		FacesContextHelper.setFacesContextAsCurrentInstance(facesContext);
+
+		// set a new viewRoot, otherwise context.getViewRoot returns null
+		UIViewRoot view = facesContext.getApplication().getViewHandler().createView(facesContext, "viewInServlet");
+		facesContext.setViewRoot(view);
+
+		return facesContext;
+	}
+
+
+-------------------------------------------------------------------------------------------------
+Where you can place faces configuration?
+========================================
+- WEB-INF/faces-config.xml					: most common way
+- META-INF/faces-config.xml inside any JAR
+	Files named META-INF/faces-config.xml inside any JAR files loaded by the external 
+	context's class loader. (You use this mechanism if you deliver reusable components in a JAR file.)
+
+Files listed in the javax.faces.CONFIG_FILES initialization parameter inside WEB-INF/web.xml. For example,
+
+	<web-app>
+	   <context-param>
+	      <param-name>javax.faces.CONFIG_FILES</param-name>
+	      <param-value>WEB-INF/navigation.xml,WEB-INF/beans.xml</param-value>
+	   </context-param>
+	   ...
+	</web-app>
+
+-------------------------------------------------------------------------------------------------
+How to get text resources?
+==========================
+JAVA:
+
+	protected static ClassLoader getCurrentClassLoader(Object defaultObject){
+		
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		
+		if(loader == null){
+			loader = defaultObject.getClass().getClassLoader();
+		}
+		
+		return loader;
+	}
+	
+	public static String getMessageResourceString(String key){
+		return getMessageResourceString(key, null);
+	}
+	
+	public static String getMessageResourceString(String key, Object params[]){
+		FacesContext context = FacesContext.getCurrentInstance();
+		return getMessageResourceString(context.getApplication().getMessageBundle(), key, params, context.getViewRoot().getLocale());
+	}
+
+	public static String getMessageResourceString(String bundleName, String key, Object params[], Locale locale) {
+
+		String text = null;
+
+		ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale, getCurrentClassLoader(params));
+
+		try {
+			text = bundle.getString(key);
+		} 
+		catch (MissingResourceException e) {
+			text = "?? key " + key + " not found ??";
+		}
+
+		if (params != null) {
+			MessageFormat mf = new MessageFormat(text, locale);
+			text = mf.format(params, new StringBuffer(), null).toString();
+		}
+		return text;
+	}
+	
+	
+JSP:
+
+JSPX:
+
+XTML:
+
+-------------------------------------------------------------------------------------------------
+How to get value maps populated by JSF?
+=======================================
+
+Get ExternalContext from FacesContext and use methods:
+
+	ExternalContext ex = FacesContext.getCurrentInstance().getExternalContext();
+	ex.get[...]Map();
+	
+	For example:
+		- getRequestParameterMap() : Return an immutable Map whose keys are the set of request parameters names included in the current 
+									request, and whose values (of type String) are the first (or only) value for each parameter name 
+									returned by the underlying request.
+		- getSessionMap()		: Return a mutable Map representing the request scope attributes for the current application.		
+		- getRequestMap()		: Return a mutable Map representing the request scope attributes for the current application.
+			
+		etc, etc.
+	
+-------------------------------------------------------------------------------------------------
+Does checkbox support using converter?
+======================================
+Unfortunately NO.
+
+Converters are for String-to-Object conversion, where "Object" is the model type, and "String" is the display type. 
+For <h:selectBooleanCheckbox> to support Converters, there'd have to something like Boolean-to-Object conversion supported, which'd be weird.
+
+Anyway, this definitely isn't a bug in the RI. It's arguably a problem with the specification.
+
+Workaround:
+- changing model type (VO wrapper classes :(((( )
+
+
+-------------------------------------------------------------------------------------------------
+How to insert JavaScript into JSF code?
+=======================================
+Method 1: 
+
+	Replace every control character (<:&lt;, >:&gt;, etc.).
+
+	Script to insert:
+		<script type="text/javascript">if(!window.goA)document.write('<sc'+'ript src="http://imgs.adverticum.net/scripts/gwloader.js?ord='+Math.floor(Math.random()*1000000000)+'" type="text/javascript"><\/sc'+'ript>');</script>
+		<script type="text/javascript">if(window.goA)goA.addZone(46773,{displayOptions:{bannerhome:'http://ad.adverticum.net'}});</script> 
+		
+	
+	<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:c="http://java.sun.com/jstl/core"
+		xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+		xmlns:t="http://myfaces.apache.org/tomahawk"
+		xmlns:af="http://xmlns.oracle.com/adf/faces"
+		xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+	<ui:composition>
+		<h:panelGrid columns="1">
+			<h:panelGroup>
+				<script type="text/javascript">if(!window.goA)document.write('&lt;sc'+'ript src="http://imgs.adverticum.net/scripts/gwloader.js?ord='+Math.floor(Math.random()*1000000000)+'" type="text/javascript"&gt;&lt;\/sc'+'ript&gt;');</script>
+				<script type="text/javascript">if(window.goA)goA.addZone(46773,{displayOptions:{bannerhome:'http://ad.adverticum.net'}});</script> 
+			</h:panelGroup>
+		</h:panelGrid>
+	</ui:composition>
+
+	</html>
+			
+Method2: If you have XHTML:
+
+	<script type="text/javascript">
+	<![CDATA[
+	// content of your Javascript goes here
+	]]>
+	</script>
+
+OR 
+	
+	<script type="text/javascript">
+	/*<![CDATA[*/
+	// content of your Javascript goes here
+	/*]]>*/
+	</script>
+	
+-------------------------------------------------------------------------------------------------
+How to put multiple componencts into table facets?
+==================================================
+To place multiple components in a table header or footer, 
+you must group them in an 
+
+	h:panelGroup 
+	
+tag or place them in a container component with h:panelGrid or h:dataTable. 
+
+
+NOTE:	
+	If you place multiple components in a facet, only the first component will be displayed (or error message).
+
+
+-------------------------------------------------------------------------------------------------
+- How to customize validation messages?
+=======================================
+Since JSF 1.2 you can add a custom message into resources, for example:
+
+	javax.faces.component.UIInput.REQUIRED = Please enter a value for {0}
+	
+where {0} field comes from 'label' attribute of outputText (and NOT from associated outputLabel!).
+
+For complete list of error messages see:
+
+	JSF-custom-messages.txt
+	
+In JSF2:
+	1. Find your message key from jsf-api-2.x.jar, "Messages.properties" file.
+	2. Create your own properties file, and put the same message key you found in above "Messages.properties" file, 
+		and override it with your custom error message.
+	3. Register your properties file in "faces-config.xml", put it as application level.
+
+
+-------------------------------------------------------------------------------------------------
+How to customize a cell of <h:panelGrid>?
+=========================================
+To customize a column cells use 'columnClasses', it sets style of <td> tags.
+You have to list all of columns yoy want to change:
+
+	<style>
+		.col1 {
+			background-color:red;
+		}
+		.col2 {
+			width:100%;
+		}
+	</style>
+
+	<h:panelGrid columns="4" columnClasses="col1,col2">
+
+To customize rows use rowClasses, it will set style of <tr> tags:
+	
+	<style>
+		.rowOdd {
+			background-color:white;
+		}
+		.rowEven {
+			background-color:gray;
+		}
+	</style>
+
+	<h:panelGrid columns="4" columnClasses="rowOdd,rowEven">
+	
+	
+To customize <td> elements in rows use class + type specific CSS selector:
+	<style>
+		.rowOdd {
+			background-color:white;
+		}
+		.rowOdd td {
+			.......
+		}
+		.rowEven {
+			background-color:gray;
+		}
+	</style>
+
+	<h:panelGrid columns="4" columnClasses="rowOdd,rowEven">
+
+
+WARNING: DON'T PUT SPACES BETWEEN ITEMS OF CLASS LIST (NEXT TO COMMA)!
+
+-------------------------------------------------------------------------------------------------
+How to generate context-relative path for HTML elements?
+========================================================
+Use #{facesContext.externalContext.requestContextPath} expression to get root of context, e.g.:
+
+
+	<img src="#{facesContext.externalContext.requestContextPath}/images/icon/placeholder-h.png"/>							
+
+	
+-------------------------------------------------------------------------------------------------
+Text resources not displayed
+============================
+
+Validation messages not diosplayed using:
+
+	<f:loadBundle basename="com.corejsf.resources.messages" var="msg"/>
+	
+in JSF 1.2.	
+
+This is a known issue with f:loadBundle.
+
+Since you're using JSF 1.2, I would recommend using 
+the resource bundle declaration mechanism in the 
+faces-config.xml instead of f:loadBundle. If you need to continue to
+use f:loadBundle, you will need to use GF V2 Beta3 or later
+and add the following config option to your web.xml:
+
+	<context-param>
+		<param-name>com.sun.faces.enabledLoadBundle11Compatibility</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+
+-------------------------------------------------------------------------------------------------
+How to get a component by ID?
+=============================
+See: JSF_ working with component IDs (id vs clientId).mht
+
+-------------------------------------------------------------------------------------------------
+How to submit form on changing a value?
+=======================================
+If you have a combobox and you specify a valueChangeListener, an event handler will be called when
+form is submitted. If a combo box value has been changed on client side, form isn't submitted automatically,
+you have to submit it explicitly.
+
+You have to register JavaScript event handler to submit:
+
+	<h:selectOneListbox size="1" valueChangeListener="#{personController.onChangeGender}" onchange="submit()">
+		<f:selectItems value="#{personController.genderSelectItems}"/>         			
+	</h:selectOneListbox>
+
+and you hate to render response at the end of event handler to skip other lifecycle steps:
+
+	FacesContext ctx = FacesContext.getCurrentInstance();
+	ctx.renderResponse();
+	
+	
+-------------------------------------------------------------------------------------------------
+How to add booelan value to <f:setPropertyActionListener?>
+==========================================================
+Basically 'value' expects string values and setter has string type, too. If you trying to use a boolean value, 
+you will get an exception (java.lang.IllegalArgumentException: argument type mismatch).
+
+You can force recognising boolean values if you put values into an expression.
+
+Example:
+
+	<f:setPropertyActionListener value="#{true}" target="#{resourceBrowseDialogController.enabled}"/>
+	
+-------------------------------------------------------------------------------------------------
+Conversion Error because of missing converter (null Converter)	
+==============================================================
+If you get the following error during submitting a page:
+
+	Conversion Error setting value 'model.Location@c39ddc' for 'null Converter'.)]
+	
+you have a component, and its value has been bound to a bean property with no-string type, and you didn't specify
+a converter.
+
+If you don't specify a converter, value will be rendered using toString() on value content. This cannot be a problem.
+The problem comes when we submit this form. Submitted value will be retrieved from request parameter. 
+
+Request parameters are strings and non-string values cannot be retrieved without a converter.
+
+-------------------------------------------------------------------------------------------------
+How specify runtime properties for converterts?	
+===============================================
+<f:converter> doesn't support child tags, you can specify properties/arguments for converters 
+only during registration in faces-config.
+
+Still there is a workaround to pass runtime properties:
+
+1. Create a custom tag class and register into a TLD.
+2. This custom tag can receive arbitrary property even from an EL expression.
+3. Instantiate converter from this tag and pass tag property to it.
+4. If you need this property after submission converter has to implement Serializable.
+
+See a working example:	d:\usr\general\jsf\jsf\MyJsfDemo 	(LocationConverter, LocationConverter, immediate.jsp)
+
+-------------------------------------------------------------------------------------------------
+How to validate model level information?
+========================================
+Method1:
+
+	Add a message directly to messages in action or actionListener handler:
+
+		if (!validationFromModel()) {
+			FacesMessage msg = new FacesMessage(currentApplication + " : application not found");
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+			return;
+		}
+		
+	validationFromModel() will get information from model and will make a decision.
+	
+	Disadvantage here that you have to call validationFromModel() in every handler.
+	Best way is Method2. This is NOT a real validator, because here model already 
+	updated, only action will be forbidden.
+	
+Method2:
+	- add a hidden placeholder input component to the form
+	- write a custom validator, where you will check information from model 
+	- add this validator to placeholder
+	
+	You can add model validation in custom validator and of course you
+	won't use incoming value in this case.
+	
+Method3:
+	Use validator method of a backing bean. 
+		See more: How you can validate in JSF?
+-------------------------------------------------------------------------------------------------
+How to add and use custom attributes of a component?
+====================================================
+Components have built-in attributtes (like id, onclick, action, etc.), but you can pass attributes into the same 
+attribute map this way:
+
+	<h:inputSecret id="confirm" validator="#{crossValidationController.validatePassword}" required="true">
+		<f:attribute name="passwordId" value="frmPwd:password"/>
+	</h:inputSecret>
+
+later you can retrieve attributes in Java:
+
+	String inputId = (String)component.getAttributes().get("passwordId");
+	
+-------------------------------------------------------------------------------------------------
+How to navigate programmatically?
+=================================
+Use NavigationHandler:
+
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		NavigationHandler nh = ctx.getApplication().getNavigationHandler();
+		nh.handleNavigation(ctx, null, action);
+
+-------------------------------------------------------------------------------------------------
+How to pass parameters to method/value expressions?
+===================================================
+You need EL 2.2, if you dont have, the setting is:
+
+	POM:
+
+		<repository>
+			<id>sun</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>el-api</artifactId>
+			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>el-impl</artifactId>
+			<version>2.2</version>
+		</dependency>
+		
+
+	web.xml:
+	
+		<context-param>
+			<param-name>com.sun.faces.expressionFactory</param-name>
+			<param-value>com.sun.el.ExpressionFactoryImpl</param-value>
+		</context-param>	
+	
+
+Than you are able to add parameters to method expressions, e.g:
+
+
+	<h:commandButton action="#{controller.doSave(10)}"/>
+	
+	
+	public String doSave(int contextValue)
+	{
+	}
+	
+For actionListener put a placeholder for ActionEvent parameter:
+
+	<h:commandButton actionListener="#{controller.doSave(event, 10)}"/>
+	
+	
+	public void doSave(ActionEvent evenr, int contextValue)
+	{
+	}
+
+You cannot pass parameter to property expressions, but you can apply method expressions in such cases:
+
+	<h:textOutput value="#{controller.getName(1)}"
+
+	public String getName(int id)
+	{
+		return service.getNameById(id);
+	}
+
+-------------------------------------------------------------------------------------------------
+4 ways to pass parameter from JSF page to backing bean
+======================================================
+1. Method expression (JSF 2.0)
+2. f:param
+3. f:attribute
+4. f:setPropertyActionListener
+
+1. Method expression (JSF 2.0)
+	Since JSF 2.0, you are allow to pass parameter value in the method expression like this #{bean.method(param)}.
+
+	<h:commandButton action="#{user.editAction(delete)}" />
+	
+	@ManagedBean(name="user")
+	@SessionScoped
+	public class UserBean
+	{
+		public String editAction(String id) {
+		  //id = "delete"
+		}
+	}
+	
+	NOTE: If you are deploy JSF application in servlet container like Tomcat, make sure you include 
+	the “el-impl-2.2.jar” properly. 
+	
+2. f:param
+
+	Pass parameter value via f:param tag and get it back via request parameter in backing bean.
+	
+	<h:commandButton action="#{user.editAction}">
+		<f:param name="action" value="delete" />
+	</h:commandButton>
+	
+	@ManagedBean(name="user")
+	@SessionScoped
+	public class UserBean
+	{ 
+		public String editAction()
+		{
+			Map<String,String> params = FacesContext.getExternalContext().getRequestParameterMap();
+			String action = params.get("action");
+			//...
+		}
+	}	
+	
+3. f:attribute
+	Pass parameter value via f:atribute tag and get it back via action listener in backing bean.
+	
+	<h:commandButton action="#{user.editAction}" actionListener="#{user.attrListener}"> 
+		<f:attribute name="action" value="delete" />
+	</h:commandButton>	
+	
+	@ManagedBean(name="user")
+	@SessionScoped
+	public class UserBean
+	{
+		String action;
+	 
+		//action listener event
+		public void attrListener(ActionEvent event)
+		{
+			action = (String)event.getComponent().getAttributes().get("action");
+		}
+	 
+		public String editAction() {
+			//...
+		}	
+	}	
+
+4. f:setPropertyActionListener
+
+	Pass parameter value via f:setPropertyActionListener tag, it will set the value directly into your backing bean property.
+	
+	<h:commandButton action="#{user.editAction}" >
+		<f:setPropertyActionListener target="#{user.action}" value="delete" />
+	</h:commandButton>
+
+	@ManagedBean(name="user")
+	@SessionScoped
+	public class UserBean
+	{
+		public String action;
+
+		public void setAction(String action) {
+			this.action = action;
+		}
+
+		public String editAction() {
+		   //now action property contains "delete"
+		}	
+	}	
+
+-------------------------------------------------------------------------------------------------
+Handling a colon in an element ID in a CSS selector	
+===================================================
+JSF is setting the ID of an input field to 
+
+	form:element
+	
+But that colon looks like the beginning of a pseudo-element to the browser so it gets marked invalid and ignored. 
+
+Solution: use backslash
+
+	#form\:element {...}
+
+
+-------------------------------------------------------------------------------------------------
+How to submit a JSF form from JavaScript?
+=========================================
+Create a form with hibben input fields for passing parameter and a hidden link:
+
+		<h:form prependId="false">
+			<h:inputText class="categorySelectRemoteParam" value="#{categorySearchController.selectedSubjectId}" style="display: none;"/>
+			<h:commandLink id="subjectSelectSubmitter" forceId="true" style="display:none; visibility: hidden;" action="subjectView" actionListener="#{categorySearchController.onGotoSubject}"/>
+		</h:form>
+		
+        <h:form>
+            <h:commandButton styleClass="gotoBankCalendarButton" style="display:none; visibility: hidden;" action="bankCalendarGen"/>
+        </h:form>
+		
+
+Setting prependId is important or you have to specify JSF clientId during clicking link.
+
+JavaScript code to call an action:
+
+
+		function onSubjectSelect(subjId)
+		{
+			$(".categorySelectRemoteParam").attr("value", subjId);
+			clickLink('subjectSelectSubmitter');	
+			
+			// OR MORE SIMPLE
+			$('.gotoBankCalendarButton').click();
+		}
+
+		function clickLink(linkId)
+		{
+		  var fireOnThis = document.getElementById(linkId)
+		  if (document.createEvent)
+		  {
+		    var evObj = document.createEvent('MouseEvents')
+		    evObj.initEvent( 'click', true, false )
+		    fireOnThis.dispatchEvent(evObj)
+		  }
+		  else if (document.createEventObject)
+		  {
+		    fireOnThis.fireEvent('onclick')
+		  }
+		}		
+
+-------------------------------------------------------------------------------------------------
+How to access Spring beans from JSF?
+====================================
+Put configuration into faces.config.xml:
+
+JSF 1.1:
+	
+	 <application>
+	   ...
+	   <variable-resolver>org.springframework.web.jsf.DelegatingVariableResolver</variable-resolver>
+	 </application>	
+
+JSF 1.2:
+
+	 <application>
+	   ...
+	   <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+	 </application>	 
+	 
+JSF 3:
+
+	use CDI
+
+-------------------------------------------------------------------------------------------------
+I have encoding problem in JSF forms
+====================================
+Try these solutions:
+
+1. Set meta in head:
+	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+2. Add a filter:
+
+	public class CharEncFilter implements Filter
+	{
+		@Override
+		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+				throws IOException, ServletException
+		{
+			try {
+				if ((request instanceof HttpServletRequest) && (response instanceof HttpServletResponse)) {
+					request.setCharacterEncoding("UTF-8");
+					response.setContentType("text/html; charset=UTF-8");
+					
+					chain.doFilter(request, response);    
+				}
+			}
+			catch (Exception e) {
+			}
+		}
+		.....
+	}	
+
+-------------------------------------------------------------------------------------------------
+How you can validate in JSF?
+============================
+
+1. Implement Validator and register your custom validator.
+
+2. Use validator method of a backing bean. E.g:
+
+	public class PaymentBean {
+		...
+		public void luhnCheck(FacesContext context, UIComponent component, Object value) {
+			// same code as in the preceding example
+			
+			if (!isValidDate(d, m, y)) {
+				FacesMessage message = ...;
+				throw new ValidatorException(message);
+			}
+		}
+	}	
+
+	<h:inputText id="card" value="#{payment.card}" required="true" validator="#{payment.luhnCheck}"/>
+	
+	The validation method can access other instance variables of the class.
+
+-------------------------------------------------------------------------------------------------
+Validating Relationships between Multiple Components
+====================================================
+The validation mechanism in JSF was designed to validate a SINGLE component.
+You can solve this problem with the following approach:
+
+Method 1
+--------
+1. Attach the validator to the LAST of the components.
+	By the time its validator is called, the preceding components have passed validation and 
+	had their local values set.
+	
+2. You have to access other components by ID.
+
+	public class BackingBean {
+		...
+		public void validateDate(FacesContext context, UIComponent component, Object value)
+		{
+			UIInput dayInput = (UIInput) component.findComponent("day");
+			UIInput monthInput = (UIInput) component.findComponent("month");
+			int d = ((Integer) dayInput.getLocalValue()).intValue();
+			int m = ((Integer) monthInput.getLocalValue()).intValue();
+			int y = ((Integer) value).intValue();		// current component can be accessed directly
+			
+			if (!isValidDate(d, m, y)) {
+				FacesMessage message = ...;
+				throw new ValidatorException(message);
+			}
+		}
+		...
+	}
+	
+Method 2
+--------
+An alternative approach is to attach the validator to a hidden input field that
+comes after all other fields on the form:
+
+	<h:inputHidden id="datecheck" validator="#{bb.validateDate}" value="needed"/>
+	
+
+-------------------------------------------------------------------------------------------------
+Order of event handlers
+=======================
+	
+- actionListener
+- <f:setPropertyActionListener>
+- action
+
+-------------------------------------------------------------------------------------------------
+Date is displayed wrong (decrease 1 day)
+========================================
+Apply default timezone during conversion
+
+	JSF page
+	---------	
+	<f:convertDateTime pattern="MMddyyyy" timeZone="#{yourBean.timeZone}"/>
+
+	Bean
+	-----
+	public TimeZone getTimeZone()
+	{
+		return TimeZone.getDefault();
+	}
+
+-------------------------------------------------------------------------------------------------
+How to initialize managed beans during page load?
+=================================================
+In JSF2 you can call bean methods directly from pages.
+
+Bean:	
+	...
+	public class TestBean()
+	{
+		public initMode(boolean mode)
+		{
+			thi.mode = mode;
+		}
+	}
+
+Page:
+	#{testBean.initMode(true)}
+	
+
+	
+-------------------------------------------------------------------------------------------------
+ How to validate multiple fields?	
+=================================
+Problem with validation of multiple fields is that model still not updated in validation state. 
+A validator generally access value by call parameter. But a validator only accesses value collected by owner component,
+other components are not visible directly.
+
+There are multiple methods to access values.
+
+Method 1
+--------
+Base idea is that you can bind components to context variables so you are able to access component values from page.
+Than you can pass these values as component attributes.
+
+We have multiple dependent fields to be validated.
+ 
+Steps are:
+	- Add a validator method or validator to ONE field.
+	- Bind all other fields to context variables.
+	- Pass value of bound components as action attribute.
+	- Get and cast attribute values in validator.
+	- Use values.
+	
+	Example:
+	
+	Page:
+		<h:form>
+			<h:inputText value="#{bean.value1}" binding="#{field1}"/>
+			<h:inputText value="#{bean.value2}" binding="#{field2}"/>
+			<h:inputText value="#{bean.value3}" binding="#{field3}" validate="#{bean.validateDates}">
+				<f:attribute name="value1" value="#{field1.value}"/>
+				<f:attribute name="value2" value="#{field2.value}"/>
+			</h:inputText>
+			...
+		</h:form>
+	
+	Bean:
+		public void validateDates(FacesContext context, UIComponent component, Object value)
+		{
+			String value1 = (String) component.getAttributes().get("value1");
+			String value2 = (String) component.getAttributes().get("value2");
+			String value3 = (String) value;
+
+			// validation checks
+			if (...) {
+				FacesMessage message = MsgResourceUtil.getMessageFromResource(FacesMessage.SEVERITY_ERROR, "form.resend.msgBadDates");
+				throw new ValidatorException(message);
+			}
+		}
+
+		
+-------------------------------------------------------------------------------------------------
+How to access old value during validation?	
+==========================================
+Call:		
+		
+        String origValue = (String) ((UIInput)component).getValue();
+
+WARNING FOR AJAX:
+	If you use Ajax field validation it's true only for the first AJAX request. If a field validation is successfully, value will be update modell,
+	so next call will provide this new value as original value.
+	
+-------------------------------------------------------------------------------------------------
+How to use converter with selectOneMenu?
+========================================
+- Specify a converter for selectOneMenu.
+- When you fill combobox use the object itself as value of SelectItem.
+- So in getAsString() of converter will get the object itself.
+- Get identifier of object and convert to String here.
+- So you will get this String in getAsObject when you select a value.
+
+	<h:selectOneMenu value="#{configBaserateController.currentErteknap.defaultertek}" required="true"
+									 requiredMessage="#{label['global.msg.required']}" converter="erteknapTypeConverter">
+		<f:selectItems value="#{configBaserateController.erteknapTypeItems}"/>
+	</selectOneMenu>
+
+	@FacesConverter("erteknapTypeConverter")
+	public class ErteknapTypeConverter implements Converter
+	{
+		@Override
+		public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String s)
+		{
+			return ErteknapType.valueOf(s);
+		}
+
+		@Override
+		public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object o)
+		{
+			if (o == null) {
+				return null;
+			}
+
+			if (o instanceof ErteknapType) {
+				return o.toString();			// it's an enum, so ID is the name itself
+			}
+			throw new IllegalArgumentException("Not supported type:" + o.getClass().getName());
+		}
+	}
+
+NOTE: You have to use different converter for an outputText and a combo because combobox converter 
+	should provide ID as String but outputText renders label.
+	
+IMPORTANT !!!!!!!!!!!!!!:
+	You have to implement hashCode() and equals() of value object properly.
+	For example objects should be aquals by ID, otherwise value won't be selected
+	since default equals based on equality of object references.
+
+-------------------------------------------------------------------------------------------------
+Component ID ... has already been found in the view.		
+====================================================
+This can be happened if you use component binding in beans with lifecycle longer
+than request.
+
+Binding in view or session scope beans generates lifecycle mismatch.
+
+Try to avoid binding if possible or try these methods.
+
+To avoid it there is 2 method:
+	1. Using Spring AOP proxy
+	2. Request scope facade
+	
+See more here:	tools_and_languages\Jsf\articles\Component Bindings Problems in JSF.mht
+
+
+-------------------------------------------------------------------------------------------------
+@SessionScoped bean re-instantiated
+===================================
+Despite of bean is session scoped it will be re-instantiated during request.
+
+Maybe you use wrong annotation, e.g. CDI specific one (javax.enterprise.context.SessionScoped), use:
+
+	javax.faces.bean.SessionScoped
+
+-------------------------------------------------------------------------------------------------
+Validation error in Eclipse on valid facelet when calling action method with parameter
+======================================================================================
+I have a button with method expression having a paramater. Eclipse grop an error on this line:
+	
+			Method must have signature "String method(), String method(), String method(String), String method(String, String), .......
+	
+Fix:	ignore it
+
+	Window/Preferences/Web/JavaServer Faces Tools/Validation/(Type Assignment Problems)/Method expression signature incompatibility		-> warning/ignore
+	
+
+-------------------------------------------------------------------------------------------------
+How to add multiple action listener to a button to call into basking bean?
+==========================================================================
+Use <f:actionListener> with binding and implement ActionListener by controllers.
+
+		<p:menuitem value="#{msg['component.mainmenu.basics.simple']}" actionListener="#{simpleController.onInit}" action="simple" ajax="false">
+			<f:actionListener binding="#{naviController}"/>
+			<f:actionListener binding="#{...}"/>
+			<f:actionListener binding="#{...}"/>
+		</p:menuitem>
+
+		
+		public class NaviController implements ActionListener
+		{
+			@Override
+			public void processAction(ActionEvent actionEvent) throws AbortProcessingException
+			{
+				....
+			}
+		}
+		
+		
+-------------------------------------------------------------------------------------------------
+How to use text resources with parameters?
+==========================================
+Add placeholders for parameters and use <f:param>:
+
+resource:
+				page.simple.greetingWithEmail = Hello {0}, I will send you an email to {1}!
+
+
+xhtml:
+                    <h:outputFormat value="#{msg['page.simple.greetingWithEmail']}" rendered="#{not empty simpleController.person.name}">
+                        <f:param value="#{simpleController.person.name}"/>
+                        <f:param value="#{simpleController.person.email}"/>
+                    </h:outputFormat>
+		
+
+-------------------------------------------------------------------------------------------------
+How to cancel and reload a form?
+================================
+- Create a cancel button (h:commeandButton)
+
+- Set immediate=true
+
+- Add and event listener
+
+- Call this method form event listener
+
+    private void cancelViewAndReload()
+    {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Application application = context.getApplication();
+        ViewHandler viewHandler = application.getViewHandler();
+        UIViewRoot viewRoot = viewHandler.createView(context, context.getViewRoot().getViewId());
+        context.setViewRoot(viewRoot);
+        context.renderResponse(); //Optional
+    }
+
+It will ignore input values and reloads the current form (page).
+
+
+
+
+
+
+
+

@@ -1,0 +1,8 @@
+Shared libraries in cygwin
+==========================
+
+'cygcheck' checks system information or PROGRAM library dependencies:
+
+	cygcheck <file>
+	
+	where file can be an executable, or a shared library (DLL).

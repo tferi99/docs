@@ -1,0 +1,23 @@
+----------------------------------------------------------------------------------------
+To generate 
+		- toString()
+		- hashCode()
+		- equals()
+		- compareTo()
+		
+	for Java beans
+
+use Commons4E (org.jiayun.commons4e_1.1.10.zip)	
+	
+OR
+
+CommonClipse	
+	Update site:
+	
+			http://commonclipse.sourceforge.net
+		
+----------------------------------------------------------------------------------------
+
+
+		
+

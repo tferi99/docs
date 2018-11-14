@@ -1,0 +1,25 @@
+Calling FTP from script
+------------------------
+
+Calling script:
+
+	cat download.txt | ftp ftp.ifm.uni-hamburg.de &
+
+Download.txt example:
+
+	bi
+	prompt
+	lcd /incoming/kami
+	cd /pub/soft/lang/java/
+	mget jdk*.exe
+	clo
+	by
+
+You have to create .netrc file for authentication into your home.
+
+	machine <souce host> login <user> password <password>
+
+, for example:
+	machine ftp.ifm.uni-hamburg.de login anonymous password a@b
+
+

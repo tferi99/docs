@@ -1,0 +1,40 @@
+
+Installing, using Tripwire
+==========================
+Tripwire is a file integrity check and intrusion detection tool. This 
+mini-howto based on version 2.2.1 .
+
+1. Extract install package from .tgz file, and call install.sh
+Note:
+	On SuSE you have to TWEDITOR in install.cfg to /usr/bin/vibefore calling
+	install.sh .
+
+2. During installation specify keyphrases used for protecting key files.
+
+3. Create policy file from policy source (e.g. there is a sample source for
+   SuSE: suse.txt . Maybe you have to change it, because not all listed file 
+   has been installed on your system). For example:
+
+   twadmin --create-polfile suse.txt
+or   
+   twadmin -m P suse.txt
+	
+4. Initialize Tripwire database:
+
+	tripwire --init
+or
+	tripwire -m i
+
+It will use policy file generated during step 3.
+
+5. Some command:
+
+	Checking integrity:
+
+		tripwire --check
+	or	
+		tripwire -m c 
+		
+	
+	
+

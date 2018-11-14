@@ -1,0 +1,44 @@
+SuSE 9.1 DSL setup
+==================
+
+The easiest way to setup DSL is using Yast.
+
+1. Choose a LAN card to connect ADSL modem.
+
+2. Set a static IP address for this interface. For example: 192.168.2.1/255.255.255.0.
+   It's only a placeholder for new interface.
+   DON'T SET DEFAULT GATEWAY.
+
+3. Connect and switch ON ADSL modem.
+
+4. Call Yast to create new DSL interface (Network devices/DSL menu)
+
+	- Add new DSL device
+		PPP mode		: PPP over Ethernet
+		Ethernet card		: choose one from combo box (to identify see files in /etc/sysconfig/network)
+		Device acivation	: On Boot
+
+5. Restart network and smpppd if necessary:
+	- rcnetwork restart
+	- rcsmpppd restart
+
+6. rcsmpppd commands
+
+	- getting DSL interface:		cinternet -I
+
+		Example output:
+				
+				01 i dsl0
+
+	- getting state of a DLS interface:	cinternet -i dsl0 -s [-v]
+
+	- starting interface:			cinternet -i dsl0 -A
+
+	- stopping interface:			cinternet -i dsl0 -O
+
+	After starting you have to see a new network interface:		ppp0
+
+	See:  
+		man smpppd
+		man cinternet
+

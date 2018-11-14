@@ -1,0 +1,12 @@
+============
+McAffee tips
+============
+McAffee in our company protects files of browsers, so you are not able to delete there files.
+
+But there is a workaround, you can uninstall temporary McAffee (for a few minutes):
+
+
+	msiexec /x "c:\Program Files\McAfee\VirusScan Enterprise\RepairCache\vse850.msi"
+	
+	
+,so you will able to delete everything until McAffee installed again by policy rules.

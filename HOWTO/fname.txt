@@ -1,0 +1,17 @@
+
+How to get items of a filename in sh ?
+======================================
+
+file="/path/to/the/file.sfx"
+
+path="`expr "$file" : '\(.*\)/'`"
+basename="`expr "//$file" : '.*/\([^/]*\)'`"
+suffix="`expr "$file" : '.*\.\([^./]*\)$'`"
+name="`expr "$file" : '\(.*\)\.[^./]*$' \| "$file"`"
+
+echo "file:$file"
+echo "path:$path"
+echo "basename:$basename"
+echo "suffix:$suffix"
+echo "name:$name"
+

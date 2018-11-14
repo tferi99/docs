@@ -1,0 +1,32 @@
+How to create a new swap device ?
+=================================
+First you have to create a new partition with fdisk:
+- call fdisk [-u device]
+- add a new partition 
+- set type (system id) of new partition to 82 (Linux swap)
+- write modified data (maybe you have to reboot after that)
+
+Make a swap area on new partition:
+	mkswap -c <device>
+
+List available swap areas:
+	swapon -s 
+or	
+	swapoff -s 
+
+or 
+	cat /proc/swaps
+
+Switch off all active swap areas:
+	swapoff -a 
+
+Note:
+	swapon/swapoff use /etc/fstab to get information about swap areas
+
+Insert new device into /etc/fstab and delete unnecesary swap entries (if you want to activate a new spaw area instead of an old one), for example:
+
+	/dev/hdc2	swap	swap	defaults   0   0
+
+Acxtivate swap area(s):
+	swapon -a
+	

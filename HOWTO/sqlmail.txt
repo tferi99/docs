@@ -1,0 +1,18 @@
+Configuring SQLMail
+In order to send mail using a stored procedure, you must configure SQLMail and verify that the SQLMail service is running. 
+
+To configure SQLMail 
+
+Click Start, point to Programs, point to Microsoft SQL Server 7.0, and then click Enterprise Manager. The SQL Server Enterprise Manager appears. 
+In the Console tree, expand the Microsoft SQL Servers node, and then expand the SQL Server Group node. 
+Expand the ServerName node where ServerName is the name of your server. 
+Expand the Support Services node and right-click the SQLMail folder and click Properties. 
+From the list provided, select the MAPI Profile name from which overdue notices are to be sent. Click OK. If a MAPI profile is not automatically provided, you need to create one, using any version of Microsoft Outlook. (For example, you can install Microsoft Outlook 2000 by running setup.exe from BackOffice Server 4.5, CD 8, or from Microsoft Office 2000 CD 1.) To configure your MAPI profile, open the Mail icon in Control Panel and click Show Profiles. Select from the drop-down menu or add the profile name to which you would like to have overdue notices sent. 
+Click OK. 
+
+
+!!!!!!!!!!!!!!!!
+Note If you have configured the SQLServerAgent service to use a different Windows NT account than the one you are using to configure SQLMail, you will not be able to select any MAPI profiles until one has been created for the service account. Log off and log on using the SQLServerAgent's service account name, and create a MAPI profile using the Mail icon in the Windows NT Control Panel.
+!!!!!!!!!!!!!!!!
+
+For more information on scheduling SQL tasks, execute the following query in the Microsoft Platform SDK: "SQL" NEAR "Scheduling Tasks".

@@ -1,0 +1,45 @@
+=========
+Dozer FAQ
+=========
+
+- How to ignore error during mapping?
+- How to use conditional mappings?
+
+--------------------------------------------------------------------------------------------------------------------------
+How to ignore error during mapping?
+===================================
+To ignore any error during mapping set stop-on-errors to 'false'. For example during mapping entities retrieved from Hibernate
+we often have LazyInitializationException without non-initialized collections.
+
+In cuch cases we can eliminate errors.
+
+	<mapping map-id="simple" stop-on-errors="false">
+		<class-a>com.infinica.webfrontend.core.model.UserGroup</class-a>
+		<class-b>com.wise.webservice.vo.UserGroup</class-b>
+	</mapping>
+
+	
+--------------------------------------------------------------------------------------------------------------------------
+How to use conditional mappings?
+================================
+You can use context based mapping by passing a mapId to mapper and specifying map-id in mapping configuretion.
+Fore example:
+
+	<mapping map-id="caseA">
+	  <class-a>org.dozer.vo.context.ContextMapping</class-a>
+	  <class-b>org.dozer.vo.context.ContextMappingPrime</class-b>
+	</mapping>
+
+	<mapping map-id="caseB">
+	  <class-a>org.dozer.vo.context.ContextMappingNested</class-a>
+	  <class-b>org.dozer.vo.context.ContextMappingNestedPrime</class-b>
+	   <field-exclude>
+		 <a>loanNo</a>
+		 <b>loanNo</b>
+	   </field-exclude>
+	</mapping>
+
+
+	ContextMappingPrime cmpA = mapper.map(cm, ContextMappingPrime.class, "caseA");
+	
+	

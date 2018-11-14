@@ -1,0 +1,16 @@
+Redirection in shell
+====================
+
+- Redirections are processed in order they appear, from left to right.
+For example:
+
+	ls > dirlist 2>&1
+	
+directs both standard output and standard error to the file 'dirlist', while the command
+
+	ls 2>&1 > dirlist
+
+directs only standard output to file 'dirlist', because the standard error was duplicated as standard output before the standard output was redirected to dirlist.
+
+
+

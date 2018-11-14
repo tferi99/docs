@@ -1,0 +1,97 @@
+===========
+Cygwin tips
+===========
+- Sending mail
+- Documentations
+- Installing cygserver
+- Installing sshd
+-----------------------------------------------------------------------------------------------
+Sending mail
+============
+Install ssmtp (e.g. with a mail client: mutt, pine)
+
+See also:
+	/usr/share/doc/Cygwin/ssmtp-*.README
+
+
+-----------------------------------------------------------------------------------------------
+Documentations
+==============
+- /usr/shar/doc/*
+- /usr/shar/doc/Cygwin/*
+
+
+Installing cygserver
+====================
+Newer versions of Cygwin provide IPC functions by cygserver (see above).
+
+At the first call initalize Cyserver:
+
+	cygserver-config
+
+This can install Cygserver as service. Start Cyserver before starting Postgres.
+
+The Cygserver services are used by Cygwin applications only if you set the environment
+variable CYGWIN to contain the string "server". You must do this before
+starting the application.
+
+	export CYGWIN=server
+
+-----------------------------------------------------------------------------------------------
+Installing sshd
+===============
+Call:
+	
+	ssh-host-config -y
+	
+	(run as administrator)
+
+Should privilege separation be used? (yes/no)
+
+	Privilege separation is a technique to make the sshd service more secure. 
+	Privilege separation splits the sshd service in two computer processes, 
+	one process runs as "root" (SYSTEM) and the other process runs as a lower-privileged user account, 
+	typically this account is created as a user called "sshd".
+
+	This technique makes the pre-authentication attack on the system much harder.
+
+Do you want to install sshd as service? yes
+
+When the script stops and asks you for "environment variable CYGWIN=" your answer is 
+
+	ntsec tty
+
+	ntsec is an environment variable used by cygwin to instruct cygwin to use Windows' 
+	security rules for controlling users' access to files and other operating system facilities.
+	
+	tty is an environment variable used by cygwin to make it work properly with editors
+	such as pico and nano
+
+	Without it (the default case), you won't be able to insert characters.	
+	
+To start:
+	
+	cygrunsrv -S sshd	
+
+	It starts:		/usr/sbin/sshd -D
+	
+Troubleshouting:
+
+	/usr/sbin/sshd -D -dd
+	
+Fixing some problems:
+
+Segmentation fault during ssh-host-config
+-----------------------------------------
+ssh-keygen drops segmantation fault during ssh-host-config.
+
+Steps:
+	- Run Cygwin as Administrator
+	- There are 4 ssh-keygen, run these 4 commands again manually
+	- Set owner of generated key pairs to SYSTEM:Administrators
+	- Copy generated keypairs into /etc
+	- run again ssh-host-config
+	
+SEE ALSO:
+	CYGWIN/usr/share/doc/Cygwin/openssh.README
+	

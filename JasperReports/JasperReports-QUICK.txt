@@ -1,0 +1,116 @@
+1. Compiling 
+------------
+A. design from XML, result into .jasper file
+
+Input: 		XML file based on jasperreport.dtd 
+		InputStream
+		JasperDesign
+		
+Output:		JasperReport		<- compileReport(...)		
+		into .jasper file (configured and serialized JasperReport object)
+		into OutputStream
+
+Process:
+- JasperCompileManager.compileReportToFile(xmlFile);
+	- JasperDesign jasperDesign = JRXmlLoader.load(sourceFileName);
+	- JasperReport jasperReport = JRCompiler.compileReport(jasperDesign)
+		- String sourceCode = JRClassGenerator.generateClass(jasperDesign);
+		- saveClass(sourceCode, javaFile);
+		- jasperReport = new JasperReport(jasperDesign, readClassBytecodes(classFile));
+	- JRSaver.saveObject(jasperReport, destFileName);
+
+
+XML -> JasperDesign -> JAVA (JRCalculator) -> CLASS (JRCalculator) -> |
+					           -> JasperDesign -> | -> JasperReport -> .jasper
+
+
+B. design from JAVA code
+	same as previos method, but JasperDesign generated from JAVA instead of XML file
+
+- JasperDesign jasperDesign = getJasperDesign();
+...
+
+
+
+2. Filling report
+-----------------
+Design input:	file (.jasper file)
+		InputStream
+		JasperReport
+		
+Data input:	Connection
+		JRDataSource
+
+Output:		JasperPrint 		<- fillReport(...)
+		into .jrprint file	<- fillReportToFile(...)
+		into OutputStream 	<- fillReportToStream(...)
+		
+
+Process: 
+- JasperFillManager.fillReportToFile(String sourceFileName, ...)
+	- JasperReport jasperReport = (JasperReport)JRLoader.loadObject(sourceFile);
+	- JasperPrint jasperPrint = fillReport(jasperReport, ...);
+		- JRFiller.fillReport(jasperReport, ...);
+			
+	- JRSaver.saveObject(jasperPrint, destFileName);
+
+
+.jasper -> JasperReport -> |
+	     Connection -> | -> JasperPrint -> .jrprint 
+	   JasperReport -> |
+
+
+
+3. Viewing report
+-----------------
+Input:		file (.jrprint or XML file)	
+		InputStream
+		JasperPrint 
+
+Output:		view of report in a javax.swing.JFrame
+
+Process:
+- JasperViewer.viewReport(...)
+	
+
+.jrprint -> JasperPrint -> javax.swing.JFrame
+
+
+4. Printing report
+------------------
+Input:		file (.jrprint file)
+		InputStream
+		JasperPrint
+
+Output:		
+		AWT Image object	<- printPageToImage(...)
+		printing to printer	<- 	
+Process:
+- JasperPrintManager	.printReport() .printPage() or .printPages()	-> JRPrinterAWT.printPages(...)
+
+	printReport(pageIdx)		-> JRPrinterAWT.printPages(..., 0, pageNum - 1)
+	printPage(pageIdx)		-> JRPrinterAWT.printPages...,pageIdx, pageIdx)
+	printPages(startIdx, endIdx)	-> JRPrinterAWT.printPages(...,startIdx, endIdx)
+
+NOTE:
+	Page format comes from settings of default printer.
+
+.jrprint -> JasperPrint -> AWT Image
+
+	
+
+5. Exporting
+------------
+Input:		file (.jrprint)
+		JasperPrint
+
+Output:		file (HTML, PDF, XLS, XML)
+		OutputStream
+
+Process:
+- exportReportToPdfFile(String sourceFileName)
+	- JasperPrint jasperPrint = (JasperPrint)JRLoader.loadObject(sourceFile);
+	- JRPdfExporter.exportReport();
+
+.jrprint -> JasperPrint -> JR...Exporter -> file
+

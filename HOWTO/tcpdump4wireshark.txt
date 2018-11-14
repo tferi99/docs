@@ -1,0 +1,10 @@
+==================================
+How to call tcpdump for Wireshark?
+==================================
+
+Older versions of tcpdump truncate packets to 68 or 96 bytes. If this is the case, use -s to capture full-sized packets:
+
+
+	tcpdump -i <interface> -s 65535 -w <some-file>
+	
+	

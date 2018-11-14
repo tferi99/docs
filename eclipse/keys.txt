@@ -1,0 +1,95 @@
+============
+Eclipse Keys
+============
+
+F2			: rename
+F5			: refresh
+F11			: debug
+F12			: activate editor
+
+Alt-Shift UP, DOWN	: expand selection to enclosing element
+Alt-Shift-B		: show in breadcrumb
+Alt-Shift-C		: change method signature
+Alt-Shift-J		: add JavaDoc comment
+Alt-Shift-O		: mark occurences
+Alt-Shift-Q + ...	: show views
+Alt-Shift-R		: rename (variable, method, ...)
+Alt-Shift-S		: source quick menu
+Alt-Shift-T		: refactor quick menu
+
+Ctrl-/			: line comment
+Ctrl-1			: quick fix
+Ctrl-D			: delete line
+Ctrl-E 			: open editor dropdown
+Ctrl-F 			: find and replace
+Ctrl-J			: incremental find
+Ctrl-K			: find next
+Ctrl-L			: goto line
+Ctrl-M			: maximize active view/editor window
+Ctrl-N			: new
+Ctrl-O			: quick outline
+Ctrl-Q			: last edit location
+Ctrl-Backspace		: delete previous word
+Ctrl-Delete 		: delete next word
+
+Ctrl-F4			: close editor 
+Ctrl-F6			: next editor
+Ctrl-F7			: next view
+Ctrl-F8			: next perspective
+Ctrl-F11		: run
+
+Ctrl-Alt-H		: open call hierarchy
+
+Ctrl-Shift UP, DOWN	: previous/next member 
+Ctrl-Shift-/		: block comment
+Ctrl-Shift-Enter	: insert line above current
+Ctrl-Shift-H		: open type in hierarchy
+Ctrl-Shift-F		: format
+Ctrl-Shift-K		: find previously
+Ctrl-Shift-L		: key shortcut help
+Ctrl-Shift-M		: add import
+Ctrl-Shift-O		: organize imports 
+Ctrl-Shift-P		: go to matcihng bracket
+Ctrl-Shift-R		: open resource
+Ctrl-Shift-T		: open type
+Ctrl-Shift-U		: occurences in file 
+Ctrl-Shift-X		: upper case 
+Ctrl-Shift-Y		: lower case 
+
+Ctrl-NUM /			: collapse
+Ctrl-Shift-NUM /	: collapse all
+Ctrl-NUM *			: expand
+Ctrl-Shift-NUM *	: expand all
+
+Ctrl-Alt Up,Down	: duplicate current row up, down
+
+
+========================
+Working fast tricks
+========================
+
+Adding import in import section
+-------------------------------
+1. imp + Ctrl-Shift -> import
+2. type start of the class, Ctrl-Shift (not start of import path!!!)
+
+
+Adding import by class
+----------------------
+1. Typing a classname into (by typing start of the class, Ctrl-Shift)
+2. import will be added automatically
+
+Navigating to a method of a class
+---------------------------------
+1. Ctrl-Shift-H or Ctrl-Shift-T to type dialog
+2. start typing classname
+3. choose class
+4. Ctrl-O to quick outline
+5. start typing method name
+6. choose method
+
+Incremental find
+----------------
+1. Ctrl-J
+2. Type text to find
+3. Press Up/Down to find previous/next items.

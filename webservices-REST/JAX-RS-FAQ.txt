@@ -1,0 +1,34 @@
+==========
+JAX-RS FAQ
+==========
+
+- I get 404's when I try to hit my jax-rs path-anotated resources 
+- How to inject EJBs into RESTresources?
+
+-------------------------------------------------------------------------------------------------------
+I get 404's when I try to hit my jax-rs path-anotated resources
+===============================================================
+1) Add a javax.ws.rs.core.Application sub-class to your web project 
+2) Then, add a @javax.ws.rs.ApplicationPath("/*") annotation to the Application sub-class.
+
+Your Application sub-class shouldn't have to do anything. By the spec this implies that any @Path/@Provider found 
+in the app will be included in the application and then your @ApplicationPath is like your servlet mapping. 
+This will let you have an empty web.xml.
+
+-------------------------------------------------------------------------------------------------------
+How to inject EJBs into RESTresources?
+======================================
+Change resource beans to EJBs. EJBs can be injected into EJBs.
+
+	@Stateless
+	@Path("/persons")
+	public class PersonResource
+	{
+		@EJB
+		PersonServiceImpSingleton personService;
+		
+		...
+		...
+	}
+
+	

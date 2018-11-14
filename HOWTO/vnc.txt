@@ -1,0 +1,17 @@
+About VNC
+=========
+
+VNC is a free graphical remote control software. It was implemented in many
+platform (Linux, Solaris, Windows, Apple).
+
+FAQ:
+
+Q: Howto change window manager started by VNC server on unix?
+A: vncserver script contains information about window manager, but
+   another script's started by vncserver sript: ~/.vnc/vncstartup 
+
+   Change this script.
+
+
+   
+

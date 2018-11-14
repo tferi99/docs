@@ -1,0 +1,1069 @@
+====================
+Maven 2.x kick guide
+====================
+
+1. Preface
+2. Usage
+2.1 Calling a plugin
+3. Maven principles
+3.1 Convention over configuration
+3.2 Declarative execution
+3.3 Organization of Dependencies
+4. Repositories, dependencies
+4.1 Specifying additional remote repositories
+4.2 Locating artifacts
+4.3 Transitive dependencies
+4.4 Dependency scopes
+5. Preparing to Use Maven
+5.1 Installation
+5.2 Settings
+5.3 Specifying HTTP proxy
+5.4 Specifying maven proxy
+6. Working with maven
+6.1 Projects from creation to installation
+6.2 Classpath resources
+6.2.1 Filtering classpath resources
+7. Plugins
+7.1 MOJO
+8. Maven's build life cycle
+
+
+4. POM - Project Object Model
+5. Maven's build life cycle
+5.1 Lifecycle, plugins, MOJOs
+8. Creating projects
+8.1 Multi-project build
+8.2 Project inheritance
+9. Dependency management
+10. Customizing build
+11. Profiles
+12. Getting more info about project
+13. Plugins
+14. Plugin development
+14.1 Plugin descriptor
+15. Deployment
+
+A. Tips
+B. Project structure
+C. POM - Project Object Model
+
+
+1. Preface
+----------
+Maven is a project management framework.
+
+Maven provides a comprehensive approach to managing software projects. From COMPILATION, to DISTRIBUTION, to 
+DOCUMENTATION, to TEAM COLLABORATION.
+Maven provides the necessary abstractions that encourage reuse and take much of the work out of project builds.
+
+
+2. Usage
+--------
+The mvn command is actually a script 
+	Un*x: bash
+	Windows: bat
+mvn -h or mvn --usage for CLI options 
+usage: maven [options] [<goal(s)>] [<phase(s)>]
+
+	Options:
+	 -C,--strict-checksums         Fail the build if checksums don't match
+	 -c,--lax-checksums            Warn if checksums don't match
+	 -P,--activate-profiles        Comma-delimited list of profiles to
+	                               activate
+	 -ff,--fail-fast               Stop at first failure in reactorized builds
+	 -fae,--fail-at-end            Only fail the build afterwards; allow all
+	                               non-impacted builds to continue
+	 -B,--batch-mode               Run in non-interactive (batch) mode
+	 -fn,--fail-never              NEVER fail the build, regardless of project
+	                               result
+	 -up,--update-plugins          Synonym for cpu
+	 -N,--non-recursive            Do not recurse into sub-projects
+	 -npr,--no-plugin-registry     Don't use ~/.m2/plugin-registry.xml for
+	                               plugin versions
+	 -U,--update-snapshots         Update all snapshots regardless of
+	                               repository policies
+	 -cpu,--check-plugin-updates   Force upToDate check for any relevant
+	                               registered plugins
+	 -npu,--no-plugin-updates      Suppress upToDate check for any relevant
+	                               registered plugins
+	 -D,--define                   Define a system property
+	 -X,--debug                    Produce execution debug output
+	 -e,--errors                   Produce execution error messages
+	 -f,--file                     Force the use of an alternate POM file.
+	 -h,--help                     Display help information
+	 -o,--offline                  Work offline
+	 -r,--reactor                  Execute goals for project found in the
+	                               reactor
+	 -s,--settings                 Alternate path for the user settings file
+	 -v,--version                  Display version information
+	 
+- All downloads have checksums (you can enable or disable using them)
+- Profiles allow to change operational parameters depending on the circumstances
+- Other options are for SPECIFIC PLUGINS, NOT FOR THE CORE 
+	- Set in project.xml or ~/.m2/settings.xml
+	- Given as Java system property using -Dproperty=value
+		
+	where:
+		format of goals:		plugin:goal
+
+
+		
+		
+- Maven 2.0 is based around the central concept of a BUILD LIFECYCLE. What this means is that the process for building and distributing 
+  a particular artifact is clearly defined.
+  
+- Each of these steps, all previous steps are always executed, so you only need to specify the last one you desire on the command line.  
+  For example:
+	
+		mvn install
+	
+- The same command can be used in a multi-module scenario. For example;
+
+	mvn clean install
+
+  This command will traverse into all of the subprojects and run clean, then install (including all of the prior steps).
+  
+		
+2.1 Calling a plugin
+--------------------
+
+	mvn groupId:artifactId:[version:]goal 
+
+Example: 
+
+	mvn org.apache.maven.plugins:maven-javadoc-plugin:2.0-beta-2:javadoc
+
+Without the version, we use the latest version of the plugin:
+
+	mvn org.apache.maven.plugins:maven-javadoc-plugin:javadoc
+
+
+2.2 Calling with prefix
+-----------------------
+To make typing commands easier: 
+
+	mvn prefix:goal
+
+Where prefix can come : 
+
+- artifactId == maven-${prefix}-plugin 
+	
+  E.g., javadoc resolves to maven-javadoc-plugin
+	
+- <goalPrefix> tag in pom.xml of the plugin 
+  It must be unique in group where groupId configured by <pluginGroups> tag
+  
+	Set in $M2_HOME/conf/settings.xml or ~/.m2/settings.xml 
+	[…]
+	  <pluginGroups>
+	    <pluginGroup>groupId</pluginGroup>
+	  </pluginGroups>
+	[…]
+	
+  Default plugin groups are always used: 
+	- org.apache.maven.plugins
+	- org.codehaus.mojo
+
+	
+2.3 Call using phase
+--------------------
+There are STANDARD BINDINGS via the <packaging> element in pom.xml.
+Call using a build lifecycle phase:
+
+	mvn phase
+	
+E.g., mvn post-clean
+
+It is important to note that EACH PHASE IN THE LIFE CYCLE WILL BE EXECUTED UP TO AND INCLUDING THE PHASE 
+you specify. 
+If you tell Maven to compile, the validate, initialize, generate-sources, process-sources, 
+generate-resources, and compile phases will execute.
+	
+
+2.4 Plugin Prefix Resolution
+----------------------------
+
+	
+3. Maven principles
+-------------------
+• Convention over configuration
+• Declarative execution
+• Reuse of build logic
+• Coherent organization of dependencies
+
+
+3.1 Convention over configuration
+---------------------------------
+Maven is to provide sensible DEFAULT STRATEGIES for the most common tasks so that you don't have to 
+think about these mundane details. You can override them, but when absolutely necessary.
+
+Conventions:
+- Standard directory layout for projects
+	The first convention used by Maven is a standard directory layout for project sources, project resources,
+	configuration files, generated output, and documentation. These components are generally referred to as 
+	PROJECT CONTENT.
+
+- One primary output per project
+	The second convention used by Maven is the concept of a Maven project producing one primary output.
+	Maven pushes you to think clearly about the separation of concerns, this helps you create more 
+	reusable modules.
+	
+- Standard naming conventions
+	The third convention, a set of conventions really, is a standard naming convention for directories 
+	and a standard naming convention for the primary output of a project.
+
+- Default values
+	Default values (though not visible in the POM above), in fact, inherited from the Super POM.
+
+Maven base working:
+	Maven puts this principle into practice by encapsulating build logic into coherent modules called PLUGINS.
+	Maven can be thought of as a framework which coordinates the execution of plugins in a well defined way.
+	Plugins are the key building blocks for everything in Maven.
+
+	The execution of Maven's plugins is coordinated by Maven's BUILD LIFE CYCLE in a declarative fashion with 
+	inputs from Maven's Project Object Model (POM), specifically from the plugin configurations contained in 
+	the POM.
+
+	
+3.2 Declarative execution
+-------------------------
+Everything in Maven is driven in a declarative fashion using Maven's PROJECT OBJECT MODEL (POM) and 
+specifically the plugin configurations contained in the POM.
+
+Software projects generally follow a similar, well-trodden paths: 
+	preparation
+	compilation
+	testing
+	packaging
+	installation. 
+The path that Maven moves along to accommodate an infinite variety of projects is called the BUILD LIFE CYCLE.
+
+The standard build life cycle consists of many PHASES and these can be thought of as EXTENSION POINTS. 
+When you need to add some functionality to the build life cycle you do so with a PLUGIN. Maven plugins 
+provide reusable build logic that can be SLOTTED INTO THE STANDARD BUILD LIFE CYCLE. Any time you need 
+to CUSTOMIZE the way your project builds you either employ the use of an EXISTING PLUGIN or CREATE A CUSTOM PLUGIN 
+for the task at hand.
+
+
+3.3 Organization of Dependencies
+--------------------------------
+A dependency is a reference to an specific artifact that resides in a repository.
+A dependency is uniquely identified by the following identifiers: 
+	 - groupId
+	 - artifactId
+	 - version
+
+In the POM you are NOT specifically telling Maven where the dependencies are physically, 
+you are simply telling Maven what a specific project EXPECTS.
+
+
+4. Repositories, dependencies
+-----------------------------
+Maven has two types of repositories: 
+	- local
+	- remote
+MAVEN USUALLY INTERACTS WITH YOUR LOCAL REPOSITORY, but when a declared dependency is not present in 
+your local repository Maven searches all the remote repositories it has access to in an attempt to 
+find what’s missing. Once the dependency is satisfied, THE ARTIFACT IS DOWNLOADED AND INSTALLED 
+IN YOUR LOCAL REPOSITORY.
+
+By default, Maven creates your local repository in 
+
+	~/.m2/repository	
+
+By default, Maven will attempt to fetch an artifact from the central Maven repository at 
+
+	http://www.ibiblio.org/maven2. 
+	
+If your project's POM contains more than one remote repository, Maven will attempt to download an 
+artifact from each remote repository in the order defined in your POM. Once the dependency is 
+satisfied, the artifact is downloaded and installed in your local repository.	
+
+	
+4.1 Specifying additional remote repositories
+---------------------------------------------
+To set remote repository add <repository> tag into <settings>. This can be in 
+	
+	pom.xml
+
+or
+
+	~/.m2/settings.xml
+
+For example to add AndroMDA repos:
+
+	<repositories>
+        <repository>
+            <id>andromda</id>
+            <name>AndroMDA Repository</name>
+            <url>http://team.andromda.org/maven2</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>andromda</id>
+            <name>AndroMDA Repository</name>
+            <url>http://team.andromda.org/maven2</url>
+        </pluginRepository>
+    </pluginRepositories> 	
+
+
+4.2 Locating artifacts
+----------------------
+Location of artifacts in repository:
+
+	REPOSITORY
+	  <groupId>
+	    <artifactId>
+	      <version>
+	        <artifactId-version>.jar
+			<artifactId-version>.sh1
+			<artifactId-version>.pom
+			<artifactId-version>.pom.sh1
+	
+
+
+4.3 Transitive dependencies
+---------------------------
+With Maven 1, you have to declare each and every JAR that will be needed, directly or indirectly, by your application. 
+For example, can you list the JARs needed by a Hibernate application? 
+With Maven 2, you don't have to. You just tell Maven which libraries you need, and Maven will take care
+of the libraries that your libraries need (and so on).
+
+
+4.4 Dependency scopes
+---------------------
+Maven provides four dependency scopes:
+
+compile		: A compile-scope dependency is available in all phases. This is the default value.
+provided	: A provided dependency is used to compile the application, but will not be deployed.
+		  You would use this scope when you expect the JDK or application server to provide 
+		  the JAR. The servlet APIs are a good example.
+runtime		: Runtime-scope dependencies are not needed for compilation, only for execution, 
+		  such as JDBC (Java Database Connectivity) drivers.
+test		: Test-scope dependencies are needed only to compile and run tests (JUnit, for example).
+
+	
+5. Preparing to Use Maven
+-------------------------
+5.1 Installation
+----------------
+Windows 2000/XP
+- Unzip maven-2.0.3-bin.zip to the directory you wish to install Maven 2.0.3. 
+  These instructions assume you chose C:\Program Files\Apache Software Foundation\maven-2.0.3
+- Add the bin directory to your path, by opening up the system properties (WinKey + Pause), selecting the "Advanced" tab, 
+  and the "Environment Variables" button, then editing the PATH variable in the user variables. 
+  eg. "C:\Program Files\Apache Software Foundation\maven-2.0.3\bin";%PATH%
+- In the same dialog, make sure that JAVA_HOME is set to the location of your JDK, eg. C:\Program Files\Java\jdk1.5.0_02
+- Run mvn --version to verify that it is correctly installed.
+
+Unix-based Operating Systems (Linux, Solaris and Mac OS X)
+- Extract the distribution archive to the directory you wish to install Maven 2.0.3. These instructions assume you chose /usr/local/maven-2.0.3. 
+  The directory maven-2.0.3 will be created from the archive.
+- Add the bin directory to your path, eg. export PATH=/usr/local/maven-2.0.3/bin:$PATH
+- Make sure that JAVA_HOME is set to the location of your JDK, eg. export JAVA_HOME=/usr/java/jdk1.5.0_02
+- Run mvn --version to verify that it is correctly installed.
+
+
+5.2 Settings
+------------
+You can add settings in the following locations:
+
+- <settings> tag of POM
+- ~/.m2/settings.xml
+
+
+5.3 Specifying HTTP proxy
+-------------------------
+If you are behind a firewall and you access WEB via HTTP proxy:
+
+	<settings>
+		<proxies>
+			<proxy>
+				<active>true</active>
+				<protocol>http</protocol>
+				<host>proxy.mycompany.com</host>
+				<port>8080</port>
+				<username>your-username</username>
+				<password>your-password</password>
+			</proxy>
+		</proxies>
+	</settings>
+	
+	
+5.4 Specifying maven proxy
+--------------------------
+If you have a mirrored repository, add this into settings.xml: 
+
+	<mirrors>
+		<mirror>
+			<id>maven.mycompany.com</id>
+			<name>My Company's Maven Proxy</name>
+			<url>http://maven.mycompany.com/maven2</url>
+			<mirrorOf>central</mirrorOf>
+		</mirror>
+	</mirrors>
+	</settings>
+
+
+6. Working with maven
+---------------------
+6.1 Projects from creation to installation
+------------------------------------------
+In Maven, an archetype is a template of a project, which is combined with some user input to produce 
+a fully-functional Maven project. 
+
+To create the Quick Start Maven project, execute the following:
+
+	mvn archetype:create -DgroupId=<groupId> -DartifactId=<artifactId>
+
+Compile:
+
+	mvn -o compile
+
+Compile test classes and test:
+
+	mvn -o test
+	
+	OR just compile it
+
+	mvn -o test-compile
+
+Creating output artifact (e.g JAR):
+
+	mvn package
+
+To install artifact into local repository:
+
+	mvn install
+
+	
+6.2 Classpath resources
+-----------------------
+Files in 
+		
+		src/main/resources 
+		
+are packaged into artifact without compilation. This has been specified in super POM.
+
+
+6.2.1 Filtering classpath resources
+-----------------------------------
+Sometimes a resource file will need to contain a value that can be supplied at build time, only.
+To enable processing expressions in resource files enable filtering for resource entry.
+
+	[...]
+	<build>
+		<filters>
+			<filter>src/main/filters/filter.properties</filter>
+		</filters>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+	[...]
+
+Example resource file:
+
+	# application.properties
+	java.version=${java.version}
+	application.name=${project.name}
+	application.version=${project.version}
+	message=${my.filter.value}
+	command.line.prop=${command.line.prop}	
+
+Values can come from:
+	- POM
+	
+		[...]
+		<properties>
+			<my.filter.value>hello</my.filter.value>
+		</properties>		
+		[...]
+		
+	- settings
+	
+	- filter file, for example src/main/filters/filter.properties:
+	
+		# filter.properties
+		my.filter.value=hello!	
+		
+	- command line
+	
+		mvn process-resources "-Dcommand.line.prop=hello again"
+	
+
+	
+7. Plugins
+----------	
+Maven is really just a core framework for a collection of Maven Plugins. 
+In other words, plugins are where much of the real action is performed.
+Plugins are the central feature of Maven that allow for the reuse of COMMON BUILD LOGIC across multiple projects.
+
+The build lifecycle is a series of common stages through which all project builds naturally progress. 
+Plugin goals are bound to specific stages in the lifecycle.
+
+Maven is actually a platform that executes plugins within a build life cycle, in order
+to perform the tasks necessary to build a project.
+
+- Correspondingly, the build process for a project is comprised of set of mojos executing in a particular, well-defined order. 
+  This ordering is called the BUILD LIFE CYCLE, and is defined as a set of task categories, called phases. 
+- When Maven executes a build, it traverses the PHASES of the life cycle in order, executing 
+  all the associated mojos at each phase of the build.
+- This association of mojos to phases is called binding.
+
+
+Plugins are installed into local repository:
+
+	$HOME/.m2/repository/<$groupID>/$artifactID/$version/$artifactID-$version.jar
+ 
+		where <$groupID> can be a directory hierarchy (it depends on the form of $groupID).
+
+- A plugin is a jar, classified the maven way groupId, artifactId, version
+  For example:
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-javadoc-plugin</artifactId>
+	<version>2.0-beta-2</version>
+	
+- A plugin is a collection of Mojo's Carries a descriptive XML file 
+
+
+
+Defined via annotations
+E.g., @goal javadoc		
+		
+		
+		
+7.1 MOJO
+--------
+- There is no default Mojo in a plugin :-(
+- A Mojo is 1 class with an execute method 
+	void execute() throws org.apache.maven.plugin.MojoExecutionException
+- Arguments and options are properties
+- Class is instantiated using IoC as Plexus component 
+- Arguments and options are set by the framework from the POM
+- Each Mojo works in total isolation (separate ClassLoader)
+	E.g., org.apache.maven.plugin.javadoc.JavadocReport
+- Mojo == goal 
+
+A Mojo is really just a goal in Maven 2, and plug-ins consist of any number of goals (Mojos). 
+Mojos can be defined as annotated Java classes or Beanshell script. A Mojo specifies metadata about a 
+goal: a goal name, which phase of the lifecycle it fits into, and the parameters it is expecting.
+
+NOTE:
+	MOJO is a play on POJO (Plain-old-Java-object), substituting "Maven" for "Plain".
+
+- A mojo is the basic unit of work in the Maven application. 
+- It executes an atomic build task that represents a single step in the build process. 
+- Each mojo can leverage the rich infrastructure provided by Maven for loading projects, 
+  resolving dependencies, injecting runtime parameter information, and more. 
+- When a number of mojos perform related tasks, they are packaged together into a plugin.
+
+
+
+8. Maven's build life cycle
+---------------------------
+Project lifecycles are central to Maven 2. 
+Most developers are familiar with the notion of build phases such as compile, test, and deploy. 
+Ant has targets with names like those. In Maven 1, corresponding plug-ins are called directly. 
+
+The build lifecycle is a series of common stages through which all project builds naturally progress. 
+Plugin goals are bound to specific stages in the lifecycle.
+
+
+There are 3 life-cycles:
+- default	: to build projects
+- clean		: to clean a project's work directory
+- site		: to generate a project web site
+
+
+Default life cycle phases:
+
+1.validate		– verify that the configuration of Maven, and the content of the current set of POMs to be built is valid.
+2.initialize		– perform any initialization steps required before the main part of the build can start.
+3.generate-sources	– generate compilable code from other source formats.
+4.process-sources	– perform any source modification processes necessary to prepare the code for compilation. For example,
+			  a mojo may apply source code patches here.
+5.generate-resources	– generate non-code resources (such as configuration files, etc.) from other source formats.
+6.process-resources	– perform any modification of non-code resources necessary. This may include copying these resources 
+			  into the target classpath directory in a Java build.
+7.compile		– compile source code into binary form, in the target output location.
+8.process-classes	– perform any post-processing of the binaries produced in the preceding step, such as instrumentation or
+			  offline code-weaving, as when using Aspect-Oriented Programming techniques.
+9.generate-test-sources – generate compilable unit test code from other source formats.
+10.process-test-sources – perform any source modification processes necessary to prepare the unit test code for compilation. 
+			  For example, a mojo may apply source code patches here.
+11.generate-test-resources – generate non-code testing resources (such as configuration files, etc.) from other source formats.
+12.process-test-resources – perform any modification of non-code testing resources necessary. This may include copying these 
+			  resources into the testing target classpath location in a Java build.
+13.test-compile		– compile unit test source code into binary form, in the testing target output location.
+14.test			– execute unit tests on the application compiled and assembled up to step 8 above.
+15.package		– assemble the tested application code and resources into a distributable archive.
+16.preintegration-test	– setup the integration testing environment for this project. This may involve installing the archive
+			  from the preceding step into some sort of application server.
+17.integration-test	– execute any integration tests defined for this project, using the environment configured in the preceding step.
+18.post-integration-test – return the environment to its baseline form after executing the integration tests in the preceding step.
+			  This could involve removing the archive produced in step 15 from the application server used to test it.
+19.verify		– verify the contents of the distributable archive, before it is available or installation or deployment.
+20.install		– install the distributable archive into the local Maven repository.
+21.deploy		– deploy the distributable archive into the remove Maven repository configured in the distributionManagement 
+			  section of the POM.
+
+			  
+5.1 Lifecycle, plugins, MOJOs
+-----------------------------
+
+
+
+- While mojos usually specify a default phase binding, THEY CAN BE BOUND TO ANY PHASE IN THE LIFE CYCLE.
+- Indeed, a given mojo can even be bound to the life cycle MULTIPLE TIMES DURING A SINGLE BUILD,
+  using the plugin executions section of the project's POM.
+- Each execution can specify a separate phase binding for its declared set of mojos. 
+- However, before a mojo can execute, it may still require that certain activities have already been completed, 
+  so be sure to check the documentation for a mojo before you re-bind it.
+
+
+8.1 Multi-project build
+-----------------------
+For POMs that contain modules, the packaging must be set to value of 'pom':
+
+	<project>
+	  <parent>
+	    <groupId>org.apache.maven.proficio</groupId>
+	    <artifactId>proficio</artifactId>
+	    <version>1.0-SNAPSHOT</version>
+	  </parent>
+	  <modelVersion>4.0.0</modelVersion>
+	  <artifactId>proficio-stores</artifactId>
+	  <name>Maven Proficio Stores</name>
+	  <packaging>pom</packaging>
+	  <modules>
+	    <module>proficio-store-memory</module>
+	    <module>proficio-store-xstream</module>
+	  </modules>
+	</project>
+
+
+8.2 Project inheritance
+-----------------------
+Using project inheritance allows you to do things like state your organizational information, 
+state your deployment information, or state your common dependencies - all in a single place.
+
+
+	...
+	<parent>
+	  <groupId>org.apache.maven.proficio</groupId>
+	  <artifactId>proficio</artifactId>
+	  <version>1.0-SNAPSHOT</version>
+	</parent>
+	...
+
+NOTE:
+	To view full POM with inherited content call:
+
+		mvn help:effective-pom
+
+
+9. Dependency management
+------------------------
+When you write applications which consist of multiple, individual projects, it is likely that some
+of those projects will share common dependencies.
+
+- Add dependencies to <dependencyManagement> tag with version.
+- DON'T add version to top-level dependecy tags.
+
+	...
+	<dependencyManagement>
+	  <dependencies>
+	    <dependency>
+	      <groupId>org.apache.maven.proficio</groupId>
+	      <artifactId>proficio-model</artifactId>
+	      <version>${project.version}</version>
+	    </dependency>
+	    ...
+	  </dependencies>
+	</dependencyManagement>
+	...
+	<dependencies>
+	  <dependency>
+	    <groupId>org.apache.maven.proficio</groupId>
+	    <artifactId>proficio-model</artifactId>
+	  </dependency>
+	</dependencies>
+	...
+
+The dependencies element contained within the dependencyManagement element is used ONLY TO STATE THE PREFERENCE 
+for a version and by itself DOES NOT AFFECT A PROJECT'S DEPENDENCY GRAPH, whereas the top-level dependencies 
+element does affect the dependency graph.
+
+
+NOTE:
+	Call maven with -X to print dependency versions during build.
+
+
+
+10. Customizing build
+---------------------
+- Specifying 
+
+Maven was described as a framework that coordinates the execution of its plugins in a well defined way or path, 
+which is actually Maven’s default build life cycle. Maven’s default build life cycle will suffice for a great number 
+of projects without any augmentation but, of course, all projects have different requirements and it is sometimes 
+necessary to augment the life cycle to satisfy these requirements.
+
+Plugins in Maven are created with a specific task in mind, which means the plugin is bound to a specific phase 
+in the default life cycle, typically.
+
+You can custimize build in POM by specifying <build> tag, where you specify plugins and goals.
+
+	<build>
+	  <plugins>
+	    <plugin>
+	      <groupId>org.codehaus.modello</groupId>				<-------------
+	      <artifactId>modello-maven-plugin</artifactId>
+	      <version>1.0-alpha-5</version>
+	      <executions>
+	        <execution>
+	          <goals>
+	            <goal>java</goal>						<-------------
+	          </goals>
+	        </execution>
+	      </executions>
+	      <configuration>
+	        <version>1.0.0</version>
+	        <packageWithVersion>false</packageWithVersion>
+	        <model>src/main/mdo/proficio.mdo</model>
+	      </configuration>
+	    </plugin>
+	  </plugins>
+	</build>
+
+
+11. Profiles
+------------
+Profiles are Maven's way of letting you create environmental variations in the build life cycle to accommodate
+things like building on different platforms, building with different JVMs, testing with different databases,
+or referencing the local file system.
+
+You can define profiles in one of the following three places:
+ • The Maven settings file (typically <your -home-directory>/.m2/settings.xml)
+ • A file in the the same directory as the POM, called profiles.xml
+ • The POM itself
+
+In any of the above three profile sites, you can define the following elements:
+ • repositories
+ • pluginRepositories
+ • dependencies
+ • plugins
+ • properties (not actually available in the main POM, but used behind the scenes)
+ • modules
+ • reporting
+ • dependencyManagement
+ • distributionManagement
+
+A subset of the build element, which consists of:
+ • defaultGoal
+ • resources
+ • testResources
+ • finalName
+
+Activating profile:
+
+	mvn -Pprofile1,profile2 install
+
+
+
+
+
+
+13.2 Available plugins
+----------------------
+See also:	http://maven.apache.org/plugins/index.html
+
+ant		Generate an Ant build file for the project.	
+antlr 		Generate sources from an Antlr grammar.	
+antrun		Run a set of ant tasks from a phase of the build.	
+archetype	Generate a skeleton project structure from an archetype.	
+assembly	Build an assembly (distribution) of sources and binaries.	
+changelog	Generate a list of recent changes from your SCM.	
+changes		Generate a report from issue tracking or a change document.	
+checkstyle	Generate a checkstyle report.	
+clean		Clean up after the build.	
+clover		Generate a Clover report.	
+compiler	Compiles Java sources.	
+dependency	Dependency manipulation.	
+deploy		Deploy the built artifact to the remote repository.	
+ear			Generate an EAR from the current project.	
+eclipse		Generate an Eclipse project file for the current project.	
+ejb			Build an EJB (and optional client) from the current project.	
+help		Get information about the working environment for the project.	
+idea		Create/update an IDEA workspace for the current project (individual modules are created as IDEA modules)	
+install		Install the built artifact into the local repository.	
+jar			Build a JAR from the current project.	
+javadoc		Generate Javadoc for the project.	
+jxr			Generate a source cross reference.	
+one			A plugin for interacting with legacy Maven 1.x repositories and builds.	
+plugin		Create a Maven plugin descriptor for any Mojo's found in the source tree, to include in the JAR.	
+pmd			Generate a PMD report.	
+project-info-reports	Generate a standard project reports.	
+rar			Build a RAR from the current project.	
+release		Release the current project - updating the POM and tagging in the SCM.	
+resources	Copy the resources to the output directory for including in the JAR.	
+scm			Generate a SCM for the current project.	
+site		Generate a site for the current project.	
+source		Build a JAR of sources for use in IDEs and distribution to the repository.	
+surefire	Run the Junit tests in an isolated classloader.	
+surefire-report	Generate a report based on the results of unit tests.	
+verifier	Useful for integration tests - verifies the existence of certain conditions.	
+war			Build a WAR from the current project.
+
+See also about plugins:
+	To get complete reference	: http://maven.apache.org/plugins/
+	List				: http://docs.codehaus.org/display/MAVEN/Maven+Plugin+Matrix				
+
+
+14. Plugin development
+----------------------
+
+See example:
+	
+	D:\usr\general\maven2\hello-plugin 
+
+
+Steps:
+- Create a simple POM, where:
+	- packaging	: maven-plugin
+	- dependency	: maven-plugin-api
+
+  You can create skeleton code by archetype:
+
+	  mvn archetype:create -DgroupId=<GRPID> \
+		-DartifactId=<ARTID> \
+		-DarchetypeGroupId=org.apache.maven.archetypes \
+		-DarchetypeArtifactId=maven-archetype-mojo \
+		-DarchetypeVersion=1.0-alpha-4
+
+
+- Create MOJO classes (extending AbstractMojo)
+
+  You have to specify goals and parameters in JAVA class using annotations in comments.
+  For example:
+
+		package sample.plugin;
+
+		import org.apache.maven.plugin.AbstractMojo;
+		import org.apache.maven.plugin.MojoExecutionException;
+
+		/**
+		 * @goal sayhi							<-------------------- goal binding
+		 * @description Says "Hi" to the user
+		 */
+		public class GreetingMojo extends AbstractMojo 
+		{
+		    /**
+		     * The greeting to display.					<-------------------- parameter
+		     * @parameter expression="Hello"
+		     */
+		    private String greeting;
+
+
+		    public void execute() throws MojoExecutionException 
+		    {
+				if ((greeting == null))	{
+					greeting = "?";
+				}
+			getLog().info("Hello, world !!! ------------------------------ greeting:[" + greeting + "]");
+		    }
+		}
+
+
+NOTE:
+	To get information about plugin call:
+
+		mvn help:describe -DgroupId=<grpID> -DartifactId=<artID> -Dfull=true
+
+
+- To bind a MOJO into life-cycle and specify parameters modify POM. For example you can see
+  binding 'sayhi' goal into 'compile' phase here:
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>sample.plugin</groupId>
+				<artifactId>maven-hello-plugin</artifactId>
+				<configuration>
+					<greeting>!!!!!!!!!!!!!!!!!!!!!!!! LOFASZ !!!!!!!!!!!!!!!!!!!!!!!!</greeting>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>sayhi</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+
+  See example:
+
+	D:\usr\general\maven2\hello-plugin-usage 
+
+
+14.1 Plugin descriptor
+----------------------
+Plugin descriptor has been generated into:
+
+	<plugin>.jar\META-INF\maven\plugin.xml
+
+It describes plugin's MOJOs, you can query with help:describe.
+
+
+
+15. Deployment
+--------------
+Currently Maven supports several methods of deployment include simple file-based deployment:
+	- SSH2
+	- SFTP
+	- FTP
+	- external SSH
+
+In order to deploy you need to correctly configure your distributionManagement element in your POM.
+
+
+A. Tips
+--------
+Command examples:
+	mvn -v			: version info
+
+	mvn eclipse:eclipse	: creating Eclipse project files
+
+	mvn help:effective-pom 		: Display the effective POM for this build, with the active profiles factored in.	
+
+	mvn help:effective-settings 	: Print out the calculated settings for this project, given any profile enhancement and the 
+
+	mvn help:active-profiles 	: Lists the profiles which are currently active for this build.	
+
+	help:describe 				: Describes the attributes of a plugin and/or plugin mojo.	
+
+		mvn help:describe -Dplugin=help
+		mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-compiler-plugin -Dfull=true
+		mvn help:describe -DgroupId=org.apache.maven.plugins -DartifactId=maven-help-plugin -Dfull=true
+
+	help:effective-pom 			: Display the effective POM for this build, with the active profiles factored in.	
+
+	help:effective-settings 	: Print out the calculated settings for this project, given any profile 
+							      enhancement and the inheritance of the global settings into the user-level settings.
+
+
+	mvn install:install-file	: installs a JAR into local repository
+
+		mvn install:install-file -DgroupId=org.apache.maven.scm -DartifactId=maven-scm-provider-bazaar \
+			-Dversion=1.0-beta-3 -Dpackaging=jar -Dfile=/path/to/file
+
+								  
+Options:
+	-e			: Produce execution error messages
+	-o			: OFFLINE mode
+	-U			: Update all snapshots regardless of repository policies	
+	-X			: debug
+
+Get plugin description from plugin reference:
+	
+	http://maven.apache.org/plugins/
+	
+	
+B. Project structure
+--------------------
+
+Standard Directory Structure:
+
+pom.xml			Maven’s POM, which is always at the top-level of a project.
+
+LICENSE.txt		A license file is encouraged for easy identification by users and is optional.
+
+README.txt		A simple note which might help first time users and is optional.
+
+target/			Directory for all generated output. This would include compiled classes, generated 
+			sources that may be compiled, the generated site or anything else that might be 
+			generated as part of your build.
+
+target/generated-sources/<plugin-id>
+			Standard location for generated sources. For example, you may generate some sources from a JavaCC grammar.
+
+src/main/java/		Standard location for application sources.
+			
+src/main/resources/	Standard location for application resources.
+
+src/main/filters/	Standard location for resource filters.
+			
+src/main/assembly/	Standard location for assembly descriptors.
+
+src/main/config/	Standard location for application configuration files.
+
+src/test/java/		Standard location for test sources.
+
+src/test/resources/	Standard location for test resources.
+
+src/test/filters/	Standard location for test resource filters.
+
+
+C. POM - Project Object Model
+-----------------------------
+See also:	http://maven.apache.org/pom.html
+
+POM is Maven's description of a single project. Without POM, Maven is useless - the POM is 
+Maven's currency. It is the POM that drives execution in Maven and this approach can be 
+described as model driven execution.
+
+	<project>
+	  <modelVersion>4.0.0</modelVersion>
+
+	  <!-- The Basics -->
+	  <groupId>...</groupId>
+	  <artifactId>...</artifactId>
+	  <version>...</version>
+	  <packaging>...</packaging>
+	  <dependencies>...</dependencies>
+	  <parent>...</parent>
+	  <dependencyManagement>...</dependencyManagement>
+	  <modules>...</modules>
+	  <properties>...</properties>
+
+	  <!-- Build Settings -->
+	  <build>...</build>
+	  <reporting>...</reporting>
+
+	  <!-- More Project Information -->
+	  <name>...</name>
+	  <description>...</description>
+	  <url>...</url>
+	  <inceptionYear>...</inceptionYear>
+	  <licenses>...</licenses>
+	  <organization>...</organization>
+	  <developers>...</developers>
+	  <contributors>...</contributors>
+
+	  <!-- Environment Settings -->
+	  <issueManagement>...</issueManagement>
+	  <ciManagement>...</ciManagement>
+	  <mailingLists>...</mailingLists> 
+	  <scm>...</scm>
+	  <prerequisites>...</prerequisites>
+	  <repositories>...</repositories>
+	  <pluginRepositories>...</pluginRepositories>
+	  <distributionManagement>...</distributionManagement>
+	  <profiles>...</profiles>
+	</project>
+
+Maven's Super POM carries with it all the default conventions that Maven encourages.
+Maven all POMs have an implicit parent which is Maven's Super POM. 
+The key feature to remember is the Super POM contains important default information 
+so you don't have to repeat this information in the POMs you create.
+
+

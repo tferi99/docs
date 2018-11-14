@@ -1,0 +1,518 @@
+===================
+Apache 2 kick guide
+===================
+
+
+1. Configuration files
+1.1 httpd.conf
+1.2 mime.types
+1.3 .htaccess Files
+1.4 Configuration sections - scope of directives
+1.5 Filesystem and Webspace
+2. Virtual hosts
+2.1 Name based virtual hosts
+3. Modules
+4. Log maintenance
+
+M.1 mod_rewrite
+M1.1 Processing of rewrite rules
+M.1.2 Regex Back-Reference Availability
+M1.3 RewriteCond parameters
+M1.4 Setting rewriting
+M2. mod_cache
+M2.1 To mark a document uncachable
+M2.2 Max-Age Response Headers
+M2.3 Setting caching
+
+
+A. Tips
+B. Installation, configuration
+C. Logging of modules
+D. See also
+
+
+
+1. Configuration files
+----------------------
+
+1.1 httpd.conf
+--------------
+Apache is configured by placing directives in plain text configuration files. 
+The main configuration file is usually called 
+
+	httpd.conf. 
+	
+The location of this file is set at compile-time, but may be overridden with the -f command line flag. 
+In addition, other configuration files may be added using the 
+
+	Include 
+	
+directive, and wildcards can be used to include many configuration files.
+
+You can check your configuration files for syntax errors without starting the server 
+by using 
+
+	apachectl (Linux?) 
+	
+configtest or the 
+
+	apache -t 
+	
+command line option.
+
+1.2 mime.types
+--------------
+The server also reads a file containing mime document types; the filename is set by the 
+
+	TypesConfig 
+	
+directive, and is mime.types by default.
+
+1.3 .htaccess Files
+-------------------
+Apache allows for DECENTRALIZED management of configuration via SPECIAL FILES PLACED INSIDE THE WEB TREE. 
+The special files are usually called 
+
+	.htaccess, 
+	
+but any name can be specified in the AccessFileName directive. 
+Directives placed in .htaccess files apply TO THE DIRECTORY where you place the file, 
+AND ALL SUB-DIRECTORIES. 
+
+	`
+1.4. Configuration sections - scope of directives
+-------------------------------------------------
+Directives placed in the main configuration files apply to the ENTIRE SERVER. 
+If you wish to change the configuration for only a part of the server, you can scope your 
+directives by placing them in 
+
+	<Directory>
+	<DirectoryMatch>
+	<Files>
+	<FilesMatch>
+	<Location>
+	<LocationMatch> 
+	<VirtualHost> 
+	 
+sections. These sections LIMIT the application of the directives which they enclose to particular 
+filesystem locations or URLs. They can also be NESTED, allowing for very fine grained configuration.
+
+Section merge order:
+	1. <Directory>
+	2. <DirectoryMatch>
+	3. <Files>,<FilesMatch>
+	4. <Location>,<LocationMatch> 
+
+
+
+1.5 Filesystem and Webspace
+---------------------------
+First, it is important to understand the difference between the two. 
+
+a. The filesystem is the view of your disks as seen by your operating system. 
+	<Files>
+	<Directory>
+	
+b. In contrast, the webspace is the view of your site as delivered by the web 
+   server and seen by the client. 
+
+   <Location> 
+   
+Rules:
+Choosing between filesystem containers and webspace containers is actually quite easy. 
+
+- When applying directives to objects that reside in the filesystem always use <Directory> or <Files>. 
+- When applying directives to objects that do not reside in the filesystem 
+  (such as a webpage generated from a database), use <Location>.
+- It is important to never use <Location> when trying to restrict access to objects in the 
+  filesystem. This is because many different webspace locations (URLs) could map to the 
+  same filesystem location, allowing your restrictions to be circumvented.
+- There are many other ways to map multiple webspace locations to the same filesystem 
+  location. Therefore YOU SHOULD ALWAYS USE THE FILESYSTEM CONTAINERS WHEN YOU CAN.
+- One exception to this rule. Putting configuration restrictions in a 
+		
+		<Location /> 
+   section is perfectly safe because this section will apply TO ALL REQUESTS regardless of the 
+   specific URL.
+   
+   
+2. Virtual hosts   
+----------------
+The term Virtual Host refers to the practice of running MORE THAN ONE WEB SITE (such as www.company1.com and www.company2.com) 
+on a single machine.
+
+Virtual hosts can be 
+	- IP-based:	meaning that you have a different IP address for every web site
+	- name-based: meaning that you have multiple names running on each IP address
+
+	
+2.1 Name based virtual hosts
+----------------------------
+With name-based virtual hosting, the server RELIES ON THE CLIENT TO REPORT THE HOSTNAME as part of the HTTP headers. 
+Using this technique, many different hosts CAN SHARE THE SAME IP address.
+
+Configuration: you need only configure your DNS server to map each hostname to the correct IP address.
+
+Disadvantages:
+	- Some ancient clients are not compatible with name-based virtual hosting. 
+	- Name-based virtual hosting cannot be used with SSL secure servers because of the nature of the SSL protocol.
+	- Some operating systems and network equipment implement bandwidth management techniques that cannot differentiate between hosts.
+	
+
+Example:
+
+	NameVirtualHost *:80
+
+	<VirtualHost *:80>
+		ServerName www.domain.tld
+		ServerAlias domain.tld *.domain.tld
+		DocumentRoot /www/domain
+	</VirtualHost>
+
+	<VirtualHost *:80>
+		ServerName www.otherdomain.tld
+		DocumentRoot /www/otherdomain
+	</VirtualHost>	
+		
+
+1. Now when a request arrives, the server will FIRST CHECK if it is using an IP address that matches the NameVirtualHost. 
+2. If it is, then it will look at each <VirtualHost> section with a matching IP address and try to find one 
+	where the ServerName or ServerAlias matches the requested hostname. 
+	- If it finds one, then it uses the configuration for that server. 
+	- If no matching virtual host is found, then the FIRST listed virtual host that matches the IP address will be used.
+
+	As a consequence, the FIRST LISTED VIRTUAL HOST IS THE DEFAULT VIRTUAL HOST. 
+	
+   
+3. Modules
+----------
+Apache is a modular server. By default, a base set of modules is included in the server 
+at compile-time. If the server is compiled to use dynamically loaded modules, then modules 
+can be compiled separately and added at any time using the 
+
+	LoadModule 
+	
+directive. Configuration directives may be included CONDITIONAL on a presence of a 
+particular module by enclosing them in an 
+
+	<IfModule> 
+
+block.
+
+
+4. Log maintenance
+------------------
+Method 1: using apache rotatelogs
+
+	rotatelogs is a simple program for use in conjunction with Apache's piped logfile feature. 
+	For example:
+
+			CustomLog "|bin/rotatelogs /var/logs/logfile 86400" common 
+
+	This creates the files /var/logs/logfile.nnnn where nnnn is the system time at which the log nominally starts (this 
+	time will always be a multiple of the rotation time, so you can synchronize cron scripts with it). At the end of each 
+	rotation time (here after 24 hours) a new log is started.
+
+		CustomLog "|bin/rotatelogs /var/logs/logfile 5M" common 
+
+	This configuration will rotate the logfile whenever it reaches a size of 5 megabytes.
+
+		ErrorLog "|bin/rotatelogs /var/logs/errorlog.%Y-%m-%d-%H_%M_%S 5M" 
+
+	This configuration will rotate the error logfile whenever it reaches a size of 5 megabytes, and the suffix to the logfile 
+	name will be created of the form errorlog.YYYY-mm-dd-HH_MM_SS.		
+	
+
+Method 2: using logrotate of operating system
+
+	logrotate - rotates, compresses, and mails system logs
+	
+	See also:
+		man logrotate
+		
+===========================================================================================================================
+M1 mod_rewrite
+--------------
+Source			: mod_rewrite.c
+Compatibility	: Available in Apache 1.3 and later
+
+Provides a rule-based rewriting engine to rewrite requested URLs on the.
+
+This module uses a rule-based rewriting engine (based on a regular-expression parser) to rewrite requested URLs on the fly. 
+It supports an unlimited number of rules and an unlimited number of attached rule conditions for each rule to provide a 
+really flexible and powerful URL manipulation mechanism. 
+The URL manipulations can depend on various tests, for instance:
+	- server variables
+	- environment variables
+	- HTTP headers
+	- time stamps 
+	- and even external database lookups 
+	
+in various formats can be used to achieve a really granular URL matching.
+
+There are 2 hooks:
+	1. URL-to-filename translation hook
+		Which is used after the HTTP request has been read but before any authorization starts.
+	2. Fixup hook 
+		Wich is triggered AFTER the authorization phases and after the per-directory config files (.htaccess) 
+		have been read, but before the content handler is activated.
+			
+
+			
+M1.1 Processing of rewrite rules
+---------------------------------
+Rule:
+
+	[RewriteCond	<TestString1> <CondPattern1>]
+	[RewriteCond	<TestString2> <CondPattern2>]
+	[...]
+	RewriteRule <pattern> <Substitution>
+
+			
+Order of processing:
+	1. Checking pattern of rule
+		FIRST the current URL is matched against the PATTERN (!!!) of each RULE. 
+		When it fails mod_rewrite immediately stops processing this rule and continues with the next rule-chain.
+		
+	2. Checking conditions if exists.
+		If the Pattern matches, mod_rewrite looks for corresponding rule CONDITIONS. 
+	
+		For conditions the logic is different: we DON'T MATCH A PATTERN AGAINST THE CURRENT URL. Instead we first create 
+		a string TestString by expanding variables, back-references, map lookups, etc. and then we try to match 
+		CondPattern against it.
+	
+			
+		- If the pattern doesn't match, the complete set of conditions and the corresponding rule fails. 
+		- If the pattern matches, then the next condition is processed until no more conditions are available. 
+		- If all conditions match, processing is continued with the substitution of the URL with Substitution.	
+
+	3. Substitution
+		If there isn't any conditions or all conditions match, processing is continued with the substitution of the URL 
+		with Substitution. It substitutes the URL with a new value which is constructed from the string Substitution.
+		
+		
+	4. Pass-through or/and last rule
+		- If rule has PT flag, rule output will be passed through other modules for post-processing (alias, redirect, jk).
+		- If rule has L flag, rewrite processing will be stopped.
+		
+		NOTE: If you want to stop rewrite processing with post-processing, mix PT and L flag (but maybe only PT is enough for this).
+		
+		
+		
+M.1.2 Regex Back-Reference Availability
+---------------------------------------
+Whenever you use parentheses in Pattern or in one of the CondPattern, back-references are internally created which can be 
+used with the strings $N and %N (see below). These are available for creating the strings Substitution and TestString.
+
+
+	$N						: RewriteRule backreferences
+	
+	%N						: RewriteCond backreferences
+	
+	${mapname:key|default}	: rewrite map from a file, or get default value if key not found in file (see below)
+	
+	%{ NAME_OF_VARIABLE }	: Server-Variables (see reference guide)
+	
+
+CondPattern is a perl compatible regular expression with some additions.
+
+Text:
+		.           Any single character
+		[chars]     Character class: One  of chars
+		[^chars]    Character class: None of chars
+		text1|text2 Alternative: text1 or text2
+
+Quantifiers:
+		?           0 or 1 of the preceding text
+		*           0 or N of the preceding text (N > 0)
+		+           1 or N of the preceding text (N > 1)
+
+Grouping:
+		(text)      Grouping of text
+				  (either to set the borders of an alternative or
+				  for making backreferences where the Nth group can 
+				  be used on the RHS of a RewriteRule with $N)
+
+Anchors:
+		^           Start of line anchor
+		$           End   of line anchor
+
+Escaping:
+		\char       escape that particular char
+				  (for instance to specify the chars ".[]()" etc.)
+
+
+M1.3 RewriteCond parameters
+---------------------------
+
+	[NC]	: This makes the test case-insensitive.
+	[OR]	: or next condition - default conditions are in AND (since they are in chain)
+	
+
+M1.4 Rewriting settings
+-----------------------
+
+RewriteEngine <on/off>				: enabling/disablind rewrite engine
+RewriteLogLevel	2					: logging
+RewriteLog "logs/rewrite.log"
+
+
+	
+M2. mod_cache
+-------------
+Source: mod_cache.c
+
+HTTP defines several ways for a server to specify how long a document can be cached before it expires. 
+In decreasing order of priority, the server can: 
+
+	- Attach a Cache-Control: no-store header to the response.
+	- Attach a Cache-Control: must-revalidate header to the response.
+	- Attach a Cache-Control: no-cache header to the response.
+	- Attach a Cache-Control: max-age header to the response.
+	- Attach an Expires date header to the response.
+	- Attach no expiration information, letting the cache determine its own heuristic expiration date. 
+
+	
+M2.1 To mark a document uncachable
+----------------------------------
+Here are a few HTTP headers that mark a document uncachable: 
+
+Pragma: no-cache
+	This request header is included in HTTP 1.1 for backward compatibility with HTTP 1.0+. 
+	
+Cache-Control: no-cache
+	RFC 2616 ALLOWS a cache to STORE a response that is marked "no-cache"; however, the 
+	cache needs to REVALIDATE the response with the origin server before serving it. 	
+	
+Cache-Control: no-store
+	A response that is marked "no-store" FORBIDS a cache FROM MAKING A COPY of the response.
+
+	
+M2.2 Max-Age Response Headers
+-----------------------------
+It indicates the number of seconds since it came from the server for which a document can be 
+considered fresh. 
+There is also an s-maxage header (note the absence of a hyphen in "maxage") that acts like 
+max-age but applies only to shared (public) caches: 
+
+	Cache-Control: max-age=3600
+	Cache-Control: s-maxage=3600
+
+Servers can request that caches either NOT CACHE A DOCUMENT or refresh on every access by setting 
+the maximum aging to zero: 
+
+	Cache-Control: max-age=0
+	Cache-Control: s-maxage=0
+
+	
+M2.3 Setting caching
+--------------------
+Example: 
+
+	LoadModule cache_module modules/mod_cache.so
+	<IfModule mod_cache.c>
+		CacheMaxExpire 86400
+		
+		LoadModule disk_cache_module modules/mod_disk_cache.so
+		<IfModule mod_disk_cache.c>
+			CacheRoot c:/cacheroot
+			CacheSize 16384
+			CacheEnable disk /
+			CacheDirLevels 5
+			CacheDirLength 3
+		</IfModule> 
+
+		LoadModule mem_cache_module modules/mod_mem_cache.so
+		<IfModule mod_mem_cache.c>
+			CacheEnable mem /
+			MCacheSize 16384
+			MCacheMaxObjectCount 100
+			MCacheMinObjectSize 1
+			MCacheMaxObjectSize 200000
+		</IfModule>
+		
+		CacheIgnoreCacheControl On 
+	</IfModule> 
+
+Modules to load:
+	- mod_cache			: general - it has to be loaded for every kind of caching
+	- mod_disk_cache	: for disk caching
+	- mod_mem_cache		: for memory caching
+
+
+Parameters:
+	CacheMaxExpire <seconds>
+		The CacheMaxExpire directive specifies the maximum number of seconds for which cachable HTTP documents will be retained 
+		without checking the origin server. 
+	
+	CacheEnable <cache_type> <url-string> 
+		where cache_type 
+			mem 	: instructs mod_cache to use the memory based storage manager implemented by mod_mem_cache. 
+			disk 	: instructs mod_cache to use the disk based storage manager implemented by mod_disk_cache. 
+			fd 		: instructs mod_cache to use the file descriptor cache implemented by mod_mem_cache.
+
+		Example:
+			CacheEnable mem /manual
+			CacheEnable fd /images
+			CacheEnable disk /		
+			
+		In the event that the URL space overlaps between different CacheEnable directives (as in the example below), 
+		each possible storage manager will be run until the first one that actually processes the request. The order 
+		in which the storage managers are run is determined by the ORDER of the CacheEnable directives IN THE CONFIGURATION FILE.
+			
+	CacheIgnoreCacheControl On|Off
+		Ignore the fact that the client requested the content not be cached. But documents requiring authorization 
+		will NEVER BE CACHED.
+	
+	CacheRoot	: disk cache directory.
+					!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					Under Unix/Linux be aware of permissions of cache directory.
+					!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
+	CacheSize, MCacheSize 						: in Kbytes
+	MCacheMinObjectSize, MCacheMaxObjectSize	: in bytes
+	
+	MCacheRemovalAlgorithm LRU|GDSF
+		LRU (Least Recently Used)
+			LRU removes the documents that have not been accessed for the longest time.
+		GDSF (GreadyDual-Size)
+			GDSF assigns a priority to cached documents based on the cost of a cache miss and the size of the document. 
+			Documents with the lowest priority are removed first.
+
+			
+			
+
+===========================================================================================================================
+A. Tips
+-------
+Set logging level to get more detailed log in error.log . This is not only an error log file
+but it may contain development log entries, depending on logging level.
+For example:
+
+	LogLevel	debug
+	
+will add debug development log entries. You can trace caching by this setting.
+
+
+B. Installation, configuration
+------------------------------
+Installation from source:
+
+	./configure --prefix=/usr/local/apache2 --enable-mods-shared=all --enable-cache --enable-disk-cache --enable-mem-cache
+	make
+	make install
+
+	
+C. Logging of modules
+----------------------
+
+mod_cache		: set LogLevel of Apache to 9
+
+mod_rewrite		:	RewriteLogLevel	<0-9>
+					RewriteLog <logfile>
+
+
+D. See also
+-----------
+RFC 2616		: Hypertext Transfer Protocol -- HTTP/1.1
+http://localhost/manual/misc/rewriteguide.html	: Rewriting examples

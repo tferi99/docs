@@ -1,0 +1,45 @@
+Customizing the Logon Process in Windows NT4/ Windows2000
+---------------------------------------------------------
+
+You can customize the logon process.
+To do so, run the "regedt32.exe". and all the followings should be done under, 
+
+\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsNT\CurrentVersion\WinLogon
+
+Removing the Default Username
+
+By default, the user name of the last person to successfully log on to Windows NT is displayed in the WINLOGON dialog box. 
+You can make this not to display any user name at the WINLOGON dialog box.
+Click "Edit>Add Value".
+And at Value Name, type "DontDisplayLastUserName" and leave the Data Type as "REG_SZ", and click OK.
+And when the string box pops up, type value "1" to display a blank username field, and value "0" to display the last username.
+
+Display a Security Warning Message
+
+You can make Windows NT to display a pop-up warning message just before displaying the WINLOGON dialog box.
+Each time a user presses Ctrl+Art+Del, the warning will appear and the OK button must be clicked before logon can be attempted. 
+To do so, double click on the "LegalNoticeCaption" value. When the string box pops up, write the cation. (example : Warning ).
+And double click on the "LegalNoticeText" value, and enter the string. (example : Someone's Watching You !)
+To terminate the warning display, just clear the contents of each value.
+
+Disabling the Shutdown Button
+
+The Shutdown button is displayed at the WINLOGON prompt, by default.
+To disable it, double click on "ShutdownWithoutLogon", and enter value "1" to enable the button, and "0" to disable the button.
+
+Logon Automation
+
+You can make Windows NT to eliminate the need to press Ctrl+Alt+Del, type in a username and password, and just logon automatically.
+To do so, enter the string values of "DefaultUserName", and "DefaultPassword".
+If you don't see the values of those, you can edit them by clicking "Edit>Add Value", and name the Value Name for example "DafualtPassword", and leave the Data
+Type as "REG_SZ", and write the string.
+Another thing is to add the "AutoAdminLogon" value, and set the string as "1" to automate the logon, and "0" to disable it.
+
+Customizing the Logon Process in Windows2000
+
+In Windows 2000, you no more have to edit the registry.
+You can do it at Start>Programs>Admin Tools>Domain Security Policy
+Expand the "Security Settings", expand the "Local Policy", and double click the "Security Option" of the left pane.
+Double click the "Don't display the last logon username on the logon screen", and select the box, and select Enable.
+
+ 

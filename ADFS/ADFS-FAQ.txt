@@ -1,0 +1,26 @@
+========
+ADFS FAQ
+========
+
+- How to configure ADFS?
+- How to get certificates?
+
+-----------------------------------------------------------------------------------------------------
+How to configure ADFS?
+======================
+In Windows Server you can configure everything in MMC.
+
+- in Windows Server call mmc.exe
+- File/Add-Remove Snap-in...
+- add 'AD FS Management'
+
+-----------------------------------------------------------------------------------------------------
+How to get certificates?
+========================
+Windows Server 2016/ADFS 2.0:
+
+	https://ADFS_HOST/FederationMetadata/2007-06/FederationMetadata.xml
+	
+	
+	
+	

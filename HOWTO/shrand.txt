@@ -1,0 +1,9 @@
+Howto generate a random number in bash?
+=======================================
+
+Use $RANDOM shell variable. It gives you a random integer between 0 and 32767.
+The seguence of random numbers may be initialized by assigning a value to RANDOM.
+
+See more:
+	man bash
+

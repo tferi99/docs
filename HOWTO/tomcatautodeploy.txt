@@ -1,0 +1,32 @@
+How to auto-deploy on Tomcat
+============================
+
+Tomcat 4.x
+----------
+- Any XML file in the 
+
+	$CATALINA_HOME/webapps
+
+
+Tomcat 4.x, 5.x
+----------
+- Any XML file in the 
+
+	$CATALINA_HOME/conf/[engine_name]/[host_name]
+
+directory is assumed to contain a Context element (and its associated subelements) for a single web application. 
+The docBase attribute of this <Context> element will typically be the absolute pathname to a web application directory, 
+or the absolute pathname of a web application archive (WAR) file (which will not be expanded).
+
+- Any web application archive file that does not have a corresponding directory of the same name 
+(without the ".war" extension) will be automatically expanded, unless the unpackWARs property is set to false. 
+If you redeploy an updated WAR file, be sure to delete the expanded directory when restarting Tomcat, 
+so that the updated WAR file will be re-expanded (note that the auto deployer will automatically take care of this if it is enabled).
+
+- Any subdirectory within the application base directory that appears to be an unpacked web application 
+(that is, it contains a /WEB-INF/web.xml file) will receive an automatically generated Context element, 
+even if this directory is not mentioned in the conf/server.xml file. 
+This generated Context entry will be configured according to the properties set in any DefaultContext 
+element nested in this Host element. The context path for this deployed Context will be a slash 
+character ("/") followed by the directory name, unless the directory name is ROOT, in which case the 
+context path will be an empty string ("").

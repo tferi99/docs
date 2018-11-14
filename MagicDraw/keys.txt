@@ -1,0 +1,5 @@
+ALT-B			: select in Containment Tree
+
+CTRL-W			: fit to window
+
+CTRL-SHIFT-F		: quick search

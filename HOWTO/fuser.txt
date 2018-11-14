@@ -1,0 +1,13 @@
+
+How can you find out who does use a specific file or socket?
+
+You can do it by calling fuser. Examples:
+
+	fuser -m <dir>		: who uses this mounted directory ?
+	fuser telnet/tcp	: who uses local telnet TCP port ?
+
+You can also kill processes using files with fuser.
+
+See also:
+	man fuser
+

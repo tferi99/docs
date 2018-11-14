@@ -1,0 +1,18 @@
+================
+How to use wget?
+================
+
+How To Use Wget Through Proxy?
+------------------------------
+	export http_proxy="http://proxy.example.com:8080"
+or
+	export ftp_proxy="http://proxy.example.com:8080"
+than
+	–proxy=on
+	
+When authentication needed
+--------------------------
+
+	wget -c http://mysite.com/myfile.tgz --http-user=me http-passwd=mypass 
+
+	

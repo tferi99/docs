@@ -1,0 +1,741 @@
+==========
+OpenAM FAQ
+==========
+- What is OpenAM?
+- Installation
+- Basics
+
+Configuration
+-------------
+- How to change debug log level?
+- How to configure SAML2 federation with two OpenAM instances?
+- Authentication chain and criterias
+- How to configure LDAP security module
+- How to configure LDAP authentication with OpenDJ DataStore?
+- OpenAM certificates
+- Howto print content of certificates from SAML2 metadata?
+- How to re-new self signed certificate in OpenAM?
+- How to setup SSL in OpenAM?
+
+Troubleshooting
+---------------
+- ERROR:  AuthId JWT Signature not valid
+- ERROR:  Port parameters are -1 during initialization
+- Problem: IDP stores users with DN or RDN as unique ID
+
+Development
+-----------
+- Howto use spring-boot-security-saml-sample with OpenAM?
+
+Other
+-----
+- How to configure SAML2 SSO federation with OpenAM?
+
+---------------------------------------------------------------------------------------------------------------------------
+
+SEE ALSO:
+	- OpenAM Admin Guide:					https://backstage.forgerock.com/docs/openam/13/admin-guide/
+	- OpenAM Wiki 							https://wikis.forgerock.org/confluence/display/openam
+	- OpenAM Learning Curve					http://www.fedji.com/blogs/tag/openam/		
+	- OpenAM Java J2EE Tutorial Stuff		http://reddymails.blogspot.hu/2013/03/sso-for-java-or-net-web-based.html
+	
+---------------------------------------------------------------------------------------------------------------------------
+What is OpenAM?
+===============
+OpenAM is an open source access management, entitlements and federation server platform. It is sponsored by ForgeRock.
+
+OpenAM originated as OpenSSO, an access management system created by Sun Microsystems and now owned by Oracle Corporation. 
+OpenAM is a fork which was initiated following Oracle's purchase of Sun.
+
+“All in one” access management that includes:
+- authentication
+- adaptive risk assessment
+- authorization
+- federation
+- single sign-on
+- social sign-on
+- basic self-service
+- privacy and consent
+- and high performance session management. 
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Installation
+============
+PRE-REQUISITIES:
+
+- Before start OpenAM specify FQDN (Full qualified domain name) for server and put in into DNS server or hosts file,
+	BOTH ON SERVER AND CLIENT SIDE.
+
+STEPS:	
+	
+- It's a J2EE WEB application deployed as WAR, so you can easily install it under Java WEB container like Tomcat.
+
+- Call OpenAM WEB application always with FQDN from browsers.
+
+- Basic configuration performed during 1st call of OpenAM WEB page
+
+- During 1st call initialization software components will be copied also into OS disk, into
+	
+	HOME/openam
+
+	If you have any configuration issue and you would like to restart initialization you just delete OpenAM directories from your HOME.
+
+	
+---------------------------------------------------------------------------------------------------------------------------
+Basics
+======
+- IDP:(Identity provider) - A module/application that can authenticate and provide you a security token which can be used in singe sign on.
+
+- SP:(Service provider):  A system that allows users (Or principal) to authenticate against IDP.
+	E.g.: We have a JSF 2.0 web application that talks to openam.
+	Here our web application is SP, Openam is IDP and I am logging in to our webapp I am the principal (user).
+	
+- Realm: A realm is the unit that used to organize configuration information. Authentication properties, authorization policies, data stores, subjects 
+ and other data can be defined within the realm.
+
+- Circle of Trust: COT is a federation of any number of service providers and at least one identity provider - with whom principals can transact in a secure and apparently seamless environment.
+	Eg: Say your web application (SP) is at www.xyz.com/shopnow and your identity provider url is www.myidp.com/openam then you need to add both these urls to one circle of trust in OpenAM.
+	
+- Realm and Circle of Trust. How are they connected ?
+	Realm => Can have many Data stores or Identity Stores.
+	COT => Will have many host names or Ip address (ie. SPs, IDP)
+	COT ===> Is linked to Realm. 
+
+- Fedlet: A client that we can generate using OpenAM. The client generated can be for a .Net or a Java based Fedlet. 
+	
+- SAML: Security Assertion Mark Language is an XML based data format that flows between IDP and SP when a principal is trying authentication and/or authorization. 
+	You dont need to worry about this as OpenAM generates this for you when	it sends response and in your Web application.
+	
+	Don't panic you will not create this xml OpenAM, Spring Saml extension or Fedlet does the job for you.
+	
+	
+---------------------------------------------------------------------------------------------------------------------------
+How to change debug log level?
+==============================
+Configuration/Server and Sites/Servers (item)/General/[Debugging]/(Debug level)
+
+For more detailed log set level to:		Message
+
+Location of debug files is:
+
+	HOME/openam/<server name>/debug
+
+	
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+BE AWARE OF FREE SPACE OF DISK IS DEBUG IS ACTIVE 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
+---------------------------------------------------------------------------------------------------------------------------
+ERROR:  AuthId JWT Signature not valid
+======================================
+
+I reproduced it the following way:
+	- Set up a deployment with two openam 13.0.0
+	- In Postman start authentication on server1 to openam.example.com:18080/openam/json/authenticate
+	- for the second step when returning credentials switch to the second server openam2.example.com:28080/openam/json/authenticate?
+
+	The answer I get is
+		{
+			"code": 400,
+			"reason": "Bad Request",
+			"message": "AuthId JWT Signature not valid"
+		}
+
+Workaround:
+	Replacing that value by a static key fixes the problem. The key needs to be a 128 bit random string base64 encoded.
+	To do that you can either use the console: under
+
+		Realms > Edit realm > Authentication > Settings > Security  > Organization Authentication Signing Secret > Save
+
+	or
+
+		ssoadm set-realm-svc-attrs -u amadmin -f PATH_TO_PWD_FILE -s iPlanetAMAuthService -e / -a iplanet-am-auth-hmac-signing-shared-secret=BASE64_ENCODED_STRING	
+		
+		
+		e.g:
+			+BLxJioElZImDlAy0Xo9Iw==
+			h1R64ahehFtYd0aLZlNEEw==
+			8T8eocE4+qVNQQcIHybRcg==
+
+		
+SEE ALSO:
+	https://bugster.forgerock.org/jira/browse/OPENAM-8269
+
+
+ ---------------------------------------------------------------------------------------------------------------------------
+ERROR:  Port parameters are -1 during initialization
+====================================================
+If you call OpenAM 1st time basic configuration will be performed.
+
+If host name contained by WEB request cannot be resolved on server side initialization script will be failed.
+Setup of embedded OpenDJ will get -1 as port parameters and initialization won't be successful.
+
+In this case add DNS or hosts entry to your environment, delete OpenAM directory from HOME, restart application
+and call application again to restart initialization.
+
+---------------------------------------------------------------------------------------------------------------------------
+How to configure SAML2 federation with two OpenAM instances?
+============================================================
+Pre-requisities:
+- install 2 OpenAM (13) instances into different machine
+	- machine 1:	Identity Provider (IDP)
+	- machine 2:	Service Provider (SP)
+- put FQDN of both machines into DNS (or hosts files of all participants)
+
+Scenario:
+- SP provides application and business logic without authention/authorization
+- IDP provides identity database 
+- if user tries to access SP functions and it's not autenticated yet it will be redirected to IDP to authenticate
+- after successful authentication user will be redirected back to SP to use application
+
+Configuration steps:
+- IDP: create Hosted Identity Provider
+	
+		top level realm/Create SAML2 Providers/Create Hosted Identity Provider
+		
+		- Name: URL of OpenAM app here	(http://idp.example.com:8080/openam)
+		- Signing key: Test (means self-signed certificate)
+		- Put into a COT (Circle Of Trust): mycot
+		- map ALL attributes
+		
+			Select attributes one-by-one from dropdown and use the same name in left side.
+			
+		
+- SP:	create Hosted Service Provider
+	
+	top level realm/Create SAML2 Providers/Create Hosted Service Provider
+
+		- Name: URL of OpenAM app here	(http://sp.example.net:8080/openam)
+		- Put into a COT (Circle Of Trust): mycot
+		
+- SP:	create Remote Identity Provider
+
+		You can access this function directly after creating Hosted Service Provider
+		
+		URL:  to meteadata on remote IDP (http://idp.example.com:8080/openam/saml2/jsp/exportmetadata.jsp)
+		
+- SP:	activate Auto Federation
+
+	- Federation tab/<choose URL of Hosted Service Provider>/Assertion Processing/[Auto Federation]/Enabled		-> ON
+	- Attribute:	uid
+		
+- SP: set dynamic creation user profile during Authentication
+
+	- Realm/Authentication/Settings/User Profile/(User Profile)	-> Dynamic with User Alias
+												(Alias Search Attribute Name) : uid
+												
+- SP:	remove users from SP to validate dynamic user creation
+
+		Realm/Subjects
+		
+		- delete all user BUT NOT amadmin!
+		
+- IDP:	register service provider 		
+												
+		You can access function directly on status page after creation Hosted Identity Provider
+		OR
+		realm/Create SAML2 Providers/Register Remote Service Provider
+												
+		- URL:  to meteadata on remote SP (http://sp.example.net:8080/openam/saml2/jsp/exportmetadata.jsp)
+		
+			NOTE: mapping is default (empty)
+												
+- SP: create SAML2 authentication module
+
+		- Realm/Authentication/Modules/(+Add Module)
+		- Name:		mySAML
+		- Type:		SAML2
+		- IdP Entity ID:	URL of IDP (http://idp.example.com:8080/openam)
+	
+
+NOTE: domain of IDP (example.com) and domain of SP (example.net) are different on purpose.
+
+	
+	
+Final configuration
+-------------------
+	IDP Hosted Identity Provider 	<-------- 	SP Remote Identity Provider
+	SP Hosted Service Provider		<-------- 	IDP Remote Service Provider
+
+- IDP:	create a user account
+
+	Realm/Subjects
+	
+- SP - test SAML2
+
+	- open another browser or open new incognito window
+	- Call SP and use mySAML for authenticate:
+	
+			http://sp.example.net:8080/openam/UI/Login?module=mySAML
+	
+	
+	
+Troubleshooting:
+- validate accesibility of remote metadata URL:
+		http://idp.example.com:8080/openam/saml2/jsp/exportmetadata.jsp
+		http://sp.example.net:8080/openam/saml2/jsp/exportmetadata.jsp
+
+- validate configuration on Federation tab od IDP and SP
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Authentication chain and criterias
+==================================
+- Basically, each authentication module handles one way of obtaining and verifying credentials. 
+
+- You can chain different authentication modules together.
+
+- Authentication modules in a chain can assign a pass or fail flag to the authorization request. 
+	To successfully complete an authentication chain at least one pass flag must have been achieved, and there must be no 
+	fail flags.
+
+- Each authentication module can be configured to specify the continuation and failure
+	semantics with one of the following four criteria: requisite, sufficient, required,
+	or optional.
+
+	                               FAIL            PASS
+								   
+Requisite (elofeltetel):          Fail flag        Pass flag
+                                <--- Exit             | Continue 
+                                                      |
+                                                      V
+
+	
+Sufficient (elegseges):           NO flag         Pass flag
+                                     | Continue     Exit --->
+                                     |
+                                     V
+
+									 
+Required (szukseges):             Fail flag        Pass flag
+                                     | Continue        | Continue 
+                                     |                 |
+                                     V                 V
+									 
+									 
+Optional (nem kotelezo):          NO flag          Pass flag
+                                     | Continue        | Continue 
+                                     |                 |
+                                     V                 V
+
+									 
+---------------------------------------------------------------------------------------------------------------------------
+How to configure LDAP security module
+=====================================
+SEE ALSO:
+	https://wikis.forgerock.org/confluence/display/openam/Configure+OpenAM+to+use+Active+Directory+for+Authentication+and+DataStore
+
+
+1. Make a test query from LDAP with ldapsearch, e.g: 
+
+	ldapsearch -x -h 192.168.150.80 -p 389 -b "OU=Wacker,OU=Benutzer,DC=lync,DC=lab,DC=com" -D "CN=zoltan,OU=admin,OU=Benutzer,DC=lync,DC=lab,DC=com" -w And33phone
+	
+		# extended LDIF
+		#
+		# LDAPv3
+		# base <OU=Wacker,OU=Benutzer,DC=lync,DC=lab,DC=com> with scope subtree
+		# filter: (objectclass=*)
+		# requesting: ALL
+		#
+
+		# Wacker, Benutzer, lync.lab.com
+		dn: OU=Wacker,OU=Benutzer,DC=lync,DC=lab,DC=com
+		objectClass: top
+		objectClass: organizationalUnit
+		ou: Wacker
+		description: OU for Wacker Provisioning users
+		distinguishedName: OU=Wacker,OU=Benutzer,DC=lync,DC=lab,DC=com
+		instanceType: 4
+		whenCreated: 20131111130754.0Z
+		whenChanged: 20131111212305.0Z
+		uSNCreated: 342898
+		uSNChanged: 342977
+		name: Wacker
+		objectGUID:: EUiPAFZcbk2YT/SPhOduIg==
+		objectCategory: CN=Organizational-Unit,CN=Schema,CN=Configuration,DC=lync,DC=l
+		 ab,DC=com
+		dSCorePropagationData: 20131111130754.0Z
+		dSCorePropagationData: 16010101000000.0Z
+
+		# self test, Wacker, Benutzer, lync.lab.com
+		dn: CN=self test,OU=Wacker,OU=Benutzer,DC=lync,DC=lab,DC=com
+		objectClass: top
+		objectClass: person
+		objectClass: organizationalPerson
+		objectClass: user
+		cn: self test
+		sn: test
+		telephoneNumber: +3787921234567
+		givenName: self
+		distinguishedName: CN=self test,OU=Wacker,OU=Benutzer,DC=lync,DC=lab,DC=com
+		instanceType: 4
+		...
+		
+2. Log into the OpenAM Console and create new realm (e.g. MSAD)
+
+3. Add a new LDAP authentication module to this realm, e.g. AD:
+
+4. Configure module:
+	- Provide the DN to Start User Search (Base DN), 
+	- the Bind User DN (which we used earlier in ldapsearch to test), 
+	- Bind User Password. 
+	- Change the "Attribute Used to Retrieve User Profile" from cn to samAccountName. 
+	- Similarly change the "Attribute Used to Search for a User to be Authenticated" to samAccountName. 
+	- set Realms/<realm>/Authentication/Settings/[User Profile]/(User Profile) to "Dynamic" or "Dynamic with User Alias" 
+	     otherwise you will get "User Requires Profile to Login" error message on login dialog and users won't be created in user store (Subjects)	  
+	- Finally add (objectclass=person) to the User Search Filter. The filter ensures efficient LDAP query.
+
+5. (Optionally) if you don't want the full DN to be returned to the DataStore then uncheck 'Return User DN to DataStore'.  
+	This will be need if you are going to use Active Directory as a DataStore and use samAccountName as the Authentication Naming Attribute.  
+	
+	
+NOTE:
+	If authentication to AD is still not working, you may need to change a setting for User Attributes from "Required" to "Dynamic"
+	To do this, go to OpenAM Console | Configuration | Authentication | Realm Attributes.	
+	
+	
+Test module on IDP:
+
+		http://idp2.example.com:8080/openam/UI/Login?realm=MSAD&module=AD
+	
+	
+	
+Configuring AD as Data Store
+----------------------------
+1. Log into the console as amadmin and click on Access Control->MSAD->Data Store. 
+	Delete the existing “embedded” Data Store if you don't need it and then Click on New to create a new datastore of type Active Directory. 
+	You can choose any name. We have chosen AD_DataStore.	
+
+2. Click on the AD_DataStore and configure it much like the AD Authentication Plugin. 
+	However here you don't need to change the search attribute i.e. leave it as cn.	
+
+3. If you want to pull additional attributes from Active Directory (that are not listed under LDAP user Attributes) then add them. 
+	For example we have added ipPhone so that OpenAM can use it.
+	
+4. If your users in Active Directory reside in other containers beside the default cn=Users, then delete “users” 
+	from the LDAP People Container Value and if needed also for the LDAP Groups Container Value.	
+
+5. (Optional) If you see in the previous step, "cn" is used as the Authenticaiton Naming Attribute.  
+	You might want to use "samAccountName" instead especially if on the login screen you want to use the value of "samAccountName" for the Username.  
+	And in addtion to this change you should also change under User Configuration the LDAP User Search Attribute from "cn" to "samAccountName". 	
+	
+6. Test this datastore by clicking on the Subjects tab. You should be able to see all your Active Directory users.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------
+How to configure LDAP authentication with OpenDJ DataStore?
+===========================================================
+Scenario:
+User wants to authenticate from an LDAP (or Active Directory) and user profile data should be stored into memory for authenticated user.
+User will be created dynamically if not exists yet in data store (by default OpenDJ/LDAP).
+
+Steps:
+- User authenticates with AD authention module
+- Once the user has successfully authenticated, there is a thing called 'profile lookup'.
+	- Authentication module search memory for profile of authenticated user
+	- If not found in memeory user profile searched from from LDAP data store
+- If user not found it will be created in LDAP data store
+- User profile will be stored into memory
+
+Data:
+- unique ID in AD: samAccountName
+- unique ID in OpenAM: uid
+
+
+How configuration parameter works?
+----------------------------------------------------------------------------------------------------------------------
+                 AD                                  Memory                           DataStore
+             (user data entry)                (authenticated profile)             (stored profile)
+                  |                                    |                                  |                
+                  |------------ [1][2]---------------->|                                  |
+                  |                                    |<---------- [3] ------------------|
+                  |---------------- [4] -------------->|------------- [5] --------------->|
+                  |------------------------------------[6]------------------------------->|
+                  |                                    |<---------------[6]---------------|
+				  
+
+----------------------------------------------------------------------------------------------------------------------					  
+
+
+					  
+User authenticates with AD authention 
+-------------------------------------
+LDAP auth:
+	Configuration in AD authentication module:
+
+		OpenAM/Realm/Authentication/Modules/<Module>
+
+		
+	- LDAP search filter is generated from:
+		- [1] userSearchAttrs (Attributes Used to Search for a User to be Authenticated)
+			List items here will be concatenated into LDAP search filter with OR:
+				(| (item1) (item2) ...(itemN))
+
+				 
+		- and concatenated to [2] searchFilter (User Search Filter) with AND
+
+		Generated LDAP filter:          (& (userSearchAttrs) (searchFilter))
+
+		E.g:
+			- baseDN-> OU=ssotest,OU=Benutzer,DC=lync,DC=lab,DC=com
+			- userSearchAttr(s)-> [sAMAccountName]
+			- searchFilter-> (objectclass=person)
+		
+	Searching:	 OU=ssotest,OU=Benutzer,DC=lync,DC=lab,DC=com for (&(sAMAccountName=test2)(objectclass=person))
+	
+	
+	
+	
+Profile Lookup
+--------------
+	- [3] - userNamingAttr (Attribute Used to Retrieve User Profile):
+
+		The LDAP module will use value of this LDAP attribute to search of the profile 
+		of an authenticated user.
+
+
+New user profile will be created if does not exist yet
+------------------------------------------------------
+	- [4] - userCreationAttrs (User Creation Attributes)
+	
+		This is a list of attribute values to be retrieved from the AD/LDAP authentication source that we wish to pass through to the user profile creation step.
+	
+	- [5] - sun-idrepo-ldapv3-config-createuser-attr-mapping (Create User Attribute Mapping in OpenAM/Realm/DataStore with OpenDJ data store)
+		
+		When creating a new user profile into data store, apply this map of OpenAM profile attribute names to directory server attribute names
+		which attributes have been loaded by authentication module and specified by userCreationAttrs [4].
+		Rules here:
+		- if an attribute provided by userCreationAttrs it will be saved into datastore 
+		- if an attribute provided by userCreationAttrs it can be mapped into different data store attribute
+		- BUT a provided value cannot be overriden by a mapped value. E.g if attribute 'A' provided by userCreationAttrs and there is property 'B' 
+		wich mapped into the 'A' in sun-idrepo-ldapv3-config-createuser-attr-mapping mapping will be ignored
+		- if an attribute is mapped to itself by sun-idrepo-ldapv3-config-createuser-attr-mapping (e.g. givenName=givenName) and 
+			value not specified by userCreationAttrs then user name (userID) will be stored into data store attribute
+
+	- [6] - Return User DN to DataStore 
+
+		When enabled the (LDAP/AD) authentication module returns the DN rather than the User ID, so the bind for
+		authentication can be completed without a search to retrieve the DN.
+		
+		The truth is that the DN will be returned and from that the value of the RDN will be stored into data store and 
+		it's used to search the user profile.
+		
+		Example:
+		DN set for the module would be 'uid=demo,ou=people,dc=openam,dc=forgerock,dc=org'
+		OpenAM will then use 'demo' to search the data store(s).
+		
+		OR 
+		
+		DN: 		CN=John Test,OU=ssotest,OU=Benutzer,DC=lync,DC=lab,DC=com
+		stored:		John Test
+		
+		In general scenarios UNCHECK this option (e.g. where you authenticate from an AD and your identity store is embedded OpenDJ LDAP).
+		
+
+		
+Troubleshooting
+---------------
+Get information from debug log files (on 'message' level):
+	- Authentication
+	- IdStore
+	- Configuration
+
+	
+To trace SAML2 traffic use SAML plugins of browsers:
+- Firefox: 
+- Chrome: SAML Message Decoder	
+	
+	
+	
+---------------------------------------------------------------------------------------------------------------------------
+Problem: IDP stores users with DN or RDN as unique ID
+=====================================================
+If you authenticate from AD or LDAP authentication module and stores user profile into data store 
+by default settings user will be stored with RDN as unique ID instead of LDAP unique ID.
+
+RDN is the first tag value of DN of LDAP authentication entry.
+
+E.g:
+
+	DN: 		CN=John Test,OU=ssotest,OU=Benutzer,DC=lync,DC=lab,DC=com
+	stored:		John Test
+
+But sometimes you need original unique ID.
+
+Solution:
+
+		Uncheck flag here:
+		
+				OpenAM/Realm/Authentication/Modules/<AD/LDAP Module>/(Return User DN to DataStore)
+
+
+---------------------------------------------------------------------------------------------------------------------------
+How to configure SAML2 SSO federation with OpenAM?
+==================================================
+SEE:	doc\software\tools_and_languages\telephony\cisco\FAQ\How to configure SAML2 SSO federation with OpenAM.txt
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Howto use spring-boot-security-saml-sample with OpenAM?
+=======================================================
+- get SP (Service Provider) project from https://github.com/vdenotaris/spring-boot-security-saml-sample
+
+- install OpenAM and configure a COT
+
+- change IPD metadata URL in WebSecurityConfig.java. E.g:
+
+	String idpSSOCircleMetadataURL = "http://idp2.example.com:8080/openam/saml2/jsp/exportmetadata.jsp?entityid=http://idp2.example.com:8080/openam&realm=/MSAD";
+	
+- build SP project with Maven and start it:	mvn spring-boot:run	
+	
+- get SP metadata from application (see notes in README.md)
+
+	http://localhost:8080/saml/metadata
+	
+- import SDP entity (metadata file of application) into OpenAM IDP
+	- go to REALM/Federation/[Entity Providers]/(Import Entity...)
+		
+		Here choose destination realm properly and upload metadata XML file.
+
+- you can add other SP applications into COT, too
+
+- call one of applications from COT and login
+
+- call another COT member application, you can use it without login
+
+
+---------------------------------------------------------------------------------------------------------------------------
+OpenAM certificates
+===================
+- A SAML entity uses public key cryptography to secure the data transmitted to trusted partners. 
+- Public keys are published in the form of X.509 certificates in metadata whereas the corresponding private keys are held securely by the entity. 
+- These keys are used for message-level signing and encryption, and to create secure back channels for transporting SAML messages over TLS. 
+- They are not used for browser-facing TLS transactions on port 443. 
+
+After OpenAM installation, a default keystores are:
+
+	- $HOME/keystore.jks						: for Tomcat (SSL)
+	- $HOME/openam/openam/keystore.jks			: for signing messages
+	
+Its password, stored in $HOME/openam/openam/.storepass, is changeit by default. 
+
+The only key in this keystore is for a self-signed certificate (alias: test). 
+Its password, stored in $HOME/openam/openam/.keypass, is also changeit by default.
+
+OpenAM uses the signing key in this keystore to perform the following functions:
+
+	- To sign persistent cookies. 
+	
+		The certificate that OpenAM uses to sign persistent cookies—by default the test certificate—is configured at 
+		
+			Realms > Realm Name > Authentication > Settings > Security > Persistent Cookie Encryption Certificate Alias
+
+	- To sign SAML 2.0 assertions when OpenAM is configured as an identity provider. 
+	
+		The certificate used for signing by an identity provider is configured at 
+		
+			Federation > Provider Name > Assertion Content > Signing and Encryption.
+			
+			
+---------------------------------------------------------------------------------------------------------------------------
+Howto print content of certificates from SAML2 metadata?
+========================================================
+
+To get public key certificate from metadata:
+	- get ds:KeyInfo tag from metadata
+	
+		<ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>
+						MIIEazCCAlMCCQDfWuCMQjw58zANBgkqhkiG9w0BAQsFADBqMQswCQYDVQQGEwJIVTELMAkGA1UE
+						CAwCVnAxDzANBgNVBAcMBkJGdXJlZDEPMA0GA1UECgwGQW5kdGVrMQwwCgYDVQQLDANEZXYxHjAc
+						...
+						ZWsxDTALBgNVBAsTBERldnMxPjA8BgNVBAMTNU9wZW5BTSBTaWduaW5nIC0gY2VlcmQtb3BlbmFt
+						WOSH+Rf5bdkoy28jmZYYo6KmAQgkRy1qwKjJ7fM8kvjSc6ZfG8BzCa8aFmKJYna3AgWloh7gvJf9
+						cZVUs9V+TBTHzo8JWzois9qRi8KEpU2IT5PSqG3aOff8EOZxi1rHxu3b0FR/Z911CDKhMA==
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+
+	- get value of ds:X509Certificate tag and put into PEM format frame and save into a file:
+	
+		-----BEGIN CERTIFICATE-----
+						MIIEazCCAlMCCQDfWuCMQjw58zANBgkqhkiG9w0BAQsFADBqMQswCQYDVQQGEwJIVTELMAkGA1UE
+						CAwCVnAxDzANBgNVBAcMBkJGdXJlZDEPMA0GA1UECgwGQW5kdGVrMQwwCgYDVQQLDANEZXYxHjAc
+						...
+						ZWsxDTALBgNVBAsTBERldnMxPjA8BgNVBAMTNU9wZW5BTSBTaWduaW5nIC0gY2VlcmQtb3BlbmFt
+						WOSH+Rf5bdkoy28jmZYYo6KmAQgkRy1qwKjJ7fM8kvjSc6ZfG8BzCa8aFmKJYna3AgWloh7gvJf9
+						cZVUs9V+TBTHzo8JWzois9qRi8KEpU2IT5PSqG3aOff8EOZxi1rHxu3b0FR/Z911CDKhMA==
+		-----END CERTIFICATE-----
+
+	- print content with keytool:
+	
+		keytool -printcert -file <file>
+		
+			Owner: CN=OpenAM Signing - ceerd-openam.andtek.cee.cs.eilab.biz, OU=Devs, O=Andtek, L=Balatonfured, C=HU
+			Issuer: CN=ca.openam.example.com, OU=Dev, O=Andtek, L=BFured, ST=Vp, C=HU
+			Serial number: df5ae08c423c39f3
+			Valid from: Fri Oct 26 16:50:31 CEST 2018 until: Mon Oct 23 16:50:31 CEST 2028
+			Certificate fingerprints:
+			 MD5:  FB:D0:1A:0C:4F:5D:99:A8:0F:81:79:CE:3A:5B:24:0B
+			 SHA1: 5D:EE:63:44:1C:93:64:20:D2:47:C6:84:DB:D5:28:2B:1F:C8:03:4B
+			 SHA256: 0D:DC:23:F0:8F:9E:E6:42:78:1A:8F:DD:7E:94:F7:2C:30:07:87:E0:A6:6E:C8:26:42:1E:FD:A8:C5:96:89:EA
+			 Signature algorithm name: SHA256withRSA
+			 Version: 1
+
+
+
+
+		
+---------------------------------------------------------------------------------------------------------------------------
+How to re-new self signed certificate in OpenAM?
+================================================
+During the first startup after installation you have to configure OpenAM environment. 
+It generates a self-signed certificate.
+
+OpenAM 13.0 stores its default signing key in a Java Keystore file located in the 
+
+	$HOME/openam/openam/keystore.jks; 
+	
+you can check the location of this keystore in the OpenAM console by navigating to: 
+
+	Configuration > Servers and Sites > Default Server Settings > Security > Key Store
+
+Password of the keystore is:				changeit
+Alias of this self-signed certificate:		test
+
+This certificate is used for example to sign metadata by IDP (alias configured during created Hosted IDP entity).
+- You can specify alias of signature key during creating Hosted IDP:
+
+	Create a SAMLv2 Identity Provider on this Server/[metadata]/(Signing key)
+	
+OR
+
+- You can change later:
+	
+	- Choose IDP from FEDERATION/Entity Providers
+	
+	- [Signing and Encryption]/[Certificate Aliases]/Signing
+	
+	IMPORTANT, maybe you have to change key pass, too. In the next input field.
+	
+	
+---------------------------------------------------------------------------------------------------------------------------
+How to setup SSL in OpenAM?
+===========================
+In fact, you have to setup SSL in container of OpenAM, e.g. in Tomcat.
+
+- create self-signed or CA signed certificate in Tomcat keystore
+- enable SSL connector in conf/server.xml
+
+
+
+	
+
+
+
+
+
+

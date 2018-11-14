@@ -1,0 +1,16 @@
+After the install the MagicDraw cannot be launched or it just appears on the screen and vanishes.
+-------------------------------------------------------------------------------------------------
+Start MagicDraw with system property no.printer.lookup=true. 
+In the
+
+	/bin/mduml.properties 
+
+file to the line 'JAVA_ARGS=' append additional part 
+
+	-Dno.printer.lookup=true
+
+Other tips:
+- The problem may be related with printer driver. Try to change the default printer driver on your Windows OS and load again. 
+
+- The problem may be related with Java SDK 1.4.2_04. Try to use Java SDK 1.4.2_03.
+

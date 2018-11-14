@@ -1,0 +1,140 @@
+=========================================
+Package managers in various distributions
+=========================================
+
+
+- yast (SuSE)
+- apt-get (Debian)
+- dselect (Debian)
+- yum (Fedora)
+- emerge (gentoo)
+- rpm (RedHat)
+
+------------------------------------------------------------------------------------------------------------------------------
+yast (SuSE)
+===========
+yast
+
+
+------------------------------------------------------------------------------------------------------------------------------
+apt-get (Debian)
+================
+Installation:
+
+	apt-get <command> <package>
+
+for example:
+
+	apt-get install postgresql
+
+Interactive tools:
+
+	dselect, tasksel
+
+Installing DEB packages:
+
+	dpkg -i <packagename.deb>
+	
+Listing installed packages:
+
+	dpkg -l
+
+Listing files owned by a packages:
+
+	dpkg -L <package>
+	
+Info about package:
+	
+	dpkg -s <packagename.deb>
+
+List of indexed APT sources:
+
+	/var/lib/apt/lists
+
+	Here you can find package names, contents by calling a simple grep query.
+
+Looking for APT packages:
+
+	apt-cache search <package/keyword>
+	
+------------------------------------------------------------------------------------------------------------------------------	
+dselect
+=======
+Debian `dselect' package handling frontend.
+
+   0. [A]ccess    Choose the access method to use.
+   1. [U]pdate    Update list of available packages, if possible.
+   2. [S]elect    Request which packages you want on your system.
+   3. [I]nstall   Install and upgrade wanted packages.
+ * 4. [C]onfig    Configure any packages that are unconfigured.
+   5. [R]emove    Remove unwanted software.
+   6. [Q]uit      Quit dselect.
+
+
+1. Set access methd to 'apt' in [A]
+2. Refresh package list in [U]
+3. Select package to install in [S]
+  
+	/	- search
+	-	- remove
+	Ins	- install
+	Q	- back to main menu
+	?	- help
+
+4. Install in [I]
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Fedora
+======
+yum		- Yellowdog Updater Modified
+
+	yum [-y] install <package>		- to install a package
+	yum [-y] remove <package>		- uninstall a package
+	yum search <pattern>			- search for a package by name or description contect
+	yum list						- listing available/installed packages
+	yum list installed				- listing installed packages
+	yum info <package>				- info about a package
+
+	To get installed files:
+	yum uses RPM, so
+
+		rpm -ql package-name	
+
+		
+		
+	
+	
+------------------------------------------------------------------------------------------------------------------------------
+emerge (gentoo)
+===============
+emerge
+
+------------------------------------------------------------------------------------------------------------------------------
+rpm (RedHat)
+============
+Options:
+• -i : install a package
+• -v : verbose
+• -h : print hash marks as the package archive is unpacked
+• -q query operation
+• -a queries all installed packages
+• -i : view information about an rpm
+• -p : specify a package name
+• -l : list the files in the package
+
+rpm -ivh <package-file>			: install
+rpm -qa							: query all the packages installed
+rpm -q <package>				: query a single package
+rpm -qf <file>					: Which RPM package does a file belong to? It returns package which contanins a file.
+rpm -qip <package file>			: Information about RPM Package file
+rpm -qi <package>				: Information about RPM Package
+rpm -qlp <package file>			: List all the Files in a Package file
+rpm -ql <package>				: List all the Files in a Package
+rpm -qRp <package file>			: List the Dependency Packages
+
+Handling conflicts
+------------------
+If you have some conflict during installation use --replacefiles:
+
+	rpm -ivh --replacefiles foo-1.0-1.i386.rpm

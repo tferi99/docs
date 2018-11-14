@@ -1,0 +1,27 @@
+Windows network tricks
+======================
+
+Getting IP address from NetBIOS name:
+
+	nmblookup -S <name>
+
+
+Getting NetBIOS name from IP address:
+
+	nmblookup -A <IP address>
+
+Listing shares of a machine:
+
+	smbclient -L <host> -U <user>
+
+	'host' can be address or NetBIOS name
+
+Sending message to a Windows:
+
+	smbclient -M <NetBIOS name>
+
+	To close message press Ctrl-D.
+
+	
+
+

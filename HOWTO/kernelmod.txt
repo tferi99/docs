@@ -1,0 +1,12 @@
+Tips for handling kernel modules
+================================
+
+depmod -a		: looking for devices with unresolved symbols 
+depmod -e		: -a + it shows unresolved symbols
+depmod -n		: it writes dependency tree to standard output
+
+'depmod' can create a Makefile-like dependency file that can be used 
+by modprobe to load t load modules or stack of modules automatically.
+
+
+insmod 			: it installs a loadable kernel into running kernel

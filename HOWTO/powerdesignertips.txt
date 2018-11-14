@@ -1,0 +1,35 @@
+PowerDesigner tips
+==================
+
+PowerDesigner generates double quote around table and field names by default.
+For example:
+
+	create table "Slots"  (
+	   "IDSlot"             INTEGER                         not null,
+	   "IDBannerAd"         INTEGER,
+	   "SlotSeq"            INTEGER,
+	   constraint PK_SLOTS primary key ("IDSlot"),
+	   constraint FK_SLOTS_REFERENCE_BANNERAD foreign key ("IDBannerAd")
+		 references "BannerAd" ("IDBannerAd")
+	);
+
+
+To elminate this call:
+
+	Menu:	Database/Edit current DBMS...
+
+	Set 
+		Script/Sql/Format/CaseSensitivityUsingQuote 
+	item from Yes to No.
+
+
+-----------------------------------------------------------------------------------------
+To force upper/lower case identifiers in generated code:
+
+	Tool/Model options/Naming conventions/Column menu
+
+	Code tab
+
+Select what you want.
+-----------------------------------------------------------------------------------------
+

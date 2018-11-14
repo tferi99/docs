@@ -1,0 +1,13 @@
+How can you create a ~user URL ? for Apache ?
+
+- There must be a
+
+		UserDir public_html
+
+entry in the /etc/httpd/httpd.cfg file.
+
+- You have to create a public_html directory under user's home directory. Set dis directory permissions to runnable (chmod +x) for anybody (or for httpd).
+
+After this you can refer to thos URL in the following way:
+	http://host/~user/...
+

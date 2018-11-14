@@ -1,0 +1,18 @@
+How to retrieve free spaces of HD nad memory
+============================================
+
+To retrieve free spaces on HD:
+
+	df -k
+
+
+To retrieve free spaces in memeory:
+
+	free
+
+To retrieve free spaces in swap:
+
+	swapon -s
+
+(Equivalent to "cat /proc/swaps")
+

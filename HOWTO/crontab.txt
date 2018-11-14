@@ -1,0 +1,26 @@
+Crontab setup
+=============
+
+Listing:
+	crontab -l
+
+Changing:
+	crontab -e
+
+
+File format
+-----------
+Minute Hour DOM Month DOW Full File Location
+
+,where:
+	Minute: 0-59 are valid
+	Hour: 24 hour clock (army time) 
+	Day Of Month: 1-31 are valid
+	Month: 1-12 are valid (1 is January, 2 is February) 
+	Day Of Week: 0-6 are valid (0 is Sunday, 1 is Monday) 
+	Full File Location: Make sure you put the FULL path to the script you're automating.
+
+Example:
+
+	0 3 * * * /usr/local/sbin/dumpdatabases
+

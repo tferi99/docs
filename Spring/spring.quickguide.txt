@@ -1,0 +1,727 @@
+================
+Spring framework
+================
+
+1. Base concept
+2. Base objects
+2.1 Which one should I use?
+2.2 Instantiation
+3.2 Initialization
+3. Bean definition
+3.1 Bean class
+3.1.2 Via constructor
+3.1.2 Via static factory method
+3.1.3 Via instance factory method
+3.2 Bean IDs
+3.3 To singleton or not to singleton
+3.4 Importing Bean Definitions from One File Into Another
+4. Inversion of Control / Dependency Injection
+4.1 Dependency Injection steps
+4.2 Other 'Dependency Injection' features
+4.3 Lifecycle interfaces
+5. ApplicationContext
+5.1 Events
+5.2 Creating an ApplicationContext from a web application
+6. AOP
+6.1 Proxying interfaces with AOP
+6.2 Proxying classes with AOP
+6.3. Using an Autoproxy
+7. DAO
+8. OR Persistence with Hibernate
+9. Transactions
+9.1 General terms
+9.2 Transactions in spring
+A. Eclipse tips
+A.1 Installing Spring IDE
+A.2 Using Spring IDE
+
+
+
+
+1. Base concept
+---------------
+- BeanFactory
+- JNDI-like bean repository
+- Inversion of Control (IoC) / Dependency Injection
+
+The major goal is to allow for clear application layering, with any data access and transaction technology, and for
+loose coupling of application objects. 
+---> No more business service dependencies on the data access or transaction strategy.
+---> No more hard-coded resource lookups.
+---> No more hard-to-replace singletons, no more custom service registries.
+
+
+2. Base objects
+---------------
+Two of the most fundamental and important packages in Spring are:
+	- org.springframework.beans
+	- org.springframework.context 
+packages. 
+	
+Code in these packages provides the basis for Spring's Inversion of
+Control (alternately called Dependency Injection) features.
+
+BeanFactory
+	- is the actual CONTAINER which instantiates, configures, and manages a number of beans.
+	- it separates your application’s configuration and dependency specifications from the actual application code
+	- provides an advanced configuration mechanism capable of managing beans (objects) of any nature, using
+	potentially ANY KIND of storage facility (e.g. for XML storage create XmlBeanFactory).
+
+ApplicationContext
+	- builds on top of the BeanFactory (IT'S A SUBCLASS)
+	- and adds other functionality such as easier integration with Springs AOP features
+	- message resource handling (for use in internationalization)
+	- event propagation
+	- etc.
+
+Differences:
+- The core module’s BeanFactory makes Spring a container, but the context module
+  is what makes it a framework.
+- In short, the BeanFactory provides the configuration framework and basic functionality, while the
+  ApplicationContext adds enhanced capabilities to it, some of them perhaps more J2EE and enterprise-centric.
+
+
+2.1. Which one should I use?
+----------------------------
+Normally when building most applications in a J2EE-environment, the best option is to use
+the ApplicationContext.
+
+The main usage scenario when you might prefer to use the BeanFactory is when memory usage is 
+the greatest concern (such as in an applet where every last kilobyte counts), and you don't 
+need all the features of the ApplicationContext.
+
+
+2.2 Instantiation
+-----------------
+The most commonly used simple BeanFactory implementation is org.springframework.beans.factory.xml.XmlBeanFactory.
+
+	InputStream is = new FileInputStream("beans.xml");
+	XmlBeanFactory factory = new XmlBeanFactory(is);
+or
+	Resource res = new FileSystemResource("beans.xml");
+	XmlBeanFactory factory = new XmlBeanFactory(res);
+or
+	ClassPathResource res = new ClassPathResource("beans.xml");
+	XmlBeanFactory factory = new XmlBeanFactory(res);
+or
+	ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] {"applicationContext.xml", "applicationContext-part2.xml"});
+	// of course, an ApplicationContext is just a BeanFactory
+	BeanFactory factory = (BeanFactory) appContext;
+
+
+3. Bean definition
+------------------
+Bean definitions inside a DefaultListableBeanFactory variant (like XmlBeanFactory) are represented as
+BeanDefinition objects, which contain (among other information) the following details:
+
+• a class name: 
+	- this is normally the actual implementation class 
+	- or the class name of the factory class.
+• bean behavioral configuration elements:
+	- prototype or singleton
+	- autowiring mode
+	- dependency checking mode
+	- initialization and destruction methods
+• constructor arguments and property values to set in the newly created bean. 
+• other beans a bean needs to do its work, i.e. collaborators. 
+  These can also be called DEPENDENCIES.
+
+
+3.1 Bean class
+3.1.2 Via constructor
+
+	<bean id="exampleBean" 
+		class="examples.ExampleBean"/>
+
+3.1.2 Via static factory method
+
+	<bean id="exampleBean"
+		class="examples.ExampleBean2"
+		factory-method="createInstance"/>
+
+3.1.3 Via instance factory method
+
+	<!-- The factory bean, which contains a method called
+	createInstance -->
+	<bean id="myFactoryBean"
+		class="...">
+		...
+	</bean>
+
+	<!-- The bean to be created via the factory bean -->
+	<bean id="exampleBean"
+		factory-bean="myFactoryBean"
+		factory-method="createInstance"/>
+
+
+3.2 Bean IDs
+------------
+- Every bean has one or more ids
+- IDs must be unique within the BeanFactory or ApplicationContext
+
+In an XmlBeanFactory (including ApplicationContext variants), you use the 
+'id' or	'name' attributes to specify the bean id(s), and at least one id must be 
+specified in one or both of these attributes.
+
+
+3.3 To singleton or not to singleton
+------------------------------------
+When a bean is a singleton, ONLY ONE SHARED INSTANCE of the bean will be managed 
+and all requests for beans with an id or ids matching that bean definition
+will result in that one specific bean instance being returned.
+
+The non-singleton, PROTOTYPE MODE of a bean deployment results in the creation of a NEW BEAN INSTANCE EVERY
+TIME a request for that specific bean is done. 
+
+BEANS ARE DEPLOYED IN SINGLETON MODE BY DEFAULT.
+
+Example:
+	<bean id="exampleBean"
+		class="examples.ExampleBean" singleton="false"/>
+
+
+3.4 Importing Bean Definitions from One File Into Another
+---------------------------------------------------------
+It's often useful to split up container definitions into multiple XML files. 
+With a bean factory, a bean definition reader can be used multiple times to
+read definitions from each file in turn. 
+However, an alternate approach is to from one XML bean definition file, use one or more 
+instances of the IMPORT element to load definitions from one or more other files.
+
+	<beans>
+		<import resource="services.xml"/>
+		<import resource="resources/messageSource.xml"/>
+		<import resource="/resources/themeSource.xml"/>
+		<bean id="bean1" class="..."/>
+		<bean id="bean2" class="..."/>
+		...
+
+
+
+4. Inversion of Control / Dependency Injection
+----------------------------------------------
+NOTE:
+In an article written in early 2004, Martin Fowler asked what aspect of control is
+being inverted. He concluded that it is the ACQUISITION OF DEPENDENT OBJECTS THAT
+IS BEING INVERTED. Based on that revelation, he coined a better name for inversion
+of control: dependency injection.
+
+Inversion of Control has already been referred to as DEPENDENCY INJECTION. 
+The basic principle is that beans define their dependencies (i.e. the other objects they work with) 
+only through constructor arguments, arguments to a factory method, or properties which are set on 
+the object instance after it has been constructed or returned from a factory method. 
+Then, it is the job of the container to actually INJECT those dependencies when it creates the bean.
+
+There are 2 variants:
+- setter-based:
+	It is realized by calling SETTERS on your beans after invoking a NO-ARGUMENT
+	CONSTRUCTOR OR NO-ARGUMENT STATIC FACTORY METHOD to instantiate your bean.
+
+- constructor-based:
+	It is realized by invoking a constructor with a number of arguments,
+	each representing a collaborator or property.
+
+
+Injection can be:
+- Inner bean definitions (inline definition)
+
+- nested bean elements (reference)
+	- idref	: only the name of bean injected - same as String type property.
+	- ref	: a reference has been injected
+
+
+4.1 Dependency Injection steps
+------------------------------
+The first step in learning Spring is the dependency injection pattern. 
+It's not complicated, but it's the central concept.
+
+- A client uses another class that we'll call a service. 
+- The client has a property that accepts a service. 
+- The service is wrapped in an interface. 
+- The client can't see the implementation of the service. 
+
+But this code is not yet loosely coupled: you still have to create the service somewhere. With dependency injection,
+a third-party, called 
+
+	the assembler or container, 
+
+creates both the client and service, and then sets the
+value of a service (which is a reference to an instance of Service) to satisfy the dependency.
+
+
+To decouple with dependency injection, there are three steps:
+
+- Wrap the service in an interface.
+- Add a property to the client, to refer to the service.
+- With a third party framework or custom code, build the service and populate the property.
+
+
+Moving a well-designed plain-ordinary-Java-object (POJO) application to Spring is straightforward.
+
+- Refactor your code to take advantage of dependency injection. Model objects are beans, and services 
+  are aspects. Usually, you'll only have beans.
+- Remove the code that instantiates the objects and sets dependencies.
+- Build a configuration file describing your beans and aspects.
+- Access your code through Spring.
+
+
+
+4.2 Other 'Dependency Injection' features
+-----------------------------------------
+- depends-on	: calling initialization of dependent beans before caller beans
+- autowiring	: to auto-resoleve collaborators and to reduce the size of 
+		  properties (no, by name, by type, constructor, auto)
+
+
+4.3 Lifecycle interfaces
+------------------------
+InitializingBean	: implementing this allows a bean to perform
+			  initialization work after all necessary properties on the bean 
+			  are set by the BeanFactory. 
+DisposableBean		: implementing this allows a bean to get a callback when the 
+			  BeanFactory containing it is destroyed.
+
+
+
+5. ApplicationContext
+---------------------
+ApplicationContext enhances BeanFactory functionality in a more framework-oriented style.
+
+• MessageSource, providing access to messages in, i18n-style
+• Access to resources, such as URLs and files
+• Event propagation to beans implementing the ApplicationListener interface
+• Loading of multiple (hierarchical) contexts, allowing each to be focused on one particular layer, for
+  example the web layer of an application
+
+As the ApplicationContext includes all functionality of the BeanFactory, it is generally RECOMMENDED that it be
+used over the BeanFactory, except for a few limited situations such as perhaps in an APPLET, WHERE MEMORY
+CONSUMPTION MIGHT BE CRITICAL.
+
+It can be create:
+- manually
+- automatically by ContextLoader (as part of the normal startup process of a J2EE web-app.)
+
+
+5.1 Events
+----------
+If a bean which IMPLEMENTS the ApplicationListener interface is deployed into the context, 
+every time an ApplicationEvent gets published to the ApplicationContext, that bean will be
+notified.
+
+There are built-in events, and you can send custom events.
+Event object implements ApplicationEvent can be sent by calling publishEvent() method.
+
+
+5.2 Creating an ApplicationContext from a web application
+---------------------------------------------------------
+As opposed to the BeanFactory, which will often be created programmatically, ApplicationContexts can be
+created declaratively using for example a ContextLoader.
+
+The ContextLoader has two implementations (usability depends on Servlet version):
+	- ContextLoaderListener (preferrend)
+	- ContextLoaderServlet
+
+ContextLoaderListener:
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/daoContext.xml /WEB-INF/applicationContext.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+ContextLoaderServlet:
+
+	<!-- OR USE THE CONTEXTLOADERSERVLET INSTEAD OF THE LISTENER
+	<servlet>
+		<servlet-name>context</servlet-name>
+		<servlet-class>org.springframework.web.context.ContextLoaderServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	-->
+
+The listener inspects the contextConfigLocation parameter. 
+If it doesn't exist, it'll use /WEB-INF/applicationContext.xml as a DEFAULT.
+
+
+6. AOP
+------
+Aspect-oriented programming is often defined as a programming technique that
+promotes SEPARATION OF CONCERNS within a software system.
+
+Object-oriented languages handle some problems pretty well, but THEY DON'T HANDLE CROSSCUTTING CONCERNS, 
+common in enterprise developments, very well (e.g. tranzactions, security, logging, profiling, etc.)
+
+To handle crosscutting concerns, you might decide to use a CONTAINER. 
+
+
+6. AOP concept
+--------------
+Aspect		: A modularization of a concern for which the implementation might otherwise CUT ACROSS MULTIPLE
+		  OBJECTS.
+
+Joinpoint	: Point during the execution of a program, such as a method invocation or a particular exception
+		  being thrown. 
+		  In Spring AOP, A JOINPOINT IS ALWAYS METHOD INVOCATION. Joinpoint information is accessible 
+		  through methods on the MethodInvocation argument passed to interceptors.
+
+Advice		: Action taken by the AOP framework at a particular joinpoint.
+		  Different types of advice include "around," "before" and "throws" advice.
+		  Many AOP frameworks, including Spring, model an advice as an INTERCEPTOR, maintaining a chain of 
+		  interceptors "around" the joinpoint.
+
+Pointcut	: A set of joinpoints specifying when an advice should fire. An AOP framework must allow
+		  developers to specify pointcuts: for example, using regular expressions.
+
+Introduction	: Adding methods or fields to an advised class. Spring allows you to introduce new interfaces
+		  to any advised object.
+
+Target object	: Object containing the joinpoint. Also referred to as advised or proxied object.
+
+AOP proxy	: Object created by the AOP framework, including advice. In Spring, an AOP proxy will be a
+		  JDK dynamic proxy or a CGLIB proxy.
+
+Weaving		: Applying advice to an object is known as WEAVING. In other words assembling aspects to create an advised object. 
+		  This can be done at compile time (using the AspectJ compiler, for example), or at runtime. 
+		  Spring, like other pure Java AOP frameworks, performs WEAVING AT RUNTIME.
+
+Advice types
+------------
+Around advice	: Around advices will perform custom behavior BEFORE and AFTER the method invocation.
+		  They are responsible for choosing whether to PROCEED TO THE JOINPOINT OR TO SHORTCUT EXECUTING by returning their
+		  own return value or throwing an exception.
+
+Before advice	: Advice that executes before a joinpoint, but WHICH DOES NOT HAVE THE ABILITY TO PREVENT
+		  EXECUTION FLOW PROCEEDING TO THE JOINPOINT (unless it throws an exception).
+
+Throws advice	: Advice to be executed if a method throws an exception.
+
+After returning advice: 
+		  Advice to be executed AFTER a joinpoint COMPLETES NORMALLY: for example, if a
+		  method returns without throwing an exception.
+
+
+6.1 Proxying interfaces with AOP
+--------------------------------
+1. Building an advice (interceptor)
+	That can be called before and/or after a method.
+	Example:
+
+	public class LoggingBeforeAdvice implements MethodBeforeAdvice
+	{
+		// Log4j
+		private static Logger log = Logger.getLogger(LoggingBeforeAdvice.class);
+		
+		public void before(Method method, Object[] args, Object target)
+			throws Throwable
+		{
+			if (log.isInfoEnabled()) {
+				String s = method.getName() + "() method of " + target.getClass().getName() + " will be called."; 
+				log.info(s);
+			}
+		}
+	}
+
+	
+
+2. Configure the advice (interceptor).
+	Example:
+
+	<bean id="loggingBefore" class="com.springinaction.chapter01.hello.LoggingBeforeAdvice"/>
+		
+3. Configure the advisor, including a target object, target methods, and the advice.
+4. Configure the target object.
+5. Configure the proxy to use the advisor.
+	Example:
+	
+	<bean id="greeting" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="proxyInterfaces">
+			<list>
+				<value>com.springinaction.chapter01.hello.Greeting</value>
+			</list>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>loggingBefore</value>
+			</list>
+		</property>
+		<property name="target">
+			<ref bean="greetingTarget"/>
+		</property>		
+	</bean>
+
+IMPORTANT
+This way you can proxying ONLY INTERFACES, so proxyInterfaces must be interface implemented by target.
+Here you can specify only INTERCEPTOR NAMES and not references.
+
+
+You can instantiate target object in the same way as in non-AOP mode, but you can cast retrieved object
+only INTO INTERFACE specified in 'proxyInterfaces' - since a proxy object has been returned, not the target itself.
+
+	BeanFactory factory = new XmlBeanFactory(new FileSystemResource(beanDefXml));
+
+	Greeting greeting = (Greeting)factory.getBean("greeting");
+	greeting.showGreeting();
+
+6.2 Proxying classes with AOP
+-----------------------------
+While it's best to program to interfaces, rather than classes, the ability to advise classes that don't
+implement interfaces can be useful when working with legacy code.
+
+In this case, you can configure Spring to use CGLIB proxying.
+
+- Final methods can't be advised, as they can't be overridden.
+- You'll need the CGLIB 2 binaries on your classpath; dynamic proxies are available with the JDK
+
+6.3. Using an Autoproxy
+-----------------------
+So far, you've explicitly and manually created each proxy. Spring also has the ability to automatically create a proxy, 
+or autoproxy. The goal of the autoproxy is to apply the SAME SIGNATURE TO A NUMBER OF METHODS.
+
+
+7. DAO
+------
+To support IoC, DAO based on interfaces as well.
+
+DAO has a consistent layer to support various DAO implementations.
+Spring separates the fixed and variant parts of the data access process into two
+distinct classes: 
+1. Templates
+	A template method defines the SKELETON of a process.
+	Template classes handle the invariant
+	parts of data access—controlling:
+	- transactions
+	- managing resources
+	- handling exceptions
+
+2. Callbacks
+	At certain points, the process delegates to other collaborators to fill in some 
+	IMPLEMENTATION-SPECIFIC DETAILS.
+	Callback interfaces define what is specific to your application:
+	- creating statements
+	- binding parameters
+	- marshalling result sets
+
+
+
+8. OR Persistence with Hibernate
+---------------------------------
+8.1 Steps to use Hibernate
+--------------------------
+1. Create classes and Hibernate mappings.
+2. Configure datasource and Hibernate session factory.
+
+   Example:
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>org.postgresql.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:postgresql://127.0.0.1:5432/bikestore</value>
+		</property>
+		<property name="username">
+			<value>postgres</value>
+		</property>
+		<property name="password">
+			<value/>
+		</property>
+	</bean>
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate.LocalSessionFactoryBean">
+		<property name="dataSource">								<----- ref to datasource
+			<ref local="dataSource"/>
+		</property>
+		<property name="mappingResources">							<----- mappings
+			<list>
+				<value>Bike.hbm.xml</value>
+				<value>Customer.hbm.xml</value>
+				<value>Reservation.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">							<----- Hibernate properties
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+
+3. Accessing Hibernate
+   There is 2 ways:
+
+   Using HibernateTemplate:
+   ------------------------
+   The template-callback mechanism in Hibernate is pretty simple.
+   It performs a call via HibernateCallback object. For example:
+
+
+	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate.HibernateTemplate">
+		<property name="sessionFactory"><ref bean="sessionFactory"/></property>			<----- Hib. session factory for template
+	</bean>
+	<bean id="studentDao" class="com.springinaction.training.dao.hibernate.StudentDaoHibernate">
+		<property name="hibernateTemplate"><ref bean="hibernateTemplate"/>			<----- Template for DAO bean
+
+
+   	public Student getStudent(final Integer id)							<----- calling Hib. from DAO bean
+	{
+		return (Student) hibernateTemplate.execute(new HibernateCallback() {
+			public Object doInHibernate(Session session) throws HibernateException
+			{
+				return session.load(Student.class, id);
+			}
+		});
+	}
+
+   
+	public void updateStudent(Student student)
+	{
+		hibernateTemplate.update(student);
+	}
+
+	public List findStudentsByLastName(String lastName)
+	{
+		return hibernateTemplate.find("from Student student " + "where student.lastName = ?", lastName, Hibernate.STRING);
+	}
+
+
+   Subclassing HibernateDaoSupport:
+   --------------------------------
+   Spring’s Hibernate ORM framework also comes with the convenience class HibernateDaoSupport
+   that your DAO classes can subclass:
+
+	public class StudentDaoHibernate extends HibernateDaoSupport implements StudentDao
+	{
+		...
+	}
+
+   This class provides you with a convenience methods:
+	- getHibernateTemplate()
+	- getSession()
+	- closeSessionIfNecessary()
+
+
+The major advantage of such direct Hibernate access code is that it allows any CHECKED APPLICATION EXCEPTION to
+be thrown within the data access code, while HibernateTemplate is restricted to UNCHECKED EXCEPTIONS within
+the callback.
+
+
+
+9. Transactions
+---------------
+9.1 General terms
+-----------------
+ACID stands for :
+	- Atomic
+	- Consistent
+	- Isolated 
+	- Durable. 
+All transactions need these properties.
+
+Demarcation types:
+ 1. bean managed (programmatic)
+ 2. container managed (declarative)
+
+
+Declarative transactions can be specified for methods.
+Declarative transaction attributes and effects:
+	
+			Caller:T	Caller: -
+			--------	---------
+	Required	T		T		(transaction REQUIRED, so called method will be running in transaction anyway)
+	RequiresNew	T2		T		(must be a NEW transaction, so if caller is in transaction, called will be running 
+							in a new transaction - previous transaction will be suspended)
+	Supports	T		-		(called SUPPORTS transactions, so if caller is in transaction, caller will be use it as well)
+	NotSupported	-		-		(called NOT SUPPORTS transactions, so it won't use it)
+	Mandatory	T		ERR		(you have to call from a method that is already in transaction)
+	Never		ERR		-		(you souldn't call from a method that is already in transaction)
+
+Isolation levels:
+- READ_UNCOMMITTED - (dearty read) can be read inconsistent data
+- READ_COMMITTED - (non-repeatable read) you can read a different data in transaction if another transaction committed 
+- REPEATABLE_READ - can cause a dead-lock, and doesn't protect against phantom read (records inserted by another committed transactions)
+- SERIALZABLE - it synchronizes transactions -> possible preformance issues
+
+Local/global:
+Local transaction			: only one data source
+Global or distributed transactions	: more data source
+
+
+
+9.2 Transactions in spring
+--------------------------
+Spring DOES NOT DIRECTLY MANAGE TRANSACTIONS. Instead, it comes with a selection
+of transaction managers that DELEGATE responsibility for transaction management
+to a platform-specific transaction implementation provided by either JTA or the
+persistence mechanism.
+
+Spring’s selection of transaction managers for many different transaction implementations:
+
+	org.springframework.jdbc.datasource.DataSourceTransactionManager
+
+		Manages transactions on a single JDBC DataSource.
+
+	org.springframework.orm.hibernate.HibernateTransactionManager
+
+		Used to manage transactions when Hibernate is the persistence mechanism.
+
+	org.springframework.orm.jdo.JdoTransactionManager
+
+		Used to manage transactions when JDO is used for persistence.
+
+	org.springframework.transaction.jta.JtaTransactionManager
+
+		Manages transactions using a Java Transaction API
+		(JTA ) implementation. Must be used when a transaction
+		spans multiple resources.
+
+	org.springframework.orm.ojb.PersistenceBrokerTransactionManager
+
+		Manages transactions when Apache’s Object Relational
+		Bridge (OJB) is used for persistence.
+
+
+A. Eclipse tips
+---------------
+To discover spring configuration files use 'Spring IDE'. It's an eclipse plugin.
+
+A.1 Installing Spring IDE
+-------------------------
+
+- After the startup of Eclipse open the Install / Update dialog via the menu entry "Help > Software Updates > Find and Install ..."
+- Select the option "Search for new features to install" and hit "Next >" 
+- Add a new entry with the Spring IDE updatesite http://springide.org/updatesite
+- Select the entries for the Callisto Discovery Site and the Spring IDE updatesite and hit "Finish"
+	
+	- WEB and J2EE Development/
+		- WEB Standard Tools (WST)
+	
+	- Graphical Editors and Frameworks/
+		- Visual Editor
+		- Graphical Editing Framework
+
+  See: docs under Spring IDE
+			
+
+A.2 Using Spring IDE
+--------------------
+Features:
+	- selecting Spring configuration files
+	- selecting Spring configuration sets
+	- graphical view and navigation
+	- navigation between beans and jumping to classes (CTRL-Mouse click)
+	- validating Spring config files
+		- bean references
+		- beans classes
+		- bean class properties
+
+1. Activate the context menu item "Add Spring Project Nature" on the selected project(s)
+2. Add Spring Beans Config Files 
+3. Create Spring Beans Config File Sets (Config Files loaded together)
+4. Spring View
+	- open a config file and call Navigate/Show in/Spring Beans (its a view)
+5. Graphical view 
+	- Right mouse in Spring Beans and Show Graphs
+

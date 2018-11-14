@@ -1,0 +1,50 @@
+===========
+AWSTATS FAQ
+===========
+
+Q:
+	Error message:
+	... : couldn't create child process: 720003: awstats.pl
+	....: couldn't spawn child process: C:/apps/awstats-6.5/wwwroot/cgi-bin/awstats.pl
+
+A: Change the path of PERL at the start of awstats.pl. E.g. in windows:
+
+	#!c:/Perl/bin/perl.exe
+
+---------------------------------------------------------------------------------------------------	
+Q: How to trace dropped records?
+
+
+A: Use -showdropped comand line parameter to display dropped lines, e.g.:
+
+	perl awstats.pl -config=www.mytest.cc -update -showdropped
+
+		Update for config "./awstats.www.mytest.cc.conf"
+		With data in log file "c:/Program Files/Apache Group/Apache2/logs/mytest.cc_80_awstats.alog"...
+		Phase 1 : First bypass old records, searching new record...
+		Direct access after last parsed record (after line 4480)
+		Dropped record (URL /?boxid=e8346636 not qualified by OnlyFiles): [18/Sep/2008:11:59:36 +0200] 10.1.4.114 auto.mytest.cc
+		"GET /?boxid=e8346636 HTTP/1.1" 200 Bytes: 16218 Time: 0s Agent: "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.
+		9.0.1) Gecko/2008070208 Firefox/3.0.1" Referer: "http://auto.mytest.cc/?boxid=e8346636" auto.mytest.cc
+		Dropped record (URL /?boxid=e8346636 not qualified by OnlyFiles): [18/Sep/2008:11:59:36 +0200] 10.1.4.114 auto.mytest.cc
+		"GET /?boxid=e8346636 HTTP/1.1" 200 Bytes: 85215 Time: 0s Agent: "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.
+		9.0.1) Gecko/2008070208 Firefox/3.0.1" Referer: "http://www.mytest.cc/search?keywords=auto&x=0&y=0" auto.mytest.cc
+		Jumped lines in file: 4480
+		Found 4480 already parsed records.
+		Parsed lines in file: 2
+		Found 2 dropped records,
+		Found 0 corrupted records,
+		Found 0 old records,
+		Found 0 new qualified records.
+
+	In this case you have to refine OnlyFiles parameter.
+	
+	
+	
+Q: How to use regexp during configuration?
+
+A: Put into REGEX[...], for example:
+
+	OnlyFiles="/ REGEX[^/?.*$]"
+	
+	

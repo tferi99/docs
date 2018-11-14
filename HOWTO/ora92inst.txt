@@ -1,0 +1,35 @@
+Installing Oracle 8.1.6 client
+==============================
+
+Before installation
+-------------------
+- Creating user and group (oracle/oracle)
+
+- login
+
+- gzip downloaded files
+
+- cpio
+	cpio -idmv < diskN.cpio
+
+- Set $ORACLE_BASE environment variable. This points directory for DB instance files. 
+  This directory must be owned by 'oracle'.
+  Default value of this variable:	/oradata
+  If you don't specify variable, you have to do the followings:
+
+	mkdir /oradata
+	chown oracle:oracle /oradata
+
+Installation
+------------
+- installation can be started from X
+
+- Starting:	Disk1/runInstaller
+
+- Character set:	Unicode (UTF8)
+
+HTTP
+----
+Non-SSL:	http://host:7783
+SSL:		http://host:7784
+		https://host:4459

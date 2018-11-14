@@ -1,0 +1,35 @@
+FTP active/passive modes
+========================
+
+Active mode
+-----------
+
+1. Client try to connect to port 21 of server, and opens a "server" on port N, where N > 1024.
+2. Server try to connect to port N from its port 20 (N was sent by previous data transfer through port 21).
+
+
+Passive mode
+------------
+1. Client try to connect to port 21 of server.
+2. Client try to connect to port 20 of server.
+
+
+Firewall settings on client
+---------------------------
+to active mode
+--------------
+Enable
+	- outgoing connects to port 21
+	- incoming connects to port 1024-65535
+
+to passive mode
+---------------
+Enable
+	- outgoing connects to port 21
+	- outgoing connects to port 1024-65535
+
+
+Notes for ipchains MASQ
+-----------------------
+If you wants to connect to a server with active mode from behind a ipchains firewall, you have to load ip_masq_ftp. This module will translate port value N used by server to connect from port 20, because port N of client is masqued, so server can't connect to it in normal way. This module changes address sent by client in first FTP connect.
+
