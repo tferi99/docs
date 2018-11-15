@@ -1,0 +1,579 @@
+=========================
+Howto configure recorder?
+=========================
+
+- Basics
+- SIP Trunk Recording Configuration
+- Secured SIP Trunk Recording Configuration
+- Cleanup recordings
+- Troubleshooting
+
+
+With SPAN port configuration ports are mirrored and all mirrored traffic will be sent to APAS through SPAN port.
+
+---------------------------------------------------------------------------------------------------------------------------------
+Basics
+======
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+Supported recordings
+====================
+Supported recordings:
+	- SIP Trunk + JTAPI (Active, Built-in-Bridge)
+	
+Not supported in the future any more:
+	- SPAN + Skinny (Passive)
+		- Signaling: SCCP
+		- Signaling and voice is delivered through SPAN port
+		- Skinny (SCCP) only
+		- Use if no JTAPI interface available in CM (e.g. CM Express)
+		
+	- SPAN + H.323 (Passive)
+		- Signaling: H.323
+		- Signaling and voice is delivered through SPAN port
+		- This is used to record incoming, external calls which are terminated by a H.323 Voice Gateway.
+		
+	- SPAN + JTAPI (Passive)
+		- Signaling: JTAPI
+		- Signaling delivered through normal JTAPI and voice is delivered through SPAN port
+		
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+SIP Trunk Recording Configuration
+=================================
+How does it work?
+-----------------
+	- You have a Cisco recording profile which points to DN
+
+		If you have a recording profile and it's associated to a line and recording is enable on line, payload of calls will be forwarded to 
+		DN specified in recording profile.
+	
+	- This DN is a route pattern. Payload will be forwarded into a SIP Trunk via route pattern. 
+		So we need a route pattern wich matches with (or equals to) DN of recording profile.
+
+	- We need a SIP Trunk which is bound to APAS. So data will be sent to APAS via SIP trunk.
+
+	- Set device:
+		- Device Security Profile:	SIP Non-Secure Profile
+	
+- Set line properties in CUCM:
+
+	- Recording Option:	'.... Enabled'
+	- Assign a Recording Profile to the line
+
+Dependencies in configuration of recording
+------------------------------------------	
+	- recording configuration elements:
+	
+		Recording rule  -(1)->  line  -(2)->   Recording profile  -(3)->   Route pattern  -(4)->   SIP Trunk   -(5)->   SIP Trunk Security Profile
+	
+		(1) : recording rule matches to a line
+		(2) : recording profile associated to line
+		(3) : same DN in 'Recording Destination Address' of Recording Profile as route pattern
+		(4) : 'Gateway/Route List' field of route patter points to a SIP trunk
+		(5) : 'SIP Trunk Security Profile' field of SIP trunk points to a profile
+	
+		
+	
+	- Addresses, ports between APAS (external application) and CUCM SIP trunk:
+
+			APAS SIP server host:port ----> SIP security profile 
+			CUCM destination host:port of SIP trunk ----> APAS host:local port
+	
+		NOTE: 
+			First try to use default port (5060) on both endpoints. If it cannot work look for another free port
+			(with netstat on the APAS side and by guessing on the CUCM side).
+			
+		CUCM IP address = 'Hostname/IP' of Recorder SIP Trunk server in APAS 
+		SIP Trunk security profile 'Incoming Port' = 'Port' of Recorder SIP Trunk server in APAS 
+		SIP Trunk Destination Address = Address of APAS
+		SIP Trunk Destination Port = 'Local Port' of Recorder SIP Trunk server in APAS 
+	
+NOTE: 
+	APAS has a little bit tricly solution. There is a SIP trunk between CUCM and APAS and CUCM sends payload to APAS. 
+	But APAS itself does not catch data at all. It only receives control data. 
+	Payload will be catched by a 3rd stanalone (C/C++) application by sniffing the network interface.
+	
+	
+Configuration
+-------------
+APAS:
+	- Go to Recorder/Configuration
+	- Set 'Compression' to Speex
+	- Set 'Recorder Mode to: SIP Trunk	
+	- Add phone menu:
+		Menu:	Recording
+			URL:	Start/Stop ...	
+			URL:	Playback ...
+			
+		OR add these services to line buttons.
+		
+	- Add a rule for every/a/some specific phone(s).
+		- check: record calling, record called, monitor calling, monitor called, continue rulecheck on match
+		- 'Calling or called party' equals <phone number>
+
+	Apply regex for multiple phones and choose 'regex match', e.g:
+	
+		'regex match' :		9.*
+		
+CUCM:		
+	- Configure SIP trunk 
+		- Create a new SIP Trunk Security Profile (System->Security Profile->SIP Trunk Security Profile), use UDP
+		
+			Enable Digest Authentication					OFF
+			Enable Application level authorization			OFF
+			Other											ON
+		
+		- Create a new SIP Trunk (Device->Trunk)
+				Type: SIP // Protocol: SIP // (none/Standard)
+				"Destination Address" Configure the IP of APAS!
+				"SIP Trunk Security Profile" Use the Profile created before
+		- Set Calling Search Space (CSS) for Inbound Calls in SIP Trunk
+		
+		TIP: you can connect to this SIP Trunk from APAS from Servers dialog
+		
+		SEE ALSO: doc\software\tools_and_languages\telephony\Apas\config\02_ADMIN-REC_4-3-1c_enA4.pdf 
+		
+	- Configure route pattern, where 
+		- Route Pattern > free Phone number, reachable from CSS from other IP phones
+		- Gateway/Route List: this Trunk was configured before	
+		
+			CUCM/Call Routing/Route/Hunt
+		
+	- Create recording profile, where
+		- Recording Destination Address is the same DN specified before in Route Pattern
+		
+			CUCM/Device/Device Settings/Recording Profile
+		
+	- Device:
+		- Set built-in-bridge in phone what you want to tap, and 
+	
+	- Lines:
+		- Recording Option: Automatic Call Recording Enabled
+		- Choose this recording profile in phone lines, too. 
+		
+APAS again:
+
+	- Create SIP trunk endpoint:		APAS/Global/Servers/(Recorder SIP Trunk)
+	
+		Specify server 
+		
+	- Test SIP trunk:
+
+		Global/Servers
+		
+	- Add playback route point to playback 
+		- Go to Recorder/Configuration/Phone Playback Configuration
+		- Specify route point and add it to CUCM
+		- Specify a line for RP DN which can be called an still not reserved.
+		- Check registration of RP in CUCM (if not registered maybe it was not added to application user)
+
+	
+- Test
+	- Call target phone from another phone
+	- Call Start/Stop service (you can see notification message)
+
+		
+---------------------------------------------------------------------------------------------------------------------------------		
+Secured SIP Trunk Recording Configuration		
+=========================================
+SEE MORE: 	telephony\Apas\doc\01_ADMIN-REC_5.2.2_enA4.pdf/4.2 Secure SIP Trunk Recording Configuration
+
+Configure a non-secure configuration, except:
+
+- CUCM should be in mixed mode (VERY IMPORTANT)
+
+	To get mode:	CUCM/System/Enterprise Parameters/[Security Parameters]/(Cluster Security Mode)		: 1 (means mixed mode; 0: means non-secure mode)
+
+- Create Secure SIP Encrypted Phone Security Profile (see PDF doc) for every recorded phone type if it does not exist yet.
+	
+- Set security profile for phones with profile created before:
+
+	APAS/Device/Phone//[Protocol Specific Information]/(Device Security Profile)
+	
+- Create APAS certificate (if missing or expired) and import into CUCM:
+	- APAS/Global/Security/[Certificate List]/(Create APAS Certificate)
+	- APAS/Global/Security/[Certificate List]/Export (icon on items)
+	- CUCM OS Admin/Security/Certificate Management/(Upload certificate)	
+		- Certificate Name: Select Callmanager-trust
+		- Description: Unique description for this certificate
+		- Upload File: Upload the .pem file which was earlier downloaded from the APAS.
+	
+- Export CallManager cert from CUCM and import into APAS
+
+		- CUCM OS Admin/Security/Certificate Management/[Certificate List]		
+			- Choose item 'Callmanager'
+			- click button 'Download .PEM file' in dialog
+		- APAS/Global/Security/[Certificat List]/(Import Trusted Certificate)
+
+- SIP Trunk Security Profile
+
+		- Name : Unique name
+		- Device Security Profile : Encrypted
+		- Incoming Transport Type :TLS
+		- Outgoing Transport Type: TLS
+		- X.509 Subject name: Must be the CN value. (APAS IP ADDRESS)
+		- In our example CN=192.168.150.196, which is the IP address of the APAS
+		- Incoming Port : 5061
+
+- SIP Trunk	
+	- Device Protocol > SIP
+	- Device Pool: select a device pool which uses G711 to the APAS
+	- Destination Address: IP address of the APAS
+	- Destination Port: 5061 or above
+	- SIP Trunk Security Profile > Secure SIP TLS Trunk Profile (this profile was configured previously)
+	- SRTP Allowed: SRTP must be checked.
+	- SIP Profile: Standard SIP Profile
+	- Enable Recording gateway:
+			
+			Recording Information:		This trunk connects to a recording-enabled gateway
+
+NOTE:
+	Port in SIP TRunk and SIP Trunk Security Profile should be 5061. 
+	Other port does not work in my environment.
+	
+- Create recording profile and route pattern as you create it for non-secure recording
+	and associate them together and to trunk.
+
+Phones: same as non-secure, but:
+	- Device security profile: select device specific SIP SECURE profile
+
+APAS: SIP configuration same as non-secure, except:
+	- Port: 5061
+	- Username: choose user configured for secure recording
+	- Transport: TLS
+	- Use SSL: unchecked (This setting is typically used for SFTP)
+	- Priority: Multiple Servers can be configured under a single SIP Server and priority can be set for each server.
+	- Local Port: 5061	
+
+---------------------------------------------------------------------------------------------------------------------------------		
+Cleanup recordings
+==================
+There is a threshold to delete recorded files if reserved space exceeds this value.
+
+	APAS/Recorder/Configuration/[Recording Paramaters]/(Delete Recordings threshold)
+	
+	0 means no cleanup.
+	
+Call flow of setting configuration:
+	
+	--> GWT form submit
+		- GWT form sends value of field 'DeleteThreshold' into RecorderConfigurationBean.deleteThreshold
+		--(RPC)--> RPCrecorderServiceImpl.RemoteSaveRecorderConfiguration()
+			--> value saved into Config[recorder, DeleteThreshold]
+	
+
+
+		
+---------------------------------------------------------------------------------------------------------------------------------		
+Troubleshooting
+===============
+- Validating recorder mode
+- Troubleshooting checklist
+- Tracing standalone recorder process 
+- Monitoring with Wireshark
+- Tracing network traffic between RecorderSniffer and APAS
+- Problem: There is no data on SIP trunk
+
+
+Validating recorder mode
+------------------------
+You can get recorder mode from 
+
+	/var/log/apas/andphone_record.log
+
+Recorder sends a status response message to APAS which contains 'mode' property
+
+	<getStatusResponse code="0" string="OK" version="5.7.4-403" mode="sip" srtp="true" signalingProtocols="256"   seq="17">
+		<capture received="6001" dropped="3" tcp="5295" sccp="0" udp="233" rtp="0" rtprec="0" bufmax="0" iomax="0"/>
+	</getStatusResponse>
+
+	possible values (from record.cpp):
+		
+		RECORD_MODE_SPAN_JTAPI & RECORD_MODE_SIPTRUNK :	"sip + jtapi"
+		RECORD_MODE_SPAN_JTAPI : "jtapi"
+		
+		RECORD_MODE_SPAN_SCCP & RECORD_MODE_SIPTRUNK : "sip + sccp"
+		RECORD_MODE_SPAN_SCCP : "sccp"
+		
+		RECORD_MODE_SIPTRUNK : "sip"
+		
+		RECORD_MODE_SPAN_H323 : "h323"
+
+		
+Troubleshooting checklist
+-------------------------
+If you have a configured system with this dependencies:
+
+	line -(1)-> Recording profile -(2)-> Route pattern -(3)-> SIP Trunk -(4)-> 'SIP Trunk Security Profile'
+
+Check the followings:	
+	1. Check PhoneCallObserver on JTAPI debug page. If you have a rule on a phone it should have PhoneCallObserver.
+
+		com.andtek.andphone.recorder.PhoneCallObserver should have of recorded terminals
+
+
+		NOTE:	You can list observed terminals on 'Recorder Status' debug page, too.
+		
+	
+	2. Check recorder process 
+	
+		ps ax | grep andphone_record
+		
+			9635 ?        Ssl    0:00 /usr/bin/andphone_record -i eth0 -l /var/log/apas/andphone_record.log -p /var/run/andphone.pid -ddd -L
+		
+		
+		or call this script from iso-helper-scripts:
+		
+			~/show_recorder_status.sh
+
+				-------- Process --------
+				1381 ?        Ssl    0:04 /usr/bin/andphone_record -i eth0 -l /var/log/apas/andphone_record.log -p /var/run/andphone.pid -ddd -L
+
+				-------- Network --------
+				tcp        0      0 127.0.0.1:31320         0.0.0.0:*               LISTEN      1381/andphone_recor
+				tcp        0      0 127.0.0.1:31320         127.0.0.1:58016         ESTABLISHED 1381/andphone_recor
+				tcp6       0      0 127.0.0.1:58016         127.0.0.1:31320         ESTABLISHED 997/java
+
+	3. Check recorder process port
+
+		netstat -anp | grep andphone
+	
+			tcp        0      0 127.0.0.1:31320             0.0.0.0:*                   LISTEN      42354/andphone_reco
+
+		Process should listen on port 31320.
+		
+	
+	4. Check SIP Trunk with server connection
+	
+		APAS/Global/Servers/[Recorder SIP Trunk]
+
+		Connection test should be completed successfully.	
+		NOTE: if you change server parameters, save data before retry test.
+
+		You can validate SIP with SIP protocol log (/var/log/apas/sip_protocol.log).
+		It should contain a ping request-response:
+		
+			[2015-06-10 11:49:07,211] [SENT>] [SIPServer-2] [OPTIONS sip:PING@192.168.150.17:50036]
+			...
+			[2015-06-10 11:49:07,249] [>RECEIVED] [SIPServer-2] [200 OK]
+		
+			
+		If test is unsuccessful:
+			- Check consistency of host and port settings in APAS and in CUCM SIP security profile and SIP trunk
+				(see above: 'Addresses, ports between APAS (external application) and CUCM SIP trunk')
+				
+			- Check local host setting of APAS (Global/Configuration)
+				
+				NOTE: Sometimes old host setting remains in /etc/hosts and APAS will overwrite APAS config variables with this bad value
+					during startup. In this case SIP connection will use this bad value as APAS endpoint.
+					In this case SIP logs won't help you because these files will be empty.
+		
+			- Check  Calling Search Space (CSS) for Inbound Calls in SIP Trunk
+			
+			- If sip_protocol.log contains:
+			
+					[2017-06-19 13:38:22,130] [>RECEIVED] [SIPServer-3] [401 Unauthorized]
+					SIP/2.0 401 Unauthorized
+					Via: SIP/2.0/UDP 192.168.5.80:5080;branch=z9hG4bK436b04bc7c1df864484f87bf90de920f3234
+					From: "APAS" <sip:APAS@192.168.5.80:5080>;tag=e268c3e7
+					...
+					
+				check these parameters of security profile in CUCM:
+					- Enable Digest Authentication					OFF
+					- Enable Application level authorization		OFF
+			
+			
+			- Check UDP ports on APAS, maybe ports are reserved by other application/function:
+			
+					netstat -an | grep <port for SIP trunk>
+					
+						udp        0      0 ::ffff:192.168.5.72:5060   :::*
+					  OR
+						udp6       0      0 192.168.5.175:5060     :::*
+			
+				Try to change ports both on APAS and CUCM side, maybe specified ports are reserved.
+
+				NOTE: 
+					On CUCM you cannot check ports directly (port scanning maybe would be an option here), so change them 
+					and server settings on APAS, too - and test it again.
+					
+
+			- If APAS connected you can check status in trunk list if OPTIONS Ping enabled. Expected status: Full Service
+			
+				- Create a SIP Profile with OPTIONS Ping enabled (copy default SIP profile and enable ping)
+				- Choose this SIP profile in SIP trunk.
+					
+	5. Check Route pattern and SIP Trunk
+	
+		- Call route pattern DN from a phone and check SIP protocol log.
+			
+			If recording configured properly you can call this number, it rings once - and NO BUSY.
+			You can trace SIP traffic here:
+			
+		
+			- /var/log/apas/sip_protocol.log
+			
+				It should contain a SIP handshaking:
+		
+					[2015-06-10 11:54:03,929] [>RECEIVED] [SIPServer-2] [INVITE sip:9036@192.168.5.36:50036]
+					INVITE sip:9036@192.168.5.36:50036 SIP/2.0
+					Via: SIP/2.0/UDP 192.168.150.17:50036;branch=z9hG4bKe6f576cb991
+					...
+					
+					+ MEDIA INFO
+			
+			- /var/log/apas/andphone_record.log
+			
+				It should contain an RTP stream
+			
+					2017-Jun-29 15:40:01.736: 3: |source: 192.168.5.243 len: 200 port source: 27618  dest: 56230 seq: 1403 ts: 955104287 flags: 0080|found Call_1 0,db:63 80 (9801,9050) [1260]
+					2017-Jun-29 15:40:01.736: 3: |source: 192.168.5.243 len: 200 port source: 28914  dest: 52097 seq: 1403 ts: 955104287 flags: 0080|found Call_1 0,db:64 80 (,9801) [1859]
+					2017-Jun-29 15:40:01.756: 3: |source: 192.168.5.243 len: 200 port source: 27618  dest: 56230 seq: 1404 ts: 955104447 flags: 0080|found Call_1 0,db:63 80 (9801,9050) [1279]
+					2017-Jun-29 15:40:01.756: 3: |source: 192.168.5.243 len: 200 port source: 28914  dest: 52097 seq: 1404 ts: 955104447 flags: 0080|found Call_1 0,db:64 80 (,9801) [1878]
+					...
+			
+			
+		- In APAS Recorder Status debug page you can see an active recording and this recording can be searched and playbacked by APAS.
+
+		- If route pattern gives busy during call check SIP security profile, maybe Transport Type (Incoming or Outgoing) is wrong.
+				Incoming Transport Type:	TCP+UDP
+				Outgoing Transport Type:	UDP
+		
+
+			
+	6. Testing recording on call
+					
+		- On call pickup PhoneCallObserver will send XML message to recorder process.
+			Set DEBUG for com.andtek.andphone.recorder logger and get entries from andphone.log:
+
+			[2015-06-08 11:59:13,098] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@7f364348)] [PhoneCallObserver.java:277] - Sending XML to recorder (sip)
+
+		- Recorder process inserts call entry into rec_call table of database:
+		
+			id     start                 end                   lastaction            callingparty     calledparty     phoneip                   remoteip                  status     initiated     initiator                 filename     filesize     signaling     codec     keep     custom     recorder     callingpartyname     calledpartyname     duplicate     gcid       origcallingparty     origcalledparty     admin     rec_password     lrp                       lrp_name                 
+			-----  --------------------  --------------------  --------------------  ---------------  --------------  ------------------------  ------------------------  ---------  ------------  ------------------------  -----------  -----------  ------------  --------  -------  ---------  -----------  -------------------  ------------------  ------------  ---------  -------------------  ------------------  --------  ---------------  ------------------------  ------------------------ 
+			59     2015.06.10. 11:01:17  2015.06.10. 11:01:47  2015.06.10. 11:01:47  9031             9033            0.0.0.0                   0.0.0.0                   2          0                                                    0            16            0         0        (null)                                                           0             sip9294/1  9031                 9033                (null)                                                                        
+
+
+		- On recorded phone you get a message:		
+		
+			"This call is being recorded."
+
+			
+	7. Status validation on GUI
+		- You can see recording on APAS/Recorder/Status page.
+
+			--RPC--> RPCrecorderServiceImpl.RemoteGetRecorderStatus()
+				--> to get sniffer:		com.andtek.andphone.recorder.Module.getSniffer()
+				--> to get mode:		sniffer.getStatus().getAttribute("signalingProtocols")
+				--> to get number of recordings, SQL:
+				
+						SELECT COUNT(*) AS count FROM rec_call WHERE status=1
+						
+		- You can see recording on Recorder Status JSP page (/andphone/recorder/status)
+
+
+		
+	8. Filesystem
+		Captured data stored into these files:
+
+			/apas/andphone/tmp/<ID from rec_call>_in.wav
+			/apas/andphone/tmp/<ID from rec_call>_out.wav
+
+		At the end of call IN and OUT wav files will be converted and packed into REC file.
+			
+		Recorded file are stored finally into
+
+			/apas/andphone/archive/<YEAR>/<MONTH>/<DAY>/<ID from rec_call>.rec
+	
+		
+Tracing standalone recorder process 
+-----------------------------------
+In APAS command line:
+
+	- Normal start/stop
+
+		/etc/init.d/andphone start|stop
+
+		It will start recorder as background process.
+		
+	- Direct call:
+
+		 andphone_record -i eth0 -f -dd
+
+	- Recorded media will be saved into:
+
+			/apas/andphone/archive/<year>/<month>/<day>/<call_id>.rec
+			
+		NOTE:	/apas/andphone is linked to /var/lib/andphone
+			
+			
+	- You can browse/playback/save recorded medias in:
+
+			APAS/Recorder/Search
+
+		OR call phone service:
+		
+			 http://host:8080/andphone/Recorder?dev=#DEVICENAME#
+		
+	- Recorder has a log here:
+
+		/var/log/apas/andphone_record.log.<number>
+		
+		NOTE:	/var/log/apas/ is  a link to /var/log/tomcat6/
+
+	- To set debug level (detailed logging) add -d/-dd/-ddd option to ANDPHONE_RECORD_OPTS in:
+
+		/etc/default/andphone_record
+
+		or set APAS logging to DEBUG. It will set recorder to -ddd
+		
+	- To trace SIP
+		- set logging level to DEBUG:		APAS/Global/Logs
+		
+		- see logfile:			/var/log/apas/sip_protocol.log
+
+	
+	
+
+Monitoring with Wireshark		
+-------------------------
+At the beginning of received call CUCM calls this package to APAS
+
+	286	8.963803000	192.168.5.18	192.168.5.127	SIP	1384	Request: INVITE sip:9096@192.168.5.127:50156
+
+	Where 
+		192.168.5.18	: CUCM
+		192.168.5.127	: APAS
+		9096			: route pattern DN
+		192.168.5.127:5060	: target address and port in APAS (other endpoint of SIP trunk)
+		
+SEE MORE:	
+	doc\software\tools_and_languages\telephony\Apas\config\02_ADMIN-REC_4-3-1c_enA4.pdf 		
+
+	
+
+Problem: There is no data on SIP trunk
+--------------------------------------
+If you have a fully configured system:
+- and you have PhoneCallObserver on terminals
+- and PhoneCallObserver sends XML command to recorder process
+- and recorder process inserts call entry into rec_call
+
+BUT
+- recording not started
+	- sip_protocol.log entry not added at the start of call
+	- there is no SIP data 
+	- Recording status page doesn't show any recording
+	
+Possible reason:
+- recorded phone does not have Built-in-Bridge activated on phone
+- Recording Option not Enabled on line
+- bad recording profile assigned to line
+
+
+

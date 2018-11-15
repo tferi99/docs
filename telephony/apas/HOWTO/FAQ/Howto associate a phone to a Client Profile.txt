@@ -1,0 +1,11 @@
+============================================
+Howto associate a phone to a Client Profile?
+============================================
+- Create an IP phone pool		(APAS/Global/Pools)
+	Add phone(s).
+- Create a Client Profile		(APAS/Client/Profiles)
+	Assign pool to profile.
+
+To test configuration check profile members in 'Edit Profile' dialog call 'Edit members' button.
+Here you can move a member to another profile.
+

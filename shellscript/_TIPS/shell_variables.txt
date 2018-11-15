@@ -1,0 +1,55 @@
+=============================
+Special shellscript variables
+=============================
+
+1. * : The * variable expands to all the parameters on a command line. Since we're talking about built in variables today, I don't mean *, like in "ls *", but * as in "echo $*", which produces nothing. However if there are other parameters on the command line, expanding this variable equals all of the command line parameters, like $1, $2, $3, etc. If $* is surrounded by quotes ("$*"), it equals all of the parameters as one value, separated by the default field separator (IFS - usually a space, tab or newline), like "$1 $2 $3"
+
+2. @ : The @ variable expands the same as the * variable when called without quotes as $@. When called between double quotes, as "$@", it expands into all the command line parameters, but each parameter is separate (rather than all together in one giant double quoted string, separated by spaces, as with "$*"), like "$1", "$2", "$3", etc.
+
+3. # : The # variable expands to the number of parameters on a line. It's most often used to check to see if the proper amount of arguments have been passed to a script. For example, this would show how the $# variable could be used to test that a script is being called with only 2 arguments:
+
+	if [ $# -ne 2 ]
+	then
+	 echo "Usage: $0 arg1 arg2.  Quitting"
+	 exit
+	fi
+
+
+4. ? : The ? variable expands ( as $? ) to the return code (or errno value) of the last executed command. In a pipe-chain, it equals the return code of the last executed command in the chain.
+
+5. - : The - variable expands to the current shell's options. For instance, if you where logged into a shell and executed "echo $-", you'd probably see something similar to this:
+
+	host # echo $-
+	himBH
+
+Which (of course ;) would mean that the shell had been invoked with the -i (forces the shell to interactive mode, so it reads the .bashrc when it starts), -h (remembers where commands are when they get looked up), -m (enables job control, so you can run background processes), -B (enables brace expansion in the shell whereby, for instance, "file{a,b}" would equal "filea fileb") and -H (enables ! character history substitution) flags.
+
+6. $ : The $ variable expands to the process ID of the shell, or subshell (as happens when a script is executed, for instance), in which it's invoked (as $$). It's generally used to determine the process ID of a shell in programming and it should be noted that, if it's used within a subshell that is generated with parentheses (e.g. ($$)), it will actually retain the process ID of the parent shell, rather than the subshell.
+
+7. ! : The ! variable (which you might remember from your options list when checking $-) expands to the process ID of the last run background command. This is different than $?, which reports on the return code of the last run command. For instance, this is one way to demonstrate using $!:
+
+	host # echo $! <--- No value because we have no jobs running in the background
+	host # sleep 200000 &
+	[1] 23902
+	host # echo $!
+	23902
+
+8. 0 : $0 expands to the name of the shell you're in, or the shell script that it's being called from. It's generally found in usage messages, like in example 3 in the Usage message from the test against $#'s value. From within a script called blackhat.sh,
+
+	"Usage: $0 arg1 arg2. Exiting."
+
+would print something like:
+
+	"Usage: ./blackhat.sh arg1 arg2. Exiting."
+
+In certain circumstances it can resolve, or expand, to the first argument after the string set to execute when a shell is invoked with the "-c" option, or it can be set to the file name used to invoke Bash, if Bash is called by another name (like "rbash").
+
+9. _ : The _ variable is set to the absolute (not relative) file name of your shell when you start it up (e.g. $_ = /bin/bash) or the script being executed if it's passed in an argument list when the shell is invoked. After that, it always expands to the value of the last command executed, or argument typed. For instance:
+
+	host # vmstat 1 1
+	 kthr      memory            page            disk          faults      cpu
+	 r b w   swap  free  re  mf pi po fr de sr m1 m1 m1 m1   in   sy   cs us sy id
+	 0 0 0 37857184 2413576 16 152 0 0 0  0  0  0  1  1  0 1204  996  483  1  2 97
+	host # echo $_
+	1
+	

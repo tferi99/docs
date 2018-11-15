@@ -1,0 +1,141 @@
+<PLAINTEXT>
+---------------------------------------------------------------------------
+NOTE: The main problem with forking sub-processes under unix seems to be
+that the parent must at some point either `wait' for children or exit
+so that the `init' process will `wait' for them. If the sub-process is
+not waited apon (IE: the parant is lasy and never exits) the child becomes
+a `zombie' process, and can not be killed.
+
+NOTE:
+  Setting SIGCLD to SIG_IGN causes all children of the program to
+automatically wait on children. NOTE that the parent will however 
+never see the childs return status, or even know if any are still
+running.
+
+---------------------------------------------------------------------------
+Checking if your parent or other pid is alive
+  
+        father = getppid()
+        if (kill(father, 0)==(-1))   parent_dead()
+
+NOTE: if the father is pid 1 then the parent will never die!
+A watertight, solution is to constantly call
+getppid() and compare it to 1. (or -1 for an invalid pid)
+
+---------------------------------------------------------------------------
+How to make a program (written in C) run in background without using any
+tricks of Shell?. That is, you just type the name of the program and it will
+start in background.
+
+     if (fork()) exit(0);      /* double fork to completely disconnect */
+     if (fork()) exit(0);
+     setpgrp(0, getpid());     /* To get rid of controlling terminal */
+     nice(4);                  /* make backgrounds nice */
+
+The program's parent process becomes "init" that will to wait() for
+it. However, if you want to create a background process from a
+program that shall NOT terminate you will have to fork() twice if
+you don't want to wait() for it.
+
+                                     -- kbe@dde.dk (Kjeld Borch Egevang) 
+
+---------------------------------------------------------------------------
+Double Forking a child to stop the parent waiting for particular child
+
+   mainloop()                       /* parent */
+   {
+     while (1) {
+       ...wait for request...
+       handlerequest();
+     }
+   }
+
+   handlerequest()
+   {
+     if (fork() == 0) {             /* Intermediate */
+       if (fork() == 0) {           /* Double Forked Child */
+         runhandler();
+       }
+       exit(0);
+     }
+     wait(...);  /* clean up the fork pid's */
+   }
+
+The reason this works is that when I dies, init (process 1) inherites C.
+
+                      --  der Mouse    mouse@larry.mcrcim.mcgill.edu
+
+    int daemon_init(void) {
+      pid_t pid;
+
+      if ((pid = fork()) < 0)
+	return(-1);
+      else if  (pid != 0)
+	exit(0); /* parent dies here */
+
+      /* a child is born */
+
+      setsid();   /* become session leader */
+
+      /*
+       * Under SVR4, some people recommend calling fork again at this point
+       * and having the parent terminate. The second child continues as the 
+       * daemon. This garantees that the damon is not a session leader, which
+       * prevents it from acquiring a controlling terminal under the SVR4
+       * rules. Alternately, to avoid acquiring a controlling terminal be
+       * sure to specify O_NOCTTY whenever opening a terminal device.
+       */
+
+      chdir("/"); /* working dir to root */
+      umask(0);   /* clear our file mode creation mask */
+
+      return(0);
+   }
+                                      -- Colin Surprenant  galaad@rot.qc.ca
+
+------------------------------------------------------------------------------
+Keeping a Children List problem
+(Child exits before its PID is added to children list)
+  More accurately, the process finishes executing before the code *after*
+the fork saves the PID into the chidren list.
+
+  To avoid this problem, mask (sigblock(BSD) or sighold(SYSV)) the SIGCHLD
+signal before the fork(), and don't unmask it until after you've added the
+PID to the list after the fork(), at which point pending SIGCHLD signals
+will be delivered and things will work properly.
+			     --- jik@athena.mit.edu (Jonathan I. Kamens)
+
+  Another solution :- while forking the handler just flags that children
+are waiting to be reaped. After the critical region the program can take
+care of doing whatever the signal handler for SIGCHLD would have done.
+(IE: if you don't use a signal handler for child waits)
+                             --- dkeisen@leland.Stanford.EDU (Dave Eisen)
+
+------------------------------------------------------------------------------
+
+  int free_child()
+  {
+    int             pid;       /* childs pid */
+    union wait      pstatus;   /* its return status */
+    int             chld_cnt;  /* number of children freed in but one signal */
+
+    chld_cnt = 1;
+    while (( pid = wait3(&pstatus, WNOHANG, (struct rusage *)0 )) > 0 ) {
+      if ( debugging || pstatus.w_status )
+        fprintf(stderr, "FREE_CHILD(%d): process #%d exited with status 0x%x\n",
+                  chld_cnt++, pid, pstatus.w_status );
+    }
+    return;
+  }
+  ...
+  ...
+  signal( SIGCHLD, free_child );
+                                --- G.Eustace@massey.ac.nz (Glen Eustace)
+
+Finally, on some versions of Unix, the parent process can use
+signal(SIGCHILD,SIG_IGN) to indicate that it doesn't plan to wait for any
+of its children, in which case the system doesn't bother zombifying them.
+   
+                                --- Barry Margolin  barmar@think.com
+
+------------------------------------------------------------------------------

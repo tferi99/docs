@@ -1,0 +1,30 @@
+=========================================
+Howto add custom values to group display?
+=========================================
+Are you able to specify expressions in group label and group member labels.
+Format of variables in expressions:
+
+	${variable}
+
+In-built variables:
+	- agentState
+	
+	e.g:
+		Group 1 (${agentState})
+	
+User defined variables comes from category counters, queues in the following format:
+
+	${object_type[name].variable}
+	
+	where:
+		object_type	: category, queue
+		variable	: name of object
+		
+	e.g:	
+		G1: ${queue[9920].freeAgents} / ${queue[9920].activeAgents}
+		EQ H: ${category[HBM9920 G].slHour}
+		EQ T: ${category[HBM9920 G].slDay}
+	
+LIMITATIONS:
+
+	You can 

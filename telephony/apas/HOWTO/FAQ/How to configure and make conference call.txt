@@ -1,0 +1,31 @@
+==========================================
+How to configure and make conference call?
+==========================================
+
+Prerequisity
+------------
+Conference call require a CUCM service to be running:
+
+	Cisco IP Voice Media Streaming App
+	
+You can check this service in:
+
+	CUCM/Cisco Unified Serviceability
+		Tools/Control Center - Feature Services/[CM Services]/Cisco IP Voice Media Streaming App
+		
+			This service relies on network services. Rule of thumb here: all network service should be running (Tools/Control Center - Network Services)
+
+
+		
+Conference code - Method 1
+--------------------------
+- Start DC
+
+- Make 2 calls
+
+- Right click on a call in Calls widget/Conference
+
+- Choose conference parties
+
+
+

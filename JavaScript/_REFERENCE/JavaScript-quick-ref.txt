@@ -1,0 +1,278 @@
+==========================
+JavaScript Quick Reference
+==========================
+Sources: Packt.Publishing.Object.Oriented.JavaScript.Jul.2008.pdf
+	
+- JavaScript variables	
+- Variable scopes
+- Special numbers	
+- Arrays	
+- Functions
+- Objects
+- Built-in objects
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+JavaScript variables
+====================
+- Primitive
+	- number
+	- string
+	- boolean
+	- undefined (when you try to access a variable that doesn't exist)
+	- null (it is still defined, it only happens that its value is nothing)
+	
+- Non-Primitive (object)
+
+Use typeof to get type of a variable. E.g:
+
+	>>> typeof 3
+	number
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable scopes
+===============
+- Variables in JavaScript are not defined in a block scope, but in a function scope. 
+- If a variable is defined inside a function, it's not visible outside of the function. 
+- However, a variable defined inside an 'if' or a 'for' code block is VISIBLE OUTSIDE the code block. 
+- The term "global variables" describes variables you define OUTSIDE OF ANY FUNCTION
+- As opposed to "local variables" which are defined INSIDE A FUNCTION. 
+- The code inside a function has access to all global variables as well as to its own local variables.	
+	
+IMPORTANT NOTE:
+	If you DON'T USE var to declare a variable, this variable is automatically assigned GLOBAL SCOPE
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------	
+Special numbers
+===============
+Infinity
+	greater then 1e138
+
+	>>> 1e139
+	Infinity
+	
+Nan (Not A Number)
+	You get NaN when you try to perform an operation that assumes numbers but the operation fails.
+	E.g:
+	
+	>>> 8 * 'x'
+	NaN
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------------	
+Arrays
+======
+Arrays are objects where attribute keys are integers by default.
+
+	>>> var a = [1,2,3];
+	>>> typeoof a
+	object
+	
+	>>> a.length
+	3
+	
+But you can assign arbitrary type of keys
+
+	>>> a['a'] = 'aaaaaa';
+	>>> a.length
+	3
+
+	>>> a[100] = 'x';
+	>>> a.length
+	101
+
+	>>> a[50]
+	undefined
+
+	>>> a[500]
+	undefined
+	
+So arrays really are associative arrays.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Functions
+=========
+	function test()
+	{
+	}
+
+The name of a function is a reference variable points to 
+the function. These will create the same result:
+
+	function f(){return 1;}
+	var f = function(){return 1;}
+
+OR
+
+	f = function() {...};
+	ff = f;
+	f = null;
+	
+	Than you won't be able to call f() but you will able to call ff() .
+	
+A function can be passed as function parameter so it can be a callback:
+
+	function invoke_and_add(a, b){
+		return a() + b();
+	}
+
+	function one() {
+		return 1;
+	}
+	function two() {
+		return 2;
+	}
+
+	>>> invoke_and_add(one, two);
+	3
+
+Calling a function right after defined:
+
+	(
+		function(){
+			alert('boo');
+		}
+	)()
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------------	
+Objects
+=======
+- An object is very similar to an array but with the difference that you define the keys yourself.
+- OBJECTS ARE REALLY ALSO ASSOCIATIVE ARRAYS, where keys are object properties as strings.
+	So if you want a hash in JavaScript, you should use an object.
+	
+	var hero = {
+		breed: 'Turtle',
+		occupation: 'Ninja'
+	};
+	
+Accessing properties:
+
+		>>>hero.breed
+		"Turtle"
+		>>>hero['breed']
+		"Turtle"
+	
+NOTE:
+	Objects can be simply browsed in FireBug script console by typing name of variable:
+
+	>>> dlgSubjectViewer
+	Object { id="dlgSubjectViewer", cfg={...}, jqId="#dlgSubjectViewer", more...}
+	
+You can quote property names, but optional except in these cases:
+
+	- If the property name is one of the reserved words in JavaScript (see Appendix A)
+	- If it contains spaces or special characters (anything other than letters, numbers, and the underscore character)
+	- If it starts with a number
+	
+Using 'this':
+	'this' always means the current object:
+	
+	var hero = {
+		name: 'Rafaelo',
+		sayName: function() {
+			return this.name;
+		}
+	}
+
+	>>> hero.sayName();
+	"Rafaelo"	
+
+Creating object by constructor functions:
+	In order to create an object using this function, you use the new operator, like this:
+
+	function Hero() {
+		this.occupation = 'Ninja';
+	}
+	>>> var hero = new Hero();
+	>>> hero.occupation;
+	"Ninja"	
+	
+	So CONSTRUCTOR CAN BE ARBITRARY FUNCTION if you call it with 'new'.
+	
+To check is an object has been cre3aed by a specific constructor
+function call 'instanceof;
+	
+	>>>hero instanceof Hero
+	true
+	
+Global object:
+	- JavaScript programs run inside a host environment (e.g. the browser)
+	- The host environment provides a global object and all global variables are actually properties of the global object.
+	
+	Thus:
+	
+	>>> a = 'cat';
+	>>> a
+	cat
+	>>> window.a
+	cat
+	
+	That means global functions are member functions of window of browser:
+	
+	function f1()
+	{
+		alert('cat');
+	}
+	
+	>>> window.f1()
+		<it shows: 'cat'>
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------		
+Built-in objects
+================
+Object		: Object is the parent of all JavaScript objects, which means that every object you create inherits from it.
+
+Array		: Array() is a built-in function that you can use as a constructor to create arrays:
+
+				>>> var a = new Array();
+				This is equivalent to the array literal notation:
+				>>> var a = [];
+
+Function	: Functions are actually objects.
+
+		The following three ways of defining a function are equivalent:
+		
+			>>> function sum(a, b) {return a + b;};
+			>>> sum(1, 2)
+			3
+			>>> var sum = function(a, b) {return a + b;};
+			>>> sum(1, 2)
+			3
+			>>> var sum = new Function('a', 'b', 'return a + b;');
+			>>> sum(1, 2)
+			3
+
+Boolean		: As constructor are not too useful but the Boolean() function is useful when called as a normal function,
+				without new. This converts non-booleans to booleans.
+				
+			>>> var b = new Boolean();
+			
+			This creates a new object b, and not a primitive boolean value. To get the primitive value:
+			
+			>>> var b = new Boolean();
+			>>> typeof b
+			"object"
+			>>> typeof b.valueOf()
+			"boolean"			
+						
+Number		: Similarly to Boolean(), the Number() function can be used:
+			As a normal function in order to try to convert any value to a number.
+
+			>>> var n = Number('12.12');
+			>>> n
+			12.12
+			>>> typeof n
+			"number"						
+
+String:
+			....
+
+Math		:
+			
+Date() 		: It is a constructor function that creates date objects. You can create a new
+			object by passing:
+			- Nothing (defaults to today's date)
+			- A date-like string
+			- Separate values for day, month, time, and so on
+			- A timestamp			
+			
+RegExp		: Regular expressions provide a powerful way to search and manipulate text.			

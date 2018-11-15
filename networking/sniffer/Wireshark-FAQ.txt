@@ -1,0 +1,108 @@
+=============
+Wireshark FAQ
+=============
+
+- SSL cannot decrypted with Wireshark
+- BER Error: This field lies beyond the end of the known sequence definition.
+- HTTP SSL protocol not recognized
+- How to capture packets with tcpdump for Wireshark?
+- How to capture tcpdump remotely?
+
+Filters
+-------
+- How to get packages by byte content?
+
+
+Protocols
+---------
+- How Wireshark identifies RTP?
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+SSL cannot decrypted with Wireshark
+===================================
+- If you find this in ssl.log:		
+
+		ssl_restore_session can't find stored session
+	
+	This line indicates that the SSL session at hand is actually a reused
+	SSL session with a short handshake. Wireshark needs the full SSL handshake
+	to be able to calculate all the keys.
+
+	Best practice is to start capturing before you start up the browser. 
+	
+- If The SSL session is using a DiffieHellman cipher (0x39 = TLS_DHE_RSA_WITH_AES_256_CBC_SHA). 
+	This means the session key is transferred encrypted with a dynamically generated keypair (instead of encrypted with the public key from the certificate). 
+	This means you can't decrypt this session with wireshark by providing the private key.
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+BER Error: This field lies beyond the end of the known sequence definition.
+===========================================================================
+If you find this message in a captured packet:
+
+	Go to edit->preferences->protocol->ber and set the option:		Show inerenal ber...
+	
+	
+------------------------------------------------------------------------------------------------------------------------------
+HTTP SSL protocol not recognized
+================================
+If you don't use standard ports (e.g. Tomcat with custom ports: 18080, 18443) Wireshark cannot recognize protocol by default settings.
+
+For HTTP protocol ports should be specified in Preferences dialog. Here should be also SSL/TLS specified.
+If port not listed here, packets from this port won't be recognized.	
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+How to get packages by byte content?
+====================================
+You can refer to a byte in data part of a specific package like this:
+
+
+	data-type[position:bytes] == number(s)
+
+e.g:
+
+	(udp && udp[8:1] == 0x80 && udp[9:1] == 0x0d)
+	
+
+------------------------------------------------------------------------------------------------------------------------------
+How Wireshark identifies RTP?
+=============================
+Wireshark identifies RTP packets via two methods. 
+	1) Parses out the SDP info inside of SIP packets and then tracks the associated IP/Port pair as RTP traffic.
+	
+	2) Compares the first few bytes of every UDP packet to the known signature of an RTP packets and if its close enough, 
+		treats it as RTP.
+
+
+Filtering RTP related packets:
+
+	rtcp || rtp || udp && udp[8:1] == 0x80
+	
+If RTP cannot be recognized by Wireshark (because of lack of SIP dialog or RTCP) you can force RTP stream recognition by selecting an UDP package (length is 214) and (rightmouse + Decode as...).
+Here add RTP an entry for current packet with RTP protocol. If it is really an RTP packet you will be able to analyse and play stream under Telephony/RTP.
+
+
+------------------------------------------------------------------------------------------------------------------------------
+How to capture packets with tcpdump for Wireshark?
+==================================================
+
+tcpdump -i <interface> -s 65535 -w <some-file>		
+		
+	Older versions of tcpdump truncate packets to 68 or 96 bytes. If this is the case, use -s to capture full-sized packets:		
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+How to capture tcpdump remotely?
+================================
+	
+ssh user@host "tcpdump -s0 -w -" | wireshark -k -i -
+
+
+
+
+

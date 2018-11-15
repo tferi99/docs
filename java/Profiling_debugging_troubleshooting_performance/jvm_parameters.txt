@@ -1,0 +1,28 @@
+Win:
+	set JAVA_OPTS=-server -Xms256m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=512m
+
+Linux:
+	export JAVA_OPTS="-server -Xms256m -Xmx1024m -XX:PermSize=128m -XX:MaxPermSize=512m"
+
+...
+...
+...
+
+Example to call Tomcat:
+
+/opt/java/jre/bin/java 
+	-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Djava.util.logging.config.file=/opt/tomcat/conf/logging.properties 
+	
+	-Xms512m 
+	-Xss1m 
+	-Xmx800m 
+	-server 
+	
+	-XX:+BackgroundCompilation 
+	-XX:PermSize=128m 
+	-XX:MaxPermSize=256m 
+	
+	-verbose 
+	-Djava.endorsed.dirs=/opt/tomcat/common/endorsed -classpath :/opt/tomcat/bin/bootstrap.jar:/opt/tomcat/bin/commons-logging-api.jar 
+	-Dcatalina.base=/opt/tomcat -Dcatalina.home=/opt/tomcat -Djava.io.tmpdir=/opt/tomcat/temp org.apache.catalina.startup.Bootstrap start
+	

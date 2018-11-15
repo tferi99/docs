@@ -1,0 +1,19 @@
+=======
+ES6 FAQ
+=======
+
+- How to include modules?
+
+---------------------------------------------------------------------------------------------------------------------------------
+How to include modules?
+=======================
+var mod = require('mod-dir');
+
+It search for a module in node_modules and imports index.js from it.
+It contains module.exports(...) entries.
+
+You can specify location of module with relative path, too:
+
+	var osszead = require('./osszead');
+
+	

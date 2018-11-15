@@ -1,0 +1,143 @@
+========
+LDAP-FAQ
+========
+
+- Base terms
+- LDAP search
+- Search filter syntax
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Base terms
+==========
+
+What is a directory?
+--------------------
+A directory is defined by some as merely a database optimized for read access.
+
+What supported:
+- searching
+- browsing
+- updates are typically simple all-or-nothing changes, if they are allowed at all
+
+What NOT supported:
+- complicated transaction
+- roll-back schemes
+
+What is LDAP?
+-------------
+LDAP stands for Lightweight Directory Access Protocol. 
+
+What kind of information can be stored in the directory? 
+--------------------------------------------------------
+Entries:
+	The LDAP information model is based on entries. 
+	
+Attributes:	
+	An entry is a collection of attributes that has a globally-unique Distinguished Name (DN).
+
+Attribute types and values:
+	Each of the entry's attributes has a type and one or more values. 
+	The types are typically mnemonic strings, like "cn" for common name, or "mail" for email address.
+	The syntax of values depend on the attribute type e.g:
+
+		cn			: text
+		mail		: email address
+		jpegPhoto	: JPG binary 
+		
+
+How is the information arranged?
+--------------------------------
+Directory entries are arranged in a HIERARCHICAL TREE-LIKE structure. 		
+Traditionally, this structure reflected the geographic and/or organizational boundaries.
+
+Attribute validation
+--------------------
+LDAP allows you to control which attributes are REQUIRED and allowed in an entry through the use 
+of a special attribute called objectClass. 
+The values of the objectClass attribute determine the SCHEMA RULES THE ENTRY MUST OBEY.
+
+How is the information referenced?
+----------------------------------
+An entry is referenced by its distinguished name (DN) which is constructed by taking the name 
+of the entry itself (called the Relative Distinguished Name or RDN) 
+and CONCATENATING THE NAMES OF ITS ANCESTOR ENTRIES.
+For example:
+
+	uid=babs,ou=People,dc=example,dc=com
+	
+See: LDAP directory tree (Internet naming).png
+
+The full DN format is described in RFC4514.
+
+ Implementations MUST recognize AttributeType name strings
+   (descriptors) listed in the following table, but MAY recognize other
+   name strings:
+   
+      String  X.500 AttributeType
+      ------  --------------------------------------------
+      CN      commonName (2.5.4.3)
+      L       localityName (2.5.4.7)
+      ST      stateOrProvinceName (2.5.4.8)
+      O       organizationName (2.5.4.10)
+      OU      organizationalUnitName (2.5.4.11)
+      C       countryName (2.5.4.6)
+      STREET  streetAddress (2.5.4.9)
+      DC      domainComponent (0.9.2342.19200300.100.1.25)
+      UID     userId (0.9.2342.19200300.100.1.1)
+
+   These attribute types are described in [RFC4519].   
+
+Attributes
+----------
+- Assigning a new value to an attribute adds the value to the list of values the attribute already has,
+	so LDAP attributes CAN BE MULTIVALUED.
+- All entries in an LDAP directory must have an 
+		
+		objectClass 
+		
+	attribute, and this attribute must have at least one value. 
+	Each objectClass value acts as a template for the data to be stored in an entry. 
+	It defines a set of attributes that:
+		- MUST be present in the entry 
+		- and a set of optional attributes that MAY or may not be present.
+
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------
+LDAP search
+===========	
+To perform a search, the following parameters must be specified: 	
+
+- Base DN
+
+- Scope
+	- baseObject
+		Only the base object is examined.
+			 
+	- singleLevel
+		Only the immediate children of the base object are examined.
+	
+	- wholeSubtree
+		Base object and all of its descendants are examined.
+		
+- Search Filter 
+	Search filter is a Boolean combination of attribute value assertions. 
+	
+- Attributes to Return
+
+- Alias Dereferencing
+
+- Limits
+	- The size limit restricts the number of entries returned from the search. 
+	- The time limit limits the total time of the search. 
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Search filter syntax	
+====================
+Syntax:
+
+	attribute operator value 
+	
+Operators: =, >=, <=, =*, ~=, &, |, !	
+
+	

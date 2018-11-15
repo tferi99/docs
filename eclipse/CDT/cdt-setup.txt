@@ -1,0 +1,122 @@
+=====================
+CDT Quick Setup Guide
+=====================
+Author: FToth
+
+1. Necessary components
+2. Setup of components
+2.1 Eclipse
+2.2 Cygwin
+3. Settings
+4. Troubleshooting
+
+
+CDT is C/C++ Development Toolkit under Eclipse.
+
+1. Necessary components
+-----------------------
+- Eclipse 3.3 (Europe) with CDT
+- Cygwin
+
+2. Setup of components
+----------------------
+2.1 Eclipse
+-----------
+Method 2:
+	Download 'Eclipse IDE for C/C++ Developers' from :
+
+		http://www.eclipse.org/downloads/
+		
+Method 2:
+	If you already have an Eclipse Europe without CDT intalled, 
+	you can update components using Eclipse Update function.:
+	
+		- Call menu 'Help/Software Updates/Find and Install...'.
+
+		- Search for new features to install
+
+		- Button 'New Remote Site...'
+
+		- Name: CDT
+
+				URL:	http://download.eclipse.org/tools/cdt/releases/europa
+
+		 - Button 'Finish' and follow instuctions.
+		
+2.2 Cygwin
+----------
+Cygwin is a Linux-like environment for Windows. It consists of two parts: 
+	- A DLL (cygwin1.dll) which acts as a Linux API emulation layer providing substantial Linux API functionality. 
+	- A collection of tools which provide Linux look and feel.
+
+- Download:			http://cygwin.com/setup.exe
+
+- Start setup.exe
+
+- You can install components from Internet or you can download the whole stuff into hard drive for offline installation.
+
+- Root directory:	
+
+		C:\cygwin
+		
+	WARNING: Don't install cygwin under location where path contains spaces (e.g. Program Files). Maybe works, 
+			but sometimes may not.
+			
+- Choose a fast (hungarian) mirror
+
+- Choose packages from 'Select Packages' list
+
+	- If you leave default settings you will get core Cygwin with base tools
+	- For CDT you have to choose the following additional packages:
+		- Devel/gcc-core: C compiler
+		- Devel/make: The GNU version of the 'make' utility 
+		- Devel/gdb: The GNU Debugger
+	
+	
+3. Settings
+-----------
+- To access Cygwin DLL add 
+	
+	c:\cygwin\bin 
+	
+	to PATH environment variable.
+	
+- In case of this error message:
+	
+	Can't find a source file at "/cygdrive/......" 
+	Locate the file or edit the source lookup path to include its location.
+
+	If you're working under Windows, have you set the required mappings?
+	Maybe Eclipse couldn't find the Source because of the missing mapping to
+	the (cygwin-)drive where your projects/workspaces are.
+	
+	For example you project is in drive D:
+	
+	- Windows/Preferences/C/C++/Debug/Common Source Lookup
+	- Add a new Path Mapping:  click [Add] => Path Mapping => [OK]
+	- Select the new Mapping => [Edith] => change Name of Mapping "Project Source" 
+	- [Add]
+	- set "Compilation path" to the Source /cygdrive/d
+	- set "Local file system path" tho d:\
+
+	
+4. Troubleshooting
+------------------
+Problem: WinCVS doesn't work after adding Cygwin to PATH. 
+ 
+	If you add Cygwin to path environment variable you cannot use WinCVS,
+	because tcl84.dll from Cygwin and WinCVS are incompatible. You cannot 
+	rename tcl84.dll in Cygwin because it's used by GDB.
+	
+Solution: 
+
+	Call Eclipse through a BAT, like this:
+	
+		set PATH=%PATH%;C:\cygwin\bin
+		C:\eclipse-jee-europa\eclipse.exe
+
+		
+	
+Problem:	org.eclipse.cdt.dsf.gdb.launching.GDBDebugger cannot be cast to org.eclipse.cdt.debug.core.ICDebugger
+
+Solution: choose a debugger under debugger configuration (Debug tab)	

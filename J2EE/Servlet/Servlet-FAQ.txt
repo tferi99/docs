@@ -1,0 +1,47 @@
+============
+Servlet FAQ
+============
+
+- Servlet versions
+
+- Which servlet will be called when request URL matches to more than one url-patterns?
+
+
+
+---------------------------------------------------------------------------------------------------------
+Which servlet will be called when request URL matches to more than one url-patterns?
+====================================================================================
+
+Servlet Mapping Rules
+---------------------
+A request may match more than one servlet-mapping in a given context. The servlet container uses 
+a straightforward matching procedure to determine the best match.
+
+When a request is received, container matches the request's path (excluding any query string) 
+with the servlet mappings according to the rules shown here. THE FIRST SERVLET mapping that matches 
+the request's path is the mapping that is used, NO FURTHER MATCHES ARE ATTEMPTED.
+
+1. If the request path exactly matches on of the exact mappings, that mapping is used.
+
+2. If the request path starts with one or more prefix mappings (not counting the mapping's trailing "/*"), 
+	then the longest matching prefix mapping is used. NOTE: Only complete path elements are compared. 
+	For example, "/foo/*" will match (among infinitely many others) "/foo", "/foo/", and "/foo/bar", 
+	but will not match "/foobar".
+
+3. If the request path ends with an extension mapping (not counting the mapping's leading "*"), 
+	that mapping is used.
+
+If none of the previous rules produce a match, the default mapping is used.
+
+
+---------------------------------------------------------------------------------------------------------
+Servlet versions
+================
+
+Servlet Spec	JSP Spec	EL Spec	WebSocket Spec	Apache Tomcat version	Actual release revision	Minimum Java Version
+3.1				2.3			3.0		1.0				8.0.x					8.0.0-RC1 (alpha)		1.7
+3.0				2.2			2.2		N/A				7.0.x					7.0.42					1.6
+2.5				2.1			2.1		N/A				6.0.x					6.0.37					1.5
+2.4				2.0			N/A		N/A				5.5.x (archived)		5.5.36 (archived)		1.4
+2.3				1.2			N/A		N/A				4.1.x (archived)		4.1.40 (archived)		1.3
+2.2				1.1			N/A		N/A				3.3.x (archived)		3.3.2 (archived)		1.1

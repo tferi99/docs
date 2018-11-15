@@ -1,0 +1,16 @@
+#--------------------------- andphone.log* ----------------------------------
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//andphone.log|2017-05-31 11:50:36,367|2017-05-31 12:04:12,348|
+#--------------------------- andphone_error.log* ----------------------------------
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//andphone_error.log|2017-05-31 11:50:50,418|2017-05-31 12:04:12,348|
+#--------------------------- andphone-bg.log* ----------------------------------
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//andphone-bg.log|2017-05-31 11:50:35,532|2017-05-31 12:03:59,674|
+#--------------------------- CiscoJtapi*.log ----------------------------------
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//CiscoJtapi01.log - 
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//CiscoJtapi02.log|2017-05-31 11:52:05|2017-05-31 12:04:03|
+#--------------------------- sip_protocol.log* ----------------------------------
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//sip_protocol.log|2017-05-31 11:51:46,299|2017-05-31 12:03:58,432|
+#--------------------------- andphone_record.log* ----------------------------------
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//andphone_record.log|2017-05-31 11:49:22,919|2017-05-31 12:06:32,175|
+#--------------------------- catalina.* ----------------------------------
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//catalina.2017-05-31.log|2017-05-31 11:49:08,035|2017-05-31 12:04:13,105|
+/cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//catalina.out|2017-05-31 11:49:02|2017-05-31 12:04:13,105|

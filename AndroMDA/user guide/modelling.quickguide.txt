@@ -1,0 +1,461 @@
+=============================
+Andromda modelling kick start
+=============================
+(by Ferenc Toth)
+
+
+1. General rules
+2. Entities
+2.1 Generated code for entities
+3. Relationships
+4. Services
+4.1 Checking service parameters
+5. Value ojects
+6. Enumerations
+7. Queries
+7.1 Search criteria
+8. Exceptions
+9. Security
+10. Data types
+
+X. Stereotypes
+X. Dependencies
+X. Tagged values
+
+
+1. General rules
+----------------
+Model for generation				: $APP\mda\src\uml\*.xmi 
+
+
+(From documentation:)
+
+- Names : the general rule for all the names is to capitalize the first letter of each concatenated 
+  word (i.e exampleOfCapitalizationOfConcatenatedWords).
+
+- Specify the type of ALL attributes and operation parameters.
+
+- Specify visibility where visibiliy counts.
+
+- Specify the multiplicities of both ends of ALL associations . Cartridges use and require all multiplicity information.
+
+- Make sure names of association ends making up an association are UNIQUE within the association.
+
+- If an element CANNOT exist without another element, define the association end of the owning element as composite aggregation.
+
+- Specify ordering where ordering matters.
+
+- Do NOT add getter and setter operations for attributes.
+
+- Do NOT add getter and setter methods for association ends.
+
+- Define and use Datatypes for simple types.
+
+- Specify entities inside package or generated code won't be compiled (since default package generates empty package name)
+
+- If you have 1-1 association (DEFAULT!), you have to specify an AGGREGATION.
+
+- Change visibility of navigable association ends to 'public'. 	DEFAULT is both of ends are NAVIGABLE.
+
+- Don't created MORE THAN ONE dependencies between 2 entities.
+
+- Each classifier must have a NON-EMPTY name (e.g. classes in package).
+
+TIPP:
+	Modell validation exception thrown during building project 
+	contains exact description (and solution) about validation problem.
+
+- Type of ID-s is Long (class).
+	
+
+Key concept about AndroMDA generated applications is the strong association between service methods 
+(i.e. operations exposed by a service) and Hibernate sessions.
+When a client application calls a service method a new Hibernate session is OPENED AUTOMATICALLY. 
+YOU DO NOT HAVE TO WRITE ANY CODE TO DO THIS. Similarly, when the service method exits the associated 
+Hibernate session is CLOSED AUTOMATICALLY. In other words, the LIFESPAN of a Hibernate session is bounded 
+by the beginning and ending of a service method call.
+Consequently, ENTITIES ARE ATTACHED TO HIBERNATE SESSION for the entire duration of the service call, but 
+are detached from this session as soon as the service call ends. 
+As a result, if your service method returns raw entities, the client must be extra careful NOT TO ACCESS RELATED 
+ENTITIES THAT ARE NOT IN MEMORY ALREADY. So transfer all relevant information into VALUE OBJECTS while the session 
+is still open and PASS THESE VALUE OBJECTS BACK to your caller as a return value. 
+
+In other words, think of a SERVICE METHOD AS A LOGICAL TRANSACTIONAL BOUNDARY - do everything you need to do within 
+the method and then RETURN THE RESULTS AS VALUE OBJECTS.
+
+Another implication of the strong association between a service method and a Hibernate session is that 
+CLIENT APPLICATIONS SHOULD NOT TRY TO BYPASS THE SERVICE LAYER and interact directly with the lower layers. 
+You may be able to brute force your way into one data access object, but sooner or later you will get into trouble!
+
+
+
+2. Entities
+-----------
+************************************ MODELLING IN SHORT **********************************************
+- Entities without operation		
+		--> files for no manual editing
+
+- operation with scope INSTANCE		
+		--> abstract method into:		 	core/target/src/<entity-package>/<Entity>.java 
+		--> custom implementation into:		core/src/main/java/<entity-package>/<Entity>Impl.java 
+
+- operation with scope CLASSIFIER	
+		--> interface method into:			core/target/src/<entity-package>/<Entity>Dao.java 
+		--> base implementation into:		core/target/src/<entity-package>/<Entity>DaoBase.java 
+		--> custom implementation into:		core/src/main/java/<entity-package>/<Entity>DaoImpl.java
+			(as handle<func>() method)
+										
+- query with scope INSTANCE	or CLASSIFIER:
+		-->	interface method into:			core/target/src/<entity-package>/<Entity>Dao.java
+		--> base implementation into:		core/target/src/<entity-package>/<Entity>DaoBase.java 
+									
+- query with scope CLASSIFIER
+  OR dependency to a VO
+  
+- <<Unique>> for attribute		--> unique in database
+
+- Attribute Multiplicity [0..1]		--> not null in persistence
+
+- <<Nullable>> for operation parameters	--> parameter of an operation can be null
+
+- <<Identifier>> to attribute		--> explicit ID in entity
+
+
+******************************************************************************************************
+
+- Operations on an entity will generate as methods in the resulting Java class. 
+
+- To generete entity Impl classes into src (and to prevent regenerating):
+	- add an operation to entity with scope "instance"
+
+- To generete DaoImpl classes into src (and to prevent regenerating):
+	- add a business operation to entity, and mark the scope of operation as "classifier" 
+	OR
+	- create value object for entity (Stereotype MUST be 'ValueObject')
+	- add a dependency from entity to value object
+
+	Operations that are CLASSIFIER scoped ( static in Java) will go 
+	into the corresponding DAO (, in UML diagrams those operations are underlined).
+	This will generate auto-generated source that should be edited manually.
+
+- Unique Attributes
+	In case you want an entity's attribute to be unique for all instances of that 
+	entity's type you should assign the <<Unique>> stereotype to it. 
+
+- Attribute Multiplicity
+	It's possible to configure the multiplicity of an entity's attribute, by setting it to [0..1]
+	an attribute is not required and is allowed to be set to null ; setting the multiplicity to a 
+	value greater than 0 means the attribute is required. 
+
+- Nullable Parameters
+	If you want an operation to have a parameter which is allowed to be null then simply assign the 
+	<<Nullable>> stereotype to that parameter. By default service and DAO operations throw an 
+	exception when a null argument has been passed. 
+
+	It is possible to globally disable checking for null arguments, so you will never need to 
+	specify the <<Nullable>> stereotype; to do so just specify the parameterRequiredCheck namespace 
+	property to have the false value.
+
+- Explicite ID
+	If you explicitely want to add an identifier you should add the <<Identifier>> stereotype to an attribute.
+
+
+2.1 Generated code for entities
+-------------------------------
+core/target/src/<package>:
+	EEE.java		- abstract bean
+	EEEImpl.java		- non-abstract bean extending EEE
+	EEEDao.java		- DAO interface
+	EEEDaoBase.java		- abstract EEEDao implementation
+	EEEDaoImpl.java		- empty, non-abstract EEEDao implementation, extending EEEDaoBase
+	
+
+3. Relationships
+----------------
+************************************* MODELLING IN SHORT *********************************************
+- draw relationship between entities
+******************************************************************************************************
+- default multiplicity is 1-1 in UML
+
+1-N relationship	-->	Person.getCars() : Collection 
+				Car.getOwner() : Person
+
+N-N relationship	-->	Person.getCars() : Collection 
+				Car.getOwners() : Collection 
+
+aggregation		-->	lazy-loaded, no cascade 
+composition		-->	eager-loaded, cascade update
+
+
+
+4. Services
+-----------
+A common strategy to shield the presentation tier from the persistence tier is to model 
+the services in between, they will be used to implement the business logic in the application tier.
+
+IMPORTANT NOTE: 
+	ANDROMDA DEFAULT IMPLEMENTATION SUPPORTS ONLY SINGLETON SPRING BEANS FOR SERVICES,
+	SO THIS SERVICES ARE STATELESS.
+
+- you would just create another class, and give this class the <<Service>> stereotype. 
+- it is sufficient to only model operations in these services, they represent the operations that 
+  can be called remotely, consider these operations the API of your application's back-end.
+- we have modeled DEPENDENCIES FROM THE SERVICE TO THE ENTITIES, this will render accessors 
+  to the DAOs of both entities in the service
+
+Generated files:
+- common/target/src/.../<Service>.java			: interface for operations
+- common/target/src/.../<Service>Exception.java
+- core/target/src/.../<Service>Base.java		: abstract base 
+- core/src/java/.../<Service>Impl.java			: implementing abstract base
+
+
+************************************* MODELLING IN SHORT *********************************************
+- create a new class and set <<Service>> stereotype
+- add operations
+- draw DEPENDENCIES FROM THE SERVICE TO THE ENTITIES
+- nullable method parameter: set <<Nullable>> stereotype to that parameter
+- nullable value object parameter: set multiplicity of parameter to [0..1].
+******************************************************************************************************
+
+
+4.1 Checking service parameters
+-------------------------------
+Service operation parameters are required by default. If you want an operation to have a parameter which 
+is allowed to be null then simply assign the <<Nullable>> stereotype to that parameter.
+
+If a parameter is a VALUE OBJECT, its properties are checked as well. To enable nullable value object
+property set multiplicity of parameter to [0..1].
+
+
+5. Value ojects
+---------------
+In many cases it is a good idea to never expose your persistence layer to the presentation 
+layer directly, this dependency could cause your application to be difficult to maintain.
+
+Value objects are simple classes that simply encapsulate information to be presented to an end-user.
+Although these value objects represent different views on the existing business objects.
+
+In the spring cartridge you can simply model your value objects to be classes with the <<ValueObject>>
+stereotype, you then add attributes for all fields you want to be present. Doing this will generate a 
+simple Java class adhering to the Java Bean specification. 
+
+An interesting feature is that you can draw a dependency from any <<Entity>> to a <<ValueObject>> or 
+UML datatype. This will instruct the cartridge to generate a transformation method in the entity's 
+DAO class, this transformation method can be called directly or it can be invoked from any finder or 
+load operation that exists: just use the public constant associated with this transformation and
+specify it as the optional transformation flag, the next example will clarify this in detail. 
+
+
+
+************************************* MODELLING IN SHORT *********************************************
+- create a new class and set <<ValueObject>> stereotype
+- add attributes
+- draw DEPENDENCIES FROM entity TO value object --> transformation method in entity's DAO
+******************************************************************************************************
+
+Other rules:
+- ADD 'id' PROPERTY AND SET MULTIPLICITY TO [0..1], otherwise you won't be create an entity by this VO 
+	calling a service method.
+	Service methods checks null value in method parameters and if a parameter is a VO it checks fields
+	of VO as well. So if your ID is mandatory you won't be able to call service method without specifying
+	id (case of creating). Or you have to add a dummy id but this can be confusing.
+
+- If you add fields which are not part of dependent entity, AndroMDA won't generate VO transformation for
+	these fields in  to...VO() method of  ...DaoBase.java . In this case you have to override this method
+	in ...DaoImpl.java and add extra property transformation.
+	Without this these properties entity wont be loaded from VO into entity.
+	
+- You can create associated VOs. Create VOs with 'id' and associate them. If you want to pass a VO tree,
+	you have to mount tree manually. For bi-directional associations it needs 2 operation:
+	
+		1. parent.children.add(child)
+		2. child.setParent(parent)
+	
+	
+6. Enumerations
+---------------
+You can add type-safe enumerations to the model.
+
+Enumerations are persisted by the Hibernate framework used behind the scenes, so it is no problem 
+to use these enumeration types for entity attributes,.
+
+************************************* MODELLING IN SHORT *********************************************
+- create a new class and set <<Enumerations>> stereotype
+- add attributes, all ATTRIBUTES on such an enumeration will be known as ENUMERATION LITERALS, 
+  they will assume the DEFAULT VALUES you assign to the attributes, or the NAME OF THE ATTRIBUTE 
+  if the default value is missing.
+******************************************************************************************************
+
+Enumeration creates class in Java, but NOT a database table, so value has not been checked by 
+database constraint but in enumeration class. If an invalid value comes from database an exception 
+will be thrown.
+
+	...
+	throw new IllegalArgumentException("invalid value '" + value + "', possible values are: " + literals);
+	...
+
+
+7. Queries
+----------
+You can use queries to get entities from persistence. Type of result is always the owner entity or dependent 
+VO. YOU CANNOT USE QUERY TO GET ARBITRARY DATA RECORD, e.g to get single fields, calculated fields or 
+aggregations - ONLY ENTITIES OR VOS.
+
+To perform operations on the underlying datasource, create queries.
+
+Customizing queries:
+- OCL
+- tagged value - @andromda.hibernate.query
+	You don't need to override HQL generator method, because this method will generate customized HQL.
+	
+- method overriding in ...DaoImpl.java
+	- Query methods are generated into core/target/src/<entiry>DaoBase.java
+	- You can override them (to refine query) in core/src/<entiry>DaoImpl.java, for example:
+
+		public List findActiveUsers(int transform)
+		{
+		    // the next query is user-specified and overrides the one generated in super.findActiveUsers(int transform)
+		    return super.findActiveUsers(transform, "from org.andromda.test.Users as user where user.exitDate is null");
+		}
+
+************************************* MODELLING IN SHORT *********************************************
+- set 'query' flag of operation of entity (--> @ symbol will be displayed in front of operation name)
+- set 'classifier' scope (underlined operation entry)
+  Actually, classifier scoped operations go into the DAO while instance scoped operations go into 
+  the entity's implementation class (they are considered to be business operations).
+******************************************************************************************************
+
+
+7.1 Search criteria
+-------------------
+************************************* MODELLING IN SHORT *********************************************
+- set stereotype to <<Criteria>>
+- Fields:
+	- @andromda.hibernate.criteria.attribute	: Sets the name of the attribute on the hibernate entity that 
+		should be added to a criteria search. If the attribute you want to search for is not in the entity itself, 
+		but rather in an associated class, you can use a fully qualified name here.
+		IF YOU OMMIT THIS TAGGED VALUE, THE NAME OF THE ATTRIBUTE IN THE CRITERIA CLASS WILL BE USED.
+	- @andromda.hibernate.criteria.comparator	: type of comparator, values can be:
+																			like 
+																			insensitive_like 
+																			equal 
+																			greater 
+																			greater_equal 
+																			less 
+																			less_equal 
+																			in 
+																			not_equal
+	- @andromda.hibernate.criteria.matchmode: specifies how comparator works
+	- optional fields: set multiplicity to [0..1], if field is empty, criteria field will be IGNORED
+	- @andromda.hibernate.criteria.nullable, even if field is empty, it will be used, so you will be able filter empty values
+******************************************************************************************************
+
+8. Exceptions
+-------------
+By default a RuntimeException will be generated for each service:
+
+	<ServiceName>Exception
+
+To generate specific exception for services:
+************************************* MODELLING IN SHORT *********************************************
+- Simply model a class and assign it the <<ApplicationException>> stereotype or the <<UnexpectedException>> stereotype
+- draw a dependency FROM a <<Entity>> or <<Service>> TO exception, this will make all operations throw this exception.
+- You may choose to have a single operation throw a specific exception by drawing the dependency from that 
+  operation to the exception. 
+******************************************************************************************************
+
+
+9. Security
+-----------
+You can control accessing services or operation from model.
+
+Preparation
+1. Create security context file (Spring bean initialization) for Acegi security framework
+2. Add this file to sprint configuration via '<!-- beanRefFactory merge-point -->' merge point.
+
+Modelling
+************************************* MODELLING IN SHORT *********************************************
+- Add actors to your model named with the role's name
+- Draw a dependency from a role actor to a <<Service>> or to one or more methods of the spring service.
+******************************************************************************************************
+
+AndroMDA now generates a security interceptor with a list of all operations and its assigned roles to 
+the applicationContext file. 
+
+10. Data types
+--------------
+There can be problem with data types in various database engines:
+
+	Problem 1 : Date types in DB2
+	-----------------------------
+	DB2 Date type contains ONLY DATE part of date and not datetime (opposite to Oracle). 
+	Modelling rules for DB2:
+		- Date entity properties where you need time-part have to be modelled as Datetime.
+		- But VO properties have to be modelled as Date, since these properties generated into Java,
+			and java.util.Date contains datetime. Don't modell DateTime into VO, this will generate 
+			java.sql.Timestamp into VO classes, and you will have difficuties during using these properties.
+			
+			VO transformations in DaoImpl convert Datetime values into java.util.Date automatically. 
+
+		
+X. Stereotypes
+---------------
+Stereotypes drive code generation! : 
+UML Stereotypes are a kind of "label" that you attach to modeling elements in order to classify them.
+
+<<ApplicationException>>: 
+
+<<Criteria>>		: query for queries
+
+<<EmbeddedValue>>	: Unlike entities, embedded values do not have a separate identity in the database. 
+			  They are embedded inside entity tables and are considered to be part of the entity
+
+<<Entity>>		: to generate Entity Beans or Hibernate POJOs
+
+<<Enumeration>>		:
+
+<<Nullable>>		: nullable parameters for service operation parameters
+
+<<Service>>		: services to shield the presentation tier from the persistence tier 
+
+ <<UnexpectedException>>: 
+
+<<ValueObject>>		: value object to get rid of dependencies between presentation and persistence layer
+
+
+
+
+
+X. Dependencies
+---------------
+<<Entity>> --------------------------> <<ValueObject>>
+
+	This will instruct the cartridge to generate a transformation method in the entity's 
+	DAO class.
+	
+
+<<Service>> --------------------------> <<Entity>>
+
+	This will render accessors to the DAOs of entities in the service.
+
+
+<<Entity>> --------------------------> <<ApplicationException>>
+<<Service>>			       <<UnexpectedException>>
+
+
+	Entity or service will throw a spcifc exception from all of operations.
+	NOTE:
+	You can draw dependency from a single operation of entity or service, too. This way
+	you can assign an exception to a single operation.
+
+
+X. Tagged values
+-----------------
+Changing entity or property level generation behavior	: add tagged values to XMI elements 
+							  (MagicDraw provides user interface to do this)
+
+NOTE
+Available tagged values are imported into MagincDraw project from ZIP files of  
+$HOME\.maven\repository\andromda\xml.zips Maven directory.
+

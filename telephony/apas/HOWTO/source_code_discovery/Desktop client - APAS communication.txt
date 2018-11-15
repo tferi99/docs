@@ -1,0 +1,9 @@
+===================================
+Desktop client - APAS communication
+===================================
+
+APAS -> Desktop client
+----------------------
+	ClientConnectionMina.sendXml(String xml)
+	
+ClientConnectionMina	

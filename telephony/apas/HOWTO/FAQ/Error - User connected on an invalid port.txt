@@ -1,0 +1,19 @@
+=========================================
+Error - User connected on an invalid port
+=========================================
+APAS:
+	Primary CTI Manager: Connection to CTI Manager (192.168.150.17) was unsuccessful.
+	Exception: Unable to create provider -- User connected on an invalid port
+
+Log:
+	com.cisco.jtapi.PlatformExceptionImpl: Unable to create provider -- User connected on an invalid port
+
+
+If you have this error during startup or testing CUCM connection (APAS/Global/Configuration CUCM/[CUCM CTI MAnager]/(Test connection))
+the problem is your application user is member of Standard CTI Secure Connection.
+
+Adding the user to the Secure CTI and SRTP Key Material groups means that this JTAPI user will ONLY be allowed to connect on the secure 
+port of 2749 using certs. To connected on a non secure port later, remove the user from these secure groups.
+
+
+		 

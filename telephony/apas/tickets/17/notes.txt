@@ -1,0 +1,14 @@
+- ACDCall.priority should be set during creating from the current Pilot.defaultPriority
+	New call will be put into position specified by priority. As result calls list should be sorted by priority.
+	
+- Default value of Pilot.defaultPriority in DB is 50 (should be updated during migration)
+
+- Queue.queueCall() will put call into queue (again). In this step ACDCall.priority should be changed by an adjustment value (but not the 1st time)
+
+- Adjustment value depends on event that put call into queue. Values come from Queue properties (fallback-, noAgent-, expire-PriorityAdjustment)
+
+- After changing ACDCall.priority Queue.calls have to be sort by priority (or call should be re-positioned in calls list)
+
+- Queue.doQueueRun() always remove the 1st call of calls list.
+
+

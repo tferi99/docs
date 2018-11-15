@@ -1,0 +1,41 @@
+JSP quick guide
+===============
+
+
+
+A. Scripting Elements
+---------------------
+
+- Declaration: Declarations are used to declare scripting language variables or methods.
+
+	<%! declaration %>
+	or
+	<jsp:declaration>declaration</jsp:declaration>
+
+	Example:
+		<%! static int globalCounter = 0; %>
+
+	
+- Expression: An expression is used to add the result of executing a scripting expression to the response. 
+
+	<%= expression %>
+	or
+	<jsp:expression>expression</jsp:expression>
+
+	Example:
+	
+		<%=val%>
+		
+- Scriptlet: Scriptlets are used to embed scripting code fragments in a page. 
+
+	<% scripting code fragment %>
+	or
+	<jsp:scriptlet> scripting code fragment </jsp:scriptlet>
+	
+	Example:
+	
+	<%
+	String i = 0;
+	i++;
+	%>
+

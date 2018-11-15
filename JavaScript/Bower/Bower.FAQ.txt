@@ -1,0 +1,118 @@
+=========
+Bower FAQ
+=========
+
+- What is Bower?
+- How to install bower?
+- How bower does find packages?	
+- How to search for bower packages?
+- How to install for bower packages?
+- How to config bower?
+
+
+---------------------------------------------------------------------------------------------------------------------------
+What is Bower?
+==============
+Bower is a package manager for the web. 
+It offers a generic, unopinionated solution to the problem of front-end package management.
+
+
+It implemented as NodeJS package om JavaScript.
+
+---------------------------------------------------------------------------------------------------------------------------
+How to install bower?
+=====================
+Bower depends on Node and npm. It's installed globally using npm.
+
+- Install Node.js:
+	- Go to http://nodejs.org/ website 
+	- select the “install” button  to download install package
+	
+- test Node.js:
+
+		node
+		> 2+2
+		> 4
+		
+- Install bower:
+
+	npm install -g bower
+	
+- Test Bower is Installed	
+
+	bower search jQuery
+	
+- Install dependencies (optional)	
+
+	bower install jQuery
+	bower install underscore
+	
+---------------------------------------------------------------------------------------------------------------------------
+How bower does find packages?	
+=============================
+By default, Bower will search for a components endpoint in the Bower registry. 
+Basically, this is a json object that contains a reference, by name, to Git endpoints. The registry is located at 
+
+	https://bower.herokuapp.com/packages
+	
+
+---------------------------------------------------------------------------------------------------------------------------
+How to search for bower packages?
+=================================
+
+	bower search <package name (fragment)>
+
+
+To get detailed information:
+
+	bower info <package name>[#<version>]
+	
+---------------------------------------------------------------------------------------------------------------------------
+How to install for bower packages?	
+==================================
+- Installation:
+
+	Using the dependencies listed in the current directory's bower.json
+
+		bower install
+		
+	Using a local or remote package
+
+		bower install <package name>[#<version>]
+		
+	Using a different name and a specific version of a package
+
+		bower install <name>=<package name>[#<version>]
+	
+- All package contents are installed in the 
+
+	$HOME/bower_components 
+	
+	directory by default. You should never directly modify the contents of this directory.
+
+- Listing	
+	
+	bower list
+		
+	will show all the packages that are installed locally.	
+	
+---------------------------------------------------------------------------------------------------------------------------
+How to config bower?
+====================
+Configuration happens by including a .bowerrc json file 
+
+	- in the root of a project folder - for per project configuration
+	- in your home folder - for global configuration
+
+By default, and without setting up a .bowerrc file, Bower will use the following default configuration values.
+
+	{
+	  "directory" : "components",
+	  "json"      : "bower.json",
+	  "endpoint"  : "https://Bower.herokuapp.com",
+	  "searchpath"  : "",
+	  "shorthand_resolver" : ""
+	}	
+
+	
+	

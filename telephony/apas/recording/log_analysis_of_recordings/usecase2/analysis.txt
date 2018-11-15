@@ -1,0 +1,112 @@
+Call
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+APAS-sniffer recordCall conversation
+====================================
+[2017-05-31 12:03:03,802] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5dac8841)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip103185/1" callingParty="9001" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9001" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>]
+[2017-05-31 12:03:03,851] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5dac8841)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip103185/1" callingParty="9001" calledParty="9000" callingPartyName="" calledPartyName="" originalCallingParty="9001" originalCalledParty="9000" lastRedirectingParty="" initiated="true"/>]
+[2017-05-31 12:03:04,097] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip103185/1" dbID="8" state="1"/>
+[2017-05-31 12:03:04,286] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip103185/1" dbID="9" state="1"/>
+[2017-05-31 12:03:05,774] [DEBUG] [APAS-defaultWorker-17] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip103185/1" srcIP="192.168.5.169" srcPort="57599"/>]
+[2017-05-31 12:03:05,778] [DEBUG] [APAS-defaultWorker-21] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip103185/1" dstIP="192.168.5.169" dstPort="41359"/>]
+[2017-05-31 12:03:05,779] [DEBUG] [APAS-defaultWorker-15] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip103185/1" dstIP="192.168.5.169" dstPort="54243"/>]
+[2017-05-31 12:03:05,779] [DEBUG] [APAS-defaultWorker-19] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip103185/1" srcIP="192.168.5.169" srcPort="36151"/>]
+[2017-05-31 12:03:05,793] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip103185/1" dbID="8" state="1"/>
+[2017-05-31 12:03:05,848] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip103185/1" dbID="9" state="1"/>
+[2017-05-31 12:03:06,096] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip103185/1" dbID="8" state="1"/>
+[2017-05-31 12:03:06,102] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip103185/1" dbID="9" state="1"/>
+[2017-05-31 12:03:26,191] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5dac8841)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip103185/1" stopOut="1" />]
+[2017-05-31 12:03:26,192] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5dac8841)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip103185/1" stopOut="1" />]
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Recording metadata
+==================
+
+RECORDING[0][sip103185/1, SEPA45630BB1748] :  - , DB:9, DiskThread: DUPLICATED
+   - callingPartyName=
+   - srcIP=192.168.5.169
+   - callID=sip103185/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=9000
+   - srcPort=36151
+   - initiated=true
+   - dstIP=192.168.5.169
+   - lastRedirectingParty=
+   - callingParty=9001
+   - originalCallingParty=9001
+   - dstPort=41359
+   - calledParty=9000
+RECORDING[1][sip103185/1, SEP64A0E714F271] :  - , DB:8, DiskThread:true DUPLICATED
+   - callingPartyName=
+   - srcIP=192.168.5.169
+   - callID=sip103185/1
+   - calledPartyName=Cicamica
+   - stopOut=1
+   - terminal=SEP64A0E714F271
+   - originalCalledParty=9000
+   - srcPort=57599
+   - initiated=false
+   - dstIP=192.168.5.169
+   - lastRedirectingParty=
+   - callingParty=9001
+   - originalCallingParty=9001
+   - dstPort=54243
+   - calledParty=9000 
+   
+   
+-----------------------------------------------------------------------------------------------------------------------------------
+RTP initialization 
+==================
+terminal: SEP64A0E714F271
+
+	- srcPort=36151
+		...
+		2017-05-31 12:03:05,743: 3: |source: 192.168.5.207 len: 200 port source: 23522  dest: 36151 seq: 18426 ts: 1081159471 flags: 0880
+		2017-05-31 12:03:05,763: 3: |source: 192.168.5.207 len: 200 port source: 23522  dest: 36151 seq: 18427 ts: 1081159631 flags: 0880
+		2017-05-31 12:03:05,783: 3: |source: 192.168.5.207 len: 200 port source: 23522  dest: 36151 seq: 18428 ts: 1081159791 flags: 0880
+		2017-05-31 12:03:05,801: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip103185/1" srcIP="192.168.5.169" srcPort="36151"/>
+		2017-05-31 12:03:05,801: 1: |RTPout(192.168.5.169:36151)|dup=4160753536|(recording suppressed because it is a duplicate) of call sip103185/1 dbid:8 (9001->9000)|updating call sip103185/1
+		2017-05-31 12:03:05,803: 3: |source: 192.168.5.207 len: 200 port source: 23522  dest: 36151 seq: 18429 ts: 1081159951 flags: 0880
+		2017-05-31 12:03:05,823: 3: |source: 192.168.5.207 len: 200 port source: 23522  dest: 36151 seq: 18430 ts: 1081160111 flags: 0880
+		...
+		
+   - dstPort=41359
+		...
+		2017-05-31 12:03:05,754: 3: |source: 192.168.5.207 len: 200 port source: 24578  dest: 41359 seq: 58413 ts: 2993065079 flags: 0880
+		2017-05-31 12:03:05,775: 3: |source: 192.168.5.207 len: 200 port source: 24578  dest: 41359 seq: 58414 ts: 2993065239 flags: 0880
+		2017-05-31 12:03:05,793: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip103185/1" dstIP="192.168.5.169" dstPort="41359"/>
+		2017-05-31 12:03:05,793: 1: |RTPin(192.168.5.169:41359)|dup=4160753536|(recording suppressed because it is a duplicate) of call sip103185/1 dbid:8 (9001->9000)|updating call sip103185/1
+		2017-05-31 12:03:05,795: 3: |source: 192.168.5.207 len: 200 port source: 24578  dest: 41359 seq: 58415 ts: 2993065399 flags: 0880
+		2017-05-31 12:03:05,814: 3: |source: 192.168.5.207 len: 200 port source: 24578  dest: 41359 seq: 58416 ts: 2993065559 flags: 0880
+		...
+		
+terminal: SEP64A0E714F271
+
+		
+	- srcPort=57599
+		...
+		2017-05-31 12:03:05,753: 3: |source: 192.168.5.206 len: 200 port source: 31266  dest: 57599 seq: 34651 ts: 2993065079 flags: 0880
+		2017-05-31 12:03:05,773: 3: |source: 192.168.5.206 len: 200 port source: 31266  dest: 57599 seq: 34652 ts: 2993065239 flags: 0880
+		2017-05-31 12:03:05,774: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip103185/1" srcIP="192.168.5.169" srcPort="57599"/>
+		2017-05-31 12:03:05,774: 1: |RTPout(192.168.5.169:57599)|dup=0|updating call sip103185/1
+		2017-05-31 12:03:05,794: 3: |source: 192.168.5.206 len: 200 port source: 31266  dest: 57599 seq: 34653 ts: 2993065399 flags: 0880|found Call_1 0,db:8 880 (9001,9000) [0]Resyncing RTP because new stream detected [call-id=8/sip103185/1, dir=1, ssrc=615472691]
+		2017-05-31 12:03:05,813: 3: |source: 192.168.5.206 len: 200 port source: 31266  dest: 57599 seq: 34654 ts: 2993065559 flags: 0880|found Call_1 0,db:8 880 (9001,9000) [19]
+		2017-05-31 12:03:05,833: 3: |source: 192.168.5.206 len: 200 port source: 31266  dest: 57599 seq: 34655 ts: 2993065719 flags: 0880|found Call_1 0,db:8 880 (9001,9000) [40]
+		2017-05-31 12:03:05,853: 3: |source: 192.168.5.206 len: 200 port source: 31266  dest: 57599 seq: 34656 ts: 2993065879 flags: 0880|found Call_1 0,db:8 880 (9001,9000) [59]
+		2017-05-31 12:03:05,873: 3: |source: 192.168.5.206 len: 200 port source: 31266  dest: 57599 seq: 34657 ts: 2993066039 flags: 0880|found Call_1 0,db:8 880 (9001,9000) [79]
+		...
+		
+	- dstPort=54243
+		
+		2017-05-31 12:03:05,764: 3: |source: 192.168.5.206 len: 200 port source: 31264  dest: 54243 seq: 24766 ts: 1081159631 flags: 0880
+		2017-05-31 12:03:05,784: 3: |source: 192.168.5.206 len: 200 port source: 31264  dest: 54243 seq: 24767 ts: 1081159791 flags: 0880
+		2017-05-31 12:03:05,793: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip103185/1" dstIP="192.168.5.169" dstPort="54243"/>
+		2017-05-31 12:03:05,793: 1: |RTPin(192.168.5.169:54243)|dup=0|updating call sip103185/1
+		2017-05-31 12:03:05,804: 3: |source: 192.168.5.206 len: 200 port source: 31264  dest: 54243 seq: 24768 ts: 1081159951 flags: 0880|found Call_0 0,db:8 880 (9001,9000) [10]Resyncing RTP because new stream detected [call-id=8/sip103185/1, dir=0, ssrc=615472680]
+		2017-05-31 12:03:05,824: 3: |source: 192.168.5.206 len: 200 port source: 31264  dest: 54243 seq: 24769 ts: 1081160111 flags: 0880|found Call_0 0,db:8 880 (9001,9000) [30]
+		2017-05-31 12:03:05,845: 3: |source: 192.168.5.206 len: 200 port source: 31264  dest: 54243 seq: 24770 ts: 1081160271 flags: 0880|found Call_0 0,db:8 880 (9001,9000) [50]

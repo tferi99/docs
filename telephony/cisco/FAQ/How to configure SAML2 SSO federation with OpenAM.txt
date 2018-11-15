@@ -1,0 +1,350 @@
+==================================================
+How to configure SAML2 SSO federation with OpenAM?
+==================================================
+NOTE: SSO will be configured for a single node environment here.
+
+- Pre-requisies
+- Configuration
+- Troubleshooting
+- Example SAML2 traffic with successful SSO test
+
+--------------------------------------------------------------------------------------------------------
+Pre-requisies
+=============
+- Installed OpenAM 13
+- Installed CUCM 10.5 or above
+- Installed Presence server and associated with CUCM
+- ActiveDirectory with user entries can be used in CUCM as endusers
+- All server components can be resolved by DNS and can be accessed by servers and browsers
+
+--------------------------------------------------------------------------------------------------------
+Configuration
+=============
+CUCM:
+	- Call 
+
+		CUCM/System/SAML Single Sign-on 
+
+	- Choose 'Per node' mode
+
+	- Export All Metadata 	
+
+
+OpenAM:
+
+	- Create hosted IDP
+		- In a realm Create SAMLv2 Providers/Create Hosted Identity Provider
+		
+			Signing Key: test
+			COT: myCot
+			
+	- Mapping:
+	
+		- Under a realm call 'Federation' choose IDP entities from Entity providers/[Assertion Processing]
+		- add mapping to Attribute Mapper
+	
+			uid=uid
+			
+		You can add other attributes, too. But at least 'uid' should be added here.
+		These attributes will be added to SAML assertion.
+		
+
+	- Import metadata into OpenAM
+
+		If CUCM associated with a presence import both metadata files.
+		
+		- In realm 'Federation' in [Entity Providers] (Import Entity...)
+			
+	- Export metadata 
+
+		http://HOST:PORT/openam/saml2/jsp/exportmetadata.jsp?entityid=http://HOST:PORT/openam&realm=REALM-PATH
+		
+		e.g:	http://idp2.example.com:8080/openam/saml2/jsp/exportmetadata.jsp?entityid=http://idp2.example.com:8080/openam&realm=/MSAD
+	
+
+	
+CUCM:	
+	- Enable SAML SSO
+
+	- Next
+	
+	- Import metadata into CUCM exported from IDP before
+		- Browse
+		- Import IdP metadata
+
+	- Next
+	
+	- Run SSO Test...
+
+!!!!!!!!!!!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!!!!!!!!!!!
+SAML  test opens a new browser window so displaying popups 
+should be enabled in browsers.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+--------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+For tracing SAML data exchange use 
+	- 'SAML tracer' plugin of Firexox
+	or
+	- 'SAML DevTools' extension of Chrome
+
+
+- During SSO test in CUCM you press 'Run SSO Test...' button at the last step but nothing happens.
+	- 'Launch SSO test page' message displayed	
+	- 'NN Seconds To TimeOut.' message displayed
+	- Finally you gets this messages:
+	
+		SSO Metadata Test Failed
+			Possible reasons for Test Failure:
+
+				The test timed out before you completed the IdP login
+				The user name does not have access priviledges to the IdP
+	
+	- In SAML tracer you can see this repeating request:
+	
+		https://192.168.150.20/ccmadmin/samlSingleSignOnUpdateTestStatus.do?reqAction=init&serverName=192.168.150.20 
+	
+	
+	Problem and solution:
+	
+		SAML test opens a new browser window so displaying popups should be enabled in browsers.
+
+
+- During SSO test in CUCM you press 'Run SSO Test...', login dialog rendered by IDP, you submit login dialog with 
+	good authentication data and you get this message in dialog:
+
+		Attributes are missing in the saml response. Please check the attribute configuration on the IDP.		
+		
+	Solution:	
+		You have to add attribute mapping to Assertion Processing of IDP. It will be map user attributes from IDP data store into assertion.
+		
+			REALM/Federation/[Entity Providers - choose IDP]/[Assertion Processing]/[Attribute Mapper]/Attribute Map
+			
+		At least add 'uid' attribute:
+		
+			uid=uid
+	
+		To get available attributes connet to internal LDAP server (Open DJ) and get attributes from entries of ou=people
+		e.g: mail, cn, sn, givenName
+		
+		
+	
+	NOTE:
+		Sometimes it cannot work if User Profile generation is dynamic (REALM/Authentication/Setting/[User Profile]/User profile).
+		In this case:
+			- first set it to 'Dynamic' to add user dynamically
+			- login with user(s) - it adds user entries to data store (Subjects)
+			- set User Profile setting to 'Required'
+			
+
+	If you chack SAML2 assertion you can see attributes:
+	
+		<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ....>
+			...
+			<saml:AttributeStatement>
+			  <saml:Attribute Name="uid">															<<<<<<<<<<<<<<	
+				<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+									 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+									 xsi:type="xs:string">test1</saml:AttributeValue>
+			  </saml:Attribute>
+			</saml:AttributeStatement>
+		  </saml:Assertion>
+		</samlp:Response>
+
+			
+- If you have any problem with SSO you can call Admin CLI of CUCM (admin/and33phone).
+	SSO-related CLI commands are:
+
+		utils sso enable
+		utils sso disable
+		utils sso status
+		utils sso recovery-url enable
+		utils sso recovery-url disable
+		show samltrace level
+		set samltrace level
+		
+	e.g:
+		utils sso status
+	
+			SSO Status: SAML SSO Enabled
+			IdP Metadata Imported Date = Thu Nov 16 15:01:39 CET 2017
+			SP Metadata Exported Date = Thu Nov 16 15:01:44 CET 2017
+			SSO Test Result Date = Thu Nov 16 15:29:33 CET 2017
+			SAML SSO Test Status = passed
+			Recovery URL Status = enabled
+			Entity ID = http://idp2.example.com:8080/openam
+
+
+- If SSO test page cannot find because host name of CUCM is truncated in URL:
+	
+	For example:
+		CUCM:	 cucm-10-lab.andtek.local
+		URL:	https://cucm-10-lab/ssosp/pages/TestSSO.jsp?ssopage=true
+
+	Solution:
+		- use IP address directly
+		OR
+		- add truncated name to hosts file (on client side where browser installed)
+		
+- If you have this message during SSO test or using CUCM SSO (e.g. from Jabber):
+
+	Certificate used for encryption by the IDP is no longer valid. Please verify the certificate used by the IDP. 
+	You must update the IDP metadata on the Cisco Unified Communications Manager after regenerating the IDP servers certificate.
+
+	Possible couse is an expired certificate on IDP.
+	Replace/re-new certificate.
+	
+	SEE MORE: OpenAM-FAQ.txt/How to re-new self signed certificate in OpenAM?
+		
+- If you cannot upload CUCM metadata into IDP: 		
+
+	The metadata file upload fails if the metadata is signed. In such cases, add the Cisco Unified Communications Manager TOMCAT certificate to openAMKeystore. 
+	
+	Follow the procedure below:
+		- Download the tomcat certificate (tomcat.pem) from the Cisco Unified Communications Manager OS Administration page 
+		- and the upload the certificate to a location in OpenAM server. For example, /temp/tomcat.pem
+		- Run the following command in OpenAM:
+
+			keytool -import -v -alias cucm -keystore /root/openam/openam/keystore.jks -trustcacerts -file location_of_cucm_tomcat_cert
+	
+- If you configured SSO successfully but 
+	- you cannot login into CUCM because you get 404 for login page
+	- AND SSO status is 'disabled' in CLI (utils sso status)
+	- AND you don't have recovery URL and you cannot activate it from CUCM Admin CLI
+	
+	In this case SSO configuration is inconsistent (I don't know how/why).
+	
+	then try this:
+	
+	----------------------------- method 1 --------------------------
+	- If you have an SSO user with admin role (this is required for SSO test in CUCM Admin GUI) then try to login into Self Care Portal
+	- If SSO working then IDP login page will be rendered here and you will be able to login with SSO user as admin (test1)
+	- ...and then open CUCM Admin GIU in another tab of the same browser
+	- Here try to fix SSO problems (disable/re-initialize)
+	-----------------------------------------------------------------
+		
+	----------------------------- method 2 --------------------------
+	- if you cannot login into SelfCare Portal or other app
+		- wait OR retart CUCM (utils system restart)
+		
+		
+--------------------------------------------------------------------------------------------------------
+Example SAML2 traffic with successful SSO test
+==============================================
+SAML2 auth request
+------------------		
+AuthnRequest:
+
+	<samlp:AuthnRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+						ID="s29bd74c126849c343a7c8a19c6d5333328006c517"
+						Version="2.0"
+						IssueInstant="2017-11-16T14:12:10Z"
+						Destination="http://idp2.example.com:8080/openam/SSORedirect/metaAlias/MSAD/idp"
+						ForceAuthn="false"
+						IsPassive="false"
+						AssertionConsumerServiceIndex="0">
+	  <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">cucm-10-lab.andtek.local</saml:Issuer>
+	  <samlp:NameIDPolicy xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+						  Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+						  SPNameQualifier="cucm-10-lab.andtek.local"
+						  AllowCreate="true"></samlp:NameIDPolicy>
+	</samlp:AuthnRequest>
+
+	
+	
+Response:
+
+	<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+					ID="s2d3a98d86b7cea14fb37acb311c8d7f3494b5f32f"
+					InResponseTo="s2d7b52af7d4db584774a1e2e1f5dd2babf3895ea6"
+					Version="2.0"
+					IssueInstant="2017-11-17T08:31:06Z"
+					Destination="https://cucm-10-lab.andtek.local:8443/ssosp/saml/SSO/alias/cucm-10-lab.andtek.local">
+	  <saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">http://idp2.example.com:8080/openam</saml:Issuer>
+	  <samlp:Status xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+		<samlp:StatusCode xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+						  Value="urn:oasis:names:tc:SAML:2.0:status:Success">
+		</samlp:StatusCode>
+	  </samlp:Status>
+	  <saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+					  ID="s20517a7a54840d3bec63f60f774004f643a45ef0a"
+					  IssueInstant="2017-11-17T08:31:06Z"
+					  Version="2.0">
+		<saml:Issuer>http://idp2.example.com:8080/openam</saml:Issuer>
+		<ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+		  <ds:SignedInfo>
+			<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+			<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+			<ds:Reference URI="#s20517a7a54840d3bec63f60f774004f643a45ef0a">
+			  <ds:Transforms>
+				<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+				<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+			  </ds:Transforms>
+			  <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+			  <ds:DigestValue>/n5GtyUJho8//HpMsQbUmTN4s4U=</ds:DigestValue>
+			</ds:Reference>
+		  </ds:SignedInfo>
+		  <ds:SignatureValue>
+			Hs4VXxMC2Z/EkK4u8295QXd1DICP5F4TD4C4+wdobbAAFw6s5k7fCKFwoK5pPur6B1ZYMwY9Tk6/ SiWAFABVVrHXK9qyiy061qg1X48p3E0AQwQ+HcaM5u9KRZDIVbswVWv0K2TRVQQDCMF/mxTxEZkQ 3NCgJVL0h9XhyXgI/zo=
+		  </ds:SignatureValue>
+		  <ds:KeyInfo>
+			<ds:X509Data>
+			  <ds:X509Certificate>
+				MIICQDCCAakCBEeNB0swDQYJKoZIhvcNAQEEBQAwZzELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNh bGlmb3JuaWExFDASBgNVBAcTC1NhbnRhIENsYXJhMQwwCgYDVQQKEwNTdW4xEDAOBgNVBAsTB09w ZW5TU08xDTALBgNVBAMTBHRlc3QwHhcNMDgwMTE1MTkxOTM5WhcNMTgwMTEyMTkxOTM5WjBnMQsw CQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEUMBIGA1UEBxMLU2FudGEgQ2xhcmExDDAK
+				BgNVBAoTA1N1bjEQMA4GA1UECxMHT3BlblNTTzENMAsGA1UEAxMEdGVzdDCBnzANBgkqhkiG9w0B AQEFAAOBjQAwgYkCgYEArSQc/U75GB2AtKhbGS5piiLkmJzqEsp64rDxbMJ+xDrye0EN/q1U5Of+ RkDsaN/igkAvV1cuXEgTL6RlafFPcUX7QxDhZBhsYF9pbwtMzi4A4su9hnxIhURebGEmxKW9qJNY Js0Vo5+IgjxuEWnjnnVgHTs1+mq5QYTA7E6ZyL8CAwEAATANBgkqhkiG9w0BAQQFAAOBgQB3Pw/U
+				QzPKTPTYi9upbFXlrAKMwtFf2OW4yvGWWvlcwcNSZJmTJ8ARvVYOMEVNbsT4OFcfu2/PeYoAdiDA cGy/F2Zuj8XJJpuQRSE6PtQqBuDEHjjmOQJ0rV/r8mO1ZCtHRhpZ5zYRjhRC9eCbjx9VrFax0JDC /FfwWigmrW0Y0Q==
+			  </ds:X509Certificate>
+			</ds:X509Data>
+		  </ds:KeyInfo>
+		</ds:Signature>
+		<saml:Subject>
+		  <saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"
+					   NameQualifier="http://idp2.example.com:8080/openam"
+					   SPNameQualifier="cucm-10-lab.andtek.local">TBd6ZOgwlEdGwvO/Pha/xvUIVZAc</saml:NameID>
+		  <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+			<saml:SubjectConfirmationData InResponseTo="s2d7b52af7d4db584774a1e2e1f5dd2babf3895ea6"
+										  NotOnOrAfter="2017-11-17T08:41:06Z"
+										  Recipient="https://cucm-10-lab.andtek.local:8443/ssosp/saml/SSO/alias/cucm-10-lab.andtek.local" /></saml:SubjectConfirmation>
+		</saml:Subject>
+		<saml:Conditions NotBefore="2017-11-17T08:21:06Z"
+						 NotOnOrAfter="2017-11-17T08:41:06Z">
+		  <saml:AudienceRestriction>
+			<saml:Audience>cucm-10-lab.andtek.local</saml:Audience>
+		  </saml:AudienceRestriction>
+		</saml:Conditions>
+		<saml:AuthnStatement AuthnInstant="2017-11-17T08:31:06Z"
+							 SessionIndex="s22cd5c909bb08ff8cc9a58c9115c336ebb033c201">
+		  <saml:AuthnContext>
+			<saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef>
+		  </saml:AuthnContext>
+		</saml:AuthnStatement>
+		<saml:AttributeStatement>
+		  <saml:Attribute Name="uid">
+			<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+								 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+								 xsi:type="xs:string">test1</saml:AttributeValue>
+		  </saml:Attribute>
+		  <saml:Attribute Name="mail">
+			<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+								 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+								 xsi:type="xs:string">johntest@ssotest.net</saml:AttributeValue>
+		  </saml:Attribute>
+		  <saml:Attribute Name="sn">
+			<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+								 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+								 xsi:type="xs:string">Test</saml:AttributeValue>
+		  </saml:Attribute>
+		  <saml:Attribute Name="givenName">
+			<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+								 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+								 xsi:type="xs:string">John</saml:AttributeValue>
+		  </saml:Attribute>
+		  <saml:Attribute Name="cn">
+			<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+								 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+								 xsi:type="xs:string">John Test</saml:AttributeValue>
+		  </saml:Attribute>
+		</saml:AttributeStatement>
+	  </saml:Assertion>
+	</samlp:Response>

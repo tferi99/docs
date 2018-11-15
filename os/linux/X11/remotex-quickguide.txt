@@ -1,0 +1,123 @@
+====================
+Remote X qiuck guide
+====================
+
+1. Scene
+2. Display
+3. Authenticating connections 
+3.1 xhost
+3.2 Xauth
+
+
+
+1. Scene
+--------
+You're using two computers. You're using the X window system of the first to type to and look at. 
+You're using the second to do some important graphical work. You want the second to show its output 
+on the display of the first. The X window system makes this possible.
+So:
+	Computer1	- X Server
+	Computer2	- X Client
+
+	
+2. Display
+----------	
+The magic word is DISPLAY. 
+In the X window system, a display consists (simplified) of a keyboard, a mouse and a screen. 
+A display is managed by a server program, known as an X server. The server serves displaying 
+capabilities to other programs that connect to it.
+
+You have to specify display for X client application with '-display' parameter, or DISPLAY
+environment variable:
+
+	DISPLAY=<xserver host>:<display number>[.<screen number>]
+	-display <xserver host>:<display number>[.<screen number>]
+For example:
+
+	DISPLAY=light.uni.verse:0 
+	DISPLAY=localhost:4 
+	DISPLAY=:0
+
+	xclock -display light.uni.verse:0 
+	
+If you ever come across a display indication with an extra .n attached to it, that's the screen number. 
+A display can actually have multiple screens. Usually there's only one screen though, with number n=0, 
+so that's the default. 
+
+For the technically curious: 
+- hostname:D.S means 
+	screen S on display D of host hostname; the X server for this display is listening at TCP port 6000+D. 
+
+- host/unix:D.S 
+	means screen S on display D of host host; the X server for this display is listening at UNIX domain 
+	socket /tmp/.X11-unix/XD (so it's only reachable from host). 
+	
+- :D.S
+	is equivalent to host/unix:D.S, where host is the local hostname.
+	
+
+3. Authenticating connections 
+-----------------------------
+The server will not accept connections from just anywhere. You don't want everyone to be able to display 
+windows on your screen.
+
+Most servers know two ways of authenticating connections to it: 
+- the host list mechanism (xhost) 
+- and the magic cookie mechanism (xauth). 
+
+Then there is ssh, the secure shell, that can forward X connections.
+
+Notice that some X servers (from XFree86) can be configured not to listen on the usual TCP port with 
+the -nolisten tcp argument.
+ 
+3.1 xhost
+---------
+Xhost allows access based on hostnames. The server maintains a list of hosts which are allowed to 
+connect to it. It can also disable host checking entirely.
+
+You can control the server's host list with the xhost program. 
+
+	xhost <+/-> [host]
+
+	xhost +		: To disable host checking - you an connect from everywhere.
+	xhost -		: You wouldn't be able to connect from anywhere, not even your local host.
+	
+Warning:
+XHOST IS A VERY INSECURE MECHANISM. It does not distinguish between different users on the remote host. 
+Also, hostnames (addresses actually) can be spoofed. This is bad if you're on an untrusted network 
+(for instance already with dialup PPP access to Internet).	
+
+3.2 Xauth
+---------
+Xauth allows access to anyone who knows the right secret. 
+Such a secret is called an authorization record, or a magic cookie. 
+
+- The cookies for different displays are stored together in ~/.Xauthority. 
+- Your ~/.Xauthority must be inaccessible for group/other users. 
+- The xauth program manages these cookies, hence the nickname xauth for the scheme.
+- You can specify a different cookie file with the XAUTHORITY environment variable, 
+  but you will rarely need this. 
+- If you're not sure which cookie file your xauth is using, do an 
+
+	xauth -v
+  
+  , and it will tell you.
+
+3.3 SSH
+-------
+Authority records are transmitted over the network with no encryption. If you're even worried someone 
+might snoop on your connections, use ssh, the secure shell. 
+It can do X forwarding over encrypted connections. 
+
+To turn on X forwarding over ssh, use the command line switch -X or write the following in your 
+local ssh configuration file: 
+
+	Host remote.host.name
+		ForwardX11 yes
+	
+- The ssh server (sshd) at the remote end automatically sets DISPLAY to point to its end of the 
+  X forwarding tunnel. 
+- The remote tunnel end gets its own cookie; the remote ssh server generates it for you and puts it 
+  in ~/.Xauthority there. So, X authorisation with ssh is fully automatic.	
+  
+  

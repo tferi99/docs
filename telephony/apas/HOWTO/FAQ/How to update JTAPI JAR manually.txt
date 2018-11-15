@@ -1,0 +1,29 @@
+=================================
+How to update JTAPI JAR manually?
+=================================
+
+From APAS CLI:
+	- Call APAS Admin CLI
+
+		su admin
+		
+	- Call menu 5
+
+			5) Callmanager settings
+
+	- Choose CUCM version
+
+	- Call menu 9
+
+		9) Update jtapi.jar - fetch it from CallManager
+		
+	- Specify IP of CUCM
+
+
+	JTAPI JAR will be downloaded and stored into application and APAS will be restarted.
+
+	
+	
+From browser:
+
+	http://<ipadress-of-cucm>/plugins/jtapi.jar

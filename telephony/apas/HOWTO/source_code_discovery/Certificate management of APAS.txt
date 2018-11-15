@@ -1,0 +1,218 @@
+==============================
+Certificate management of APAS
+==============================
+
+- Keystores
+- List of certificates
+- Creating APAS certificate
+- Import trusted certificate
+
+------------------------------------------------------------------------------------------------------------------------------
+Keystores
+=========
+
+/var/lib/tomcat/.keystore
+	Keystore type: 	PKCS12
+	Password:		changeit
+	Aliases: 		tomcat (PrivateKeyEntry)
+
+	Old keysore file of APAS !!! DEPRECATED !!!
+
+	
+/var/lib/tomcat/.keystore.jks							: Keystore of APAS Tomcat and stores trust certificate for SAML SSO
+	Keystore type: 	JKS
+	Password:		changeit
+	Aliases: 		andphone (PrivateKeyEntry)
+	
+	
+	
+	
+/var/lib/tomcat/.trust_keystore.jks						: Keystore of imported server certificates
+	Keystore type: 	JKS
+	Password:		changeit
+	Aliases: 		cucm70, cucm85
+		
+	
+	
+	
+/var/lib/andphone/certificate.store						: used by recorder
+	Keystore type: 	JKS
+	Password:		ha
+	Aliases: 		andpk (PrivateKeyEntry)
+	
+	
+------------------------------------------------------------------------------------------------------------------------------
+List of certificates
+====================
+You can get list of certificates in:
+
+	APAS/General/Security/[Certificatge List]
+	
+	
+--> security_gwtappMain
+	...
+	--> RemoteGetCertificateList(ServerActionResult serverAction)
+		--> RPCServletServiceImpl.RemoteGetCertificateList(...)
+			--> ApasCertificateHelper.loadKeyStoreAliases(...)						<-- /var/lib/tomcat/.trust_keystore.jks
+			--> ApasCertificateHelper.loadKeyStoreAliases()							<--	/var/lib/tomcat/.keystore.jks
+			--> com.andtek.andphone.security.AndPhoneCA.loadKeyStoreAliases()		<-- /var/lib/andphone/certificate.store
+		--> buildCertificateManagerPanel(...)
+	
+------------------------------------------------------------------------------------------------------------------------------
+Creating APAS certificate	
+=========================
+Some important info:
+
+	Old versions of APAS shipped with an EXPIRED and self-signed certificate. First generate a new 
+	certificate and sign it with CA (it can be your test CA in OpenAM - see more: APAS_SRC/development/sso-idp-helper-scripts).
+	Use FQDN in APAS/Global/Configuration/[AndPhone Server]/(Name/IP) otherwise APAS will create certificate with CN field containing IP address 
+	and not FQDN which will cause problems during HTTPS access.
+
+APAS/Global/Security/[Certificate List]/(Create APAS Certificate)
+
+	It really re-creates the key-pair used by TLS connections with other servers (e.g. with CUCM via SIP trunk).
+
+Call flows:
+	
+	UI rendering
+	------------
+	SEE: Import trusted certificate (below)
+
+	Event handling
+	--------------
+	- Button [Create APAS Certificate] 
+		--> record = CERTIFICATE_LIST_BEAN.getSelfSignedCertificateData();
+		--> openSignRequestPanel(record, "add");
+			--> CSR_REQUEST_WINDOW.buildFormPanel(record, func)
+				It renders 'Create' button
+				
+	- Button [Create]
+		--> GwtCertSignRequestWindow.onFormPanelSubmitEvent(formPanel, false);
+			--> RemoteGenerateApasSelfSignedCertificate(DATA_RECORD, func, closeWindow);
+				--> main.RPCServletService.RemoteGenerateApasSelfSignedCertificate(..., SaveFormProgressTimerAsyncCallback)
+					-- RPC --> RPCglobalServiceImpl.RemoteGenerateApasSelfSignedCertificate(...)
+						--> ApasCertificateHelper.generateV3Certificate(DN, validYear)
+							- it keypair generated in constructor --> generateRSAKeyPair(keySize)
+							--> generateV3Certificate(String DN, KeyPair pair, long year)								<<<<<<<<<<<< generating certificate from pre-generated key-pair
+								- 
+						-->	com.andtek.andphone.global.Module.importAPASCertificate(cert, alias, CertHelper.getKeyPair());
+							
+						-- CALLBACK --> onSuccess
+							--> buildCSRDownloadPanel(...)
+------------------------------------------------------------------------------------------------------------------------------
+Import trusted certificate
+==========================
+1. Getting certificate from CUCM
+
+Download a certificate 
+
+2. APAS/Global/Security/[Certificate List]/(Import Trusted Certificate) --> [Import Trusted Certificate]/(Import)
+
+Call flows:
+
+	UI rendering
+	------------
+	security_gwtappMain.onModuleLoad()
+		--> initMainPanel()
+			--> RemoteGetSSLCertificateKey()
+				--> RPCServletService.RemoteGetSSLCertificateKey(AndGWTAsyncCallback)
+					-- RPC --> RPCglobalServiceImpl.RemoteGetSSLCertificateKey()
+					  to read revocation list from /var/lib/andphone/andphone.crl (if exists)
+						-- CALLBACK --> onSuccess
+							--> security_gwtappMain.buildSSLCertificateKeyForm()
+							--> RemoteGetCertificateList(...)
+								-- RPC --> RPCglobalServiceImpl.RemoteGetCertificateList()
+									- to load certificates
+										- it sets CERT upload URL (/andphone/Admin?module=global&page=security&func=gwtcertimport)
+										- it loads certificate list (/andphone/Admin?module=global&page=security&func=gwtapascertimport)
+										- it loads aliases from trusted keystore file (/var/lib/tomcat5/.trust_keystore.jks)
+										- it loads aliases from normal keystore file (/var/lib/tomcat5/.keystore.jks)
+									
+									-- CALLBACK --> onSuccess
+										--> buildCertificateManagerPanel(...)
+											- it renders certificate management buttons
+											- it renders certificate list
+						
+						
+						
+	Event handling
+	--------------
+	security_gwtappMain.java
+	- Button 'Import Trusted Certificate'
+		--> buildDynamicCertificateImportFormPanel()
+		  - to render certificate import dialog
+			--> CERTIFICATE_IMPORT_WINDOW.buildFormPanel(record, func);
+				it renders 'Import' button
+	
+	- Button 'Import'
+		--> GwtCertificateImportWindow.formPanel.getForm().submit(main.CERTIFICATE_LIST_BEAN.getCertUploadURL(), ...)
+			--> URL(/andphone/Admin?module=global&page=security&func=gwtcertimport)
+				--> com.andtek.andphone.Admin.doGet()
+					--> com.andtek.andphone.utils.Admin.getModuleAdminPage(connection);
+						-->	getModuleAdmin(module, connection);
+						  to get module Admin class (com.andtek.andphone.global)
+						  
+						--> com.andtek.andphone.global.Admin.security_gwtcertimport(ConnectionBean connection)			<<<<< by reflection
+							--> com.andtek.andphone.global.Module.importTrustedCertificate(import_certfile, alias);
+							
+							
+------------------------------------------------------------------------------------------------------------------------------
+Testing certification
+=====================
+- APAS/Global/Servers
+- Choose a server from a list which 'Transport' is 'tls'.
+- Press 'Test Connection' button
+	
+
+Call flows:
+	
+	UI rendering
+	------------
+	servers_gwtappMain.onModuleLoad()
+		--> RemoteGetServersPageInitBean()
+			--> RPCServletService.RemoteGetServersPageInitBean(new AndGWTAsyncCallback()
+				-- RPC --> RPCglobalServiceImpl.RemoteGetServersPageInitBean()
+					- to get server names 
+					-- CALLBACK --> onSuccess
+		--> RemoteGetServersList()
+			-- RPC --> RPCglobalServiceImpl.RemoteGetServersList()
+				- to get server groups and servers from database (servergroup - servergroup_members - servers)
+				-- CALLBACK --> onSuccess
+					--> servers_gwtappMain.buildDynamicListGrid(datarows, getServerActionResult());
+						- rendering server-group table
+						- listners on edit icon click and dblclick on row ===> calls server dialog
+						
+						--> AndGWTCommonFunctions.createEditIconColumnConfig(MODULE_BASE_URL),
+							--> AndGWTCommonFunctions.createEditIconColumnConfig(MODULE_BASE_URL, "script_edit.gif", "edit");
+								- it renders edit icon 
+								
+								
+	Event handling
+	--------------
+	- edit icon or DblClick in row
+		--> servers_gwtappMain.RemoteGetServerByID(Integer.parseInt(key));
+			--> RPCServletService.RemoteGetServerByID(...)
+				-- RPC --> RPCglobalServiceImpl.RemoteGetServerByID()
+					-- CALLBACK --> onSuccess
+						--> servers_gwtappMain.buildDynamicFormPanel(recordIF, "add");
+							--> ServerGenericWindow.createWindow(record.getServerType(), this)
+							--> ServerGenericWindow.buildFormPanel(record, func);
+								- it renders 'Test Connection' button
+								
+	- Button 'Test Connection'
+		--> ServerGenericWindow.RemoteTestServerConnection(server, button)
+			--> RPCServletService.RemoteTestServerConnection(...)
+				-- RPC --> RPCglobalServiceImpl.RemoteTestServerConnection(...)					<<<<<<<<<<<<<<<<<<<<<<<< testing server
+					--> RPCglobalServiceImpl.TestSIPConnection(server)
+						--> sendKeepAliveBlocking(SIPServer.KEEPALIVE_TIMEOUT)
+							--> SIPServer.sendKeepAliveBlocking(long timeout) 
+								SEE MORE: APAS server connections
+					OR
+					--> return TestFTPConnection(server)
+					OR
+					...
+				-- CALLBACK --> onSuccess
+					- show message
+	
+	
+	

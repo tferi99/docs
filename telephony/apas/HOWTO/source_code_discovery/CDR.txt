@@ -1,0 +1,16 @@
+===
+CDR
+===
+
+--------------------------------------------------------------------------------------------------------------
+Fetch now button
+================
+cdrfetch_gwtappMain			GWT frontend
+	--> RemoteFetchCDRFiles(...)
+		--> RPCglobalServiceImpl.RemoteFetchCDRFiles(...)
+			--> SQL
+				UPDATE cdr_settings SET last_cdr_request=? WHERE cdrid=1
+				--> Module mod.fetchNow();
+					--> cdr_thread.fetchNow()
+					
+					

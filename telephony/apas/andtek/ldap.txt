@@ -1,0 +1,7 @@
+
+Host:	192.168.150.80
+Users:	ftoth/And33phone
+		zoltan/And33phone
+		istvan/And33phone
+		
+		

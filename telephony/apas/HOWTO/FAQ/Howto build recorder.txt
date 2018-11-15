@@ -1,0 +1,55 @@
+=====================
+Howto build recorder?
+=====================
+
+1. Checkout SVN (http://devel.andtek.com/svn/andphone_record/trunk/src/andphone_record) to your developer environment.
+
+2. SSH to server Jenkins SLAVE server (192.168.150.14) and mount your source directory:
+
+	To mount your local recorder source:
+		- add REMOTE tunneling:		R 50445:localhost:445
+		- add mount entry to /etc/fstab:
+		
+			//127.0.0.1/andphone_record_remote /mnt/ftoth/dev/andphone_record cifs user,uid=500,rw,suid,port=50445,username=ftoth,noauto 0 0
+			
+			where 500 is your UID
+
+		- OR open INCOMING ports 139 and 445 
+		
+			mount -t cifs -o ftoth //192.168.5.113/andphone_record andphone_record_remote
+			
+			
+		- create mount directory if missing 
+		- mount /mnt/ftoth/andphone_record
+		
+		NOTE:
+			Pre-requisty here installed samba client package (samba-client).
+		
+2. Build project
+
+	- go to project directory (/mnt/ftoth/andphone_record)
+
+	- ant
+
+		It calls 'cmake'
+		
+			cmake
+				-> CMakeLists.txt
+					-> find_package()
+						It find packages. CMake searches for a file called "Find<package>.cmake" in the CMAKE_MODULE_PATH followed by the CMake installation. 
+						If the file is found, it is read and processed by CMake. 
+						It is responsible for finding the package, checking the version, and producing any needed messages. 
+						
+						(Here CMAKE_MODULE_PATH:	 ${CMAKE_SOURCE_DIR}/cmake)
+
+						
+			
+3. Artifact generated into 'build' directory.
+
+			
+
+NOTE:
+	If you move project into another directory delete PROJECT_DIR/build and call ant again. 
+	It will re-generate makefiles (cmake).
+	
+	

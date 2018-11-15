@@ -1,0 +1,63 @@
+===========
+Swagger FAQ
+===========
+
+- Main steps of creating REST documentation with Swagger
+- How to test Swagger documentation?
+- How to specify default URL of Swagger UI?
+- How do I ignore APIs with swagger-springmvc?
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Main steps of creating REST documentation with Swagger
+======================================================
+
+1. Integrate Swagger into application
+
+2. Integrate Swagger UI into application
+	- download it
+	- put uncompress package into your WEB application
+
+3. Annotate REST endpoint class with @Api
+
+4. 
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to test Swagger documentation?
+==================================
+Browse it:
+
+	<base URL of REST endpoint>/api-docs/
+	
+	
+and you will get API documentation in JSON.
+Yuo can render this documentation with Swagger UI.
+
+	
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to specify default URL of Swagger UI?
+=========================================
+Change 'url' variable in index.html.
+
+NOTE: 
+You can rename index.html to index.jsp and create URL dynamically. E.g.:
+
+	url = '<%=request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/rest/api-docs"%>';
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------------------
+How do I ignore APIs with swagger-springmvc?
+============================================
+- Annotation:
+	The @ApiIgnore and @ApiInclude are the simplest way to control what apis are included or ignored. By default everything is marked as included unless it is excluded. 
+	It provides fine grained control over whats included or excluded.
+	
+- customizeExcluded:	
+	The next extensibility point is the customizeExcluded resources. This is used mostly if you dont want to clutter the controllers with annotations from third party libraries. 
+	Here you can add all the endpoint urls... for e.g. if you have an endpoint http://hostname/web-application/pet. You can add to the list "/pet" and automatically the 
+	urls will be ignored. Every RequestMapping is automatically included unless it is in this list.
+	
+- DocumentationTransformer:
+	Finally if the above extensibility points dont make sense you could simply take what is generated and transform the results. Create a bean that implements a 
+	DocumentationTransformer and override the applyTransformation. This will give you ultimate control over what you want to render.
+	Least desirable is to implement your own Filter<Documentation> like you possibly did and remove the endpoints you dont care about.
+

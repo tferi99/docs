@@ -1,0 +1,33 @@
+================================================================
+How to trace PassThroughRequest messages sent by APAS to phones?
+================================================================
+
+- PassThroughRequest are generated into CiscoJTapi.log.
+
+
+	903786: Sep 14 13:00:40.504 CEST %JTAPI-PROTOCOL-7-UNK:(P1-192.168.150.20) [APAS-SendAsynch-SEP001B5494B787] sending: com.cisco.cti.protocol.DeviceDataPassThroughRequest {
+	  sequenceNumber  = 102128
+	  callManagerID   = 1
+	  deviceID        = 15800
+	  deviceDataObj   = 146@[3C,3F,78,6D,6C,20,76,65,72,73,69,6F,6E,3D,22,31,2E,30,22,20,65,6E,63,6F,64,69,6E,67,3D,22,49,53,4F,2D,38,38,35,39,2D,31,22,3F,3E,0D,0A,3C,43,69,73,63,6F,49,50,50,68,6F,6E,65,45,78,65,63,75,74,65,3E,3C,45,78,65,63,75,74,65,49,74,65,6D,20,50,72,69,6F,72,69,74,79,3D,22,32,22,20,55,52,4C,3D,22,50,6C,61,79,3A,73,6F,75,6E,64,6F,66,73,69,6C,65,6E,63,65,2E,72,61,77,22,20,2F,3E,3C,2F,43,69,73,63,6F,49,50,50,68,6F,6E,65,45,78,65,63,75,74,65,3E]
+	  mediaResourceId = 0
+	  featureDataObj  = null
+	  }
+
+
+	  
+- deviceDataObj contains request data in HEX format
+
+
+- put walues between [...] in to a hex-ascii converter, e.g:
+
+	http://www.rapidtables.com/convert/number/hex-to-ascii.htm
+
+
+	...and voila:
+	
+	<?xml version="1.0" encoding="ISO-8859-1"?>
+	<CiscoIPPhoneExecute><ExecuteItem Priority="2" URL="Play:soundofsilence.raw" /></CiscoIPPhoneExecute>
+
+	  
+

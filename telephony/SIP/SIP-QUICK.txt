@@ -1,0 +1,298 @@
+=========
+=========
+SIP QUICK
+=========
+
+- Abbreviations
+- Mi a SIP - Session Initiation Protocol?
+- SIP protocols
+- SIP válaszok
+- SIP protocols
+- Transaction
+
+--------------------------------------------------------------------------------------------------------------------------
+Abbreviations
+=============
+CTI - Computer telephony integration
+
+SIP - Session Initiation Protocol
+
+PSTN - public switched telephone network
+	Is the world's collection of interconnected voice-oriented public telephone networks, both commercial and government-owned. It's also referred to as the Plain Old Telephone Service (POTS). 
+	It's the aggregation of circuit-switching telephone networks that has evolved from the days of Alexander Graham Bell. 
+	Today, it is almost entirely digital in technology except for the final link from the central (local) telephone office to the user. 
+	
+POTS - Plain Old Telephone Service
+
+DTMF - Dual-tone multi-frequency (DTMF) signaling is used for telephone signaling over the line in the voice-frequency band to the call switching center. 
+
+SDP - Session Description Protocol (SDP)
+	The SDP protocol is described in the RFC4566. It is used to negotiate session
+	parameters between the user agents. Media details, transport addresses, and other
+	media-related information are exchanged between the user agents using the SDP protocol.
+
+--------------------------------------------------------------------------------------------------------------------------
+Mi a SIP - Session Initiation Protocol?
+=======================================
+
+A SIP a Session Initiation Protocol (Híváskezdeményezo protokoll) rövidítése és egy IP telefonjel-átviteli protokoll, amelyet VOIP telefonhívások létrehozására, 
+módosítására és bontására használnak. A SIP protokollt az IETF fejlesztette ki és RFC 3261 név alatt tette közzé.
+
+A SIP a telefonhívás létrehozásához szükséges kommunikációt írja le. A további részleteket az SDP protokoll írja le.
+
+A SIP szélviharként hatott a VOIP világra. A protokoll hasonlít a HTTP protokollhoz, szövegalapú és rendkívül nyitott és rugalmas. 
+Ezért majdnem teljesen helyettesítette a H323 szabványt.
+	
+
+--------------------------------------------------------------------------------------------------------------------------
+SIP protocols
+=============
+SIP is an application layer ptotocol.
+
+- SIP
+	SIP is primarily used in setting up and tearing down voice or video calls.	
+	
+- RTP
+	The voice and video stream communications in SIP applications are carried over another application protocol, the Real-time Transport Protocol. 
+	
+- SDP	
+	Parameters (port numbers, protocols, codecs) for these media streams are defined and negotiated using the
+	Session Description Protocol (SDP) which is transported in the SIP packet body.
+
+	SDP contains
+		- Type of media (video, audio)
+		- Transport (RTP, H.320, ...)
+		- Format (H.261, MPEG, ...)
+		- Remote IP address
+		- Remote Port
+		
+- TLS
+	If secure transmission is required, the scheme sips: is used and mandates that each hop over which the request is
+	forwarded up to the target domain must be secured with Transport Layer Security (TLS).
+	
+	IP ---------------
+	|  UDP -----------
+	|  |  SIP --------
+	|  |  |  | SDP ---
+	|  |  |  | |
+	|  |  |  | |------
+	|  |  |  |--------
+	|  |  |-----------
+	|  |--------------
+	|-----------------
+	
+SIP contains:
+	o Command/Response
+	o ID for transaction
+	o Source
+	o Destination
+	o Route details
+	o Data (i.e. SDP packet)	
+	
+SDP contains
+	o Type of media (video, audio)
+	o Transport (RTP, H.320, ...)
+	o Format (H.261, MPEG, ...)
+	o Remote IP address
+	o Remote Port	
+	
+	
+	
+--------------------------------------------------------------------------------------------------------------------------
+SIP participants
+================
+
+UA - A SIP user agent (UA) 
+	is a logical network end-point used to create or receive SIP messages and thereby manage a SIP session.
+
+UAC - User Agent Client (UAC), which sends SIP requests
+
+UAS - User Agent Server (UAS), which receives the requests and returns a SIP response
+
+	Note:
+		These roles of UAC and UAS only last for the duration of a SIP transaction.
+
+Proxy server
+	An intermediary entity that acts as both a server (UAS) and a client (UAC) for the purpose of making requests on
+	behalf of other clients. A proxy server primarily plays the role of routing, which means its job is to ensure that a
+	request is sent to another entity "closer" to the targeted user.	
+
+	
+	
+User Agent Client (UAC): A user agent client is a logical entity
+         that creates a new request, and then uses the client
+         transaction state machinery to send it.  The role of UAC lasts
+         only for the duration of that transaction.  In other words, if
+         a piece of software initiates a request, it acts as a UAC for
+         the duration of that transaction.  If it receives a request
+         later, it assumes the role of a user agent server for the
+         processing of that transaction.
+
+User Agent Server (UAS): A user agent server is a logical entity
+         that generates a response to a SIP request.  The response
+         accepts, rejects, or redirects the request.  This role lasts
+         only for the duration of that transaction.  In other words, if
+         a piece of software responds to a request, it acts as a UAS for
+         the duration of that transaction.  If it generates a request
+         later, it assumes the role of a user agent client for the
+         processing of that transaction.
+
+Proxy, Proxy Server: An intermediary entity that acts as both a
+         server and a client for the purpose of making requests on
+         behalf of other clients.  A proxy server primarily plays the
+         role of routing, which means its job is to ensure that a
+         request is sent to another entity "closer" to the targeted
+         user.  Proxies are also useful for enforcing policy (for
+         example, making sure a user is allowed to make a call).  A
+         proxy interprets, and, if necessary, rewrites specific parts of
+         a request message before forwarding it.
+
+Registrar: A registrar is a server that accepts REGISTER requests
+         and places the information it receives in those requests into
+         the location service for the domain it handles.
+
+Location Service: A location service is used by a SIP redirect or
+         proxy server to obtain information about a callee's possible
+         location(s).  It contains a list of bindings of address-of-
+         record keys to zero or more contact addresses.  The bindings
+         can be created and removed in many ways; this specification
+         defines a REGISTER method that updates the bindings.
+
+Back-to-Back User Agent: A back-to-back user agent (B2BUA) is a
+         logical entity that receives a request and processes it as a
+         user agent server (UAS).  In order to determine how the request
+         should be answered, it acts as a user agent client (UAC) and
+         generates requests.  Unlike a proxy server, it maintains dialog
+         state and must participate in all requests sent on the dialogs
+         it has established.  Since it is a concatenation of a UAC and
+         UAS, no explicit definitions are needed for its behavior.
+
+	
+--------------------------------------------------------------------------------------------------------------------------
+SIP message
+===========
+- SIP is a text-based protocol with syntax similar to that of HTTP. 
+
+- There are two different types of SIP messages:
+	- requests
+	- responses
+	
+- The first line of a request has a 
+	- METHOD, defining the nature of the request, and a
+	- REQUEST-URI, indicating where the request should be sent.
+	
+- The first line of a response has a RESPONSE CODE.	
+
+- SIP requests
+	• REGISTER: Used by a UA to indicate its current IP address and the URLs for which it would like to receive calls.
+	
+	• INVITE: Used to establish a media session between user agents.
+	
+	• ACK: Confirms reliable message exchanges.
+	
+	• CANCEL: Terminates a pending request.
+	
+	• BYE: Terminates a session between two users in a conference.
+	
+	• OPTIONS: Requests information about the capabilities of a caller, without setting up a call.
+	
+	• PRACK (Provisional Response Acknowledgement): PRACK improves network reliability by adding an
+		acknowledgement system to the provisional Responses (1xx). PRACK is sent in response to provisional response
+
+- The SIP response types defined in RFC 3261 fall in one of the following categories:[15]
+	• Provisional (1xx): Request received and being processed.
+	• Success (2xx): The action was successfully received, understood, and accepted.
+	• Redirection (3xx): Further action needs to be taken (typically by sender) to complete the request.
+	• Client Error (4xx): The request contains bad syntax or cannot be fulfilled at the server.
+	• Server Error (5xx): The server failed to fulfill an apparently valid request.
+	• Global Failure (6xx): The request cannot be fulfilled at any server.		
+	
+--------------------------------------------------------------------------------------------------------------------------
+SIP válaszok
+============
+
+1xx = tájékoztató válaszok
+100 Próbálkozás 
+180 Csengés 
+181 A hívás átirányítódik 
+182 Sorba állítva 
+183 Kapcsolat folyamatban 
+
+2xx = sikeres kapcsolat válaszok
+200 OK 
+202 elfogadva: Utalásra használva 
+
+3xx = átirányítási válaszok
+300 Több lehetoség 
+301 Végleg átirányítva 
+302 Ideiglenesen átirányítva 
+305 Proxy használata 
+380 Alternatív szolgáltatás 
+
+4xx = sikertelen kérések
+400 Hibás kérés 
+401 Nincs engedélyezve: Csak a rendszergazdák használhatják. A proxy-knak a 407-es proxy engedélyt kell használniuk 
+402 Fizetés szükséges (Késobbi használatra fenntartva) 
+403 Tiltott 
+404 Nem található: A felhasználó nem található 
+405 A módszer nincs engedélyezve 
+406 Elfogadhatatlan 
+407 Proxy hitelesítés szükséges 
+408 Kérés idotúllépés: A felhasználót nem lehetett idoben megtalálni 
+410 Elköltözött: A felhasználó létezett, de ezen a számon többé nem érheto el. 
+413 Kérés entitás túl nagy 
+414 Kérés URI túl hosszú 
+415 Nem támogatott hordozótípus 
+416 Nem támogatott URI séma 
+420 Hibás mellék: Hibás SIP protokollmelléket használt, a szerver nem tudja értelmezni 
+421 Mellék szükséges 
+423 Túl rövid idoköz 
+480 Pillanatnyilag nem elérheto 
+481 A hívás/tranzakció nem létezik 
+482 Hurok jelentkezett 
+483 Túl sok akadály 
+484 A cím nem teljes 
+485 Kétértelmu 
+486 Itt foglalt 
+487 Kérés megszakítva 
+488 Itt elfogadhatatlan 
+491 Kérés folyamatban 
+493 Értelmezhetetlen: Az S/MIME testét nem sikerült kikódolni 
+
+5xx = szerverhibák
+500 Belso szerverhiba 
+501 Nincs bevezetve: A SIP kérési módszer nincs bevezetve itt 
+502 Hibás átjáró 
+503 A szolgáltatás nem elérheto 
+504 Szerver idotúllépés 
+505 Ez a verzió nem támogatott: A szerver nem támogatja a SIP protokoll ezen verzióját 
+513 Az üzenet túl hosszú 
+
+6xx = általános hibák
+600 Mindenhol foglalt 
+603 Visszautasítás 
+604 Sehol sem létezik 
+606 Elfogadhatatlan
+
+
+--------------------------------------------------------------------------------------------------------------------------
+Transaction
+===========
+- SIP makes use of transactions to control the exchanges between participants and deliver messages reliably. The
+	transactions maintain an internal state and make use of timers. 
+	
+- Client Transactions send requests 
+
+- and Server Transactions respond to those requests with one-or-more responses. The responses may include zero-or-more
+	Provisional (1xx) responses and one-or-more final (2xx-6xx) responses.
+
+- Transactions are further categorized as either 
+	- Invite 
+	- or Non-Invite. 
+	
+- Invite transactions differ in that they can establish a long-running conversation, referred to as a Dialog in SIP, 
+	and so include an acknowledgment (ACK) of any non-failing final response (e.g. 200 OK).
+
+- Because of these transactional mechanisms, SIP can make use of un-reliable transports such as User Datagram Protocol (UDP).
+
+	

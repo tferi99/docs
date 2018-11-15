@@ -1,0 +1,73 @@
+============
+Headless FAQ
+============
+
+- What is headless mode?
+- How get current mode?
+- How headless mode detected?
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+What is headless mode?
+======================
+Java contains a lot of classes which assume that there is a some sort of display and a keyboard attached. 
+Sometimes, you are writing code to run on a server which does not have these and this is called Headless mode. 
+
+Javas stores state of mode into GraphicsEnvironment.headless.
+
+This will be detected on demand in
+
+	
+	GraphicsEnvironment.getHeadlessProperty()
+	
+or you can force it with system property:
+
+	System.setProperty("java.awt.headless", "true");	(from code)
+
+	or 	
+	
+	-Djava.awt.headless=true (from command line)
+	
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How get current mode?
+=====================
+GraphicsEnvironment.isHeadless()
+
+
+	
+----------------------------------------------------------------------------------------------------------------------------------------------
+How headless mode detected?
+===========================
+Javas stores state of mode into GraphicsEnvironment.headless.
+
+This will be detected on demand in
+
+	
+	GraphicsEnvironment.getHeadlessProperty()
+
+	
+If a component requires display it should check current runtime environment. E.g. AWT Button constructor:
+
+	public Button(String label) throws HeadlessException {
+        GraphicsEnvironment.checkHeadless();
+        this.label = label;
+	}
+
+	
+
+Call flow:
+	--> GraphicsEnvironment.checkHeadless()
+        --> isHeadless()) IS FALSE --> throw new HeadlessException()
+			--> getHeadlessProperty()
+				- getting 'java.awt.headless'
+				- if not exists
+					- getting OS name from 'os.name'
+					- headless calculated:
+					
+						(osname = 'Linux' | osname = 'SunOS' | osname = 'FreeBSD' | osname = 'NetBSD' | osname = 'OpenBSD' | osname = '') & 'DISPLAY' environment not found
+						
+				
+		
+		
+
+	

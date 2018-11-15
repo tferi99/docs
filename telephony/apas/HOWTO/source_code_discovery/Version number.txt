@@ -1,0 +1,27 @@
+==============
+Version number
+==============
+Version number displayed in:	com.andtek.andphone.global.gwtapp.client.gwtframework_gwtappMain
+
+Get:
+	com.andtek.andphone.global.gwtapp.client.gwtframework_gwtappMain
+		--> GWTFrameworkInitBean.getApasVersion()
+	
+Set:	
+	WEB APP Startup
+	--> gwtframework_gwtappMain.RemoteGWTFrameworkInit()
+		--> RPCglobalServiceImpl.RemoteGWTFrameworkInit()
+			--> ver = com.andtek.andphone.utils.Modules.getVersionPlatformString()
+				--> getModuleVersion(...) 
+					--> versionInt = versionToInt(JTAPIServlet.getVersionProperties().getProperty("version"));
+						It reads 
+							from:	version.properties
+					--> getBuild()
+							from:		build.properties
+					--> getDevVersion()								(only in developer mode)
+							from:		version.properties
+					--> getSvnRevision()
+							revision from:	revision.properties
+			--> GWTFrameworkInitBean.setApasVersion(String apasVersion)
+			
+			

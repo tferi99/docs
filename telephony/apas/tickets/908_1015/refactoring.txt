@@ -1,0 +1,114 @@
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Refactored classes
+==================
+AcdCategory  --> named to AcdCategoryOld, data part moved into new AcdCategory			(ChangePoint.ACD_CATEGORY)
+	AcdCategory2
+	AcdCategoryCalculationServiceImpl (AcdCategoryCalculationService)
+	AcdCategoryDao			(DB: acdcategory)
+	AcdCategoryRowMapper
+	AcdCategoryDailyStat
+	AcdCategoryDailyStatDao (DB: acdCategoryDailyStats)
+	AcdCategoryHourlyStat
+	AcdCategoryHourlyStatDao (DB: acdCategoryHourlyStats)
+AcdCategory.ACD_REPORT_CONFIG			(ChangePoint.ACD_REPORT_CONFIG)
+	
+-------------- managing acd stat table for categories ------------------
+AcdCategoryTypeStatsTables  --> moving properties into AcdCategoryToStatTable	(ChangePoint.CATEGORY_STAT_TABLE)
+	AcdCategoryToStatTable
+	AcdCategoryToStatTableDao			(DB: stats_categorytype_ref)
+	AcdCategoryToStatTableRowMapper
+	AcdStatTableServiceImpl (AcdStatTableService)
+	
+-------------- managing acd stat table for queues ------------------	
+QueueStatsTables -->		data part moved into AcdQueueToStatTable		(ChangePoint.QUEUE_STAT_TABLE)
+	AcdQueueToStatTable  
+	AcdQueueToStatTableDao				(DB: stats_queue_ref)
+	AcdQueueToStatTableRowMapper
+	AcdStatTableServiceImpl (AcdStatTableService)
+	
+DefaultQueueThresholdDefinitions - simplified and changed to return StatTable lists
+	
+-------------- managing acd stat tables and colums ------------------		
+StatisticsTableBean -->		data part moved into StatTable					(ChangePoint.STAT_TABLE_BEAN)
+	StatTable
+	StatTableDao				(DB: stats_table_def)
+	StatTableRowMapper
+	StatColumn 
+	StatColumnDao				(DB: stats_table_columns_def)
+	StatColumnRowMapper
+	AcdStatTableServiceImpl (AcdStatTableService)
+	
+StatsColumnColorThreshold -> StatColumn (renamed and added id property by extending EntityBase and moved into model package)
+
+
+
+AcdCategorySuperVisor	-> AcdCategorySupervisor - same as old + extended with some properties
+	
+------------------------------------------------------------------------------------------------------------------------------		
+Entry points: AcdRefactoringHelper.EP_....
+
+
+
+
+Questions 
+---------
+- JSP ? 
+
+	FORGET!
+
+- Are there new paramaters or only we add UI for managing old parameters?
+	Wait Ignore Time	: ?
+	Call Ignore Time	: ?
+	Call Minimum Time	: contant now
+	Call Maximum Time	: constant now
+	
+Labels should contain an expression resolved from parameters
+
+- 120 missing ?
+
+- riport values should be stored into DB with ABSOLUTE (UTC) time
+
+
+- Additional values are like these
+
+	16: ${category[600-Group].answeredAllDay}
+	30: ${category[600-Group].callIgnoredDay} 
+
+are calculated from standard values using expressions
+
+------------------------------------------------------------------------------------------------------------------------------		
+Target of refactoring
+=====================
+- removing 
+	- loading data from JSP
+	
+- make more simple code
+	- eliminate code duplications
+	- adding some unified layers (DAO, service)
+	- splitting big monolithic code into logical units
+		- database operations -> DAO
+		- business logic -> service
+		- API that can be implemented for customers -> service
+		- common code -> helpers
+	- using common design patterns:
+		- DAO
+		- service
+		- service locator 
+		- data mapper
+	- using lightweight Spring components to
+		- accessing database 
+		- JDBC helpers for direct SQL operations
+		- services to make possible using extended features in the future (transactions)
+		- to provide clear layers and unified developer pattern:
+		
+			service locator -> service -> DAO -> database
+		
+- providing an interface to access ACD calcualtion functionality
+	- adding service layer to implement
+	
+- splitting common and customer specific code (MOST HARD)
+	- too many functionality in common part -> changing common code will affect all customer specific implementation
+	- too many code in custom code -> code duplications
+	-

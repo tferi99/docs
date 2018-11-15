@@ -1,0 +1,29 @@
+========================================
+Calling APAS sidemenu and loading a page
+========================================
+About creating menu see:	GWT page/menu rendering
+
+Menu URLs are:
+
+	/andphone/Admin?module=<modulName>&page=<pageName>&func=<funcName>&page_without_decoration=true
+								
+	where:
+		modulName	: name of module from Modules.sw_module_names[1]
+		pageName	: name of page from com.andtek.andphone.<moduleName>.Admin.pages[x][0]
+		funcName	: name of page from com.andtek.andphone.<moduleName>.Admin.pages[x][1]
+	
+Clicking a menu this servlet will be called:
+		
+	com.andtek.andphone.Admin
+	
+	--> com.andtek.andphone.Admin.doGet()
+		--> com.andtek.andphone.utils.Admin.getModuleAdminPage(connection);
+			--> getModuleAdmin(String module, ConnectionBean connection)
+				It instantiates Admin object of module (com.andtek.andphone.<moduleName>.Admin)
+	
+	...
+	...
+	... finally loaded GWT page described by:
+	
+		com.andtek.andphone.<moduleName>.gwtapp.<pageName>_gwtappMain.gwt.xml
+	

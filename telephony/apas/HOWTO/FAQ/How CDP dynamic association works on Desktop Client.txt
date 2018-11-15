@@ -1,0 +1,32 @@
+====================================================
+How CDP dynamic association works on Desktop Client?
+====================================================
+
+NOTE: 
+	CDP is depretcated since not supported WinPCAP library. WinPCAP not supported sence several years and works unstable nowadays.
+
+Cisco Discovery Protocol (CDP)
+------------------------------
+CDP (Cisco Discovery Protocol) is a Cisco proprietary protocol that runs between direct connected network entities (routers, switches, remote access devices, IP telephones etc.). 
+The purpose of the protocol is to supply a network entity with information about its direct connected neighbors.
+
+CDP multicast messages will be sent by devices per 60 seconds.
+
+
+------------------------------------------------------------------------------------------------------------------------------
+How it works in DC?
+===================
+- CDP enabled in phones
+
+- DC PC connected to network via phne device which will be associated
+
+- disable 'Span to PC Port' on phone device, otherwise CDP packages from every phone will be forwarded to your PC and DC will sniff them 
+	and generated bad 'cdp' messages to ASAS
+	
+- DC sniffs for CDP packages and if no phone associated to DC it will send 'cdp' and 'associatePhone' messages to APAS
+
+- APAS wil associate phone temporarly (in memory) where timestamp is 120 secs
+
+	If cleanup called on APAS it will remove old entries. Cleanup only called on terminal change. 
+	If phone inactivated and activated again CDP will activate is again.
+

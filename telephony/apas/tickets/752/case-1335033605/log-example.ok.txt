@@ -1,0 +1,34 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Description: Detecting codec
+Filter: 'MEDIA_DETAILS'
+============================================================================
+[2012-09-27 09:09:23,675][ObserverThread(com.andtek.andphone.partner.acd.RPCallObserver@5e9815f3)](RPCallObserver.java:97) - MEDIA_DETAILS: acd.RPCallObserver.startOutputStream(): codec=4
+[2012-09-27 09:12:29,275][ObserverThread(com.andtek.andphone.partner.acd.RPCallObserver@5e9815f3)](RPCallObserver.java:97) - MEDIA_DETAILS: acd.RPCallObserver.startOutputStream(): codec=4
+[2012-09-27 09:12:56,572][ObserverThread(com.andtek.andphone.partner.acd.RPCallObserver@5e9815f3)](RPCallObserver.java:97) - MEDIA_DETAILS: acd.RPCallObserver.startOutputStream(): codec=11
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Description: Starting RTP stream
+Filter: 'CiscoRTPInputStartedEv'
+============================================================================
+[2012-09-26 16:06:59,199][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#241] Cause:100 CallCtlCause:0 FeatReason:12
+[2012-09-26 16:06:59,216][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEPA45630BB1748] CiscoRTPInputStartedEv [#244] Cause:100 CallCtlCause:0 FeatReason:12
+[2012-09-26 16:06:59,217][ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5cb1e877)](PhoneCallObserver.java:85) - RCCO-TC - [(P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#241] Cause:100 CallCtlCause:0 FeatReason:12, callID: [202817/1], rtpProps: [/192.168.5.235/31886], terminal: [SEP64A0E714F271]]
+[2012-09-26 16:09:50,230][ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5cb1e877)](PhoneCallObserver.java:85) - RCCO-TC - [(P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#304] Cause:100 CallCtlCause:0 FeatReason:12, callID: [202830/1], rtpProps: [/192.168.5.235/27290], terminal: [SEP64A0E714F271]]
+[2012-09-26 16:09:50,232][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#304] Cause:100 CallCtlCause:0 FeatReason:12
+[2012-09-26 16:09:50,234][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEPA45630BB1748] CiscoRTPInputStartedEv [#307] Cause:100 CallCtlCause:0 FeatReason:12
+[2012-09-26 16:28:17,704][ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5cb1e877)](PhoneCallObserver.java:85) - RCCO-TC - [(P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#367] Cause:100 CallCtlCause:0 FeatReason:12, callID: [202895/1], rtpProps: [/192.168.5.235/32200], terminal: [SEP64A0E714F271]]
+[2012-09-26 16:28:17,706][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#367] Cause:100 CallCtlCause:0 FeatReason:12
+[2012-09-26 16:28:17,710][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEPA45630BB1748] CiscoRTPInputStartedEv [#370] Cause:100 CallCtlCause:0 FeatReason:12
+[2012-09-27 09:09:20,596][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#532] Cause:100 CallCtlCause:0 FeatReason:12
+[2012-09-27 09:09:20,596][ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5cb1e877)](PhoneCallObserver.java:85) - RCCO-TC - [(P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#532] Cause:100 CallCtlCause:0 FeatReason:12, callID: [202959/1], rtpProps: [/192.168.5.235/27990], terminal: [SEP64A0E714F271]]
+[2012-09-27 09:12:27,093][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#594] Cause:100 CallCtlCause:0 FeatReason:12
+[2012-09-27 09:12:27,099][ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5cb1e877)](PhoneCallObserver.java:85) - RCCO-TC - [(P1-TOTH_APAS) [SEP64A0E714F271] CiscoRTPInputStartedEv [#594] Cause:100 CallCtlCause:0 FeatReason:12, callID: [202962/1], rtpProps: [/192.168.5.235/32102], terminal: [SEP64A0E714F271]]
+[2012-09-27 09:12:54,657][ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@53011788)](AgentCallObserver.java:73) - RCCO-TC:Received[0] (P1-TOTH_APAS) [SEPA45630BB1748] CiscoRTPInputStartedEv [#655] Cause:100 CallCtlCause:0 FeatReason:12
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Description: Choosing input file to send in RTP stream
+Filter: 'DataSource created from file file:'
+============================================================================
+[2012-09-27 09:09:24,212][ObserverThread(com.andtek.andphone.partner.acd.RPCallObserver@5e9815f3)](RTPStream.java:358) - DataSource created from file file:D:\eclipse\eclipse-indigo\andapps\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\apas\modules\global\media\7_ulaw.wav
+[2012-09-27 09:12:29,713][ObserverThread(com.andtek.andphone.partner.acd.RPCallObserver@5e9815f3)](RTPStream.java:358) - DataSource created from file file:D:\eclipse\eclipse-indigo\andapps\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\apas\modules\global\media\7_ulaw.wav
+[2012-09-27 09:12:56,973][ObserverThread(com.andtek.andphone.partner.acd.RPCallObserver@5e9815f3)](RTPStream.java:367) - DataSource created from file file:D:\eclipse\eclipse-indigo\andapps\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\apas\modules\global\media\7.g729

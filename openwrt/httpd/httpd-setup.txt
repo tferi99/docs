@@ -1,0 +1,37 @@
+=======================================
+OpenWRT httpd quick configuration guide
+=======================================
+
+1. Authentication, authorization
+
+	Add permission entries:
+	
+		/path:user:pass
+		
+	for example:
+
+		/opt/www/pub:public:valami
+		
+	you can create MD5 password hash, too:
+
+		$httpd -m valami
+		$1$$dWOYdQ2Q2I0lnGhaxE98r1
+				
+		--->
+		/opt/www/pub:public:$1$$dWOYdQ2Q2I0lnGhaxE98r1
+		
+		
+2. Add mime types
+
+3. Start httpd, for example:
+
+	httpd -c /opt/etc/httpd.conf -p 8888 -r public -h /opt/PUBLIC/www/
+
+4. Enable source port in firewall:
+
+	iptables -I input_vlan1 -p tcp --dport 8888 -j ACCEPT
+
+See also:
+	OpenWrtDocs_httpd.conf - OpenWrt.mht
+	
+	

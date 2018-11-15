@@ -1,0 +1,46 @@
+===================
+64bit ISO in vmWare
+===================
+
+- Error: binary translation long mode 64bit
+- How to copy virtual machine with Scientific Linux?
+
+----------------------------------------------------------------------------------------------------------------------
+Error: binary translation long mode 64bit
+=========================================
+If you configure a 64bit guest OS in vmWare and you get some message during OS startup about:  
+
+	binary translation long mode 64bit
+	
+then you have to enable VT mode in BIOS of your HOST system.
+
+E.g. in Dell desktops:
+	- Virtualization Support:
+		- Enable Intel VT
+		- Enable Intel VT for I/O
+		
+		
+----------------------------------------------------------------------------------------------------------------------
+How to copy virtual machine with Scientific Linux?
+==================================================
+
+- Right-click the virtual machine and Click Edit Settings.
+
+- Click Network adapter and click 'Advanced'
+	- Generate a new one
+	- Note this MAC
+
+- Power on the Linux virtual machine.
+
+- Open a console and log in as root.
+
+- Edit /etc/sysconfig/network-scripts/ifcfg-eth0 and change MAC
+	
+
+- Edit /etc/udev/rules.d/70-persistent-net.rules
+
+	NOTE: Remove duplications, sometimes your new MAC will be generate a new entry (e.g. for eth1)
+	
+- ifup-eth0 or restart
+
+

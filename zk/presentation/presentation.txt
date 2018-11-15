@@ -1,0 +1,33 @@
+What is
+- ZK is a Java/Ajax-based Web application framework that enables rich UI for Web applications 
+	with no JavaScript and little programming. 
+	
+What is NOT	
+	- It is only aimed at the presentation tier. 
+	- It does not require or suggest any other back-end technologies
+	- ZK doesn't enforce developers to use MVC or other design patterns. Whether to use them is the developer's choice.
+	- ZK is not a framework aiming to bring XUL to Web applications. It is aimed to bring the desktop programming model to Web applications. 
+
+What are the goals of the ZK project?
+- The same or better rich and interactive user interfaces as that of desktop applications. 
+- The same or better simplicity to develop Web applications as that of desktop applications. 
+
+Features
+- Over 70 XUL and 80 XHTML components are supported
+- Server centric
+- Easy-Script in Java and EL expressions. No JavaScript. No compilation. No proprietary expressions or scripts.
+- Easy to learn, 
+- Easy to develop new components.
+
+- Over 70 XUL and 80 XHTML components are supported, including list boxes, tree, drag-and-drop, auto-completion, sliders, timer, combo boxes, audio and many others.
+- Server centric. Visual representation and content are synchronized automatically between clients and servers.
+- The best way to use Ajax is not to know its existence.
+- Script in Java and EL expressions. No JavaScript. No compilation. No proprietary expressions or scripts.
+- Simple threading model. No prerequisite of handling threading and concurrent accesses. Yet no limitation to apply any sophisticated threading on your demand.
+- Flexible threading model. Easy to suspend and resume your application without blocking users. Supports true server-side modal dialogs.
+- Easy to develop new components with supports of template and synchronization technologies.
+- Easy to encapsulate a pure-client JavaScript widget into a server-centric Java component, such as FCKeditor and Dojo.
+- Easy to power applications with versatile components, as simple as dropping jar files into the class path.
+- An open community to share components, themes and utilities.
+- Zero configurations and compilation. Maintaining ZUML pages is as easy as maintaining HTML pages.
+- No prerequisite of any design patterns. For fast protyping, you could embed Java codes directly in ZUML pages. For sophisticated applications, you could apply MVC or others. The choice is yours, not framework.

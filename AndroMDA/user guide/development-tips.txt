@@ -1,0 +1,119 @@
+================
+Development tips
+================
+
+1. First steps
+2. Problems during (re)generating code
+2.1 Entity name has been changed
+2.2 Service extended with new operation
+3. Traps in modelling with MagicDraw
+3.1 Copy/paste
+3.2 Dependency ends
+4. Performance tips
+
+
+
+1. First steps
+--------------
+
+1. Create your model
+	See 'General rule in modelling-kick-start.txt'
+
+2. Generate code and try to compile.
+
+	Just generating:	maven mda
+	Compiling:		maven install
+
+
+2. Create your schema script and create database.
+	- May be you will meet reserved names, change them.
+	  (e.g. User entity is not a good name for PostgreSQL database, because 'user' keyword is reserved).
+
+
+
+2. Problems during regenerating code
+------------------------------------
+
+2.1 Entity name has been changed
+--------------------------------
+Code regenaration will NOT REMOVE files that not part of model from generated directories (**/target/src).
+Also source files in implementation directories (**/src) will be completely untouched.
+
+1. Rename old implementation code (**/src/*Impl.java) - (for example add a _ prefix).
+
+
+2. Call 
+	'clean'		- to remove generated files.
+	'mda'		- to generate new files.  This will generate new implementation files into **/src/ .
+
+   NOTE:
+   Maybe you have to close Eclipse IDE because it can lock resources.
+
+3. Move old handwritten code from old file into new.
+
+4. Delete old implementation class.
+
+
+2.2 Service extended with new operation
+---------------------------------------
+When you adds new operation to a service, this operation will be added to service interface (...Service.java), since
+it's an auto-generated 
+but it won't be 
+
+1. Rename old implementation code (**/src/*Impl.java) - (for example add a _ prefix).
+
+
+2. Call 
+	'clean'		- to remove generated files.
+	'mda'		- to generate new files.  This will generate new implementation files into **/src/ .
+
+3. Move new operation code into old file and rename back it.
+
+
+
+3. Traps in modelling with MagicDraw
+------------------------------------
+3.1 Copy/paste
+--------------
+If you generate a class by copy paste (e.g create a value object from entity), be careful and don't copy a class
+into itself. It can cause a hard to find problem.
+
+In this case sometimes a new class with the same name will be generated into DEFAULT PACKAGE.
+
+3.2 Dependency ends
+-------------------
+Be aware of dependency ends during drawing dependencies between two classes.
+Dependency end can be:
+	- a whoole class
+	- property of a class
+	- an operation of class
+
+Always bind the dependency end to the proper target or generated code will be failed.
+It's wery easy to miss the target and generated result will be improper.
+
+For example:
+	If you draw dependency between an entity and a service, and you bind dependency
+	end to an operation of service instead of service class, accessor of entity DAO won't be
+	generated into service base class and applicationContext.xml .
+
+Tip:
+	You can check dependecies in 'Containtment tree' of MagicDraw.
+
+
+
+4. Performance tips
+-------------------
+- Use Maven console.
+
+  This way you can avoid reloading Java Virtual machine every time.
+  You can call goals from console directly (e.g install, mda, clean).
+
+
+- Use AndroMDA server.
+
+  This way you can avoid reloading AndroMDA project every time.
+  Server can notice model changes, and it reloads model when you save changes with MagicDraw.
+
+
+- Best method is using both of Maven console and AndroMDA server.
+

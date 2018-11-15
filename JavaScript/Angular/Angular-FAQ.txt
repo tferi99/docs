@@ -1,0 +1,494 @@
+===========
+Angular FAQ
+===========
+
+General
+-------
+- Structure of an Angular application
+- Build architecture
+- Bootstrapping Angular application
+
+Configuration
+-------------
+- Easy installation of development environment
+- How to configure TS?
+- How to configure TSLint?
+- How to add global styles with Angular CLI?
+
+Patterns
+--------
+- Data binding
+	- Bindigs
+- How to use interpolation (template expression)?
+- Conditional CSS
+
+Directives, Components
+----------------------
+- What is a directive? Directive vs component
+- How to set CSS class of host element from component code?
+- How to change the default prefix of component to stop tslint warnings
+- How to set component input with a literal value?
+
+Services
+--------
+- How to use a service?
+
+Development
+-----------
+- How to debug Angular?
+- How to generate components?
+- Howto get usable Angular CLI functions?
+
+Deployment
+----------
+- How to deploy for production?
+
+Troubleshooting
+---------------
+- How to get versions?
+- TSLint: Type ... trivially inferred from a ... literal, remove type annotation (no-inferrable-types)
+  
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Structure of an Angular application
+===================================
+- Everything is directive
+- components are directives with template
+- application contains a component tree, where there is one main component 
+
+Compiled index.html contains JS references which loads main.js (compiled from main.ts) ---> <app-root>
+
+--> main.ts bootstraps main module (e.g. AppModule)
+	platformBrowserDynamic().bootstrapModule(AppModule)
+	
+		--> app.component.ts
+			--> app.component.html
+				<app-heroes>
+			--> app.component.css
+
+
+			
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Build architecture
+==================
+
+Typescript
+TSLint:			TSLint is an extensible static analysis tool that checks TypeScript code.
+Codelyzer:		A set of tslint rules for static code analysis of Angular TypeScript projects.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Bootstrapping Angular application
+=================================
+
+Development with Angulkar-CLI:
+
+	ng serve -> angular.json -> main.ts -> @NgModule AppModule -> AppComponent
+
+	
+	Angular has a powerful concept of modules. When you boot an Angular app, you’re not booting a
+	component directly, but instead you create an NgModule which points to the component you want
+	to load.
+	
+ng serve
+	• ng serve looks at .angular-cli.json which specifies main.ts as our entry point (and index.html as our index file)
+	• main.ts bootstraps AppModule
+	• AppModule specifies that AppComponent is the top level component
+	• … and then AppComponent renders the rest of our app!
+
+	==> angular.json
+			"main": "src/main.ts"			// this is entry point
+			
+			It bootstraps an Angular module:			
+			
+				platformBrowserDynamic().bootstrapModule(AppModule).catch(err => console.log(err));
+			
+			==> AppModule
+			
+				AppModule specifies which component to use as the top-level component:
+				
+					bootstrap: [AppComponent]
+			
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Easy installation of development environment
+============================================
+- Install npm
+	NPM is part of NodeJS so install NodeJS if you don't have it yet.
+	
+	OR
+
+	- Update npm
+
+		npm install npm -g
+
+- Install Angular CLI
+
+		
+	npm install -g @angular/cli
+
+- Create a new project
+
+	ng new my-app
+
+- Start app
+
+	cd my-app
+	ng serve --open
+	OR
+	npm start
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Bindigs
+=======
+Method 1:
+
+	<div class="field">
+		<label for="title">Title:</label>
+		<input name="title" id="title" #newtitle>
+	</div>
+	...
+	<button (click)="addArticle(newtitle, newlink)" class="ui positive right floated button">Submit link</button>
+
+	
+	export class XComponent {
+		addArticle(title: HTMLInputElement, link: HTMLInputElement): boolean {
+			console.log(`Adding article title: ${title.value} and link: ${link.value}`);
+			return false;
+		}
+	}
+	
+
+Method 2:
+
+	<li>{{hero.name}}</li>														<--
+	<hero-detail [hero]="selectedHero"></hero-detail>							<--
+	<li (click)="selectHero(hero)"></li>										-->
+	<input [(ngModel)]="hero.name">												<-->		
+
+	
+DOM                             COMPONENT
+         <-----------------                       {{v}}					:  The {{hero.name}} interpolation displays the component's hero.name property value within the <li> element.
+		 
+		 <-----------------                       [property]="value"	: The [hero] property binding passes the value of selectedHero from the parent HeroListComponent to 
+																			the hero property of the child HeroDetailComponent.
+		 
+		 ------------------>                      (event)="handler"		: The (click) event binding calls the component's selectHero method when the user clicks a hero's name.
+		 
+        <------------------>                       [(ngModel)]="value"	: Two-way data binding is an important fourth form that combines property and event binding in a single notation, 
+																			using the ngModel directive.
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+What is a directive? Directive vs component
+===========================================
+- A directive is a class with a @Directive decorator. 
+- A component is a directive-with-a-template; 
+- @Component decorator is actually a @Directive decorator extended with template-oriented features. 
+- While a component is technically a directive, components are so distinctive and central to Angular applications that we separate components from directives.
+
+Two other kinds of directives exist: 
+	- structural directives	: Structural directives alter layout by adding, removing, and replacing elements in DOM.
+	
+		<li *ngFor="let hero of heroes"></li>
+		<hero-detail *ngIf="selectedHero"></hero-detail>
+	
+		*ngFor tells Angular to stamp out one <li> per hero in the heroes list.
+		*ngIf includes the HeroDetail component only if a selected hero exists.
+		
+	- attribute directives	: Attribute directives alter the appearance or behavior of an existing element. 
+
+		<input [(ngModel)]="hero.name">
+		
+		The ngModel directive, which implements two-way data binding, is an example of an attribute directive. 
+		ngModel modifies the behavior of an existing element (typically an <input>) by setting its display value property and responding to change events.
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to use a service?
+=====================
+- Create:
+		ng generate service hero
+		
+	OR write it manually.
+
+- Register
+	- To instantiate a service a provider should be registered.
+	- In general, add providers to the root module so that the same instance of a service is available everywhere.
+	- But you can register a provider in a component, too. Registering at a component level means you get a new instance of the service 
+		with each new instance of that component.
+
+	
+- Import and inject
+	
+	- 
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to debug Angular?	
+=====================
+- Print out model as JSON:
+
+	<div>{{model | json}}</div>
+
+- Put 'debugger' command into JS:
+
+	debugger;
+	
+	and browser will stop at this location.
+	
+	Set:	"sourceMap": true
+	
+		in tsconfig.ts and browser will show source TS instead of generated JS in source panel.
+	
+- Install Augury Chrome extension 	
+	- you can show component hierarchy
+	- you can view/change component properties
+	
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to generate components?	
+===========================
+General component:
+
+	
+Service:
+	global:
+		ng generate service hero
+	module specific:
+		ng generate service hero --module=app
+	
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to configure TS?
+====================
+There are multiple tsconfig*.json in hierarchy (in inheritance):
+
+
+
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to configure TSLint?
+========================
+TSLint is an extensible static analysis tool that checks TypeScript code for readability, maintainability, and functionality errors.
+It uses Codelyzer rules for check Angular code.
+
+Yuo can customize behavior in tslint.json, e.g. changing component selector format add:
+
+	       "component-selector": [
+            true,
+            "element",
+            ["app", "custom"],
+            "kebab-case"
+        ]
+		
+		
+Be aware of multiple tslint.json, for example latest Angular-CLI generates 
+
+	APP/tslint.json
+	APP/src/tslint.json
+	
+	where src/tslint.json extends the other one.
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to get versions?
+====================
+Call:		ng --versions
+
+It prints version of all important packages:
+
+	Angular CLI: 6.0.3
+	Node: 8.10.0
+	OS: win32 x64
+	Angular:
+	...
+
+	Package                      Version
+	------------------------------------------------------
+	@angular-devkit/architect    0.6.3
+	@angular-devkit/core         0.6.3
+	@angular-devkit/schematics   0.6.3
+	@schematics/angular          0.6.3
+	@schematics/update           0.6.3
+	rxjs                         6.2.0
+	typescript                   2.7.2
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto get usable Angular CLI functions?
+=======================================
+ng --help
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to set CSS class of host element from component code?
+=========================================================
+Use @HostBinding('attr.class'). It sets class of rendered element.
+
+For example:
+
+	@Component({
+	  selector: 'app-article',
+	  templateUrl: './article.component.html',
+	  styleUrls: ['./article.component.css']
+	})
+	export class ArticleComponent implements OnInit {
+		@HostBinding('attr.class') cssClass = 'row';
+		....
+	}
+	
+is the same as you would put class='row' into parent template where you use <app-article>:
+
+	<app-article ... class='row'>
+
+
+
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+TSLint: Type ... trivially inferred from a ... literal, remove type annotation (no-inferrable-types)
+====================================================================================================
+If you have a member property like this:
+
+	export class CounterComponent implements OnInit {
+
+	  count: number = 0;
+	  
+	  ...
+	}
+	
+and you have lint error as mentioned.
+
+Problem: type declaration and value assignement is redundant.
+Fix: if you have assigned value right in the property declaration remove type declaration.	
+
+	export class CounterComponent implements OnInit {
+
+	  count = 0;
+	  
+	  ...
+	}
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to change the default prefix of component to stop tslint warnings
+=====================================================================
+Prefix of a component only appearing in template. 
+Name of component in file names and in TS does NOT contain prefix.
+For example:
+
+	Prefix is:	app
+
+	src/app/user-list
+		- user-list.component.css
+		- user-list.component.html
+		- user-list.component.ts
+		
+			selector:	app-user-list
+		
+How to configure alowed prefixes:
+	angular-cli.json/projects/prefix					: default prefix, it will be used when AngularCLI generates a new component
+	tslint.json/component-selector/3rd array element	: contains 1 prefix or array of prefixes which contains permitted prefix(es)
+
+	- If you want to change prefix to another, then change them 
+	- If you want to allow multiple prefixes in change prefix in tslint.json into an array and add multiple prefixes. 
+		Then set default prefix in angular-cli.json .
+		
+If you don't want prefixes you have to remove/comment out component-selector from tslint.json
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to use interpolation (template expression)?
+===============================================
+Double-curly braces: interpolation, iut contains template expression.
+- interpolation contains an expression
+- expressions access component properties directly
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to set component input with a literal value?
+================================================
+Component input binding in template receives property name and not a value directly by default.
+If you want to set an input with a string literal value directly use '...' 
+if you want to set an input with a number literal value directly specify it directly:
+	
+TS:
+	@Component({
+	  selector: 'app-my-form',
+	  templateUrl: './my-form.component.html',
+	  styleUrls: ['./my-form.component.css']
+	})
+	export class MyFormComponent implements OnInit {
+	  @Input() title: string;
+	  @Input() size: number;
+
+	  constructor() {
+		this.title = 'default';
+		this.size = 3;
+	  }
+
+	  ngOnInit() {
+	  }
+	}
+	
+Caller template:
+
+	<app-my-form [title]="'literal'" [size]="3.2"></app-my-form>
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Conditional CSS
+===============
+<tag [class-<CSS CLASS>]='<boolean component property>'>
+
+For example:
+HTML:
+	
+	<p [class.clicked]='clicked'>
+	
+TS:
+	
+	@Component({
+	  selector: 'app-css-demo',
+	  templateUrl: './css-demo.component.html',
+	  styleUrls: ['./css-demo.component.css']
+	})
+	export class CssDemoComponent implements OnInit {
+	  clicked: boolean = false;
+
+	  constructor() {
+		this.showTitle();
+	  }
+
+	  ngOnInit() {
+	  }
+
+	  onClick() {
+		this.clicked = !this.clicked;
+	  }
+	}
+	
+	
+CSS:
+	.clicked {
+		background-color: lightgreen;
+	}
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to add global styles with Angular CLI?	
+==========================================
+Add new entry to projects/.../styles generated angular.json. E.g:
+
+	"styles": [
+	  "src/assets/vendor/semantic.min.css",
+	  "src/styles.css"
+	],
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to deploy for production?
+=============================
+
+	ng build --target=production --base-href /

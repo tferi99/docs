@@ -1,0 +1,259 @@
+===================
+Servlet quick guide
+===================
+1. What is servlet?
+1.1 Servlet Lifecycle
+1.2 Servlet communication
+1.3 Additional interfaces
+
+4. Filters
+4.1 Filter Actions
+4.2 The Lifecycle of a Filter
+4.3 Configuring Filters
+5. Servlet Event Listeners
+5.1 Listener implementation example
+
+
+
+1. What is servlet?
+-------------------
+Servlet is a J2EE WEB component that run in a servlet container. Servlet container is a WEB container 
+in the middle tier of 3 tier server J2EE Container Architecture.
+
+Servlets are Java classes that dynamically process requests and construct responses. In practice this 
+often means that they dynamically generate HTML web pages in response to requests. However, they may 
+also send data in other formats to clients, such as serialized Java objects (applets and Java 
+applications), and XML. 
+
+The client of the servlets can be a 
+	- browser, 
+	- applet, 
+	- Java application 
+	- or any other client 
+that can construct a request (normally an HTTP request that the servlet can recognize and respond to) 
+and receive the response to it.
+
+
+1.1 Servlet Lifecycle
+---------------------
+1. INIT
+   The container initializes servlet before processing requests.
+
+2. REQUEST RECEIVING
+   Servlet components receive requests from the client tier. 
+   The container actually receives the request, transparently maps the request to the appropriate component.
+
+3. REQUEST PROCESSING
+   The servlet then processes the request, normally with the help of either the business tier logic 
+   or by database or enterprise information tier.
+
+4. SENDING RESPONSE
+   Once processing has been completed a response is returned to the client tier.
+
+5. CLEANUP
+   Finally, the container is responsible for destroying any servlet instances that it has created.
+
+   
+1.2 Servlet communication
+-------------------------
+1. With the CLIENT, during a request/response cycle
+
+2. With the SERVLET CONTAINER, to access information about the container environment or to access JNDI resources
+
+3. With OTHER RESOURCES on the server, such as other servlets, EJBs, and so on
+
+4. With EXTERNAL RESOURCES in order to fulfill the request, including databases, legacy systems, and EIS
+
+
+1.3 Servlets using other J2EE APIs
+----------------------------------
+- JDBC
+- Java Transaction Service (JTS)
+- Java Message Service (JMS) 
+- JavaMail
+- Java Authentication and Authorization Service (JAAS)
+- Java Naming and Directory Interface (JNDI)
+- Java API for XML Processing (JAXP)
+
+
+1.3 Additional interfaces
+-------------------------
+SingleThreadModel 	: if you implement this interface, the container effectively guarantees that only one thread will 
+					  execute concurrently in the servlet's service() method, by synchronizing access to each instance 
+					  of the servlet. No additional synchronization needed. Interface doesn't contain any additional
+					  method to implement.
+
+RequestDispatcher 	: 	
+
+
+4. Filters
+----------
+Filters allow us to add functionality to our web applications that previously would have required 
+proprietary container enhancements or other non-portable extensions to our environment. 
+
+Filters sit BETWEEN THE CLIENT AND THE UNDERLYING WEB APPLICATION, and are used to EXAMINE and 
+the REQUESTS and RESPONSES that flow between them.
+
+Like servlets, filters are web application components that can be bundled into a web application archive.
+However, unlike other web application components, filters are 'CHAINED' to the container's processing pipeline. 
+This means that they have ACCESS TO AN INCOMING REQUEST BEFORE THE SERVLET PROCESSOR does, and they have 
+ACCESS TO THE OUTGOING RESPONSE BEFORE IT IS RETURNED to the client. This access allows filters to examine 
+and modify the contents of both requests and responses.
+
+They can be used for:
+	- Prototyping new functionality for a web application
+	- Adding new functionality to legacy code
+
+
+4.1 Filter Actions
+------------------
+We've seen how we can use filters to:
+
+- Access request information before servlets (or other web resources) process the request
+
+- Examine and modify (via a transformation) the response after servlets (or other web resources) have processed 
+  the response
+
+We can also use filters to:
+
+- Generate a response and block access to the underlying web resource - this could be used to create 
+  authorization filters
+
+- Dynamically redirect clients from an old resource to a new one
+
+- Expose additional functionality for the web resource to use - for example, a filter could bundle a 
+  library that encapsulates data access methods and a servlet could detect during runtime if this 
+  filter is available and use the methods accordingly
+
+  
+4.2 The Lifecycle of a Filter
+-----------------------------
+A filter follows a lifecycle similar to that of a servlet: 
+	- instantiate
+	- initialize		-> init()
+	- filter			-> doFilter()
+	- destroy			-> called by container after all outstanding doFilter() method calls have been returned
+	
+	
+4.3 Configuring Filters
+-----------------------
+Location:	web.xml 
+
+Filter definition:
+
+	<filter>
+       <filter-name>XSLTFilter</filter-name>
+       <filter-class>filters.SmartXSLFilter</filter-class>
+       <init-param>
+         <param-name>xsltfile</param-name>
+         <param-value>/xsl/stockquotes.xsl</param-value>
+        </init-param>
+     </filter>
+	
+It associates a name with a class and it can also be used to specify initialization parameters.
+NOTE:
+	Each occurrence of a filter definition in the web.xml file specifies a unique instance of 
+	a filter that will be loaded by the container. If n filter definitions refer to the same 
+	underlying Java class, the container will create n distinct instances of this class.
+
+
+Mapping Filters:
+
+	<filter-mapping>
+     <filter-name>Logger</filter-name>
+     <url-pattern>/servlet/*</url-pattern>
+   </filter-mapping>
+
+   <filter-mapping>
+     <filter-name>XSLTFilter</filter-name>
+     <servlet-name>XMLOutServlet</servlet-name>
+   </filter-mapping>
+
+A filter mapping specifies the web resource that a filter instance should be applied to. 
+
+Chaining Filters:
+	<filter-mapping>
+         <filter-name>XSLTFilter</filter-name>
+         <url-pattern>/*</url-pattern>
+     </filter-mapping>
+     <filter-mapping>
+         <filter-name>AuditFilter</filter-name>
+         <url-pattern>/*</url-pattern>
+     </filter-mapping>
+
+When multiple filters applied to a specific resource.	 
+
+
+
+5. Servlet Event Listeners
+--------------------------
+It can be used to notify container-managed life cycle events. 
+
+Knowing this information is helpful because you may have code that relies on it.
+For example: 
+- a database that needs to be loaded at startup and saved at shutdown. 
+- or keeping track of the number of concurrent clients using a Web Application
+
+The interfaces for event listeners correspond to 
+	- request life cycle events
+	- request attribute binding
+	- Web Application life cycle events
+	- Web Application attribute binding
+	- session life cycle events
+	- session attribute binding
+	- and session serialization
+
+so:	
+	- javax.servlet.ServletRequestListener
+	- javax.servlet.ServletRequestAttributeListener
+	- javax.servlet.ServletContextListener
+	- javax.servlet.ServletContextAttributeListener
+	- javax.servlet.http.HttpSessionListener
+	- javax.servlet.http.HttpSessionAttributeListener
+	- javax.servlet.http.HttpSessionAttributeListener
+
+5.1 Listener implementation example
+-----------------------------------
+Tracking the number of concurrent users.
+
+- Implements HttpSessionListener. It provides notification of two events: 
+	session creation and session destruction. 
+
+	package com.jspbook;
+
+	import javax.servlet.*;
+	import javax.servlet.http.*;
+
+	public class ConcurrentUserTracker implements HttpSessionListener {
+	  static int users = 0;
+
+	  public void sessionCreated(HttpSessionEvent e) {
+	    users++;
+	  }
+	  public void sessionDestroyed(HttpSessionEvent e) {
+	    users--;
+	  }
+	  public static int getConcurrentUsers() {
+	    return users;
+	  }
+	}
+
+- Deployment:
+
+	<listener>
+		<listener-class>
+		com.jspbook.ConcurrentUserTracker
+		</listener-class>
+	</listener>
+
+
+
+
+
+
+
+
+
+	
+
+	

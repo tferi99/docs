@@ -1,0 +1,29 @@
+
+Report
+XLS Scenarios
+
+---------------------------------------------------------------------------------------------------------------------------
+Report
+======
+
+APAS/Reporting/Schedule Reports
+
+(Add)
+	- GASS Calls CSV Export
+	
+Running:	in riport list click 'View' icon.
+
+
+---------------------------------------------------------------------------------------------------------------------------
+XLS Scenarios
+==============
+13	- Verloren im Wartefeld des Team1
+-------------------------------------
+	Configuration:
+		- Put ACD pilot DN into team 
+			It's a workaround because in pre-queue or qued state there is no agent, but we need agent categories for counting.
+		- Add a pre-queue media to your queue, so caller will enough time to drop call before routing an agent.
+		
+		
+		
+		

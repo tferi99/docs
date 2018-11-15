@@ -1,0 +1,103 @@
+======================
+Recording XML services
+======================
+
+- Basics
+- Usage
+
+
+-------------------------------------------------------------------------------------------------------------
+Basics
+======
+
+XML services of recording managed by RecorderPhoneServicesServlet:
+
+web.xml:
+
+	<servlet>
+		<servlet-name>Recorder</servlet-name>
+		<servlet-class>com.andtek.andphone.recorder.web.RecorderPhoneServicesServlet</servlet-class>
+	</servlet>	
+	...
+	<servlet-mapping>
+		<servlet-name>Recorder</servlet-name>
+		<url-pattern>/Recorder</url-pattern>
+	</servlet-mapping>
+
+
+Commands are:
+
+	PARAM_PAGE_MAIN = "main";
+	PARAM_PAGE_NOTIFY = "notify";
+	PARAM_PAGE_CALL = "call";
+	PARAM_PAGE_KEEP = "keep";
+	PARAM_PAGE_MARK = "mark";
+	PARAM_PAGE_ONDEMAND = "ondemand";		// starting on-demand recording
+	PARAM_PAGE_AUTOMON = "automon";
+	PARAM_PAGE_MONITEST = "monitest";
+	PARAM_PAGE_MONITORAGENT = "monitoragent";
+	PARAM_PAGE_MONITOR = "monitor";		// starting silent monitoring
+	PARAM_PAGE_WHISPER = "whisper";
+	PARAM_PAGE_TEST = "test";
+
+
+-------------------------------------------------------------------------------------------------------------
+Usage
+=====
+XML services are simple HTTP GET requests which call a JAVA servlet and the result is XML.
+GEneral form of a request:
+
+	http://APAS_HOST:8080/andphone/Recorder?page=COMMAND&func=FUNCTION&dev=PHONE_DEVICE
+
+		
+Entry point is 'main':
+
+	http://APAS_HOST:8080/andphone/Recorder?page=main&dev=PHONE_DEVICE
+	
+	e.g:
+	
+	http://192.168.5.248:8080/andphone/Recorder?page=main&dev=SEP64A0E714F271
+
+
+It renders a list of recordings of a phone which can be used to call further functions, like:
+	- playback
+	- 
+
+	<CiscoIPPhoneMenu>
+		<Title>Available Recordings</Title>
+		<Prompt>Choose action</Prompt>
+		<MenuItem>
+			<Name>(9002) > valami9000 (9000) 2018-07-31 12:23:37 00:00:1..</Name>
+			<URL>http://192.168.5.248:8080/andphone/Recorder?callid=77&recorder=&dev=SEP64A0E714F271</URL>
+		</MenuItem>
+		<MenuItem>
+			<Name>(9001) > valami9000 (9000) 2018-07-31 12:14:47 00:00:3..</Name>
+			<URL>http://192.168.5.248:8080/andphone/Recorder?callid=74&recorder=&dev=SEP64A0E714F271</URL>
+		</MenuItem>
+		<SoftKeyItem>
+			<Name>Play</Name>
+			<URL>QueryStringParam:page=call&func=start</URL>
+			<Position>1</Position>
+		</SoftKeyItem>
+		<SoftKeyItem>
+			<Name>Keep</Name>
+			<URL>QueryStringParam:page=main&func=keep</URL>
+			<Position>2</Position>
+		</SoftKeyItem>
+		<SoftKeyItem>
+			<Name>Exit</Name>
+			<URL>Init:Services</URL>
+			<Position>3</Position>
+		</SoftKeyItem>
+		<SoftKeyItem>
+			<Name>Mark</Name>
+			<URL>QueryStringParam:page=mark&func=mark</URL>
+			<Position>4</Position>
+		</SoftKeyItem>
+		<SoftKeyItem>
+			<Name>Delete</Name>
+			<URL>QueryStringParam:page=main&func=delete</URL>
+			<Position>5</Position>
+		</SoftKeyItem>
+	</CiscoIPPhoneMenu>
+

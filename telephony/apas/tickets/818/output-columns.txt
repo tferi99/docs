@@ -1,0 +1,51 @@
+GASS Incoming    = acdAnswered + acdNotAnswered + queueBusy + OtherGroupOvr (102 + 103 + 20 + 24)
+GASS Answered    = acdAnswered (102)
+GASS Missed      = acdNotAnswered (103)
+GASS Busy        = queueBusy (20)
+GASS Overrun     = OtherGroupOvr (24)
+GASS SL (day)    = acdslDay (121)
+GASS SL (hour)   = acdslHour (120)
+
+Direct Incoming  = directAnswered + directNotAnswered + agentBusy (112 + 113 + 21)
+Direct Answered  = directAnswered (112)
+Direct Missed    = directNotAnswered (113)
+Direct Busy      = agentBusy (21)
+Direct Overrun   = NOT DEFINED, only in GASS (ACD) call, it is always zero value here
+Direct SL (day)  = directslDay (111)
+Direct SL (hour) = directslHour (110)
+
+
+
+Desktop Client data tables
+--------------------------
+Table #1 - Call summary:
+
+	Column							Direct							GASS													Summary
+	------							------							----													-------
+	cat_gscs_label					Direct							GASS
+	cat_gscs_waiting_calls			0								queues[q].getCallCount()
+	cat_gscs_incom_calls			112 + 113 + 21					102 + 103 + 20 + 24 (BUT 0 if CATEGORY_TYPE_TEAM)
+	cat_gscs_answered_calls			112								102
+	cat_gscs_missed_calls			113								103
+	cat_gscs_busy_calls				21								20
+	cat_gscs_OtherGroupOvr			0								24
+	cat_gscs_slt_val				111								121														101
+	cat_gscs_sl_val					110								120														100
+	
+	- Rows are summarized into "Summary" row (last row).
+	- numbers here are variable IDs declared in VARIABLE_NAME_ID_TABLE of uploaded descriptor JSP.
+	
+Table #2 - Agent summary:	
+
+	Column
+	------
+	cat_gsagsum_total				
+	cat_gsagsum_loggedOn
+	cat_gsagsum_avail
+	cat_gsagsum_unavail
+	cat_gsagsum_busy
+	cat_gsagsum_notbusy
+	cat_gsagsum_break
+	cat_gsagsum_wrapup
+	
+	- colums are calculated by ApasClientCorecalcTable_cat_gsagent_sum(...)

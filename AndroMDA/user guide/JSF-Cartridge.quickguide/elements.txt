@@ -1,0 +1,108 @@
+1. Diagrams
+-----------
+1.1 UseCases
+------------
+Use-cases split application into smaller module. Usecase should define a unique set of processing logic 
+operations that are specific to your application. Typical use-cases are: 'Login', 'Place order', 'Add new user'. 
+	
+We will put usecase in a suitable package, and label it with the <<FrontEndUseCase>> stereotype.
+It is mandatory to inform the cartridge which use-cases will be considered to be the application's entry point, 
+this use-case must be labeled with the <<FrontEndApplication>> stereotype. 
+One and only one use-case must be labeled this way.
+
+You can use UseCase diagrams to specify authentication/authorization.
+
+
+
+1.2 Activity diagrams
+---------------------
+These graphs allow you to express the way you want your application to behave, this is expressed by means of 
+STATES and TRANSITIONS. An activity graph therefore is, by definition, a STATE MACHINE.
+	
+	
+
+	
+2.1 Initial states	
+	Each use-case needs an initial state ,an initial state is displayed as a SOLID BLACK DISC. It denotes the starting 
+	point of the use-case, it can have no incoming transitions and only one outgoing transition. Only a single initial 
+	state is allowed per activity graph.
+	
+2.2 Action states
+	Draw states for server side and client side states.
+	
+	Client-side action states are TAGGED WITH the <<FrontEndView>> stereotype, they represent a JSP and may have 
+	multiple outgoing transitions (one per call to the server). 
+	
+	Server-side action states DO NOT NEED ANY STEREOTYPE but can ONLY HAVE A SINGLE OUTGOING TRANSITION.
+
+- Final states
+	In bpm4struts a final state represents the END OF THE USE-CASE and the FLOW INTO THE NEXT USE-CASE. 
+	There are two ways of modeling a final state: 
+		1. you give it the name of the next use-case (which can be the same as the current use-case)
+		
+		2. either you do not name it and you use a hyperlink to the next use-case (this is not supported 
+			in all UML tools)
+	
+- Transitions
+	Transition types can be the followings:
+
+	1. Whenever you model such a transition it represents a CALL TO THE SERVER FROM A WEBPAGE, usually by 
+	submitting a form. The parameters you model will represent the form fields.
+	
+	2. You can tie arbitrary type of state (so server and client side states as well). You can model more 
+	than one form in a GUI state BY DRAWING MORE OUTGOING TRANSITIONS.
+	
+
+- Event parameters
+	Event parameters are parameters modeled on transitions EXITING CLIENT-SIDE ACTION states.
+	Please note that you will need to add the parameters to the TRANSITION'S TRIGGER , 
+	this trigger SHOULD BE OF TYPE 
+	
+		'signal'
+	
+	, but don't worry about that if your UML tool does not support setting the type of the trigger.	
+	
+- Controllers
+
+	Assigning controller class to an Activity diagram in MagicDraw:
+		Method 1:
+		- click on the Controller class (in Containment Tree list - not in diagram!!!)
+		- choose 'State/Activity Diagram' submenu
+		- choose 'Assign...' submenu
+		- choose a diagram from the list
+	
+		Method 2:
+		Add a tagged value to the controller, pointing to the use-case, like this: 
+		
+			@andromda.presentation.controller.usecase=My UseCase 
+			
+	(the value is the name of the use-case). We recommend using the Method 1 that way you won't need to update the tagged 
+		value whenever you decide to change the name of the use-case.
+	
+
+	
+2.1 UseCase servlet
+-------------------
+JSF cartridge generates a servlet class for every use case. This servlet will process client request belong
+to use case.
+
+
+2.2 UseCase Form
+----------------
+
+2.3 
+
+2.3 Controller
+--------------
+Controllers provides user defined functions called during application flow from
+one state to another, e.g. validating page data, processing data using services.
+
+can be bound into application flow in the following 
+Controller function can be deferring (delegating) from specific points in our activity graph:
+- action states (deferred events)
+- decision points (ransition entering the decision point)
+
+
+2.4 UseCaseForwards
+-------------------
+

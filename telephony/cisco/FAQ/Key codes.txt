@@ -1,0 +1,7 @@
+=============================
+Key shorcuts for Cisco phones	
+=============================
+
+**#		: lock/unlock configuration
+**#**	: reset
+??		: it shows status message about current conversation

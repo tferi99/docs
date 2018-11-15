@@ -1,0 +1,6 @@
+=============================================
+How to get info about dependent CUCM objects?
+=============================================
+- Choose an object (CSS, partition, device, line, end user, etc.)
+- Choose 'Dependency Records' from 'Related Links' combo (top-right).
+

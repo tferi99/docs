@@ -1,0 +1,11 @@
+=======================
+REST-API authentication
+=======================
+
+Configuration:	/src/apas-restapi-spring-security.xml
+URL pattern:	/api/**
+
+
+	<intercept-url pattern="/api/**" access="isAuthenticated() and hasAnyRole('restadmin', 'restpublic')" />
+	
+	--> com.andtek.andphone.api.security.authentication.ApasRestApiAuthenticationProvider

@@ -1,0 +1,159 @@
+===================
+AndroMDA cartridges
+===================
+(by Ferenc Toth)
+
+
+1. General
+1.1 Usage
+2. Cartridge resources
+3. Customizing resources
+3.1 Overriding cartridge resources
+3.2 Merging cartridge resources
+
+
+
+1. General
+----------
+The primary plugin of the AndroMDA framework, cartridges provide the ability to process model elements 
+that meet certain conditions, for example
+	- that have specified stereotypes (i.e. <<Entity>> , <<Enumeration>> , etc.) 
+	- inferred by the model (all Actors that have a dependency to a <<Service>> for example). 
+	- ...
+	
+- Cartridges process these model elements using template files DEFINED WITHIN THE CARTRIDGE DESCRIPTOR.
+- Because the cartridge ia a namespace component it MUST be registered within a namespace descriptor (namespace.xml)
+
+1.1 Usage
+---------
+To use cartridge during generation cartidge must be in classpath.
+
+In Maven it's easy:	add to dependencies, for example:
+
+	...
+	<dependencies>
+	    ...
+	    <dependency>
+		<groupId>${pom.groupId}</groupId>
+		<artifactId>maven-andromda-plugin</artifactId>
+		<version>3.0</version>
+		<type>plugin</type>
+	    </dependency>
+	    ...
+
+
+2. Cartridge resources
+----------------------
+An AndroMDA cartridge is a resource (directory or jar file) on the classpath that consists of several items:
+
+	/META-INF/andromda/namespace.xml
+
+		Because the cartridge is a namespace component it MUST be registered within a namespace descriptor.
+		This descriptor is what allows the cartridge's namespace to be "discovered" on the classpath. 
+		This namespace descriptor also registers the cartridge component within the AndroMDA core.
+
+	/**/*.class
+
+		There could be a couple uses for this directory, placing cartridge specific metafacade classes, 
+		and/or other support classes (such as templateObjects)
+
+	/META-INF/andromda/cartridge.xml
+
+		Declarative cartridge descriptor
+
+	/META-INF/andromda/metafacades.xml
+		
+		Metafacades descriptor. This is used to specify metafacades for the underlying metamodel (UML 1.4, etc.).
+
+	/templates/**/*.vsl  (or any template extension depending on your cartridge template engine).
+		
+		Templates that tell the cartridge how to format the generated code.
+
+
+
+
+
+3. Customizing resources
+------------------------
+You can customize resources by:
+- overriding
+- merging (using merge-points in XML files)
+
+
+2.1 Overriding cartridge resources
+----------------------------------
+Sometimes you may want to override some of the resources a cartridge uses without touching the internals of the cartridge.
+- specify a mergeLocation (into mda/conf/andromda.xml)
+- put the replacement-files in that directory
+
+	...
+	 <namespace name="bpm4struts">
+	     <properties>
+		 ...
+		 <property name="mergeLocation">${maven.src.dir}/cartridge/custom</property>
+		 ...
+	     </properties>
+	 </namespace>
+	 ...
+
+This way the cartridge will try to load resources (templates, images, etc.) from ${maven.src.dir}/cartridge/custom PRIOR 
+to loading them from the cartridge-jar.
+
+When loading resources from the merge location you will need to respect the same directory structure as in the cartridge jar. 
+This means that when the cartridge contains 
+
+	templates/SomeTemplate.vsl 
+
+and your merge location is 
+
+	${maven.src.dir}/cartridge/custom 
+	
+you will need to copy your new template in 
+
+	${maven.src.dir}/cartridge/custom/templates/SomeTemplate.vsl
+
+, like this you can override all cartridge resources.
+
+
+
+2.2 Merging cartridge resources
+-------------------------------
+- add a mergeMappingsUri to namespace of cartridge (andromda.xml)
+
+	...
+	 <namespace name="bpm4struts">
+	     ...
+	     <property name="mergeMappingsUri">file:${maven.conf.dir}/mappings/Bpm4StrutsMergeMappings.xml</property>
+	     ...
+	 </namespace>
+	...   
+
+- create merge file
+	
+	<mappings name="Bpm4StrutsMergeMappings">
+	    ...
+	    <mapping>
+		<from><![CDATA[<!-- error-page merge-point -->]]></from>
+		<to>
+	<![CDATA[
+	<error-page>
+	    <error-code>404</error-code>
+	    <location>/index.jsp</location>
+	</error-page>
+	<error-page>
+	    <error-code>408</error-code>
+	    <location>/index.jsp</location>
+	</error-page>
+	<error-page>
+	    <error-code>400</error-code>
+	    <location>/index.jsp</location>
+	</error-page>
+	]]>
+		</to>
+	    </mapping>
+	    ...
+	</mappings>
+
+
+Merge point in 'from' will be searched and content in 'to' will be merged there.
+

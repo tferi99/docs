@@ -1,0 +1,11 @@
+===========================================
+How to run general troubleshooting on CUCM?
+===========================================
+
+- SSH into CUCM (admin/and33phone)
+
+- Call:
+	utils diagnose test
+	
+It will be validate disk-, tomcat-, network-related serviceas and functions.
+

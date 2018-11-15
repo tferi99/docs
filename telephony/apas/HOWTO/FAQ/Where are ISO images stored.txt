@@ -1,0 +1,6 @@
+============================
+Where are ISO images stored?					
+============================
+
+Host:	apas www (85.214.108.91)
+Dir:	/var/www/andtek/htdocs/files

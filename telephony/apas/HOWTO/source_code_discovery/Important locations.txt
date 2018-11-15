@@ -1,0 +1,6 @@
+===================
+Important locations
+===================
+
+
+Uploaded media:		APAS_WEB_APP/modules/global/media 

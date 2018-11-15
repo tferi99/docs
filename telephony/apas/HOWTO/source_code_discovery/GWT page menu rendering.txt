@@ -1,0 +1,51 @@
+=======================
+GWT page/menu rendering
+=======================
+
+	web.xml welcome -> index.html -> GWTAdmin
+
+	- Main entry point (starter applet):
+			
+			com.andtek.andphone.global.GWTAdmin
+		
+			It generates host page where GWT JS will contain version specific path:
+			
+				/<WEBAPP>/gwt/ver<VERSION>-<BUILD>/com.andtek.andphone.global.gwtapp.gwtframework_gwtappMain/com.andtek.andphone.global.gwtapp.gwtframework_gwtappMain.nocache.js
+				
+				
+				where 
+					VERSION : from version.properties
+					BUILD : 100
+					
+			Version specific part of path will be removed by 
+			
+				com.andtek.andphone.utils.GWTCacheFilter
+		
+	
+	- GWT JS will load design -> gwtframework_gwtappMain
+	
+		gwtframework_gwtappMain.onModuleLoad()
+			- create RPCglobalService
+			- RemoteGWTFrameworkInit()
+				-> RPCglobalServiceImpl.RemoteGWTFrameworkInit() ----- RPC async ------> RPCglobalServiceImpl.RemoteGWTFrameworkInit()
+					- It creates initBean (GWTFrameworkInitBean)
+					- initBean.setAndPhoneMenus(RemoteGetAndPhoneMenus())		
+					--> RPCglobalServiceImpl.RemoteGetAndPhoneMenus()		: to generate side menu
+					
+						It enumerates modul names from com.andtek.andphone.utils.Modules.sw_module_names[1] (!!!)
+						------------------------- loop on modul names ------------------------------
+							- It gets module version from com.andtek.andphone.utils.Modules.module_versions
+							- check if module is allowed --> isModuleAllowedmodule()
+							- gets pages for current module into pages[][]
+								--> pages = com.andtek.andphone.utils.Admin.getPages(moduleName)
+									- it loads Admin class of module by reflection and gets public pages[][] array
+										pages = com.andtek.andphone.<moduleName>.Admin.pages
+									-------------------------------------- loop on pages of a module -----------------------------------
+										Menu items will be generated for pages
+										pageName = pages[x][0]
+										funcName = pages[x][1]
+										url = pagebean.setUrl(com.andtek.andphone.utils.Admin.url + "?module=" + Modules.sw_module_names[1][i] + "&page="+pages[j][0]+"&func=" + pages[j][1] + "&page_without_decoration=true"
+										
+										So menu URL is:
+										
+											/andphone/Admin?module=<modulName>&page=<pageName>&func=<funcName>&page_without_decoration=true

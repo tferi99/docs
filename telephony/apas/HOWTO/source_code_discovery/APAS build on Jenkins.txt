@@ -1,0 +1,44 @@
+=====================
+APAS build on Jenkins
+=====================
+Build server:	192.168.150.10
+Project configuration:		http://192.168.150.10:8080/view/APAS-Trunk/job/apas-trunk-x86_64/configure
+
+Locations
+---------
+Jenkins HOME:	/var/lib/jenkins
+Jobs are under:	/var/lib/jenkins/jobs
+
+Build steps
+-----------
+1. SVN checkout from trunk
+
+2. Ant build:	
+		- clean-classes 
+			--> init
+		- clean-rpm 
+			--> init
+
+3. Copy artifacts from:
+	- recorder
+	- logrotator
+	
+4. Ant build:	
+	- locales 
+	- test 
+		--> compile_tests
+			--> build-project
+				--> init
+	- pkg
+		--> rpm
+			--> build
+				--> build-subprojects
+				--> build-project
+					--> init
+			--> incbuild
+
+			
+- SVN revision number generated during Ant build into:
+
+	/src/com/andtek/andphone/svnrevision.properties
+	

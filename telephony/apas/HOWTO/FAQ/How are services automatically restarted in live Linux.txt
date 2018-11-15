@@ -1,0 +1,8 @@
+=======================================================
+How are services automatically restarted in live Linux? 
+=======================================================
+monit
+
+Configuration in:
+
+	/etc/monit.d

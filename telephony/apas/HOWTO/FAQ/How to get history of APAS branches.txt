@@ -1,0 +1,6 @@
+====================================
+How to get history of APAS branches?
+====================================
+
+To get creation time of brances get SVN log of com/andtek/andphone/version.properties from trunk and 
+see comments.

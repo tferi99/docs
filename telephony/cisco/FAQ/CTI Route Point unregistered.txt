@@ -1,0 +1,7 @@
+============================
+CTI Route Point unregistered
+============================
+Possible reasons:
+- missing line
+- not added to application user used by application
+- application not running

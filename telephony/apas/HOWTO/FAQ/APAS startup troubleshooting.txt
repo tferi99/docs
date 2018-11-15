@@ -1,0 +1,27 @@
+============================
+APAS startup troubleshooting
+============================
+
+------------------------------------------------------------------------------------------------------------------------------------------
+APAS starting successfully but CTI manager not available
+========================================================
+I've got a lot of NPE from several location of code because JTAPI provider is null.
+I've found the following error in catalina.out after JTAPI initialization:
+
+	INFO  bootstrap - #--------------------------------------------------------------
+	INFO  bootstrap - Initializing JTAPI ...
+	INFO  bootstrap - #--------------------------------------------------------------
+	Xlib: connection to "localhost:13.0" refused by server
+	Xlib: PuTTY X11 proxy: wrong authorisation protocol attempted
+	Exception in thread "APAS-JTAPIThread" java.lang.InternalError: Can't connect to X11 window server using 'localhost:13.0' as the value of the DISPLAY variable.
+			at sun.awt.X11GraphicsEnvironment.initDisplay(Native Method)
+			at sun.awt.X11GraphicsEnvironment.access$100(X11GraphicsEnvironment.java:52)
+			at sun.awt.X11GraphicsEnvironment$1.run(X11GraphicsEnvironment.java:155)
+			at java.security.AccessController.doPrivileged(Native Method)
+			at sun.awt.X11GraphicsEnvironment.<clinit>(X11GraphicsEnvironment.java:131)
+
+Possible reason:
+
+	I needed wireshark on ISO system and installed 'xauth'. It was the source of this problem.
+	
+	

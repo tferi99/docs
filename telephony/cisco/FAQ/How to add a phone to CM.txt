@@ -1,0 +1,31 @@
+=========================
+How to add a phone to CM?
+=========================
+1. Add phone and line(s) to CM
+
+	Phone configuration elements
+	----------------------------
+	Location 				: System/Location
+	Partition 				: Call Routing/Class of Control/Partition
+	Calling Search Space 	: Call Routing/Class of Control/Calling Search Space
+	Directory Number		: Call Routing/Directory Number
+	Phone					: Device/Phone
+	Assigning DN			: Device/Phone
+	
+2. Set TFTP server on (physical) phone.
+	- Settings/Network configuration/IPv4 Configuration/TFTP Server 1
+	
+3. Clean old CTL file
+	- Settings/Security Configuration[/Trust List]/CTL File
+	
+		Unlock and press 'Erase'. 
+		
+		**#		: lock/unlock configuration 
+
+4. Restart phone (from CM admin or **#**).
+
+Steps of initialization:
+	- Configuration will be downloaded from TFTP server.
+	- IP address and other information will be set by DHCP server.
+	- Firmware will be upgraded (optional).
+	- Lines will be configured.

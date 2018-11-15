@@ -1,0 +1,85 @@
+=======================
+Maven2 pocket reference
+=======================
+
+create
+------
+Interactive mode:
+	mvn archetype:generate
+
+JAR:
+	mvn archetype:create -DgroupId=ArtifactGroup -DartifactId=ArtifactID
+WAR:
+	mvn archetype:create -DgroupId=ArtifactGroup -DartifactId=ArtifactID -DarchetypeArtifactId=maven-archetype-webapp
+	
+
+help
+----
+mvn <plugin>:help			- generally plugins has 'help' goal to give info
+
+help
+----
+mvn help:help				- help on help plugin
+mvn help:system				- environment/system properties
+mvn help:all-profiles		- list profiles of project
+mvn help:describe			- info about a maven plugin
+	
+	mvn help:describe -DgroupId=org.somewhere -DartifactId=some-plugin -Dversion=0.0.0
+	mvn help:describe -Dplugin=plugin-name
+
+	Example:
+			mvn help:describe -DgroupId=org.codehaus.mojo -DartifactId=exec-maven-plugin
+			mvn help:describe -Dplugin=exec
+			
+mvn help:describe -Ddetail	- DETAILED(!) info about a maven plugin			
+			
+mvn help:effective-pom		- print effective POM to stdout (super-POM)
+mvn help:effective-settings	- print effective settings to stdout
+
+
+exec
+----
+exec:java					-  calls java class with the enclosing project's dependencies as classpath.
+
+	mvn exec:java -Dexec.mainClass="com.example.Main" [-Dexec.args="argument1"] ...
+	
+exec:exec					- calls external application
+
+	mvn exec:exec -Dexec.executable="maven" [-Dexec.workingdir="/tmp"] -Dexec.args="-X myproject:dist"
+	
+	
+eclipse
+-------
+mvn eclipse:eclipse			- create Eclipse project files
+mvn eclipse:m2eclipse		- create Eclipse project files for M2Eclipse
+
+
+with source	+ javadoc
+---------------------
+mvn clean javadoc:jar source:jar install
+
+
+Variables
+---------
+${env.XXX}				: environment variables from OS (e.g. ${env.PATH})
+${project.XXX}			: to expose variables from POM (e.g. ${project.artifactId})
+${settings.XXX}			: to expose variables from settings.xml (e.g. ${settings.offline})
+Java propoerties		: All properties accessible via getProperties() on java.lang.System are exposed as
+							POM properties. Some examples of system properties are: 
+
+							${user.name}, ${user.home}, ${java.home}, ${os.name}
+
+Arbitrary properties	: Arbitrary properties can be set with a properties element in a pom.xml or settings.xml,
+							or properties can be loaded from external file.
+
+							
+	project.basedir							: absolute location of POM
+	project.build.sourceDirectory 			 
+	project.build.scriptSourceDirectory 
+	project.build.testSourceDirectory 
+	project.build.outputDirectory 
+	project.build.testOutputDirectory 
+	project.build.directory
+							
+	SEE MORE: 
+			maven properties.mht 

@@ -1,0 +1,93 @@
+==============
+Backup-restore
+==============
+
+- Backup call flow
+- Error handling
+
+-----------------------------------------------------------------------------------------------------------------------------
+Backup call flow of manual backup
+=================================
+--> GWT:	Global/Backup.../Manual Backup Methods/[Download Binary Backup]
+	backup_gwtappMain.java - BinaryBackupButton	--> HTTP request
+	--> com.andtek.andphone.utils.Admin.getModuleAdminPage(ConnectionBean connection)		
+		REFLECTION --> com.andtek.andphone.global.Admin.backup_gwtbindownload(...)
+			--> [2]                                                                                        <<<<<<<<< com.andtek.andphone.global.Module.binaryBackup((...)
+			--> UPLOAD (binary/octet-stream)
+		- EVENTLOG on error ("Unable to create binary backup file ...") - WITH 'request' parameter
+		
+			
+-----------------------------------------------------------------------------------------------------------------------------
+Restore call flow
+=================
+backup_gwtappMain.java - BinaryBackupButton	--> HTTP request
+--> createRestoreConfiguration(AndGWTDataRecordIF)
+	--> restoreformPanel.addFormListener(new FormListener()
+		--> RemoteGetDataRecordBeanFromSession(...)
+			--> RPC: RPCServletService.RemoteGetDataRecordBeanFromSession(recordSessionName, new AndGWTAsyncCallback()
+				onSuccess --> onRestoreSubmitActionCompleted(...)
+				
+				--> com.andtek.andphone.global.Admin.backup_gwtrestore(ConnectionBean connection)
+			
+					- Saving uploaded data into /tmp/update.jar
+			
+
+-----------------------------------------------------------------------------------------------------------------------------
+Scheduled backup
+================
+GWT:	Global/Backup.../Scheduled Backup/[Save and Backup Now]
+	backup_gwtappMain.java - backupNow --> onScheduledFormPanelSubmitEvent(...)
+		--> RemoteSaveScheduledBackup(record, func, backupNow)
+			--> RPC: RPCServletService.RemoteSaveScheduledBackup(...) ==> RPCServletServiceImpl.RemoteSaveScheduledBackup(...)
+				--> [1]                                                                                  <<<<<<<<< com.andtek.andphone.global.Module.binaryBackup((...)
+				--> global.Module.doXMLbackupToFTP()
+				--> eraseOldLocalBackupFiles()
+				
+Daily maintenance:
+	--> CronJob.execute(...)
+		--> CronJob.cronEvent(...)
+			--> global.Module.cronEvent(...)
+				-->	global.Module.doDailyMaintenanceJob()
+						--> [1]
+						--> global.Module.doXMLbackupToFTP()
+						--> eraseOldLocalBackupFiles()
+					
+
+					
+					
+Creating binary backup and sending to a FTP server:
+[1]	--> global.Module.doBinaryBackupToFtp()
+		--> [2]
+		--> global.Module.uploadToSFTPServer(path, ID_BINARY_DATA)
+		- EVENTLOG on error ("Unable to create binary backup file ...") - WITHOUT 'request' parameter
+		
+[2] --> global.Module.binaryBackup(backup_outputfile)
+			- command = sudo sh /opt/apas/backup.sh -u -o <backup_file> 
+			--> process = runtime.exec(command);
+			--> int ret = process.waitFor();
+			--> processScriptMessages()
+				--> EventLog.createLogFromFile(BACKUP_SCRIPT_MESSAGES, module)
+				--> delete BACKUP_SCRIPT_MESSAGES
+			- THROWS EXCEPTION on error
+		
+				
+-----------------------------------------------------------------------------------------------------------------------------
+Error handling				
+==============
+Draft call flow of backup:
+
+--> global.Module.binaryBackup(backup_outputfile)
+	- APAS -> /opt/apas/backup.sh													<<<<<< /var/log/apas/last_backup.log
+	
+			- /opt/apas/backup.sh -> /opt/apas/backup_do.sh						<<<<<< /tmp/backup_messages.txt (<<< /tmp/backup_messages.txt.tmp)
+
+	- APAS --> processScriptMessages()
+		- processing /tmp/backup_messages.txt
+		- deleting /tmp/backup_messages.txt
+		
+Returning error information:
+- events are returned in: 						/tmp/backup_messages.txt		(will be deleted)
+- detailed information about last backup:		/var/log/apas/last_backup.log	(will be overwritten by next backup)
+		
+		
+		

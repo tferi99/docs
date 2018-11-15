@@ -1,0 +1,25 @@
+=====================
+Secure JTAPI and CAPF
+=====================
+
+If JTAPI secured CAPF downloads CTL and certificates from CUCM:
+
+JTAPIThread.run()
+	--> [1]
+	
+	-------------------------------- loop -------------------------------------
+	if 1st call was unsuccessful --> trying to connect again - over and over in every 5 seconds
+	if (secs >= 5 || provider.getCiscoProvider() == null) {
+		--> [1]
+	}
+
+
+[1]	--> initJtapi()
+		--> doInitJtapi()
+			
+		
+		
+			--> initSecureJtapi(...)
+			
+Certificates downloaded into:		/apas/andphone/cert
+

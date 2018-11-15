@@ -1,0 +1,27 @@
+How to add external JARs to WEB application dependencies?
+=========================================================
+If you have a lot of WEB application projects using WTP, which have 
+the same set of libraries under WEB-INF/lib, you can avoid to
+copy them into each projects.
+
+The most preferable way is the following:
+- copy common JARs into a common lib directory 
+- create a classpath variable pointing to this directory
+- add JARS into your WEB application as J2EE Module Dependency
+	
+	Project/Properties/J2EE Module Dependencies/Add Variable.../Extend...
+	
+NOTE: You have to add JARs as one by one (you can multi-select them).
+
+Dependencies will be added into WTP config file (org.eclipse.wst.common.component), 
+for example JSF libraries:
+
+	<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/var/COREJSF_EXAMPLES_COMMON/WEB-INF/lib/jsf-api.jar">
+		<dependency-type>uses</dependency-type>
+	</dependent-module>
+	<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/var/COREJSF_EXAMPLES_COMMON/WEB-INF/lib/jsf-impl.jar">
+		<dependency-type>uses</dependency-type>
+	</dependent-module>
+
+
+	

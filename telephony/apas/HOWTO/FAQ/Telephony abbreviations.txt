@@ -1,0 +1,27 @@
+=======================
+Telephony abbreviations
+=======================
+
+CTI - Computer telephony integration
+
+DTMF - Dual-tone multi-frequency (DTMF) signaling is used for telephone signaling over the line in the voice-frequency band to the call switching center. 
+
+PSTN - public switched telephone network
+	Is the world's collection of interconnected voice-oriented public telephone networks, both commercial and government-owned. It's also referred to as the Plain Old Telephone Service (POTS). 
+	It's the aggregation of circuit-switching telephone networks that has evolved from the days of Alexander Graham Bell. 
+	Today, it is almost entirely digital in technology except for the final link from the central (local) telephone office to the user. 
+	
+POTS - Plain Old Telephone Service
+
+
+SDP - Session Description Protocol (SDP)
+	The SDP protocol is described in the RFC4566. It is used to negotiate session
+	parameters between the user agents. Media details, transport addresses, and other
+	media-related information are exchanged between the user agents using the SDP protocol.
+	
+SIP - Session Initiation Protocol
+	
+SPAN/Port Mirroring - Port Mirroring is used on a network switch to send a copy of network packets seen on one switch port (or an entire VLAN) to a network monitoring connection on another switch port. 
+	This is commonly used for network appliances that require monitoring of network traffic, such as an intrusion-detection system. Port mirroring on a Cisco Systems switch is generally 
+	referred to as Switched Port Analyzer (SPAN).
+	

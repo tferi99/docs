@@ -1,0 +1,13 @@
+========================================
+Howto add APAS autologin for developers?
+========================================
+
+	insert into config(module, param, val) values('global', 'AutoLoginUser', 'admin')
+	insert into config(module, param, val) values('global', 'AndtekInternalUseFeatures', 'true')
+
+	Call:
+		
+		http://localhost:8080/andphone/autoLogin.jsp
+		
+		
+	So poor developer shoult not login hundred times per day :) .

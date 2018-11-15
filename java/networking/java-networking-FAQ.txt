@@ -1,0 +1,32 @@
+- URL Decoding/Encoding in Java and JavaScript
+
+-----------------------------------------------------------------------------------------------------
+URL Decoding/Encoding in Java and JavaScript
+============================================
+
+Here is the tip if you are working on URL decoding/encoding on both the server side using java and on
+client side using javascript.
+
+In JAVA,
+
+	We use java.net.URLEncoder and java.net.URLDecoder to encode/decode strings.
+
+In JAVASCRIPT,
+
+	We use encodeURIComponent and deodeURIComponent to do the same thing.
+
+BUT, there is one big difference b/w the java and javascript encode/decode logic.
+
+Java version encodes the space character as + while the javascript version encodes it as %20 
+(hex equivalent of space char).
+
+So if you are encoding anything on server side and trying to decode it in javascript than you will 
+need to replace + manually before considering URL properly decoded. For example,
+
+	function decodeURIComponent(decodedTxt)
+	{
+		// first we replace any + chars with single space as javascript built in functions do not 
+		replace + with space character
+		var tempTxt = decodedTxt.replace(/\+/g, ' ');
+		return decodeURIComponent(tempTxt);
+	}

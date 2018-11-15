@@ -1,0 +1,73 @@
+=========
+ACD calls
+=========
+
+NOTE: There is a wiki which gives global overview on ACD calls.
+
+	http://devel.andtek.com/apas/wiki/ACDArchitecture
+
+
+Route point configuration
+-------------------------
+		config[partner/RoutePointPrefix]
+
+		
+Route point initialization during startup
+-----------------------------------------
+com.andtek.andphone.JTAPIThread.initJtapi()
+	--> JTAPIThread.doInitJtapi()
+		--> com.andtek.andphone.utils.Modules.initJTAPI(JTAPIThread jtapi)
+			-------------------------- loop on modules ---------------------------------
+				--> Modules.initJTAPI(JTAPIThread jtapi, String moduleName)
+					--> ((ModuleJTAPIIF)module).initJTAPI(jtapi);
+						--> com.andtek.andphone.partner.Module.initJTAPI(JTAPIThread jtapi)
+							----------------------------- loop on terminals --------------------------------
+								- if name of terminal starts with RoutePointPrefix (from config)
+									--> removeRouteCallBack(routePoint, jtapi.getProvider(), true);
+									--> Module.setupRouteCallBack(routePoint, jtapi.getProvider());
+										- it set media capabilities of RP
+										- it registers com.andtek.andphone.partner.acd.RPCallObserver on lines of RP
+
+
+RPCallObserver is:
+	RTPStreamListener, RouteCallback, CallControlCallObserver, MediaCallObserver, CiscoTerminalObserver, CiscoAddressObserver
+										
+
+
+ACD call
+--------
+To get logs set DEBUG level to 
+	
+	com.andtek.andphone.partner=DEBUG
+	com.andtek.andphone.partner.acd=DEBUG
+
+
+Calling a pilot
+---------------
+1. CallCtlConnOfferedEv will be sent to RPCallObserver.offered(CallCtlConnOfferedEv ev)
+
+	ProxyRpCallObserver.callChangedEvent(CallEv[] eventList) 
+		CallCtlConnOfferedEv --> offered(offeredEv);
+			- event sent to RPOfferedProcessor
+			--> offeredEventProcessor.queue(ev);
+		RPOfferedProcessor.process(...)
+			--> observer.offered(event);
+				--> RPCallObserver.offered(CallCtlConnOfferedEv ev) {
+
+				
+				
+- Pilot has been called
+	--> AgentCallObserver.callChangedEvent(CallEv[] eventList)
+		CallCtlConnOfferedEv
+
+
+
+	--> ProxyRpCallObserver.routeEvent(RouteEvent arg0)
+		--> com.andtek.andphone.partner.acd.RPCallObserver.routeEvent(RouteEvent event)
+		
+	
+	
+com.andtek.andphone.recorder.MediaRoutePoint.callChangedEvent(CallEv[] eventList)		(com.andtek.andphone.partner.acd.RPCallObserver)
+CallCtlConnOfferedEv
+--> com.andtek.andphone.partner.acd.RPCallObserver.offered(CallCtlConnOfferedEv ev)
+	--> acdCall = ACDCall.getNewACDCall(pilot, queue, call);

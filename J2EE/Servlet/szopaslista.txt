@@ -1,0 +1,25 @@
+PROBLEM
+-------
+content of pages are confused by high load of WEB application
+
+FIX
+---
+DON'T USER MEMBER VARIABLES IN SERVLETS
+
+John Smith [29/May/07 04:58 PM] 
+A hiba a servletek-ben található szinkronizálási hibára vezethetõ vissza. Megoldás a szervletekben használt memberek eltávolítása. 
+
+A memberek helyett részben request attribútumokat használunk, részben a metódusokban deklarált local változókra cseréljük õket. 
+
+[ Permlink | Delete | « Hide ] 
+Toth Ferenc [30/May/07 07:44 AM] 
+A problema fo oka nem az apache-n keletkezo hurok, az csak elohozta a problemat. 
+
+A fo ok, hogy a szervletek nem szalbiztosak, es tobb request feldolgozo thread UGYANAZT a szervlet peldanyt hasznalja. 
+
+Eddig a respons writert az elejen elkertem, es tagvaltozoba tettem. Az utana kovetkezo irasi muvelet viszonylag hosszu 
+ideig tart. Nagy terheles eseten a soron kovetkezo thread elkezdett dolgozni es UGYANABBA a tag valtozoba teszi a sajat 
+writer-et, azaz a jelenlegi thread is a kovetkezo thread writer-ebe ir, es a tartalmak osszekeverednek. 
+
+Megoldas: a tagvaltozokat request attributumokra csereltem. 
+----------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,85 @@
+=================
+Silent monitoring
+=================
+You need a configured silent monitor environment.
+
+Participants are:
+	- caller
+	- called
+	- supervisor
+	- Route Point (RP)
+
+- Caller and/or called are in agents configured for supervisor.
+- Supervisor calls 'Silent Monitoring' phone XML service
+
+This servlet handles XML Phone services:
+
+	com.andtek.andphone.recorder.web.RecorderPhoneServicesServlet
+
+Monitoring by calls
+-------------------
+1. Building a menu list to choose a call
+	XML service retrieves available calls can be monitored:
+
+		Recorder?page=monitor&dev=#DEVICENAME#
+	
+	It returns a list of calls in form 'callerDN > calledDN'.
+	
+	XML service
+	--> RecorderPhoneServicesServlet.doRequest(...)
+		--> doMonitor(...)
+			--> realTimeMonService.getCallStatus();			: getting available calls to be monitored
+					-------------------------------- loop on calls ------------------------------------
+					--> phoneXML.addMenuItem(...) 			: building menu
+	
+2. To start silent monitoring select an item from previously generated menu.
+
+	IT USES THE SAME FUNCTION OF SAME SERVLET, but different paramaters:
+	
+		Recorder?page=monitor&func=start&dev=#DEVICENAME#
+
+		
+	XML service
+	--> RecorderPhoneServicesServlet.doRequest(...)
+		--> doMonitor(...)
+			--> checkRightsAndStartSilentMonitoring(connection,terminal,selectedCallId, out);	
+				--> checkMonitoringRight(supervisorExtensions, matchParty, createMatchRecord(call))
+				--> startSilentMonitoring(supervisorTerminal, selectedCallId, matchParty, supervisor, out)
+		
+		
+Monitoring by agents
+--------------------
+1. Building a menu list to choose an agent to monitor
+	XML service retrieves available calls can be monitored:
+
+		Recorder?page=monitoragent&dev=#DEVICENAME#
+	
+	XML service
+	--> RecorderPhoneServicesServlet.doMonitorAgent(...)
+		agent = null
+		--> boolean success = checkRightsAndStartSilentMonitoring(terminal, agent, monitorableAgents, out)
+			It returns monitorable agents into monitorableAgents and success = false
+			
+			----------------------------------- loop on monitorableAgents ----------------------------
+			--> phoneXML.addMenuItem(...) 			: building menu
+			
+	It returns a list of agents in form .........
+	
+	
+2. 	To start monitoring an agent user chooses an item from menu generated previously
+
+	XML service URL:
+	
+		Recorder?page=monitoragent&agent=<agentDN>&dev=#DEVICENAME#
+		
+	XML service
+		--> RecorderPhoneServicesServlet.doMonitorAgent(...)
+			agent = <agentDN>
+			--> boolean success = checkRightsAndStartSilentMonitoring(terminal, agent, monitorableAgents, out)
+				--> boolean allowed = checkMonitoringRightAndGetMonitorableAgentList(null,supervisorTerminal.getName(), agentExtension, monitorableAgents);
+					- getting users which owns any DN extension of current supervison terminal
+					--------------------------- loop on users which owns superuser lines --------------------
+					--> haveAgent = getMonitorableAgentsForUser(agentExtension, monitorableAgents, haveAgent, rs.getString("username"))
+						It collects monitorable agents for users in loop.
+					
+					

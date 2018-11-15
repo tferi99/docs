@@ -1,0 +1,11 @@
+========================
+SSO-related CLI commands
+========================
+
+utils sso enable
+utils sso disable
+utils sso status
+utils sso recovery-url enable
+utils sso recovery-url disable
+show samltrace level
+set samltrace level

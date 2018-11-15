@@ -1,0 +1,39 @@
+===========
+APAS update
+===========
+- Update is a full application package which can contain additional scripts and config files.
+- Update will be started from APAS:		General/Software Update
+
+Steps of update:
+	- User calls update UI:
+	
+		com.andtek.andphone.global.gwtapp.update_gwtappMain.gwt.xml
+		
+	- User uploads an update package (.pkg).
+	
+	- On submit Admin.update_gwtpkgupload(conn) will be called by convention (page: update, function: gwtpkgupload).
+		It will save uploaded file to:
+		
+			/tmp/update.jar
+	
+		Result will be stored into SoftwareUpdateBean which will be saved into session attribute (GWTCLIENT_SOFTWARE_UPDATE_RECORDBEAN).
+		
+	- Form listener will be called back.
+	
+		update_gwtappMain.RemoteGetDataRecordBeanFromSession("GWTCLIENT_SOFTWARE_UPDATE_RECORDBEAN")		: it gets result and calls next method on success
+			--> RemoteStartUpdateProcess() : it calls server side method (RemoteStartUpdateProcess())
+				- deletes latest upload status file (/var/lib/tomcat5/webapps/andphone/WEB-INF/lib/update_status.txt)
+				- after the delete execute the script to update (/opt/obelisk/admin_restart.pl with parameter 'update')
+					--> /opt/apas/update.sh >/var/log/update.log which do the followings:
+						- inactivate monit
+						- stops Tomcat
+						- cleans up update/backup directories
+						- make backup from config file
+						- extracts uploaded file (/tmp/update.jar)
+						- executes update script extracted from package (/tmp/update/update.sh)
+							- checks version
+							- installs extracted RPMs
+				
+Troubleshooting
+---------------	
+	tail -f /var/log/update.log

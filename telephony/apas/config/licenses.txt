@@ -1,0 +1,44 @@
+APAS
+----
+
+-------------------------------------------------------- 5.x ----------------------------------------------------------------
+Global/licenses:		E4KAA-H8LBD-HPZJ6-NSBES-KGLAA
+Base (till v.5.9.9):	E6PSS-AAUSC-PGM4A-EAKAJ-JPGAE
+HA license:				A3FSS-ALYAH-PL54K-AAAAV-W98AA 
+
+
+Customer: Falcon
+----------------
+AJGEA-JABAG-FCF2B-ACKA6-NKLAA : 2 x AND Phone Recorder Management
+E6PSU-BESTC-9GR4J-AUBE6-NP2TE : 1 x AND Phone  AND Phone BASE
+ALNWC-AE3KC-9QM2J-AUAAN-EPLSA : 10 x AND Phone Recorder
+ANNWC-KES3C-9QM2J-ECAEQ-PKL5A : 1 x AND Phone  AND Phone BASE
+A4HEU-BECTG-RRMLB-EUKE6-EKJVA : 1 x AND Phone Recorder Management
+E2PWS-BE3JC-RQRJA-ESBAQ-EKLUA : 10 x AND Phone Recorder
+E2HAC-AES3C-PRR4A-ECJAN-PPL2E : 1 x AND Phone Recorder Management
+E2NWA-BGN2C-PRR4B-ACBEN-NK4QE : 45 x AND Phone Recorder
+
+-------------------------------------------------------- 4.x ----------------------------------------------------------------
+Global/licenses: 		E2KAS-KAKBC-F2H4R-B4AAL
+Simulation test:		ELVAC-JE3JG-ZTD9Z-H4BEJ-JKYBA
+Directory Light:		EN6SA-AEKBC-EE72P-MAAEU-KCJJA
+Base License:			AQFSC-AEA2G-YN72E-QJKAS-KG2JE
+Directory License: 		EJLSS-KAMJC-FSHLN-L4BAC-AGLAA
+
+
+Demo License (valid 2016.07.14 4.99)
+ELJEU-KF7AC-HTH2H-F2AAS-AGLKA
+
+
+
+Demo license for 4 phones (80 days):	ALJAC-KAWKG-J5XLP-WAKAU-AG2KE
+
+
+
+
+TeamViewer
+----------
+09-31204-479922-181713 
+
+Otthoni használatra nem jó!
+

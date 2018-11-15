@@ -1,0 +1,38 @@
+======================================
+Howto configure recorder announcement?
+======================================
+
+Recording announcements are used to play a media file at the beginning of a voice call.
+
+How does it work?
+-----------------
+- Announcement media played by RP (route point) before starting recording the call
+- First caller or called party calls RP with a consultative call
+- Then it changes this call into conference
+- And finally originally call will be merged into this conference call and RP starts playing announcement media 
+
+SEE MORE:
+	How announcement works.txt
+
+How to configure?
+-----------------
+- Add a media in APAS/Global/Media
+
+- Configure recording RP in APAS
+
+- Add a 2nd line to RP
+
+- Configure announcement in:	APAS/Recording/Configuration/[Recorder Announcement Parameters]
+	- Add media
+	- Specify RP line DN (configured above)
+	
+- Set announcement in recording rule parameters (set 'play announcement' flag)	
+	
+- Configure conference service on CUCM
+	
+Troubleshooting
+---------------
+- Call RP DN directly - media should be played 
+
+- Make a recording with rule where 'play announcement' flag is true.
+	- All participants should be in conference call during playing announcement

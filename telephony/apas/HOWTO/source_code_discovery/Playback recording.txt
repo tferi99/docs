@@ -1,0 +1,279 @@
+==================
+Playback recording
+==================
+
+- Configuration of encryption
+- Playback by GWT recording search
+- Playback by Webclient
+- Structure of REC file
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Configuration of encryption
+===========================
+Dev tip:
+
+	Usable SQL:
+	
+		// def: 853AE90F0351324BD73EA615E6487517
+		
+		select id, start, rec_password from rec_call order by start desc
+		
+		select * from config where param = 'EncPassword'
+
+
+
+Configuration loaded here:
+
+	RPCrecorderServiceAsync.RemoteGetEncryptionConfiguration(...)
+
+- default encryption password:	config(recorder/EncPassword)
+
+	It does not exits in database by default, default value in memory:	DEFAULT_EMPTY_ENC_PW = "853AE90F0351324BD73EA615E6487517"
+	
+There are 3 password strategies:	
+1. Always protected
+	
+2. Keep Password - to store password into session:	config(recorder/EncPasswordKeep)
+
+
+	Passwords are stored into session attributes:
+	
+		String pw1 = (String) request.getSession().getAttribute("decpass1");
+		String pw2 = (String) request.getSession().getAttribute("decpass2");
+
+3. Download/Replay without password - to store password into persistence:	config(recorder/EncPasswordNeverAsk)
+
+	In this case password retrieved from recording and matched with itself - so always matching ;)
+	
+
+Creating password hash during configuration of enryption:
+	
+	GWT: encrypt_gwtappMain
+		--> buildConfigurationPage
+			--> onSubmitConfigurationForm(formPanel)
+				--> RemoteSaveEncryptionConfiguration(record)
+					--> RPCrecorderServiceImpl.RemoteSaveEncryptionConfiguration(...)
+						--> encpwNew = Recording.createEncPassword(record.getEncPW1new(), record.getEncPW2new());
+							pwd = pwd1 + ":"+ pwd2
+						--> encryption:
+							**************************************************
+							MessageDigest md = MessageDigest.getInstance("MD5");
+							md.update(encpwNew.getBytes());
+							cs = md.digest();
+							encpwNew = HexString.bufferToHex(cs);						
+							Config.getInstance().updateConfig(apas_module, "EncPassword", encpwNew);
+							**************************************************
+						
+							- create MD5 digest from pwd
+							- pwd <- digest in HEX
+						--> pwd -> config(recorder/EncPassword)
+						
+-------------------------------------------------------------------------------------------------------------------------------------
+Playback by GWT recording search
+================================
+Listing recordings:
+--> search_gwtappMain.searchButton.onClick()
+	--> RemoteSearchRecordingFiles()
+		--> RPCrecorderServiceImpl.RemoteSearchRecordingFiles()
+			SELECT ... FROM rec_call WHERE start >= ? AND WHERE start <= ? AND status = 4
+			
+					available status values (RecordingDataBean):
+					
+							public final static int STATE_RECORDING = 1;
+							public final static int STATE_RECORDING_COMPLETE = 2;
+							public final static int STATE_PROCESSING = 3;
+							public final static int STATE_ARCHIVED = 4;
+							public final static int STATE_BACKEDUP = 5;
+							public final static int STATE_DONOTDELETE = 6;
+
+				--> record.setStatusDisplay(getStatusDisplay(rec, false));
+					to get render player button
+					
+			<a href="#" onClick="window.open('/andphone/Admin?module=recorder&page=archive&func=downloadpw&year=2015&month=09&day=04&filename=2015%2F09%2F04%2F80.rec','Download','width=700,height=400,scrollbars=no,toolbar=no')">
+				<img width="19" height="19" src="/andphone/images/floppy.png" border=0 alt="Click this button to download this recording" title="Click this button to download this recording"></a>&nbsp;
+			<a href="#" onClick="window.open('/andphone/Admin?module=recorder&page=archive&func=downloadpw&year=2015&month=09&day=04&mode=playcall&archive=year%3D2015%26month%3D09%26day%3D04&audiolength=9104&filename=2015%2F09%2F04%2F80.rec','Player','width=700,height=400,scrollbars=no,toolbar=no')">
+				<img width="19" height="19" src="/andphone/images/play.png" border=0 alt="Click this button to playback this recording" title="Click this button to playback this recording">
+			</a>				
+			
+		--> buildSearchDynamicListGrid((...)
+			--> recordinglistpanel.buildRecorderGrid(...)
+				
+Playing recording by pressing rendered button:
+
+	URL:	GET /andphone/Admin 
+	
+	Request Parameters:
+			module: recorder
+			page: archive
+			month: 09
+			filename: 2015/09/04/80.rec
+			func: downloadpw
+			audiolength: 9104
+			year: 2015
+			archive: year=2015&month=09&day=04
+			day: 04
+			mode: playcall
+
+	--> com.andtek.andphone.Admin.doGet()			
+		--> com.andtek.andphone.utils.Admin.getModuleAdminPage()
+			--> com.andtek.andphone.recorder.Admin.archive_downloadpw()
+				--> com.andtek.andphone.recorder.util.archive_downloadpw_util(...)
+					--> renderPasswordFormForRecording(request, response, mode)
+						- it renders password form with submit button
+						
+						PRESSING SUBMIT BUTTON on password form
+
+							URL:	POST /andphone/Admin 
+							Request Parameters
+									module: recorder
+									decpass1
+									decpass2
+									page: archive
+									filename: 2015/09/04/80.rec
+									download
+									func: playcall
+									audiolength: 9104
+									archive: year=2015&month=09&day=04
+								
+							It gets REC information from .rec file and renders a player which calls next request.
+								
+							--> com.andtek.andphone.Admin.doGet()			
+								--> com.andtek.andphone.utils.Admin.getModuleAdminPage()
+									--> com.andtek.andphone.recorder.Admin.archive_playcall(ConnectionBean connection)
+										--> com.andtek.andphone.recorder.utils.Admin.archive_playcall_util(String module, ConnectionBean connection)
+											--> rec = getRecordingByFilename(config, fullFileName, module)
+												(fullFileName = /var/lib/andphone/archive/2015/09/04/80.rec)
+												...
+												rec = new Recording(config, fullFileName, db_table);
+													--> Recording.readFile(filename)
+														--> internalReadFile(filename)
+															- file ends with '.rec'? header and audio identified
+															
+																REC file has a header which contains a lot of information 
+																which will be stored into current Recording object then 
+																it seeks to Recording.POS_AUDIO (512)
+																SEE MORE: [Structure of REC file]
+											
+											--> ----------------------- if encrypted -----------------------------
+												--> checkPassword(...)
+													--> renderPasswordFormForRecording(...)
+														- renders a HTML form
+													
+													--> if there is a password, check it
+															
+														**************************************************
+														try {
+															MessageDigest md = MessageDigest.getInstance("MD5");
+															md.update(encpw.getBytes());
+															cs = md.digest();
+														}
+														catch (Exception ex) {
+															LOG.error("No checksum algorithm", ex);			
+															return null;
+
+														}
+														encpw = HexString.bufferToHex(cs);
+														**************************************************
+														
+														- create MD5 digest from pwd
+														- pwd <- digest in HEX
+													
+											
+											--> jPlayerApplication(out, fileName, thisPage)
+												it renders WEB player window and contains a URL to call next request ========>
+											
+												
+							URL:	POST /andphone/Admin 
+							Request Parameters:
+									month: 09
+									filename: 2015/09/04/80.rec
+									year: 2015
+									func: downloadcall
+									module: recorder
+									day: 04
+									page: archive
+
+							It gets REC information from .rec file (as above) and copies audio stuff into stream.
+									
+							--> com.andtek.andphone.Admin.doGet()			
+								--> com.andtek.andphone.utils.Admin.getModuleAdminPage()
+									--> com.andtek.andphone.recorder.Admin.archive_downloadcall()
+										-->  com.andtek.andphone.recorder.utils.Admin.archive_downloadcall_util (...)
+											--> rec = getRecordingByFilename(config, fullFileName, module)
+												SEE ABOVE call flow 
+											--> copyRecordingFileToOutputStream(response.getOutputStream(), rec, offset, audioLength, fileName)
+												--> down = new DownloadRecording(fin, w, audioLength)
+													--> DownloadRecording.instantiate()
+														--> Manager.createProcessor( dataSource)
+														================= JMF ==================
+															--> createProcessorForSource(source, UNKNOWN_CONTENT_NAME, null)
+																--> com.sun.media.processor.unknown.Handler.setSource(source);
+																	--> ProcessEngine.setSource(source);
+																		--> BasicSourceModule.createModule(ds)
+																			--> createDemultiplexer(ds)
+																				--> RawBufferParser.setSource(ds)
+																				================= APAS ==================
+																					--> com.andtek.andphone.media.datasink.audio.speex.getSteams()
+																						...
+																						--> com.andtek.andphone.media.datasink.audio.speex.Speex2PcmAudioInputStream.initialize()
+-------------------------------------------------------------------------------------------------------------------------------------
+Playback by Webclient
+=====================
+
+
+						
+-------------------------------------------------------------------------------------------------------------------------------------
+Structure of REC file
+=====================
+(from com.andtek.andphone.recorder.Recording.)
+
+If filename ends with '.rec'
+----------------------------
+File contains header info and audio data.
+
+Endian:	little endian
+
+SUPER HEADER (at position 0)
+	- 'AREC' (4 bytes fixed string)
+	- version (int in 4 bytes)
+
+HEADER	(at position 288)
+	if version >= 3
+		- id (int in 4 bytes)
+	if version >= 2
+		- keep (int in 4 bytes)
+		- lastAction (int in 4 bytes)
+		- id (int in 4 bytes)
+	- start (int in 4 bytes)
+	- end (int in 4 bytes)
+	- originalLastAction (int in 4 bytes)
+	- callingParty (0 terminated string from 24 bytes)
+	- calledParty (0 terminated string from 24 bytes)
+	- phoneip (0 terminated string from 24 bytes)
+	- origCallingParty (0 terminated string from 24 bytes)
+		if origCallingParty contains '.' then it's a remote IP
+			- remoteip = origCallingParty
+			- origCallingParty = ""
+			- initiator (0 terminated string from 24 bytes)
+		else
+			- origCalledParty (0 terminated string from 24 bytes)
+	- status (int in 4 bytes)
+	- signaling (int in 4 bytes)
+	- codec (int in 4 bytes)
+	- originalKeep (int in 4 bytes)
+	- audiolength (int in 4 bytes)
+	- keySize (int in 4 bytes)
+		if keySize = 0
+			- keySize = ENCRYPTION_ALGORITHM_LENGTH_128 (128)
+
+AUDIO	(at position 512)
+
+If filename ends with '.spx'
+----------------------------
+File contains only audio data.
+
+- id = getIDFromFilename(filename)
+- record will be read from rec_call table
+
+

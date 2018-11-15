@@ -1,0 +1,59 @@
+==================================================
+How to get SVN revision number from APAS version ?
+==================================================
+APAS 5:
+	- version information written into log during startup, e.g:
+	
+		[2015-08-25 11:51:24,761] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:328] - #--------------------------------------------------------------
+		[2015-08-25 11:51:24,761] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:329] - # APAS START UP ...
+		[2015-08-25 11:51:24,765] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:330] - #   Version: 5.7.1-8959
+		[2015-08-25 11:51:24,765] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:331] - #--------------------------------------------------------------
+
+		
+	- since SVN revision 8305 version information is written into log into every 15 minutes (com.andtek.andphone.global.Module.VERSIONINFO_LOG_PERIOD):
+
+		[2015-08-25 12:07:00,532] [INFO] [APAS-TimerDaemon] [Module.java:716] - ### APAS version: 5.7.1-8959		
+		
+
+**************************************************************************************************** OLD ***********************************************************************************************************************
+NOTE:
+	This is only a problem of elder version, newest version already contains SVN revision number.
+
+Method 1 (not too exact):
+
+- Get SVN log from version.properties
+
+	You will get a revision range where version number was active. 
+	E.g. for 4.4.1c-428:
+	
+		2265 		- 	2307
+		2012.01.11	- 	2012.02.13
+
+
+Method 2 (more exact):
+
+- Let's get version from APS GUI, e.g.:	4.4.1c-428
+
+- Login into WWW server
+
+- Get release files from:
+
+	/var/www/andtek/htdocs/files
+	
+- Try to find exact release file:
+
+		-rw-r--r-- 1 root apache 183686252 Feb  1  2012 APAS-x86_64-441c-428-Update.pkg
+		
+- Get date from file (or get approximately date from files)
+
+- Get full log from SVN and try to find out revison number by date from here:		
+
+		http://devel.andtek.com/svn/andphone4
+
+	2289	: 2012.01.30
+	2290	: 2012.02.06
+
+		2012.02.01	->	2298
+
+	
+	

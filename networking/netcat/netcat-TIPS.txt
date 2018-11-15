@@ -1,0 +1,22 @@
+Listening on a port:
+
+	nc -l -p <port>
+	
+	OR in some versions
+	
+	nc -l <port>
+	
+Listening on a port and dumping incoming characters	
+
+	nc -l <port> | hexdump -C
+	
+Testing a port:
+
+	TCP:
+		nc -vz <host> <port>
+	
+	UDP:
+		nc -vzu <host> <port>
+	
+		
+	

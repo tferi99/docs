@@ -1,0 +1,1369 @@
+=============
+AngularJS FAQ
+=============
+
+General
+-------
+- Conceptual Overview 
+- AngularJS related packages - who is who?
+
+- Why double-curly rendered into HTML output?
+
+View
+----
+- How to show/hide components?
+- How to change styles, classes with controllers?
+- How to mix fixed and optional style classes?
+- How to databind image src?
+- Howto include templates?
+- How to perform form validation?
+- How to perform form validation with ng-repeat?
+- How to set field style by validation state?
+- Bootstrap UI components don't work
+- Loading page in a single-page application
+- How to render HTML from scope variable dynamically?
+- How to style input fields with validity status?
+- How to assign unique id to items in ng-repeat?
+- How to access $scope from a popup window?
+
+Backend (Model, Controller)
+---------------------------
+- How to use modules?
+- How to create controllers?
+- How to initialize controllers?
+- How are modules, services, controllers initialized ?	
+- How does module dependency work?
+- How to use scopes?
+- How to change model?
+- How to register/deregister a model change listener?
+- How to create/get services?
+- How to call services from config block?
+- How to communicate between controllers?
+- How to create injectable constants?
+- How to call $apply safely?	
+- How to implement PUT resource method?
+- Where does AngularJS ignore $ variables?
+- How to get HTTP request query parameters?
+
+Filters
+-------
+- How to use a filter in a controller?
+- How do I call an Angular.js filter with multiple arguments?
+
+Directives
+----------
+- Directive in-short
+- How to pass a callback function to a directive?
+- How to pass parameter back to a directive callback function?
+- Directive API in short
+- How to set default values for isolated scope of a directive?
+
+Components
+----------
+- Howto set model with an object property selected from a combo?
+- How to call a modal form?
+- select2 hints
+
+JS/jQuery API
+-------------
+- How to get scope from JS?
+
+REST
+----
+- How to register custom methods to model instances retrieved from $resource?
+
+Promise
+-------
+- How to pass parameters to promise functions?
+
+Best practices, tips
+--------------------
+- Anti-patterns
+- How to watch multiple values?
+- Use type for input elements
+- Howto call a function asynchronously by timer?
+
+i18n
+----
+See: 	angular-translate-FAQ.txt
+
+Troubleshooting
+---------------
+- Directive attribute not working
+- ERROR: $scopeProvide not found
+- ERROR: ...Controller not a function
+- $resource/$http does not firing request immediately
+- ERROR: [$injector:unpr] Unknown provider: $routeProvider
+- How can you display content of an object as formatted JSON?
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to use modules?
+===================
+
+	angular.module(name, [requires], configFn);
+
+		name : unique name of module
+		requires : if there is a module will be defined (otherwise only declared), contains list of NAME of dependent modules
+		config : Optional configuration function for the module. Same as Module.config()
+
+To define a module:
+
+	var app = angular.module('myApp', []);
+	
+  where the first will be the name of the module we are creating. The second is the list of dependencies, or injectables.
+
+  
+To reference a module from a JS:
+
+	var app = angular.module('myApp')
+	
+  same method but ONLY NAME PARAMETER.
+  
+To reference a module from a view: 
+
+	<body ng-app="myApp">
+
+	
+--------------------------------------------------------------------------------------------------------------------
+Conceptual Overview of AngularJS
+================================
+Template	
+		HTML with additional markup
+Directives
+		extend HTML with custom attributes and elements
+Model	
+		the data that is shown to the user and with which the user interacts
+Scope	
+		context where the model is stored so that controllers, directives and expressions can access it
+Expressions	
+		access variables and functions from the scope
+Compiler	
+		parses the template and instantiates directives and expressions
+Filter	
+		formats the value of an expression for display to the user
+View	
+		what the user sees (the DOM)
+Data Binding	
+		sync data between the model and the view
+Controller	
+		the business logic behind views
+Dependency Injection	
+		Creates and wires objects / functions
+Injector
+		dependency injection container
+Module	
+		configures the Injector
+Service	
+		reusable business logic independent of views
+
+
+--------------------------------------------------------------------------------------------------------------------
+AngularJS related packages - who is who?
+========================================
+AngularJS			: Superheroic JavaScript MVW Framework
+
+AngularUI			: The companion suite(s) to the AngularJS framework
+						It contains UI-Modules Standalone AngularUI modules with external dependencies which
+						integrates 3rd-party components into AngularJS (e.g. select2)
+						
+UI-Bootstrap 		: Twitter Bootstrap written natively in AngularJS
+					
+AngularStrap		: native directives for Twitter Bootstrap 3 (UI-Bootstrap  competitive)
+
+					
+SEE ALSO: 
+	http://angular-ui.github.io/
+						
+					
+--------------------------------------------------------------------------------------------------------------------
+How are modules, services, controllers initialized ?	
+====================================================
+JS initialization script:
+		
+	console.log("---- START OF SCRIPTS ----");
+	var mod2 = ...
+	
+	var mod11 = ...
+
+	var mod1 = angular.module('mod1', ['mod11']).config(function() {
+		console.log("Module(" + mod1.name +  ') - config')
+	}).run(function() {
+				console.log("Module(" + mod1.name +  ') - run')
+	});
+	console.log("AFTER Module(" + mod1.name + ")");
+
+	mod1.factory('service1', function() {
+		console.log("service1 constructor");
+		return {
+			greeting: function() {
+				return 'Hello from service1';
+			}
+		};
+	});
+
+	var main = ...
+	
+	var app = angular.module('main', ['mod1', 'mod2']);
+	console.log("AFTER Module(" + app.name + ")");
+
+	function Controller11($scope, $log, service1, service11)
+	{
+		$scope.greeting = function() {
+			$log.log("Controller11 constructor");
+			$log.log(service11.greeting());
+		}
+	}
+
+	console.log("---- END OF SCRIPTS ----");
+		
+			
+	---- START OF SCRIPTS ----
+	AFTER Module(mod2)
+	AFTER Module(mod11)
+	AFTER Module(mod1)
+	AFTER Module(main)
+	---- END OF SCRIPTS ----
+	Module(mod11) - config
+	Module(mod1) - config
+	Module(mod2) - config
+	Module(mod11) - run
+	Module(mod1) - run
+	Module(mod2) - run
+	service1 constructor
+	service11 constructor		
+	>>> here I clicked button to call Controller11.greeting()
+	Controller11 constructor
+	Hello from service11
+	
+- A module is a collection of CONFIGURATION AND RUN BLOCKS which get applied to the application during the bootstrap process. 
+
+	Configuration blocks - 
+		get executed during the provider registrations and configuration phase. ONLY PROVIDERS AND CONSTANTS CAN BE INJECTED INTO CONFIGURATION BLOCKS.
+		SERVICES that may or may not have been initialized CANNOT BE INJECTED HERE.		
+		This is to prevent accidental instantiation of services before they have been fully configured.
+		
+		The configuration blocks get applied in the order in which they are registered. The only exception to it are constant definitions, 
+		which are placed at the beginning of all configuration blocks.
+		
+	Run blocks - 
+		get executed after the injector is created and are used to kickstart the application. ONLY (SERVICE) INSTANCES AND CONSTANTS CAN BE INJECTED INTO RUN BLOCKS. 
+		This is to prevent further system configuration during application run time.
+	
+- First Initialization scipt will be called. Module/service initialization steps will be cached and called later (maybe first dependencies are processed).
+- During launching cached initialization steps:
+	- first configuration blocks of all dependent module 
+	- then run blocks of all dependent module are called
+- Finally services will be created.
+- Controller constructors are called on demand on the first usage.
+	
+--------------------------------------------------------------------------------------------------------------------
+How does module dependency work?	
+================================
+Modules can list other modules as their dependencies. 
+Depending on a module implies that required module needs to be LOADED BEFORE the requiring module is loaded. In other words the configuration 
+blocks of the required modules execute before the CONFIGURATION BLOCKS of the requiring module. The same is true for the RUN BLOCKS. 
+EACH MODULE CAN ONLY BE LOADED ONCE, even if multiple other modules require it.	
+
+--------------------------------------------------------------------------------------------------------------------
+How to use scopes?	
+==================
+Scopes are objects that contain functionality and data to use when rendering the view.
+$scope object is the data model in Angular. All properties found on the $scope object are automatically accessible to the view.
+
+- There is a live-binding between $scope(s) and views.
+- Scopes are bound to DOM elements.
+- Scopes can be nested similarly to DOM elements.
+- $rootScope are bound to DOM element which applied with ng-app directive. $rootScope is the eventual parent of all $scope objects.
+
+How to create a scope object?
+- By default you have a $rootScope
+- Instead of using the $rootScope, we can explicitly create a child $scope object using a controller.
+	We can attach a controller object to a DOM element using the ng-controller directive on a DOM element.
+	
+- Not only the ng-controller creates a $scope, ng-repeat directives also create their own child scopes and attach them to 
+	the DOM element.	
+
+	
+
+--------------------------------------------------------------------------------------------------------------------
+Why double-curly rendered into HTML output?
+===========================================
+You can see rendered double-curly on HTML output, when:
+1. You forgot load angular.js
+2. You forgot add ng-app directive
+3. You put double-curly outside tag having ng-app attribute
+4. In fact, rendering double-curly on HTML output is quite normal, since HTML always contains them, but sometimes
+	Angular cannot replace them with data, e.g. in the first page.
+	
+	FIX: 
+	Don't use {{}} in the first page, use ng-bind or ng-model instead. But you can use it on templates loaded later.
+	That way, your users will see nothing until the data has loaded.
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to change styles, classes with controllers?
+===============================================
+1. Use simple style/class and apply curly bracket values:
+
+	.menu-disabled-true {
+		color: gray;
+	}
+	
+	<li class="menu-disabled-{{isDisabled}}">Stun</li>
+	<li style="{{some expression}}">Stun</li>
+	
+	
+2. Use ng-class, ng-style:
+
+	ng-class="expression"
+	
+	ng-class supports an expression that must evaluate to either 
+		- a string of space-delimited class names, or 
+		- an array of class names, or
+		- a map/object of class names to boolean values.
+	
+	
+	where expression:
+		• string
+		
+			<div ng-class="btn enabled">HELLO</div>
+		
+		• An array of class names
+				
+				<div ng-class="[class1, class2]">HELLO</div>
+				
+		• A map of class names to boolean values	
+		
+				{<class_name>:<boolean expression>}
+	
+				<td ng-class="{ok: frmTest.age.$valid, error: frmTest.age.$invalid}">{{frmTest.age}}</td>
+
+--------------------------------------------------------------------------------------------------------------------
+How to mix fixed and optional style classes?
+============================================
+You cannot mix 'class' and 'ng-class', however you can use 'ng-class' and add fixed classes with 'true' expression.
+
+	<div ng-class="{important: isImportant, warn: true, menu: true}">This is test message</div>
+				
+--------------------------------------------------------------------------------------------------------------------
+How to show/hide components?	
+============================
+ng-show, ng-hide
+	It uses call/style (display:none) entries to change visibility.
+	
+		<span class="menu enabled-true">File</span>
+	
+
+ng-if
+	The ngIf directive removes or recreates a portion of the DOM tree based on an {expression}. If the expression assigned to ngIf evaluates to a false value 
+	then the element is REMOVED FROM THE DOM, otherwise a clone of the element is REINSERTED INTO THE DOM.
+	
+--------------------------------------------------------------------------------------------------------------------
+How to databind image src?	
+==========================
+Don't use 'src' and 'href' attributes.
+
+Because browsers are aggressive about loading images parallel to other content, Angular doesn’t get a chance to 
+intercept data binding requests. While the obvious syntax for an <img> might be:
+
+	<img src="/images/cats/{{favoriteCat}}">
+	
+Instead, you should use the ng-src attribute and write your template as:
+
+	<img ng-src="/images/cats/{{favoriteCat}}">
+	
+--------------------------------------------------------------------------------------------------------------------
+How to change model?
+====================
+- Directly from controller
+
+	$scope.count = 3;
+	
+- From view using expression:
+
+	<button ng-click='count=3'>Set count to three</button>
+	
+- From view calling a controller method:
+
+	<div ng-controller='CountController'>
+		<button ng-click='setCount()'>Set count to three</button>
+	</div>
+
+- Binding an input elements with ng-model:
+
+	<input ng-model="count"/>
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to register/deregister a model change listener?	
+===================================================
+Register:
+
+	$watch(watchFn, watchAction, deepWatch)
+	
+where:
+	watchFn		: expression or function returns value to be observerd
+					This expression will be evaluated multiple times, so you need to make sure that it has no side effect
+					and it shouln'd not have performance issue.
+					
+	watchAction	: called on value change
+	
+	deepWatch	: set true if you wanted to watch individual elements in an array or properties in an object instead of 
+					just a simple value.
+	
+De-register:
+
+	var dereg = $scope.$watch('someModel.someProperty', callbackOnChange());
+	dereg();
+	
+--------------------------------------------------------------------------------------------------------------------
+How to watch multiple values?	
+=============================
+You can add multiple watches, too. But for performance considerations you can do that also with a single watcher:
+	• Put them into an array or object and pass in deepWatch as true.
+	• Watch a concatenated value of the properties.
+
+	
+--------------------------------------------------------------------------------------------------------------------
+Anti-patterns
+=============
+- Don't wrap element inside of $(). All AngularJS elements are already jq-objects.
+- Don't use jQuery to generate templates or DOM
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to create/get services?	
+===========================
+
+provider(name, Object OR constructor() )
+
+	Register a provider function with the $injector. Provider functions are constructor functions, whose instances are responsible for "providing" a factory for a service.	
+	To create a CONFIGURABLE service with COMPLEX CREATION LOGIC. 
+	
+	If you pass an Object, it should have a function named $get that returns an instance of the service. 
+	Otherwise, Angular assumes you’ve passed a constructor that, when called, creates the instance.
+	
+factory(name, $getFunction() )
+
+	Register a service factory, which will be called to return the service instance.
+	To create a NON-CONFIGURABLE service with COMPLEX CREATION LOGIC. 
+	
+	$provide.factory('ping', ['$http', function($http) {
+		return function ping() {
+			return $http.send('/ping');
+		};
+	}]);
+	
+		
+service(name, constructor() )
+
+	Register a service constructor, which will be invoked with new to create the service instance. 
+	To create a NON-CONFIGURABLE service with SIMPLE CREATION LOGIC. 
+
+	$provide.service('personService', function($http) {
+		this.getName = function() {
+			return $http({
+				method: 'GET',
+				url: '/api/user'
+			});
+		};
+	};
+	
+--------------------------------------------------------------------------------------------------------------------
+How to call services from config block?	
+=======================================
+You can inject providers and constants into config block.
+Call $get() of a provider to get a service instance.
+
+services.js:
+	
+	var services = angular.module('app.services', []).config(function($provide) {
+	
+	services.factory('textResourceService', function (config, $http) {
+		return {
+			getTextResource: function(languageId, successCb) {
+				$http.get(config.getRestContext() + '/textResource/' + languageId).success(function(data, status, headers, config) {
+					successCb(data);
+				});
+			}
+		};
+	});
+
+app.js:
+
+	
+--------------------------------------------------------------------------------------------------------------------
+How to create controllers?
+==========================
+Creating controllers into global namespace is a poor pattern, but let's take a look at an example here:
+
+	function FirstCtrl($scope) {
+		$scope.message = "Hello";
+	}
+
+Same controller in a module namespace with dependency validation:
+
+	var app = angular.module('app', []);
+	
+	app.controller('HelloCtrl', ['$scope', 'alma', function($scope, alma) {
+		$scope.hello = 'Hello';
+	}]);
+
+NOTE: 
+	We add a list of dependency names before constructor function if we would like to MINIMIZE the code later. 
+	Angular gets dependencies from constructor function parameters, but in a minimized code these parameters have
+	generated name, and in this case it needs original names.
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to initialize controllers?
+==============================
+Use ng-init. You can pass also parameters.
+
+
+            $scope.init = function(ctrlId) {
+                $scope.ctrlId = ctrlId;
+                console.log("init"  + getIdForLog());
+            }
+
+		<form ng-controller="TestController"  ng-init="init(3)" ng-submit="onSave()">
+	
+--------------------------------------------------------------------------------------------------------------------
+How to get scope from JS?
+=========================
+Either inject into service/controller and simple use it:
+
+angular.module('provappApp').controller($scope, ... {	
+
+	$scope.test = function() {
+		$scope. ...
+	}
+
+Or retrieve scope from the current DOM object:
+
+	angular.element(element).scope()
+
+	<button onclick="angular.element(this).scope().size ..."> ...
+	
+	where
+	
+		angular.element(this)	 
+		
+	returns jQuery object for DOM object.
+	
+NOTE:
+	If jQuery is available, angular.element is an alias for the jQuery function. If jQuery is not available, 
+	angular.element delegates to Angular's built-in subset of jQuery, called "jQuery lite" or "jqLite."	
+	
+So getting scope for a DOM element is:
+
+        function getScope(jquerySelector)
+        {
+            var elem = jQuery(jquerySelector);
+            return elem.scope();
+        }
+
+	e.g:
+	
+		getScope('.parent').color
+		
+--------------------------------------------------------------------------------------------------------------------
+Howto include templates?
+========================
+Use:  ng-include
+
+It has it's own scope. To initialize variables on thet scope use ng-init.
+
+For example:
+
+	<div ng-include src="'component/head.html'"
+		ng-init="
+			header.title='Controller test';
+			header.note='Logged to console';
+			header.description='It demonstrates simple local event handlers and submit handlers.'
+		"
+	></div>
+
+--------------------------------------------------------------------------------------------------------------------
+How to communicate between controllers?
+=======================================
+- Scopes are in hierarchical and nested structure. 
+
+- Meethod 1:  $rootScope
+	There is one main $rootScope (per Angular app or ng-app, that is), which all other scopes either inherit, or are nested under.
+	But sometimes scopes don’t share variables or do not prototypically inherit from one another.
+
+- Method 2: service
+	One option is creating a service that is a singleton in the scope of the app, and processing all inter-scope communication
+	through that service.
+
+- Method 3: communicating through events on the scope
+	
+	First of all, parent-child scope relation does matter. You have two possibilities to emit some event:
+		$broadcast -- dispatches the event DOWNWARDS to all child scopes
+		
+			$scope.$broadcast(...) 		ROOT -> CHILDREN
+		
+		$emit -- dispatches the event UPWARDS through the scope hierarchy.	
+	
+			$scope.$emit(...) 		SCOPE -> PARENT1 -> PARENT2 -> ... -> ROOT
+			
+	Listening an event:
+	
+		scope.$on('planetDestroyed', function(event, galaxy, planet) {
+			// do something on destroying a planet
+			scope.alertNearbyPlanets(galaxy, planet);
+		});	
+	
+	
+	NOTE:
+	In case there is no parent-child relation between your scopes you can inject $rootScope into the controller 
+	and broadcast the event to all child scopes (i.e. also secondCtrl).
+
+
+	
+--------------------------------------------------------------------------------------------------------------------
+How to create injectable constants?	
+===================================
+Use
+	$provide.constant(...)
+	
+in a module config(). E.g.:	
+
+
+	var services = angular.module('app.services', []).config(function($provide) {
+		$provide.constant("REST_CONTEXT_PATH", "/myangulartest/rest");
+	});
+
+
+--------------------------------------------------------------------------------------------------------------------
+Directive in-short
+==================
+	var myModule = angular.module(...); 
+	myModule.directive('directiveName', function (injectables) {
+	  return {
+		restrict: 'A',
+		template: '<div></div>',
+		templateUrl: 'directive.html',
+		replace: false,
+		priority: 0,
+		transclude: false,
+		scope: false,
+		terminal: false,
+		require: false,
+		controller: function($scope, $element, $attrs, $transclude, otherInjectables) { ... },
+		compile: function compile(tElement, tAttrs, transclude) {
+		  return {
+			pre: function preLink(scope, iElement, iAttrs, controller) { ... },
+			post: function postLink(scope, iElement, iAttrs, controller) { ... }
+		  }
+		},
+		link: function postLink(scope, iElement, iAttrs) { ... }
+	  };
+	});	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to pass a callback function to a directive?
+===============================================
+Method 1:
+	Not binding function into scope of directive, but calling attribute expression 
+	directly from attribute:
+
+		app.directive('ngBlur', function() {
+            return function( scope, elem, attrs ) {
+                elem.bind('blur', function() {
+                    scope.$apply(attrs.ngBlur);
+                });
+            };
+        });
+
+	
+	<input ng-blur="doSomething(myObject)" />
+	
+Method 2:
+	Storing method into scope of directive
+
+                scope: {
+					...
+                    callback: '&'       // bound a function from the scope
+                },
+	
+	<my-directive callback="doSomething(user, userData)"></my-directive>
+	
+--------------------------------------------------------------------------------------------------------------------
+How to pass parameter back to a directive callback function?	
+============================================================
+- You have to specify parameters in method attribute
+- You can return values in a hash where keys are parameter names specified before.
+
+	JS:
+        app.controller('TestController', function($scope) {
+            $scope.data = 'default value';
+            $scope.doSomething = function(u, ud) {
+                alert('CALLBACK - user:' + u + " data:" + ud);
+            }
+        })
+
+        app.directive('myDirective', function() {
+            var ret = {
+                restrict: 'E',
+                scope: {
+                    userData: '=userData',		// binds a parent scope property 
+                    ud: '=',					// binds a parent scope property (where attribute name is property name)
+                    user: '@',					// binds a parent scope value directly
+                    callback: '&'       // bound a function from the scope
+                },
+                template: '<div>Hello [{{user}}] data: [{{userData}}] <button ng-show="hasCallback()" ng-click="callback({user: user, userData: userData})">Callback</button>',
+                controller: function($scope) {
+                    $scope.hasCallback2 = function() {
+                        var t = typeof $scope.callback;
+                        return t == 'function';
+                    }
+
+                    $scope.hasCallback = function() {
+                        return angular.isDefined($scope.callback);
+                    }
+                }
+            };
+            return ret;
+        });
+
+	HTML:
+		<my-directive user="cat" user-data="data" callback="doSomething(user, userData)"></my-directive>
+		
+Passing parameter from tag into isolated scope of directive:
+	
+	@ – binds the VALUE of parent scope property (which always a string) to the local scope.
+	= – binds parent scope property DIRECTLY which will be evaluated before being passed in.
+	& – binds AN EXPRESSION OR METHOD which will be executed in the context of the scope it belongs.
+	
+Passing parameter to callback method:
+
+	in HTML: you specify method as you want to call, where parameters are placeholders:
+	
+		callback="doSomething(user, userData)
+		
+		
+	in JS you have to return a hash back to parent, where keys are the parameter placeholders
+		
+		ng-click="callback({user: user, userData: userData})"
+	
+		
+--------------------------------------------------------------------------------------------------------------------
+Directive attribute not working
+===============================
+Sometimes if you create a new directive, passed attribute values are not stored into isolated scope of directive.
+One possible cause can be that you don't follow the recommended name convention of directives.
+
+Directives have camel cased names such as ngBind. The directive can be invoked by translating the camel case name into snake case with these 
+special characters :, -, or _. Optionally the directive can be prefixed with x-, or data- to make it HTML validator compliant.
+
+DON'T USE CAMEL CASED NAMES DURING CALLING A DIRECTIVE (OR IN ATTRIBUTES). It won't be working. Only snake case instead.
+
+	ngBind : 		bad
+	ng-bind:		OK
+
+
+--------------------------------------------------------------------------------------------------------------------
+Directive API in short
+======================
+restrict 
+	Declare how directive can be used in a template as an element, attribute, class, comment, or any combination.
+	
+		E 	element 	<my-menu title=Products></my-menu>
+		A 	attribute 	<div my-menu=Products></my-menu>
+		C 	class 		<div class=my-menu:Products></div>
+		M 	comment 	<!-- directive: my-menu Products -->
+
+priority 
+	Set the order of execution in the template relative to other directives on the element.
+	
+template 
+	Specify an inline template as a string. Not used if you’re specifying your template as a URL.
+templateUrl 
+	Specify the template to be loaded by URL. This is not used if you’ve specified an inline template as a string.
+replace 
+	If true, replace the current element. If false or unspecified, append this directive to the current element.
+transclude 
+	Lets you move the original children of a directive to a location inside the new template.
+scope 
+	Create a new scope for this directive rather than inheriting the parent scope.
+		false	: (default) It does not create a new scope for a directive but shares the scope with its parent.
+		true	: Creates a new scope but prototypically inherits from the parent scope. 
+		object	: Creates an isolated scope which does not prototypically inherit from the parent scope.
+		
+		Passing parameter from tag into isolated scope of directive:
+			
+			@ – binds the attribute (string) value to the local scope.
+			= – binds parent scope property DIRECTLY which will be evaluated before being passed in.
+			& – binds AN EXPRESSION OR METHOD which will be executed in the context of the scope it belongs.
+		
+controller 
+	Create a controller which publishes an API for communicating across directives.
+require 
+	Require that another directive be present for this directive to function correctly.
+link
+	Programmatically modify resulting DOM element instances, add event listeners, and set up data binding.
+compile 
+	Programmatically modify the DOM template for features across copies of a directive, as when used in ng-repeat.
+	Your compile function can also return link functions to modify the resulting element instances.
+
+	
+--------------------------------------------------------------------------------------------------------------------
+How to set default values for isolated scope of a directive?
+============================================================
+Order of execution is the important part here, roughly: compiler -> controller -> link -> interpolation. Until the interpolation is done, there is no value for '@'. That's why your checks didn't work.
+That said, while there is no default mechanism for this, you can set up an $observe on interpolated attributes; the $observe will always fire the first 
+time, even if there was no value passed. You can use this to set your default. $observe is very efficient.
+
+	attrs.$observe( 'attr1', function(val) {
+	  if ( !angular.isDefined( val ) ) {
+		scope.attr1 = 'defaultValue';
+	  }
+	});
+
+	
+--------------------------------------------------------------------------------------------------------------------
+ERROR: $scopeProvide not found
+==============================
+Maybe you have tried to inject scope into a service?
+STOP IT!!! You cannot do that.
+
+--------------------------------------------------------------------------------------------------------------------
+ERROR: ...Controller not a function
+===================================
+If your controller does not work and you have such an error message in JS console, you have a type somewhere:
+
+	- JS file name
+	- <script> tag
+	- controller name 
+	
+--------------------------------------------------------------------------------------------------------------------
+$resource/$http does not firing request immediately
+===================================================
+Problem:
+	You call a service to communicate with server with $resource or $http but HTTP request not generated.
+	
+Possible cause:
+	v1.1.4... changed the way $http worked so that it was scheduled on nextTick instead of firing immediately. 
+	This means that if your $http is scheduled from something that doesn't cause a $digest to fire then your request won't be sent. 
+	You can verify this is the case if you put a dummy controller method and a button with ng-click and by clicking it and you should see your request go out.
+	
+Solution:
+	Call $scope.$apply() after calling service.
+
+--------------------------------------------------------------------------------------------------------------------
+How to call $apply safely?	
+==========================
+If you call $apply() in a digest phase you get a JS error:
+
+	$apply already in progress
+	
+To call $apply safely check the current phase:
+
+        if(phase != '$apply' && phase != '$digest') {
+            $scope.$apply();
+        }
+
+Here is a most sophysticated solution is you 
+
+	$scope.safeApply = function(fn) {
+	  var phase = this.$root.$$phase;
+	  if(phase == '$apply' || phase == '$digest') {
+		if(fn && (typeof(fn) === 'function')) {
+		  fn();
+		}
+	  } else {
+		this.$apply(fn);
+	  }
+	};
+
+And then just replace $apply with safeApply wherever you need it
+
+	$scope.safeApply(function() {
+	  alert('Now I'm wrapped for protection!');
+	});
+
+--------------------------------------------------------------------------------------------------------------------
+Howto set model with an object property selected from a combo?
+==============================================================
+ng-options of a combo can be
+
+	VALUE in array
+	LABEL for VALUE in array
+	SELECT as LABEL for VALUE in array
+	etcetc.
+	
+	where 
+	- VALUE 	: expression is a local varible during iteration
+	- LABEL 	: expression will be displayed in combo option
+	- SELECT	: by default model will be set by selected object, but you can also specify other value here, e.g. a property of selected object instead
+		
+	
+	array:
+			[{name: 'ERROR'}, {name: 'INFO'}, {name: 'DEBUG'}]
+
+	You want to store name propery from object, then ng-option is:
+	
+		<select ng-model="l.level" ng-options="lev.name as lev.name for lev in logLevels" ng-required="true" ng-changed="levelChanged(l)">
+		</select>
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to call a modal form?	
+=========================
+Caller:
+        $scope.add = function() {
+            var modalInstance = $modal.open({
+                templateUrl: <template URL>,						<<<<<<<<<<<<<<<<<<< template
+                controller: <controller>,							<<<<<<<<<<<<<<<<<<< controller
+                resolve: {
+                    function () {
+                        return <input_data>;						<<<<<<<<<<<<<<<<<<< input data
+                    }
+                }
+            }).result.then(function(result_data_from_dialog) {
+				// callback after closing dialog
+				// result_data_from_dialog is undefined after cancel
+				...
+            });
+        }
+
+Dialog template:		
+
+	<div class="modal-header">
+		<!-- form fields -->
+		... $scope.data.fld
+		
+		<!-- BUTTONS -->
+		<div class="modal-footer">
+			<button class="btn btn-primary" ng-click="close(true)">{{'global.add' | translate}}</button>
+			<button class="btn" ng-click="close(false)">{{'global.cancel' | translate}}</button>
+		</div>
+	</div>
+
+Dialog controller:
+	
+    .controller('AddLoggerDlgCtrl', function($scope, apiLoggingConfig, $modalInstance) {
+        $scope.data = {
+            fld: null,
+            ...
+        };
+
+        /*
+         * Dialog close function
+         */
+        $scope.close = function(result){
+            if(result)
+                $modalInstance.close($scope.newLogger);
+            else
+                $modalInstance.dismiss(false);
+        };
+
+
+        //-------------------------------- helpers -----------------------------------
+        var init = function() {
+			...
+        }
+
+        init();
+    });
+	
+SEE ALSO:
+
+	Bootstrap UI Doc
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to perform form validation?
+===============================
+- Put input components into a from
+- Add 'name' attribute to form
+- All input fields can validate against some basic validations, like minimum length, maximum length,
+etc. These are all available on the new HTML5 attributes of a form.
+
+		required
+		ng-minlength=5
+		ng-maxlength=10
+		ng-pattern="/a-zA-Z/"
+		type="email"
+		type="url"
+		
+		NOTE: custom validation can be added by creating a directive (see also)
+		
+- AngularJS makes properties available on the containing $scope in this format:
+
+	formName.inputFieldName.property
+	
+- To check if a field is 
+	
+	modified	: formName[.inputFieldName].$dirty
+	unmodified	: formName[.inputFieldName].$pristine
+	valid		: formName[.inputFieldName].$valid
+	invalid		: formName[.inputFieldName].$invalid
+	errors		: formName[.inputFieldName].$error
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to set field style by validation state?
+===========================================
+Use the following classes:
+
+	.ng-pristine {}
+	.ng-dirty {}
+	.ng-valid {}
+	.ng-invalid {}
+
+SEE ALSO: How to perform form validation?
+
+--------------------------------------------------------------------------------------------------------------------
+How to perform form validation with ng-repeat?
+==============================================
+If you have dynamic generated table with ng-repeate you have to use an ng-form per rows.
+
+	<div ng-repeat="social in formData.socials">
+		<ng-form name="urlForm">
+			<input type="url" name="socialUrl" ng-model="social.url">
+			<span class="alert error" ng-show="urlForm.socialUrl.$error.url">URL error</span>
+		</ng-form>
+	</div>
+
+TIP: If you have a table and <tr> rows are repeated use ng-form as attribute instead of tag, otherwise HTML table won't contain it.
+
+	<tr class="muted" ng-repeat="ace in selectedRole.acl | orderBy:'object.type'" ng-form="frmAceRow">
+		<td>
+			<select name="cmbAce" ui-select2="" ng-model="ace.object" ng-options="o as o.label group by o.typeLabel for o in objects | filter:withoutSelected | translate" ng-required="true">
+			</select>
+		</td>
+
+		<td>
+			<i class="icon-hand-left required" ng-show="frmAceRow.cmbAce.$invalid"></i>
+		</td>
+	</tr>
+
+Troubleshooting:
+
+	If validation does not work check if scope variable exists. 
+		- select component in Chrome
+		- Right mouse/Inspect DOM properties
+		- type name of variable into JS console. In this case $scope will be pointing to componenent relative scope:
+		
+			$scope.frmAceRow.cmbAce
+			
+			
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+Use type for input elements
+===========================
+To apply framework CSS values recommended using 'type' attribute of input elements even you want to 
+create a plain text input field.
+
+	                <input name="name" type="text" ng-model="user.name" required ng-minlength="4" ng-maxlength="10" />
+
+--------------------------------------------------------------------------------------------------------------------
+Input type recommended	
+======================
+If you 
+Bootstrap UI components don't work
+
+--------------------------------------------------------------------------------------------------------------------
+Loading page in a single-page application
+=========================================
+You can assign page URL in a single-page application similarly to a normal WEB application but URL can contain
+navigation specific information, too - separated by #, e.g:
+
+	http://localhost:18080/provisioning/app/#/login
+	
+which loads index.html from /app and specify /login as a navigation URL
+
+But of course you can add a specific page into URL, too:
+
+	http://localhost:18080/provisioning/admin/configuration.html#/add
+	
+--------------------------------------------------------------------------------------------------------------------
+ERROR: [$injector:unpr] Unknown provider: $routeProvider
+========================================================
+I received this error upon upgrading from AngularJS 1.0.x to 1.2.x :
+
+The ngRoute module is no longer part of the core angular.js file. 
+If you are continuing to use $routeProvider then you will now need to include angular-route.js, and add 'ngRoute' dependency to module.
+
+	<script src="angular.js">
+	<script src="angular-route.js">
+
+	var app = angular.module('MyApp', ['ui.router', ...]);
+	
+
+--------------------------------------------------------------------------------------------------------------------
+How to render HTML from scope variable dynamically?
+===================================================
+> v1.2 
+
+ngBind
+	The ngBind attribute tells Angular to replace the text content of the specified HTML element with the value of a given expression, 
+	and to update the text content when the value of that expression changes. 
+	Typically, you don't use ngBind directly, but instead you use the double curly markup like {{ expression }} 
+	which is similar but less verbose.
+	
+		Hello <span ng-bind="name"></span>!
+	
+ngBindHtml
+	Creates a binding that will innerHTML the result of evaluating the expression into the current element in a SECURE WAY. 
+	By default, the innerHTML-ed content will be sanitized using the $sanitize service. 
+	You may also bypass sanitization for values you know are safe. To do so, bind to an explicitly trusted value via $sce.trustAsHtml. 
+	
+		<p ng-bind-html="myHTML"></p>
+		
+		Controller:
+		
+		    $scope.renderHtml = function(html_code)
+            {
+                return $sce.trustAsHtml(html_code);
+            };
+		
+		View:
+			
+			<p ng-bind-html="renderHtml(myHTML)"></p>
+			
+	Of course you can provide this code as directive or filter. Best practice is filter, so you will be 
+			
+	SEE ALSO:	myangulartest/SCE (Strict Contextual Escaping)
+		
+	
+--------------------------------------------------------------------------------------------------------------------
+How can you display content of an object as formatted JSON?
+===========================================================
+Use 'json' filter:
+
+	app.controller('MainCtrl', function($scope, $http) {
+		$scope.obj = {.......};
+	}
+
+	<pre>Selected: {{obj|json}}</pre>
+
+--------------------------------------------------------------------------------------------------------------------
+How to use a filter in a controller?	
+====================================
+
+	$filter('filtername');
+
+If you want to pass arguments to that filter, do it using separate parentheses:
+
+	function myCtrl($scope, $filter)
+	{
+		$filter('filtername')(arg1,arg2);
+	}
+		
+--------------------------------------------------------------------------------------------------------------------
+select2 hints
+=============
+- You can override select configuration if you pass configuration object via 'ui-select2' directive attribute.
+
+- For 'select' tag you should not use 'data' in config object, otherwise use <input type='hidden'> instead of <select>
+
+	Or you get an error: 	Option 'data' is not allowed for Select2 when attached to a <select> element.
+
+	For example:
+	
+            $scope.m25Config = {
+                multiple: false,
+                data: this.items2,
+
+                formatResult: function (data) {
+                    var icon;
+                    if (data.id == 1) {
+                        icon = "fa-hdd-o";
+                    }
+                    else {
+                        icon  = "fa-arrow-circle-o-right";
+                    }
+                    return "<i class=\"fa " + icon + "\"></i> " + data.text;
+                },
+
+                formatSelection: function (data) {
+                    return "<b>" + this.formatResult(data) + "</b>";
+                },
+
+                dropdownCssClass: "bigdrop",
+                escapeMarkup: function (m) {
+                    return m;
+                }
+            };
+
+			<sel id="m25" ui-select2="m25Config" ng-model="selObj" placeholder="-- Select One --" style="width: 200px"></sel>
+	
+- You can use 'select' tag but in this case create options with ng-options or ng-repeate and avoid 'data' property:
+
+        <select id="m3b" ui-select2="m3bConfig" ng-model="selObjM3b" placeholder="-- Select One --" style="width: 200px" ng-options="i.text for i in items2">
+        </select>
+	
+
+- On the other hand, if you don't use 'select' tag and you have not specified 'data' property in configuration file you will get 
+	this error:
+	
+		query function not defined for Select2 m3b
+		
+--------------------------------------------------------------------------------------------------------------------
+How to style input fields with validity status?		
+===============================================
+Fields are supplied with classes during typing values by AngularJS automatically, e.g:
+
+	ng-dirty		: value changed
+	ng-invalid		: value is invalid
+	ng-valid		: value is valid
+
+For example:
+
+	input.ng-invalid {
+	  background-color: #ffdddd;
+	}
+
+	input.ng-invalid.ng-dirty {
+	  background-color: #ffaaaa;
+	}
+
+	in .ng-valid.ng-dirty {
+	  background-color: #aaffaa;
+	}
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to implement PUT resource method?
+=====================================
+$resource only supports get(GET), query(GET), save(POST), delete(DELETE), but doesn't support update(PUT).
+
+To implement it add a custom method to do that:
+
+	service = $resource(someUrl + ':id', null, 
+		{
+			'update': {method:'PUT'}
+		}
+	);
+
+To call this custom method:
+
+	// Now call update passing in the ID first then the object you are updating
+	service.update({ id:$id }, note);
+
+--------------------------------------------------------------------------------------------------------------------
+Howto call a function asynchronously by timer?	
+==============================================
+Use $timeout
+
+	$timeout(fn, [delay], [invokeApply]);
+	
+It works similarly to setTimeout() but skip model dirty checking, otherwise will invoke fn within the $apply block (3rd parameter).	
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to register custom methods to model instances retrieved from $resource?
+===========================================================================
+Since each resulting object returned by $resource is a resource object itself, 
+we can simply extend them to include the behavior we want for every individual job instance.
+
+var job = $resource(url);
+job.prototype.calculateCustomField = function() {
+	return this.
+};
+
+--------------------------------------------------------------------------------------------------------------------
+Where does AngularJS ignore $ variables?
+========================================
+1. In Schumli's comment below, where json filters will not output them.
+
+2. When using the {{ }} directive, angular will not show nested $ variables. 
+	For example this only displays the visible property.
+
+		<div ng-init="n = { visible: 'foo', $ignore: 'bar' };">{{ n }}</div>
+		
+3. Additionally when adding an explicit watcher on a scope object, changes to properties with a leading dollar sign of 
+	this object will not trigger the watcher.
+
+4. angular.equals() ignores keys prefixed with $.
+
+
+--------------------------------------------------------------------------------------------------------------------
+How do I call an Angular.js filter with multiple arguments?
+===========================================================
+Filter can get argument with ':'. E.g.:
+
+	{{ myDateInScope | date: 'yyyy-MM-dd' }}
+	
+	
+If you have multiple argumments, it can be separated also with ':'.
+
+		
+	myApp.filter("regexReplace", function() {							// register new filter
+		return function(input, searchRegex, replaceRegex) {				// filter arguments
+			return input.replace(RegExp(searchRegex), replaceRegex);	// implementation
+		};
+	});
+	
+	<p>{{ myText | regexReplace: '[0-9]':'X' }}</p>
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to assign unique id to items in ng-repeat?
+==============================================
+ng-repeat has its own scope and it sets $index with iteration index.
+
+Use it to generate unique id:
+
+	<div id="memberDivert{{index}}" ...>
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to pass parameters to promise functions?
+============================================
+Use closures. 
+
+Create a local variable before creating promise. Set value and refer this outer variable from promise functions.
+Because this variable is in the parent scope anonymous function will preserv its value (closure).
+
+For example $timeout returns a promise here: 
+
+    $scope.startTimer = function() {
+        var timerId = $scope.timerIndex;        // closure
+        $log.info("Timer[" + timerId + "] starting...");
+
+        var timer = $timeout(function() {
+            $log.info("Timer[" + timerId + "] executed");
+        }, $scope.timeoutSecs * 1000, true, $scope.timerIndex);       // extra parameter is timer index
+
+        timer.then(
+            function() {
+                var obj = this;
+                $log.info("Timer[" + timerId + "] resolved");
+            },
+            function() {
+                $log.warn("Timer[" + timerId + "] interrupted");
+            }
+        );
+
+		
+--------------------------------------------------------------------------------------------------------------------
+How to get HTTP request query parameters?
+=========================================
+$location.search() returs an object where query parameters are properties.
+
+E.g:
+
+	var callId = $location.search().callId;
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+How to access $scope from a popup window?
+=========================================
+CALLER:
+	$window.scope = $scope;
+	
+POPUP:	
+	vaqr scope = $window.opener.scope;
+	
+	
+	
+
+
+

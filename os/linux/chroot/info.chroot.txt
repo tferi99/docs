@@ -1,0 +1,54 @@
+File: coreutils.info,  Node: chroot invocation,  Next: env invocation,  Up: Modified command invocation
+
+`chroot': Run a command with a different root directory
+=======================================================
+
+`chroot' runs a command with a specified root directory.  On many
+systems, only the super-user can do this.  Synopses:
+
+     chroot NEWROOT [COMMAND [ARGS]...]
+     chroot OPTION
+
+   Ordinarily, filenames are looked up starting at the root of the
+directory structure, i.e., `/'.  `chroot' changes the root to the
+directory NEWROOT (which must exist) and then runs COMMAND with
+optional ARGS.  If COMMAND is not specified, the default is the value
+of the `SHELL' environment variable or `/bin/sh' if not set, invoked
+with the `-i' option.
+
+   The only options are `--help' and `--version'.  *Note Common
+options::.
+
+   Here are a few tips to help avoid common problems in using chroot.
+To start with a simple example, make COMMAND refer to a statically
+linked binary.  If you were to use a dynamically linked executable, then
+you'd have to arrange to have the shared libraries in the right place
+under your new root directory.
+
+   For example, if you create a statically linked `ls' executable, and
+put it in /tmp/empty, you can run this command as root:
+
+     $ chroot /tmp/empty /ls -Rl /
+
+   Then you'll see output like this:
+
+     /:
+     total 1023
+     -rwxr-xr-x  1 0 0 1041745 Aug 16 11:17 ls
+
+If you want to use a dynamically linked executable, say `bash', then
+first run `ldd bash' to see what shared objects it needs.  Then, in
+addition to copying the actual binary, also copy the listed files to
+the required positions under your intended new root directory.
+Finally, if the executable requires any other files (e.g., data, state,
+device files), copy them into place, too.
+
+   Exit status:
+
+     1   if `chroot' itself fails
+     126 if COMMAND is found but cannot be invoked
+     127 if COMMAND cannot be found
+     the exit status of COMMAND otherwise
+
+
+	 

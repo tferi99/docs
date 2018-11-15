@@ -1,0 +1,38 @@
+=============================================
+How to configure directory mapping and notes?
+=============================================
+
+--------------------------------------------------------------------------------------------------------------		
+Creation
+========
+
+
+- Create 2 directories (primary and secondary) under
+	
+	APAS/Directory/Directories
+	
+- Join them in 	
+
+	APAS/Directory/Mapping
+	
+	where you have to specify:
+	
+		- primary directory
+		- secondary directory
+		- join fields (like key and foreign key in database tables)
+
+IMPORTANT:
+
+		- if join field in primary directory is not the ID it should be in Assigned Attributes
+		- join field in secondary directory should be in Assigned Attributes
+
+
+--------------------------------------------------------------------------------------------------------------		
+Test
+====
+		
+- In Desktop client in Directory widget do a search
+- Right-Mouse on directory entry
+- Create note
+- Note will be displayed in Directory Details panel
+

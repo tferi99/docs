@@ -1,0 +1,9 @@
+======================================
+Howto get MAC address by DN from APAS?
+======================================
+- APAS/Global/Pools/(Add)
+- Choose 'IP Phones'
+- You can search a phone by ID and there MAC address will be displayed, too.
+
+It can be usable if you have DC at customer and you need MAC of that phones but you don't have SUSM account.
+

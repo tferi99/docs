@@ -1,0 +1,23 @@
+=======
+SIP FAQ
+=======
+
+- How to config X-Lite in CUCM?
+
+-----------------------------------------------------------------------------------------------------------------
+How to config X-Lite?
+=====================
+CUCM:
+	- Add a '3rd party basic SIP' phone and assign a line
+	- Specify an end user as owner of this phone
+	- Specify this end user as digest user of this phone
+	- Go to end user and specify digest credential.
+
+X-Lite account:
+	- User ID:				line DN
+	- Domain:				host of CUCM
+	- Password:				digest credential
+	- Authorization name:	end user
+	
+	CUCM:
+		- set end user as 'Digest user' on phone device

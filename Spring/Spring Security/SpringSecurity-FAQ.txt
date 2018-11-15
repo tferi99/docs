@@ -1,0 +1,260 @@
+==================
+SpringSecurity-FAQ
+==================
+
+Authentication
+--------------
+- How to authenticate in a standalone application?
+- How to access saved requests when redirecting to login page?
+- How to use SpringSec in JSP?
+- How to show authenticated user in JSP?
+- How do hierarchical roles work?
+
+Authorization
+-------------
+- How to show/hide JPS elements?
+- How to create custom permissions?
+
+Troubleshooting
+---------------
+- How to debug SpringSecurity?
+- Error: "No visible WebSecurityExpressionHandler instance could be found in the application context."
+- Error: "Field or property ... cannot be found on object of type 'org.springframework.security.web.access.expression.WebSecurityExpressionRoot"
+- 404 during login processing
+- How to get info about SpringSecurity filter chain?
+
+
+ACL
+---
+- How to create ACL schema?
+
+-------------------------------------------------------------------------------------------------------------
+How to debug SpringSecurity?
+============================
+Use log4j and add this entry to config:
+
+	    <logger name="org.springframework.security">
+			<level value="TRACE"/>
+		</logger>
+OR
+	log4j.logger.org.springframework.security=TRACE
+	
+OR put into config:
+
+	<security:debug/>
+
+			
+-------------------------------------------------------------------------------------------------------------
+How to authenticate in a standalone application?
+================================================
+Get AuthenticationManager bean and call authenticate().
+
+1. To get AuthenticationManager
+
+	AuthenticationManager authenticationManager = (AuthenticationManager)springAppContext.getBean("authMan");
+	
+	If you have minimal configuration the name of default AuthenticationManager:		_authenticationManager
+	
+2. 	Try to login:
+
+	UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("user", "pwd");
+	authenticationManager.authenticate(auth);
+
+-------------------------------------------------------------------------------------------------------------
+How to access saved requests when redirecting to login page?
+============================================================
+Spring 2.x:
+
+	SavedRequest savedRequest = (SavedRequest)session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY);
+	String requestUrl = savedRequest.getFullRequestUrl();
+
+	Removing:		remove attribute from session.
+	
+Spring 3.x:
+
+	SavedRequest sr = new HttpSessionRequestCache().getRequest(httpServletRequest, httpServletResponse);
+	
+	Removing:		new HttpSessionRequestCache().removeRequest(httpServletRequest, httpServletResponse);
+	
+	
+-------------------------------------------------------------------------------------------------------------
+How to use SpringSec in JSP?
+============================
+	
+1. Add spring-security-taglibs.jar to application:
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>3.1.4.RELEASE</version>
+        </dependency>
+
+2. Add taglib declaration to JSP:
+
+	<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+	
+3. 
+	There is 3 tags:
+		<security:authentication>		: Exposes the current Authentication object to the JSP.
+		
+		<security:authorize>			: Shows or hides the tag body according to whether the current principal satisfies a specified condition.
+		
+		<security:accesscontrollist>	: Shows or hides the tag body according to whether the current principal has a 
+											specified permission on the specified domain object.
+
+		SEE MORE: rc106-010d-springsecurity_2.pdf, Packt - Spring Security 3 (2010).pdf
+-------------------------------------------------------------------------------------------------------------
+Error: "No visible WebSecurityExpressionHandler instance could be found in the application context."
+====================================================================================================
+Either add this to XML configuration:
+
+	<bean id="webexpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />
+
+OR simple enable expressions in <http> tag:
+
+	
+-------------------------------------------------------------------------------------------------------------
+Error: "Field or property ... cannot be found on object of type 'org.springframework.security.web.access.expression.WebSecurityExpressionRoot"
+==============================================================================================================================================
+If you use expressions you cannot use simple role name in <intercept-url> tag, but:
+
+	<security:intercept-url pattern="/adm/*" access="hasRole('ROLE_ADMIN')" />
+	
+	
+-------------------------------------------------------------------------------------------------------------
+How to show authenticated user in JSP?
+======================================
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+
+<security:authentication property="principal.username"/>
+
+-------------------------------------------------------------------------------------------------------------
+How to show/hide JPS elements?
+==============================
+Use <security:authorize access="<expression>"> tag:
+
+	<security:authorize access="isAuthenticated()">
+		...
+	</security:authorize>
+
+	
+-------------------------------------------------------------------------------------------------------------
+How to show/hide JPS elements?
+==============================
+Recommended schema can be found in SpringSecurity reference Appendix A. for HSQL and PosgreSQL.
+
+
+-------------------------------------------------------------------------------------------------------------
+How do hierarchical roles work?
+===============================
+Configuration:
+
+    <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+        <property name="permissionEvaluator" ref="permissionEvaluator"/>
+        <property name="roleHierarchy" ref="roleHierarchy"/>
+    </bean>
+
+    <bean id="roleHierarchy" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+        <property name="hierarchy">
+            <value>
+                ROLE_ADMIN > ROLE_USER
+                ROLE_USER > ROLE_GUEST
+            </value>
+        </property>
+    </bean>
+
+NOTE: current version supports only method authorization but ACLs does not.
+
+
+-------------------------------------------------------------------------------------------------------------
+How to create custom permissions?
+=================================
+- Create new permission class inheriting BasePermission and adding new mask values:
+
+	public class CustomPermission extends BasePermission {
+		public static final Permission REPORT   = new CustomPermission(1<<5,'O');
+		public static final Permission AUDIT    = new CustomPermission(1<<6,'T');
+
+		protected CustomPermission(int mask) {
+			super(mask);
+		}
+
+		protected CustomPermission(int mask, char code) {
+			super(mask, code);
+		}
+	}
+	
+- Add custom permission factory using new custom permission:
+
+	public class CustomPermissionFactory extends DefaultPermissionFactory {
+		public CustomPermissionFactory() {
+			super();
+			registerPublicPermissions(CustomPermission.class);
+		}
+	}
+	
+- Use this factory for permission evaluator:
+
+    <bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator">
+        <constructor-arg ref="aclService"/>
+        <property name="permissionFactory" ref="customPermissionFactory"/>
+    </bean>
+
+    <bean id="customPermissionFactory" class="com.andtek.provisioning.security.authorization.CustomPermissionFactory"/>
+
+- Use new permissions :)
+
+		@PreAuthorize("hasPermission(#user,'report')")
+		public void report(User user) {
+			...
+		}
+
+-------------------------------------------------------------------------------------------------------------
+404 during login processing	
+===========================
+Default login processing URL is:	/j_spring_security_check
+
+If you have a specific url-pattern for springSecurityFilterChain which filters requests (e.g. /api/*) then 
+login-processing-url should be covered by this pattern, otherwise 404 will be resulted.
+
+For examle:
+
+web.xml:
+
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+
+Spring XML:
+
+	<security:form-login
+		login-page="/login.jsp"
+		login-processing-url="/api/j_spring_security_check"
+		authentication-failure-url="/login.jsp?login_error=1"
+		default-target-url="/main.jsp"
+		always-use-default-target="true"
+	/>
+	
+login.jsp:
+	
+	<form name="f" action="<c:url value='/api/j_spring_security_check'/>" method="POST">
+		...
+	</form>
+	
+-------------------------------------------------------------------------------------------------------------
+How to get info about SpringSecurity filter chain?
+==================================================
+
+
+1. autowire it:
+
+	@Autowired
+	FilterChainProxy filterChainProxy;
+	
+2. Activate Debug and watch log. See more: 'How to debug spring security?'
+

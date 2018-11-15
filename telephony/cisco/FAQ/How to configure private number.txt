@@ -1,0 +1,47 @@
+================================
+How to configure private number?
+================================
+
+Scenario: 9002 calls 9000 and we want to configure caller (9002) when calling 9000.
+
+Normal CSS and partitions:	
+
+	TOTH_Intern
+		- TOTH_Phones
+		
+- Create a new CSS for private callers: TOTH_CSS_Private and a partition for private feature (TOTH_Private) and put partitions into CSS:
+
+	TOTH_CSS_Private
+		- TOTH_Private
+		- TOTH_Phones
+		
+- Create a translation pattern where DN is the called target and set 
+	- Calling Line ID Presentation
+	- Calling Name Presentation
+	
+	to Restricted.
+	Set normal CSS for translation pattern.
+	
+- Put caller line (9002) into CSS TOTH_CSS_Private.
+- Put translation pattern into partition TOTH_Private.
+
+If 9002 calls 9000 caller phone number won't be displayed on called device.
+
+How does it work?
+-----------------
+- If caller (9002) calls anything target will be routed by TOTH_CSS_Private because it's the CSS of 9002.
+
+- Because translation pattern DN (9000) is part of TOTH_Private and it's the first partiotion in CSS 9000 will be 
+	found as translation pattern.
+	
+- Restricted presentation will hide calling number.
+
+- Because translation pattern is not a real number jiust a translator and route option is route. So it will be routed forward.
+	CSS of TP is the normal CSS, so 9000 will be called in the next partition (TOTH_Phones).
+	
+- If you call other numbers from 9002 which CSS is TOTH_CSS_Private these numbers will be found in second partition of CSS (TOTH_Phones).
+
+
+
+9002 ---> TOTH_CSS_Private ---> TOTH_Private ---> Translation pattern (9000) ---> Normal number (9000) in TOTH_Phones, where caller is hidden.
+                                                       TRANSLATE

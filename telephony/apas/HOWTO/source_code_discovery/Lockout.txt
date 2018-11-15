@@ -1,0 +1,66 @@
+=======
+Lockout
+=======
+- How does it work?
+- XML service
+- Admin UI
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+How does it work?
+=================
+It based on CSS which does not contain any partitions. 
+If a CSS of a device doesn't have any partitions device cannot call any other devices.
+
+If a phone is locked Lockout feature overwrites CSS of lines or device. 
+Line labels are also overwritten by pattern specified by lockout profile.
+
+Lockout states are stored into 'css' table of database
+
+css
+---
+
+id                                      devicename       type     css                                     locked     softkeytemplate     fk_profileid     savedlinelabel     line             
+ --------------------------------------  ---------------  -------  --------------------------------------  ---------  ------------------  ---------------  -----------------  ---------------- 
+ {DFFE3C01-72EE-19A0-3D46-80FC3053A21B}  SEPAC7E8AB6AF37  line     {C1D03DF7-516C-EF3E-92FB-EB4A3CF89AD1}  1                              1                                   9006@TOTH_Phones 
+ {926053A5-E4D9-22E7-D9A7-DB57AC21413B}  test9002         user     {C1D03DF7-516C-EF3E-92FB-EB4A3CF89AD1}  1                              1                                   9002@TOTH_Phones 
+
+where:
+	id:	
+	
+	devicename: SEE type
+	
+	type:
+		line - devicename contains terminal device name - if a device not associated to an end-user (device not owned by end-user or it not associated as end-user ) line will be locked directly
+		user - devicename contains end-user name - if device associated to an end-user (or owner specified)
+	
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+XML service
+===========
+Lock/Unlock:
+
+	http://APAS:8080/andphone/Lockout?devicename=#DEVICENAME#
+	
+	
+--> com.andtek.andphone.lockout.Lockout.service()
+	--> internalService(request, response)
+		--> handleRequest(connection, request, response, SECURITY_TYPE_SECURE)
+			--> request(...)
+				- devname from 'deviceName' attribute
+				- jtapi from 'jtapi' attribute	
+				--> phoneObj = getPhone(devname, false)
+				--> profile = LockoutProfile.searchProfileByPhone(phoneObj...);
+				--> synchronizeLockoutDB(devname, profile, phoneObj)
+					- internal database table will be synchronized with the current CCM information (add/remove lines)
+				--> getPhoneInfo(...)
+					- handle "manual" (un)lock request via Phone Service:
+						* get phone data
+						* check/verify pin
+						* check profile flags
+						* do (un)lock
+					--> changeLines(...)
+						* lock/unlock line(s)
+						* if profile type is APAS : change css on line(s) and other required settings
+						* if profile type is ANDGuard : no css change, only other required settings if configured
+						

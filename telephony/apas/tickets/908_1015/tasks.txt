@@ -1,0 +1,11 @@
+COMPLETED	- using ring length time parameters in calculation and in labels
+COMPLETED	- using ReportPeriod config param instead of hourly param and using it in labels				
+- adding new counter variables and calculating them (!)
+COMPLETED	- adding dynamic values 
+
+OPTIONAL
+--------
+COMPLETED 	- adding plugins
+- splitting counters and calculations into standard and non-standard (e.g. GDIS) part
+
+

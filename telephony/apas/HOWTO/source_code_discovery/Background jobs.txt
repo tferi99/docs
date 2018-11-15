@@ -1,0 +1,33 @@
+===============
+Background jobs
+===============
+
+TimerDaemon.run()
+	Calling every 1 seconds
+	--> com.andtek.andphone.Admin.background(JTAPIThread jtapi)		
+		in every in every 10 minutes (from config[global/DevxFetchPeriod]) 
+		-> jtapi.superProvider()
+			- to get JTAPI provider status, and routepoints
+		
+		in every 10 seconds
+			- get directories from DB
+			- 
+			
+		in every seconds called 
+			--> Modules.background(jtapi)
+				------------------------------- loop on module names -----------------------------------
+				calling background processing on if module is ModuleBackgroundIF
+				--> ((ModuleBackgroundIF)module).background(jtapi)
+				
+		
+		
+		
+		
+Calling queues
+--------------
+
+com.andtek.andphone.partner.acd.Module.background(JTAPIThread jtapi)
+	--> Queue.runQueues()
+		------------------------------- loop on queues -----------------------------------
+		--> q.queueRun()
+			--> doQueueRun()

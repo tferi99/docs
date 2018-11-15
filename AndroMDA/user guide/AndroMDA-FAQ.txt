@@ -1,0 +1,2028 @@
+===================
+AndroMDA FAQ & Tips
+===================
+
+######################################################################################################
+INDEX
+-----
+General andromda
+-----------------
+- To choose AndoMDA version of project
+- To enable/disable templating (for Java 1.5)
+- Project base steps
+- Service exceptions
+- Running with/without EJBs
+- Using with CVS
+- Performance tips
+- How to expose your enties directly to your presentation tier?
+
+Maven
+-----
+- Howto generate code for standalone or WEB applications?
+- Error message: The plugin '...' does not exist or no valid version could be found
+
+Modelling
+---------
+- Modelling and packages
+- Changing model XMI file name
+- How to rename names of foreign key fields?
+- How to generate 'NULL' fields?
+- Error message during generating source from model (mda goal)
+- Howto enable using domain objects as service operation parameters?
+- Emumeration data types
+- Accessing DAO from DAO
+
+MagicDraw
+---------
+- How to show missing associations?
+- Why a deferrable event isn't shown in my action state?
+- How to generate/start UML2 project for MagicDraw 11 (or higher)
+- How to fix UTF8 problem when loading modell 1st time into MagicDraw 11 (or higher)?
+- How to set stereotype of a class property in MagicDraw 11?
+- How to set shape of minimized entity?
+- How to convert UML 1.4 modell to UML 2.0?
+
+Database
+--------
+- Datasource for Tomcat
+- Specifying local datasource an transaction manager instead of JNDI and JTA
+- JDBC driver for creating schema
+- Howto change destination of SQL scripts?
+- Howto disable running of SQL scripts after generation?
+- Howto call additional SQL scripts?
+- Howto create an index for a database field?
+- Generating datasource configuration
+- Howto set add constraints to database objects?
+- 'SQL command not properly ended' message during launching SQL scripts in Oracle
+
+Hibernate
+---------
+- Beware of lazy loading!
+- Hibernate settings
+- How to initialize lazy loading collections?
+- How can I bind a dynamic list of values into an in query expression?
+- Hibernate tips and tricks
+- Howto sort collections in associations?
+- How to limit rows returned in result set?
+- How to set a criteria field to optional?
+- Who is the parent in many-to-many associations?
+- How to force a many-to-many association endpoint to be the parent?
+- Forcing eager loading of child entities in criteria queries
+
+Spring
+------
+- How to add custom interceptors to service beans?
+- How to add custom Spring bean configuration file?
+
+Logging
+-------
+- Enabling log4j
+- log4j configuration
+
+Eclipse
+-------
+- Using with Eclipse (maven1)
+- How to disable .project and .classpath generation (maven2)
+- Howto create a standalone application
+
+Error messages
+--------------
+- [INFO] Error assembling WAR: Deployment descriptor: ...../WEB-INF/web.xml does not exist.
+- Could not find a getter for ...
+- Compiling error: create(java.util.Collection) is already defined in ...
+- IllegalArgumentException ...'___.id' can not be null
+- java.lang.ArrayStoreException from DAO methods
+- org.hibernate.PropertyAccessException
+
+WEB
+---
+- Providing WEB application context descriptor
+- Using WEB projects in Eclipse I. (method1)
+- Using WEB projects in Eclipse II. (method2)
+- Howto activate generating of WEB container based security constraints?
+
+JSF
+---
+- Documentations for JSF application development?
+- How to change the generated faces-config.xml?
+- How to customize generated view pages?
+- Howto change version of JSF related libraries?
+- Howto retrieve logged user?
+- What is ADF Faces?
+- Compilation error due to ${targetUseCase.controllerAction} not resolved
+- Wrong working of guards, because guard names are not resolved in controller code
+- How to pass parameters to next usecase?
+- ClassCastException on page generates list from VO array
+- How to generate table for item selection?
+- How to set page size of GUI tables?
+- How to override generated text resource entries?
+- How to change usecase input parameter by request parameters?
+
+Testing
+-------
+- How to perform JUnit tests?
+- How to sklip JUnit tests?
+- Where can you find test reports?
+- How to launch test suites in maven2?
+
+Cartridges
+----------
+- How to modify a cartridge?
+
+######################################################################################################
+To choose AndoMDA version of project
+====================================
+It can be during creation of the project.
+
+
+- It depends on version of downloaded andromda maven plugins. So delete all of andromda stuff from 
+  Maven, and download desired version into local repository:
+
+	  maven plugin:download -DgroupId=andromda -DartifactId=maven-andromdapp-plugin -Dversion=XXX
+
+IMPORTANT:
+Maven stores permanent plug-ins into $MAVEN_HOME/plugins (cache will be extracted from here), so you 
+have to check for andromda files in this directory as well!
+-----------------------------------------------------------------------------------------------------------------------------
+To enable/disable templating (for Java 1.5)
+===========================================
+"Using the enableTemplating namespace property it is now possible to enable templating (i.e. generics in Java)."
+
+NOTE: 3.2-SNAPSHOT
+
+Set enableTemplating namespace property to true/false to enable/disable templating in generated code (e.g. generics in Java).
+This isn't supported before JDK 1.5, so set it to false.
+
+Edit $APP/mda/conf/andromda.xml:
+
+    ...
+    <namespaces>
+        <namespace name="default">
+            <properties>
+		...
+		<property name="enableTemplating">false</property>				
+            </properties> 
+    ...
+
+
++ add the following section to root pom.xml:
+	
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-compiler-plugin</artifactId>
+	<version>2.0.1</version>
+	<configuration>
+		<source>1.5</source>
+		<target>1.5</target>
+	</configuration>
+</plugin> 	
+	
+-----------------------------------------------------------------------------------------------------------------------------
+Modelling and packages
+======================
+
+ALWAYS put your classes into (non-default) packages.
+Generated Java code expects package name, so classes in default package will cause compilation error.
+
+NOTE:
+	In MagicDraw you have to put packages into root.
+
+-----------------------------------------------------------------------------------------------------------------------------
+Project base steps
+==================
+- maven adromdapp:generate
+- creating model
+	- create main package in modell 
+	- put classes into main package of application
+- maven create-schema
+
+-----------------------------------------------------------------------------------------------------------------------------
+Error message during generating source from model (mda goal)
+============================================================
+
+ERROR [AndroMDA] 1) [Data::......:Each dependency going out a of an element must have a unique name.
+
+	Maybe you has created MORE THAN ONE dependencies between 2 entities.
+
+
+ERROR [AndroMDA] 1) [Data::org.tferi.pt.model::undefined]:Each classifier must have a non-empty name.
+org.andromda.core.ModelValidationException: Model validation failed!
+
+	See your package (e.g. org.tferi.pt.model here) for unnamed objects.
+
+ERROR [AndroMDA] 4) [Data::org.tferi.pt.model::user]:All navigable connecting association ends must
+have a public visibility.
+org.andromda.core.ModelValidationException: Model validation failed!
+
+	Change visibility of navigable association ends to 'public'. 
+	Default is both of ends are navigable.
+
+ERROR [AndroMDA] 2) [Data::org.tferi.pt.model::user::user]:One-to-one associations must have one sid
+e of the association indicating aggregation (aggregation defines the parent/owning entity).
+org.andromda.core.ModelValidationException: Model validation failed!
+
+	If you have 1-1 association (DEFAULT!), you have to specify an AGGREGATION.
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+Using with Eclipse (maven1)
+===========================
+Maven generates .project and .classpath for Eclipse.
+generated classpath contains class directories but DOESN'T contain dependency JARs. They have to be added manually.
+
+Concider using the jars from the maven repository. I suggest using a global variable in Eclipse. 
+
+In Eclipse classpath variables can be used in a Java Build Path to avoid a reference to the local file system. 
+Using a variable entry, the classpath only contains a variable and the build path can be shared in a team.
+
+Use MAVEN_REPO because many people use this name. 
+Set the value to "/home/USERNAME/.maven/repository" or the windows equivalent, 
+"C:/Documents and Settings/USERNAME/.maven/repository" where USERNAME is replaced by your system user name.
+
+Project > Properties > Java Build Path > Libraries > Add Variable > Configure Variables > New
+
+Than add JARs. 
+- Project > Properties > Java Build Path > Libraries > Add Variable 
+- Choose MAVEN_REPO
+- 'Extend' button
+- Choose JAR
+- Repeate for desired JARs.
+
+IMPORTANT NOTE:
+Sometimes you have to close Eclipse IDE before re-generating code, or you will get an error during code generation
+because Eclipse lock some directories.
+
+-----------------------------------------------------------------------------------------------------------------------------
+Service exceptions
+==================
+It's not needed to model exceptions for all the services you model, the Spring cartridge will generate them automatically for you.
+That way you don't need to keep writing try/catch blocks in the handleXXX methods in the service implementation classes, just 
+throw any error, it will be handled for you. 
+
+So basically this snippet is a good example of an implementation of a service operation, there is no need to catch any exception 
+and rethrow it: 
+
+	protected PersonDetails handleGet(Long id) throws Exception
+	{
+	    return (PersonDetails)getPersonDao().load(PersonDao.TRANSFORM_PERSONDETAILS, id);
+	}
+
+-----------------------------------------------------------------------------------------------------------------------------
+Running with/without EJBs
+=========================
+If you have told andromdapp:generate to generate a WAR-only project (i.e. for deployment in Tomcat) EJBs will be disabled by 
+default and you won't need to worry about this section. 
+
+With the change of a single line it is possible to enable or disable the usage of stateless session EJBs, simply put the 
+<session-ejbs> outlet in comment, like this (this is done in mda/conf/andromda.xml ): 
+
+<namespace name="spring">
+    <properties>
+        ...
+        <!--
+            <property name="session-ejbs">${maven.andromda.core.generated.dir}</property>
+        -->
+        ...
+    </properties>
+</namespace>
+
+-----------------------------------------------------------------------------------------------------------------------------
+Beware of lazy loading!
+=======================
+UNLESS AN ASSOCIATION IS COMPOSITION-MODELED, ALL ASSOCIATIONS COLLECTIONS ARE MADE LAZY BY DEFAULT. 
+While this is very nice to avoid retrieving the whole database on each query, you should be aware that each time you invoke 
+a method on a Spring Service, a Hibernate Session is opened at the beginning and closed at the end of the call. 
+
+The consequence of this is that every persistent object that was retrieved in the body of a Service method is UNABLE TO 
+RETRIEVE ITS ASSOCIATIONS LAZILY OUTSIDE THIS VERY CALL. 
+
+For example: if the user parameter in the following code was obtained as the result of calling a Spring service method, 
+and that user has a lazy group association, and the following is another Spring Service method, it would raise 
+a net.sf.hibernate.LazyInitializationException : 
+
+	protected boolean doSomethingWithUserGroups(User user) throws Exception
+	{
+	    ...
+	    java.util.Collection userGroups = user.getGroups ();
+	    java.util.Iterator everyUserGroup = userGroups.iterator(); // this call would generate the exception
+	    ...
+	}
+	
+-----------------------------------------------------------------------------------------------------------------------------
+Enabling log4j
+==============
+In project generated with maven2 log4j is disabled by default.
+There is a dependency exclusion of log4j (pom.xml):
+
+				...
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				...
+					
+1. You have to comment out this exclusion
+2. Add an explicit dependency for log4j, e.g.:
+
+			...
+			<dependency> 
+				<groupId>log4j</groupId> 
+				<artifactId>log4j</artifactId> 
+				<version>1.2.12</version> 
+            </dependency>
+			...
+
+-----------------------------------------------------------------------------------------------------------------------------
+log4j configuration
+===================
+You can put your configuration files (log4j.properties or log4j.xml) into standard location 
+of maven2 resources, for example in JAR project:
+
+	core/src/main/resources
+	
+in WAR project:	
+
+	web/src/main/resources/WEB-INF/classes
+	
+!!!!!!!!!!!!!!!!!!!!!!!!!!! DEPRECATED (maven1) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Maven have a property enabling you to point to a log4j XML configuration file.
+The default configuration file used can be found in the andromda-core-XXX.jar artifact.
+Open this jar file and see
+
+	/org/andromda/core/common/log4j.xml
+	
+Copy it to an external location, edit it and point to it using the property. 
+
+Maven users specify 
+
+	maven.andromda.loggingConfigurationUri
+
+in their project.properties file
+
+The location of the log4j.xml file must be preceeded by the file: prefix. Here's an example: 
+
+	maven.andromda.loggingConfigurationUri=file:${logging.cfg.dir}/my-log4j.xml
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
+-----------------------------------------------------------------------------------------------------------------------------
+Hibernate settings
+==================
+Different dialect setting needed for different Hibernate versions:
+
+Hibernate 2.x:
+
+	hibernate.dialect=net.sf.hibernate.dialect.PostgreSQLDialect
+
+Hibernate 3.x:
+
+	hibernate.db.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+-----------------------------------------------------------------------------------------------------------------------------
+Datasource for Tomcat
+=====================
+
+The datasource JNDI name changes a bit to java:comp/env/${dataSource.name}
+
+----------------------------------------------------------------------------------------------------------------------------
+Specifying local datasource an transaction manager instead of JNDI and JTA
+==========================================================================
+
+ServiceLocator loads Spring configuration from beanRefFactory.xml (by default).
+
+This contains 
+
+	applicationContext-dataSource.xml
+
+as data source configuration file. This is a JNDI/JTA configuration. 
+'applicationContext-localDataSource.xml' contains local datasource configuration.
+
+If you want to call datasource from a standalone application (not from a container), comment out the 
+	
+	'dataSource' 
+	
+property out of the "spring" namespace in your andromda.xml and it should use the plain jdbc 
+properties defined in there for your JDBC connection.
+
+
+OTHER () METHOD:
+----------------
+Either you have to rename applicationContext-localDataSource.xml into applicationContext-dataSource.xml,
+or modify beanRefFactory.xml to refer applicationContext-localDataSource.xml.
+
+NOTE:
+This is not a perfect solution, but working. File will be overwritten by the next generation.
+
+-----------------------------------------------------------------------------------------------------------------------------
+Changing model XMI file name
+============================
+
+Change 
+	'maven.andromda.model.uri' 
+in 
+	mda/project.properties file.
+
+	
+-----------------------------------------------------------------------------------------------------------------------------
+JDBC driver for creating schema
+===============================
+- You can try to add JDBC driver to depecdencies (pom.xml).
+
+			<dependencies> 
+                <dependency> 
+                    <groupId>mysql</groupId> 
+                    <artifactId>mysql-connector-java</artifactId> 
+                    <version>5.0.4</version> 
+                    <scope>runtime</scope> 
+                </dependency> 
+            </dependencies>
+			
+- More simple solution if you add driver JAR directly into CLASSPATH (e.g. into lib directory under project).
+
+	<jdbc.driver.jar>lib/ojdbc14.jar</jdbc.driver.jar> 
+	
+-----------------------------------------------------------------------------------------------------------------------------
+[INFO] Error assembling WAR: Deployment descriptor: ...../WEB-INF/web.xml does not exist.
+================================================================================================
+If you generate a project without web user interface and webservice a placeholder web.xml
+generated into 
+
+	$APP_HOME/web/target/testapp2-web-1.0/WEB-INF/web.xml 
+
+during project generator.
+This web.xml will be deleted if you call
+	
+	mvn clean
+	
+, and won't be created again. This will cause an error during building WAR.
+	
+Solution1 :		Put a placeholder web.xml into 
+		
+						web/src/main/resources/WEB-INF/web.xml 
+	
+Solution2 :		Put web module into comment in pom.xml ((or remove it).
+
+		   <modules>
+		        <module>mda</module>
+		        <module>common</module>
+		        <module>core</module>
+			<!--        
+				<module>web</module> 
+			-->
+		    </modules>		
+	
+-----------------------------------------------------------------------------------------------------------------------------
+How to rename names of foreign key fields?	
+==========================================
+Add 
+
+	@andromda.persistence.column
+	
+to the endpoint of the OPPOSITE side.
+
+Foe example you have two classes: 
+
+		Group
+         1|
+          |
+          |
+          |
+         *|
+		Member
+
+In this case the following tables will be generated:
+
+	GROUP         MEMBER
+	-----         ------
+	id  <----|    id
+	         |--- group_fk
+
+You want to rename 'group_fk' into 'id_group', so you have to add tagged value to the end point at Group class:
+
+	@andromda.persistence.column=id_group
+	
+-----------------------------------------------------------------------------------------------------------------------------
+How to generate 'NULL' fields?
+==============================
+
+Set multiplicity of entity-property to 0..1 (0 works as well).
+
+-----------------------------------------------------------------------------------------------------------------------------
+Could not find a getter for ...
+===============================
+org.hibernate.PropertyNotFoundException: Could not find a getter for pColumns in class org.qualysoft.linkmanager.model.PageImpl
+	at org.hibernate.property.BasicPropertyAccessor.createGetter(BasicPropertyAccessor.java:282)
+	at org.hibernate.property.BasicPropertyAccessor.getGetter(BasicPropertyAccessor.java:275)
+	at org.hibernate.mapping.Property.getGetter(Property.java:260)
+	at org.hibernate.tuple.PojoEntityTuplizer.buildPropertyGetter(PojoEntityTuplizer.java:255)
+	at org.hibernate.tuple.AbstractEntityTuplizer.<init>(AbstractEntityTuplizer.java:121)
+	at org.hibernate.tuple.PojoEntityTuplizer.<init>(PojoEntityTuplizer.java:55)
+	
+
+If you get such an error message from Hibernate during starting, you may give a bad name for an entity.
+DON'T GIVE A NAME FOR AN ENTITY WITH 2 OR MORE CAPITAS AT START OF THE NAME!!!!!!
+This can come from an abbreviated name tag.
+
+In this example the name of the entity is:		PColumn
+
+There are a name conversion functions where this name occurs different behavior. 
+
+
+Answer for bug report:
+	"I think I remember some kind of bug in the jakarta-commons-beanutils with properties beginning with capital letters, 
+	or only one small letter followed by a capital. 
+	I dont have the reference at hand, but try a search on http://issues.apache.org/jira/browse/BEANUTILS. From what I 
+	remember, it is a long standing bug, that will probably not be fixed anytime soon. Meanwhile, try not to use entities 
+	names starting with to capital letters..."
+
+-----------------------------------------------------------------------------------------------------------------------------
+Howto enable using domain objects as service operation parameters?
+==================================================================
+If you try to use domain objects (entities) as service operation parameters or return values, you 
+will get a compilation error in maven2 project (but not in eclipse).
+
+The reason of problem is that core depends on common, so common will be compiled FIRST.
+Service interfaces are generated into common by default, entities are in core. So
+interfaces cannot use entities by default settings.
+
+Solution:
+	You have to change destination of service-interface compilation. You can do this in
+	andromda.xml (spring cartridge namespace):
+	
+	OLD:	<property name="service-interfaces">${common.generated.dir}</property>
+	NEW:	<property name="service-interfaces">${core.generated.dir}</property>
+
+-----------------------------------------------------------------------------------------------------------------------------
+How to disable .project and .classpath generation (maven2)
+==========================================================
+Just comment out the 
+
+	andromdapp-maven-plugin 
+
+<plugin> configuration in your 
+
+	mda/pom.xml 
+	
+of your project.
+
+Forum:	http://galaxy.andromda.org/forum/viewtopic.php?t=3814&highlight=eclipse+project+classpath
+
+-----------------------------------------------------------------------------------------------------------------------------
+Howto create a standalone application
+=====================================
+1. Generate AndroMDA project with maven2
+
+2. Add entities and services to modell and generate JAVA sources to create all source folders.
+
+3. Disable generating Eclipse project files:
+	- comment out andromdapp-maven-plugin from mda/pom.xml.
+	It calls 'eclipse' goal to generate eclipse files.
+
+4. Add a JDBC driver into local lib directory, and specify JDBC JAR in pom.xml for schema creation.
+
+5. Set database connect parameters in pom.xml .
+
+6. Create schema:
+	
+	mvn -f core/pom.xml andromdapp:schema -Dtasks=create 
+
+7. Put your code that depended from generated code into core/src/mail/java	
+	
+Optional steps:
+
+O1. Change destination of service interfaces generation to core instead of common. 
+	- Change service-interfaces in spring section in andromda.xml .
+	
+O2. Enable log4j 
+	- remove exclusion of log4j (pom.xml)
+	- add dependency for log4j (pom.xml)
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+How to add custom interceptors to service beans?
+================================================
+Add interceptor names to tagged value of service class:
+
+	@andromda.spring.service.interceptors=firstInterceptor,secondInterceptor,...
+
+Add custom bean configuration XML of intercwptor (see above).	
+	
+-----------------------------------------------------------------------------------------------------------------------------
+How to add custom Spring bean configuration file?
+=================================================
+1. Create 
+
+		core/src/resources 
+	
+	directory for resources.
+	
+2. Add resource entry for this directory into core/pom.xml:
+
+        <resources>
+			...
+			...
+            <resource>
+                <directory>src/resources</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+3. Add this directory as source directory to Eclipse project (.classpath):
+
+		<classpathentry kind="src" path="core/src/resources"/>
+		
+4. Put your custom XMLs into directory.
+
+5. Add this to your spring namespace:
+
+            <property name="mergeMappingsUri">file:${conf.dir}/mappings/SpringMergeMappings.xml</property> 
+
+	This will tell andromda where to pick up merge configuration, of course you have to create a 
+	SpringMergeMappings.xml and copy it to ${project.home}/mda/conf/mappings.
+	
+6. Example to create Spring merge file:
+
+	<?xml version="1.0" encoding="ISO-8859-1" ?> 
+	<!-- 
+	    This is used to map merge patterns in files generated 
+	    by Spring to new patterns. Just add content to the 
+	    CDATA sections of the <to/> elements in order to 
+	    use the following merge points. 
+	--> 
+	<mappings name="SpringMerge"> 
+	    <mapping> 
+	        <from><![CDATA[<!-- beanRefFactory merge-point -->]]></from> 
+	        <to> 
+	         <![CDATA[ 
+	         <value>applicationContext-serverSecurity.xml</value> 
+	         <value>applicationContext-mail.xml</value> 
+	         ]]> 
+	      </to> 
+	    </mapping> 
+	</mappings>
+
+7. mvn
+
+
+See more for merging:
+	http://galaxy.andromda.org/docs-3.2/andromda-cartridges/index.html
+	
+-----------------------------------------------------------------------------------------------------------------------------
+How to initialize lazy loading collections?
+===========================================
+Call: 
+
+	Hibernate.initialize(collection);
+	
+,for example:
+
+	Hibernate.initialize(p.getCars());
+
+Note that initialize() doesn’t cascade to any associated objects.
+
+-----------------------------------------------------------------------------------------------------------------------------
+How to show missing associations?
+=================================
+If you want to show associations between classes created previously (e.g. in another diagram):
+	- Right-click on the desired symbol Related Elements/Display Paths
+OR
+	- Edit/Symbol/Related Elements/Display Paths
+	
+NOTE:
+	You can show automatically related elements as well:
+	- Right-click on the desired symbol Related Elements/Display Related Elements
+
+-----------------------------------------------------------------------------------------------------------------------------	
+Compiling error: create(java.util.Collection) is already defined in ...
+=======================================================================
+
+D:/usr/general/andromda-maven2/asstest/core/target/src/org/tferi/asstest/demo/Parent12DaoBase.java:[122,43] create(java.
+util.Collection) is already defined in org.tferi.asstest.demo.Parent12DaoBase
+
+If you have an 1-N or NN association, the entity dosn't have any property and the other N endpoint is mandatory, 
+you will get this error message because of method conflict.
+
+   |-------------|                  |-------------|
+   |  Parent     | 1           1..* |  Child      |   
+   |-------------|------------------|-------------|
+   |             |                  |             |   
+   |-------------|                  |-------------|
+
+Two create() is generated with the same parameter list:
+
+	1. public java.util.Collection create(java.util.Collection entities);
+	
+		This is a method to create parents from a collection.
+		
+    2. public org.tferi.asstest.demo.Parent12 create(java.util.Collection childs);
+
+		This is a method to create 1 Parent with mandatory parameters.
+		
+Solution: you have to add at least 1 property to Parent.
+	
+-----------------------------------------------------------------------------------------------------------------------------	
+Emumeration data types
+======================
+- You can create enumeration values from primitives, but in this case you cannot use them as 
+  query parameters, since 
+
+	queryObject.setParameter("type", type.getValue());
+	
+  method expects an Object as 2nd parameter.	
+
+- Enumeration can have only String values in Java 1.4. If you set another type it won't be compiled.
+  String values are put into "_", but another values not.
+  You can set another type if you surround the value with the appropriate Java code, e.g:
+  
+	Integer:	new Integer(value)
+	Character	new Character('v')
+	...
+	
+, but it's NOT a correct solution.
+
+----------------------------------------------------------------------------------------------------------------------------	
+Hibernate tips and tricks
+=========================
+(from D:/doc/software/tools/Hibernate/FAQ/hibernate.org - Tips and Tricks.mht)	
+
+How can I count the number of query results without actually returning them? 
+
+	Integer count = (Integer) session.createQuery("select count(*) from ....").uniqueResult();
+
+How can I find the size of a collection without initializing it?
+
+	Integer size = (Integer) s.createFilter( collection, "select count(*)" ).uniqueResult();
+
+How can I order by the size of a collection? 
+	Use a left join, together with group by
+
+	select user 
+	from User user
+	left join user.messages msg
+	group by user 
+	order by count(msg)
+	
+How can I sort / order collection elements?
+	
+	There are three different approaches: 
+
+	1. Use a SortedSet or SortedMap, specifying a comparator class in the sort attribute or <set> or <map>. 
+	   This solution does a sort in memory.
+
+	2. Specify an order-by attribute of <set>, <map> or <bag>, naming a list of table columns to sort by.
+	   This solution works only in JDK 1.4+.
+
+	3. Use a filter session.createFilter( collection, "order by ...." ).list()
+
+Are collections pageable?
+
+	Query q = s.createFilter( collection, "" ); // the trivial filter
+	q.setMaxResults(PAGE_SIZE);
+	q.setFirstResult(PAGE_SIZE * pageNumber);
+	List page = q.list();
+
+How can I bind a dynamic list of values into an in query expression?
+
+	Query q = s.createQuery("from foo in class Foo where foo.id in (:id_list)");
+	q.setParameterList("id_list", fooIdList);
+	List foos = q.list();
+
+How can I bind properties of a JavaBean to named query parameters?
+
+	Query q = s.createQuery("from foo in class Foo where foo.name=:name and foo.size=:size");
+	q.setProperties(fooBean); // fooBean has getName() and getSize()
+	List foos = q.list();
+
+How can I create an association to an entity without fetching that entity from the database 
+(if I know the identifier)?
+
+	If the entity is proxyable (lazy="true"), simply use load(). The following code does not result 
+	in any SELECT statement:
+
+	Item itemProxy = (Item) session.load(Item.class, itemId);
+	Bid bid = new Bid(user, amount, itemProxy);
+	session.save(bid);
+
+To set an entity proxiable set 
+
+	@andromda.hibernate.entity.proxy = "true"
+
+It overrides the "hibernateProxy" namespace property. 
+
+	
+----------------------------------------------------------------------------------------------------------------------------		
+Using with CVS	
+==============
+Don't add target directories to CVS repository since these directories are deleted (mvn clean) and re-generated (mvn), 
+so CVS information will be deleted from theses directories. CVS will always drop error messages.
+
+----------------------------------------------------------------------------------------------------------------------------		
+IllegalArgumentException ...'___.id' can not be null
+====================================================
+Error message (example):
+
+	java.lang.IllegalArgumentException: com.qualysoft.linkmanager.service.InternalUserService.
+	create(com.qualysoft.linkmanager.vo.InternalUserVO user) - 'user.id' can not be null
+
+Possible reason of the problem:
+You are using a VO and VO contains 'id' property. If you call a service method with an object parameter,
+service method (in ...ServiceBase) will check whether a parameter is null or mandatory properties of 
+parameter object is null.
+
+Presumably you wanted to create an object by VO and VO contained a null id property.
+
+Solution: 
+
+	Set multiplicity of id (and other non-mandatory fields) to 1..0 .
+
+----------------------------------------------------------------------------------------------------------------------------		
+java.lang.ArrayStoreException from DAO methods
+==============================================
+You get such an error:
+
+Hibernate: select actionacce0_.ID as ID11_, actionacce0_.id_internaluser as id2_11_, actionacce0_.id_useraction as id3_11_, actionacce0_.id_siteelement as id4_11_ from ACTIONACCESS actionacce0_ where actionacce0_.id_internaluser=?
+com.qualysoft.linkmanager.service.PermissionServiceException: Error performing 'com.qualysoft.linkmanager.service.PermissionService.loadActionAccessesOfUser(java.lang.Long userId)' --> java.lang.ArrayStoreException
+	at com.qualysoft.linkmanager.service.PermissionServiceBase.loadActionAccessesOfUser(PermissionServiceBase.java:149)
+	...
+
+Possible reason:
+	You calls a DAO method which gives/gets a Collection, but you provides/gets data in typesafe object array.
+	For Example:
+	
+		Collection c = getActionAccessDao().loadAllByUser(userId);
+		return (ActionAccessOfUserVO[])c.toArray(new ActionAccessOfUserVO[c.size()]);
+	
+	If you forget convert data from VO into entity (or from entity into VO) you will get error message above.
+
+Fixing:
+		Collection c = getActionAccessDao().loadAllByUser(ActionAccessDao.TRANSFORM_ACTIONACCESSOFUSERVO, userId);
+		return (ActionAccessOfUserVO[])c.toArray(new ActionAccessOfUserVO[c.size()]);
+
+----------------------------------------------------------------------------------------------------------------------------			
+Howto change destination of SQL scripts?
+========================================
+Change 'createOutputPath' and 'dropOutputPath' in core/pom.xml .
+
+
+----------------------------------------------------------------------------------------------------------------------------			
+- Howto disable running of SQL scripts after generation?
+========================================================
+In core/pom.xml:
+
+	<executeScripts>false</executeScripts>	
+
+----------------------------------------------------------------------------------------------------------------------------			
+Howto call additional SQL scripts?
+==================================
+Uncomment <scripts> section of configuration of 'schema' in andromdapp-maven-plugin plugin section.
+
+	...
+	<scripts>
+		<script>${project.basedir}/path/to/scripts/script1.sql</script>
+		<script>${project.basedir}/path/to/scripts/script2.sql</script>
+	</scripts>
+	...
+
+----------------------------------------------------------------------------------------------------------------------------			
+Howto sort collections in associations?
+=======================================
+To sort by database, set this tag for enpoint of association:
+	
+	@andromda.hibernate.orderByColumns
+
+For example:
+
+	@andromda.hibernate.orderByColumns=name asc
+	
+The expression in the order-by attribute is a fragment of an SQL order by clause, so you have to add column names (and NOT
+property names) here. 
+
+You can even write SQL function calls in the order-by attribute:
+
+	@andromda.hibernate.orderByColumns=lower(name) asc
+
+----------------------------------------------------------------------------------------------------------------------------			
+org.hibernate.PropertyAccessException	
+=====================================	
+The full error message seems like this:
+
+org.hibernate.PropertyAccessException: exception setting property value with CGLIB 
+	(set hibernate.cglib.use_reflection_optimizer=false for more info) setter of 
+	com.qualysoft.linkmanager.domain.AttrImpl.setSortOrder
+...
+Caused by: net.sf.cglib.beans.BulkBeanException
+	at com.qualysoft.linkmanager.domain.AttrImpl$$BulkBeanByCGLIB$$896361d.setPropertyValues(<generated>)
+	at org.hibernate.tuple.PojoEntityTuplizer.setPropertyValuesWithOptimizer(PojoEntityTuplizer.java:212)
+	... 17 more
+Caused by: java.lang.NullPointerException
+	... 19 more
+	
+You will get this error message if you create a property with primitive type, and you set multiplicity
+to 0..1, and inserts values with null. If you try to retrieve such objects, you will get error.
+
+From hibernate.org:
+"A PropertyAccessException often occurs when the object being passed to the setter method is of the wrong type. 
+Check your type mappings for the offending property. (To see exactly which property was the problem, you might
+need to disable the CGLIB reflection optimizer.) However, THE MOST COMMON CAUSE OF THIS PROBLEM IS THAT 
+HIBERNATE ATTEMPTED TO ASSIGN NULL TO A PROPERTY OF PRIMITIVE TYPE.
+
+If your object has a primitive-type property mapped to a nullable database column then you will need to use a 
+Hibernate custom type to assign a sensible default (primitive) value for the case of a null column value. 
+A BETTER SOLUTION IS USUALLY TO USE A WRAPPER TYPE FOR THE JAVA PROPERTY."
+
+
+Solution:
+
+	Don't use primitive types for optional properties.
+	
+----------------------------------------------------------------------------------------------------------------------------			
+Accessing DAO from DAO
+======================
+
+You can draw dependencies from DAO to DAO (entity to entity).
+DAO bean properties, Spring configuration will be generated.
+
+----------------------------------------------------------------------------------------------------------------------------			
+Howto create an index for a database field?
+===========================================
+To create an index for a database field set the name of index on 
+
+	@andromda.persistence.column.index
+	
+tagged value of a property of an entity.
+
+For example creating index on 'title' field of 'page' table:
+
+	@andromda.persistence.column.index=idx_page_title
+	
+will generate:
+
+	create index idx_page_title on PAGE (TITLE); 
+	
+in the database schema generator script.
+
+From 'Hibernate In Action":
+
+	"If we reuse the same index name on other property mappings, we can
+	create an index that includes multiple database columns. The value of this
+	attribute is also used to name the index in the database catalog."
+
+	
+----------------------------------------------------------------------------------------------------------------------------				
+Howto generate code for standalone or WEB applications?
+=======================================================
+	
+Standalone application conects to database using direct JDBC connection, WEB application uses connect pool of WEB container.
+If you have to generate code for both environment, yuo have to create profiles for differences in pom.xml .
+
+There are already profiles in default pom.xml, you can cusomize them.
+A possible solution can be this:
+
+1. Create a 'web' profile.
+2. Move content of dataSource property into web profile.
+3. Clear content of dataSource property in the default property:
+
+---> Call 'mvn' to create JARs for standalone application 
+	and call 'mvn -Pweb' to generate WAR for WEB application.
+
+
+	...
+    <properties>									<-- default properties
+		...
+		...
+		<dataSource></dataSource> 					<-- empty dataSource
+    </properties>
+    <profiles>
+        <profile>									<-- profile: standalone
+            <id>standalone</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+				<!-- by FToth -->
+                <jdbc.driver.jar>lib/ojdbc14.jar</jdbc.driver.jar>
+                
+                <jdbc.driver>
+                    oracle.jdbc.driver.OracleDriver
+                </jdbc.driver>
+
+                <jdbc.url>
+                    jdbc:oracle:thin:@linkmanager.oraclehost:1521:ORCL
+                </jdbc.url>
+                <jdbc.username>sb2</jdbc.username>
+                <jdbc.password>sb2</jdbc.password>
+
+                <jdbc.exception.sorter>
+                    org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter
+                </jdbc.exception.sorter>
+            </properties>
+        </profile>
+        <profile>											<-- profile: web
+            <id>web</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>dev</value>
+                </property>
+            </activation>
+            <properties>
+				<dataSource>java:comp/env/${dataSource.name}</dataSource>				<-- dataSource (using by Spring cartridge)
+            </properties>
+        </profile>
+    </profiles>
+	...
+
+----------------------------------------------------------------------------------------------------------------------------				
+Performance tips
+================
+- Don't call services from higher layer too often, it's very time consuming. 
+	Service calls frames declarative transactions and Hibernate sessions.
+	
+	However, calling a service from another service doesn't generate more (valuable) overhead, 
+	so you can call them safely.
+	
+	Don't implement functions in sercvices which don't need transaction or DAO. Instead you
+	can implement them in DaoImp classes as static methods. It's not a beautiful solution
+	(since these methods don't contained by model) but performance-friendly.
+	
+- Call 'mvn clean' before re-building, more faster. Maybe checking existing files (or overwriting) has a big overhead.
+	
+----------------------------------------------------------------------------------------------------------------------------				
+Who is the parent in many-to-many associations?
+===============================================
+In an association parent has an inverse=true flag.
+
+Guessing who is parent is trivial in the most cases (e.g. 1-to-many, navigable, agregation, etc.)
+But who is the parent in many-to-many, full navigable associations?
+
+The inverse flag will be put on the side where the aggregation or composition is located. 
+For other type of relations it's put on the side which has the the LEXICALLY LONGER FULLY QUALIFIED NAME for it's type.
+
+
+See more:
+	http://galaxy.andromda.org/forum/viewtopic.php?t=580
+	
+
+----------------------------------------------------------------------------------------------------------------------------				
+Documentations for JSF application development?
+===============================================
+
+JSF follows the same structure as bpm4struts, have a look at:
+
+	http://galaxy.andromda.org/docs-3.2/andromda-bpm4struts-cartridge/howto.html
+	
+There are some differences in functionality, but this is the best reference other than looking at the templates etc. Smile
+
+If you are adventurous search the forum for JSF2 - a new version in dev. Don't know the current status.
+
+----------------------------------------------------------------------------------------------------------------------------					
+How to change the generated faces-config.xml?		
+=============================================
+
+Follow steps in forum topic: http://galaxy.andromda.org/forum/viewtopic.php?t=3840&highlight=jsf
+
+Merge it in using the mergeMappingsUri in the jsf namespace (of your andromda.xml), and merge into the 
+
+	<!-- faces-config merge-point -->
+
+For example:	
+	
+	<mapping> 
+	    <from><![CDATA[<!-- faces-config merge-point -->]]></from> 
+	    <to> 
+	        <path>../../../web/src/jsp/WEB-INF/faces-menu-config.xml</path> 
+	    </to> 
+	</mapping>
+
+----------------------------------------------------------------------------------------------------------------------------					
+How to customize generated view pages?
+======================================
+
+You can customize the pages. Assuming that you've generated an application with maven2 andromdapp, 
+just put the pages you customize in 
+
+	<your app>/web/src/main/xhtml
+	
+and they'll be copied over the generated ones.
+
+See also:	http://galaxy.andromda.org/forum/viewtopic.php?t=3186&highlight=jsf
+
+----------------------------------------------------------------------------------------------------------------------------					
+Howto change version of JSF related libraries?
+==============================================
+JSF related libraries (by default) are copied into 
+
+	web/target/src/WEB-INF/lib
+	
+Unfortunately these JARs don't come from Maven repository (expected by standard deployment method), but
+they are embedded by 
+
+	andromda-jsf-cartridge
+	
+as resource.	
+
+Answer from Chad Brandon:	
+	"Just remove the "libraries" outlet from your andromda.xml jsf namespace. 
+	If that's not present, the jars won't be output and you should be able to use your own versions."
+	
+----------------------------------------------------------------------------------------------------------------------------					
+Howto retrieve logged user?
+===========================
+You can do it from any controller method by call Code:
+	
+	request.getUserPrincipal().getName()
+
+See also: http://galaxy.andromda.org/forum/viewtopic.php?t=5065
+
+----------------------------------------------------------------------------------------------------------------------------					
+What is ADF Faces 
+=================
+ADF Faces is the Oracle Application Development Framework (ADF) view technology based on JavaServer Faces (JSF). 
+
+Features (The items with (*) are either not yet available or only partially implemented ): 
+- Provide more efficient implementations of client-side state saving (reduced per-component size) 
+- Rich set of components, validators, and converters 
+- ADF Faces tags often offer more features than the standard tags; for example, all input components offer built-in label 
+	and message display support ( For more information on the differences between the ADF Faces tags and the standard 
+	Faces tags, please see the following document ). 
+- Client-side converters/validators - JavaScript enabled converters and validators that attempt to catch and display 
+	errors on the client 
+- ADF Faces tags can be used inside of the < af:forEach > tag (it is, unfortunately, not possible to support standard 
+	tags inside < af:forEach > ). 
+- Accessibility - support similar to ADF UIX Accessibility 
+- Bidirectional language support - ADF Faces components automatically render themselves appropriately for bidirectional
+	languages. Users can also use the "start" and "end" constants described in ADF UIX Bidirectional Language Support 
+- Partial Page Rendering (PPR) - support similar to ADF UIX PPR overview 
+- Skinning - support similar to ADF UIX Look and Feel 
+- (*) ADF integration - including support for JSR227 (Data binding) 
+- (*) Rich Client - upcoming rich DHTML client-side renderers
+
+See more:
+	http://www.oracle.com/technology/products/jdev/htdocs/partners/addins/exchange/jsf/doc/index.html
+	
+----------------------------------------------------------------------------------------------------------------------------					
+Providing WEB application context descriptor
+============================================
+A default context.xml will be generated during generating WEB application project here:
+
+	web/src/main/resources/META-INF/context.xml
+	
+This XML file contains expressions (defined in pom.xml - like ${dataSource.name}, ${jdbc.driver}, etc).
+These expressions will be extracted by maven plugins during deployment.
+
+This file won't be changed automatically so you can modify and add your own changes.
+
+----------------------------------------------------------------------------------------------------------------------------					
+Using WEB projects with  Eclipse WTP
+====================================
+Base idea:
+	Customizing AndroMDA project so we can map WEB resources in WTP configuration file.
+
+
+AndroMDA tasks:
+---------------	
+A1. Create AndroMDA project 
+
+A2. Edit modell (add some entities, services, etc.)
+
+A3. Build 
+
+		mvn clean
+		mvn
+
+	Eclipse .classpath and .project files generated as well. 
+	Source directories are (from .classpath):
+
+		  <classpathentry kind="src" path="common/target/src"/>
+		  <classpathentry kind="src" path="core/target/src"/>
+		  <classpathentry kind="src" path="web/src/main/java"/>
+		  <classpathentry kind="src" path="web/target/src"/>
+	
+		- common/target/src			: JAVA
+		- core/target/src			: JAVA
+		- web/src/main/java			: JAVA
+		- web/target/src			: JAVA + WEB resources
+		
+	Building of this project by Eclipse provides a WEB application, but with wrong structure: 
+	
+		!!! JAVA classes are BUILT IN THE SAME DIRECTORY as WEB resources. !!!
+		
+	Follow steps above to change default behavior:
+
+	
+A4. Split web/target/src into JAVA source and WEB resources directory. This requires changing generation.
+	
+	- Add a new property for generated WEB resources. There is a <properties> tag at the end of mda/pom.xml
+		with variables (like web.generated.dir, core.generated.dir, etc.).
+		
+		Add the following property:
+		
+			<web.webresources.dir>${pom.basedir}/../web/target/webresources</web.webresources.dir> 
+	
+	- Change output of JSF generator for the following entries (from web.generated.dir to web.webresources.dir) in 
+	  jsf namespace of andromda.xml:
+	
+			<property name="views">${web.webresources.dir}</property>
+			<property name="libraries">${web.webresources.dir}</property>
+			<property name="configuration">${web.webresources.dir}</property>
+			<property name="messages">${web.webresources.dir}</property>       	
+	
+	- Change WAR packaging to get WEB resources from different location: 
+		Add a <webResource> tag to maven-war-plugin hook in web/pom.xml:
+	
+	        <configuration>
+				<warSourceDirectory>target/src</warSourceDirectory>
+				<!-- to split web.generated.dir to src and content directories - by FToth -->
+				<webResources>
+					<resource>
+						<directory>web/target/webresources</directory>
+					</resource>
+				</webResources>
+				<excludes>**/*.java</excludes>
+			</configuration> 	
+
+		NOTE: It's relative to location of main application.	
+	
+	
+	- Change dependencies in web/pom.xml points to libraries in generated WEB resources.
+
+		By default JSF plugin copies neccessary JARS into:		web/target/src/WEB-INF/lib
+		, and generates dependencies to these JARS into:		web/pom.xml
+		, for example:
+
+			<systemPath>${pom.basedir}/target/src/WEB-INF/lib/andromda-jsf-cartridge-components.jar</systemPath>		
+		
+		After changing location of JARS (since they are copied into 
+				
+			web/target/webresources/WEB-INF/lib 
+			
+		now, so you have to change dependencies accordingly:
+		
+			<systemPath>${pom.basedir}/target/webresources/WEB-INF/lib/andromda-jsf-cartridge-components.jar</systemPath>			
+		
+	
+	-  Change copy target directories in web/pom.xml:
+	
+			from:	<copy todir="${pom.basedir}/target/src" overwrite="true" failonerror="false">
+			to:	<copy todir="${pom.basedir}/target/webresources" overwrite="true" failonerror="false">
+			
+			This will copy css, images and skins files into WEB resources.
+
+A6.	Add copy antrun tasks to web/pom.xml to collect merged/filtered resources together (for WTP).
+
+A5. Disable re-generating Eclipse project files:
+	Put plugin hook with goal 'eclipse' into comment in mda/pom.xml .
+	
+	
+Eclipse tasks:
+--------------
+E1. Create a dynamic WEB project, where project name is the name of AndroMDA project.
+	This project is only a dummy project to get dynamic WEB project Eclipse environment 
+	elements for AndroMDA project.
+
+E2. Add Eclipse project elements from dummy Eclipse project into AndoMDA project:
+
+	- Edit .classpath of AndroMDA project manually:
+		Classpath file generated by AndroMDA is almost fine, you have to add 'con' entries from Eclipse file.
+	
+	- Copy .project file from Eclipse into AndroMDA project.
+	
+	- Copy .settings directory into AndroMDA project.
+	
+	
+	- Change Eclipse WSPT configuration (.settings/org.eclipse.wst.common.component):
+		
+	<?xml version="1.0" encoding="UTF-8"?>
+	<project-modules id="moduleCoreId" project-version="1.5.0">
+	<wb-module deploy-name="jsftest">
+		
+		<!-- java source folders -->
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="/core/src/main/java"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="/core/target/src"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="/common/src/main/java"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="/common/target/src"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="/web/src/main/java"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="/web/target/src"/>
+
+		<!-- generated WEB resources -->
+		<wb-resource deploy-path="/" source-path="/web/target/webresources"/>
+
+		<!-- manual editable WEB resources to overwrite generated content -->
+		<wb-resource deploy-path="/css" source-path="/web/src/main/css"/>
+		<wb-resource deploy-path="/images" source-path="/web/src/main/images"/>
+		<wb-resource deploy-path="/skins" source-path="/web/src/main/skins"/>
+		<wb-resource deploy-path="/" source-path="/web/src/main/xhtml"/>
+		
+		<!-- other merged, filtered WEB resource -->
+		<wb-resource deploy-path="/" source-path="/target/merged-webresources"/>
+		
+		<!-- properties -->
+		<property name="java-output-path" value="target/classes"/>
+		<property name="context-root" value="jsftest"/>
+	</wb-module>
+	</project-modules>
+	
+E3. Add missing libs from M2_REPO, and add them to J2EE Module Dependencies
+	(Project/Properties/J2EE Module Dependencies).
+
+	This will deploy JARs from M2_REPO into WEB aplication.
+
+
+----------------------------------------------------------------------------------------------------------------------------					
+Why a deferrable event isn't shown in my action state?
+======================================================
+You need to right-click on the action state and you need to uncheck the presentation 
+option: "Suppress actions", that will make them show them .
+
+You can also configure defaults settings so that they will always show when you add them.
+
+To set default false value for "Suppress actions" in MagicDraw 9.5 do the followings:
+	1. Call Option/Project menu
+	2. Choose Symbols properties styles/Shapes/ActionState entry
+	3. Set "Suppress actions" to false
+	4. Apply
+	5. Select all diagrams
+	6. On 'Select properties to apply' select only "Suppress actions" (unselect all first than add only this item).
+	7. OK
+	
+See also:
+http://galaxy.andromda.org/forum/viewtopic.php?t=1605
+
+----------------------------------------------------------------------------------------------------------------------------
+Compilation error due to ${targetUseCase.controllerAction} not resolved
+=======================================================================
+Reason: 
+	There is no a valid final state shortcut to another usecase.
+
+Solution:
+	Clear shortcut and add again. It has to be point to usecase class.
+	
+
+
+----------------------------------------------------------------------------------------------------------------------------
+Wrong working of guards, because guard names are not resolved in controller code
+================================================================================
+Problem: 
+	As you can see expression variables for guard names somethimes not resolved:
+	
+	    private java.lang.String __validateInputForm(final org.tferi.jsftest.usecases.Egyik.InputPageSubmitFormImpl form)
+	    {
+	        final String value = java.lang.String.valueOf(validateInputForm(form));
+	        if (value.equals("$outcome.guard.name"))
+	        {
+	            return ((org.tferi.jsftest.usecases.Start.StartController)this.resolveVariable("startController")).start();
+	        }
+	        if (value.equals("$outcome.guard.name"))			<<<============================== !!!!!!!!!!!!!!!!!!!!!!!!!!
+	        {
+	            return "egyik-input-page";
+	        }
+	        // we take the last action in case we have an invalid return value from the controller
+	        return "egyik-input-page";
+	    }
+
+Reason: 
+	Some modeling tools DO NOT PROPERLY SHOW THE NAME OF THE GUARD in the activity diagram (e.g. MagicDraw 9.5).
+		
+Fix:
+	In that case you might consider COPYING THE NAME ALSO IN THE GUARD'S BODY, this will be ignored by the cartridge 
+	and might show it on screen for clarity.
+	
+
+----------------------------------------------------------------------------------------------------------------------------
+How to pass parameters to next usecase?
+=======================================
+To pass form parameters to next use case add one or more server side states before final state.
+
+	YOU SHOULD NOT ADD A SIGNAL TO LAST TRANSITION (in contrast with andromda documentation!).
+		
+		
+----------------------------------------------------------------------------------------------------------------------------
+How to perform JUnit tests?
+===========================
+If you create classes inherited from TestCase into 
+
+	<project>/src/test/java
+
+test cases will be called automatically by maven (in test lifecycle phase).
+
+See below how you can skip performing tests.
+----------------------------------------------------------------------------------------------------------------------------
+How to sklip JUnit tests?
+=========================
+- Global solution:
+
+	mvn -Dmaven.test.skip=true install
+	
+- More sophysticated method - running tests from a profile
+	By default tests are disabled:
+		- put a variable into global properties:
+		
+			<skip.junit.test>true</skip.junit.test>
+				
+		- add the following code to pom.xml-s where you want to control testing:
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>${skip.junit.test}</skip>
+				</configuration>
+		    </plugin>			
+			
+	Add a new profile for testing, where testing is enabled:
+	
+		<profile>
+            <id>test</id>
+            <properties>
+				...
+				... other profile properties ...
+				...
+				
+				<!-- ... JUnit is enabled -->				
+				<skip.junit.test>false</skip.junit.test>
+			</properties>
+		</profile>		
+
+		Create this profile from a profile, where database connection based on direct JDBC driver,
+		since test environment cannot access DB througt JNDI (so copy a profile and add <skip.junit.test> entry).
+	
+	Add nececessary JDBC driver dependencies to root pom.xml, for example:
+	
+		...
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>oracle-jdbc</artifactId>
+			<version>unknown</version>
+			<scope>system</scope>
+			<systemPath>${pom.basedir}/../lib/ojdbc14.jar</systemPath>
+		</dependency>
+		...
+	
+	Call test:
+	
+		maven -Ptest test
+		
+		
+----------------------------------------------------------------------------------------------------------------------------
+- How to launch test suites in maven2?
+======================================
+SureFire plugin (which calls tests) doesn't support to call test suites in Maven2.
+You have to make a little hack to perform it, run suites as test cases:
+
+	public class SuiteTest extends TestCase
+	{
+		TestResult tr = null;
+
+		public void testSuite() {
+		    TestSuite suite = (TestSuite) YourTestSuite.suite(); 
+		    suite.run(tr);
+		}
+
+		public void run(TestResult res) {
+		    tr = res;
+		    testSuite();
+		}
+	}
+
+Implement your testcases in ...Test.java, and suites as ...Suite.java, than force maven to include suites and exclude 
+normal tests:
+
+	<profile>
+		<id>test</id>
+		<properties>
+			<!-- OTHER PROFILE SPECIFIC PROPERTIES -->				
+		
+		
+			<!-- ... JUnit is enabled -->				
+			<skip.junit.test>false</skip.junit.test>
+		</properties>
+		
+		<build>
+			<plugins> 
+				 <plugin> 
+					<groupId>org.apache.maven.plugins</groupId> 
+					<artifactId>maven-surefire-plugin</artifactId> 
+					<configuration> 
+						<includes> 
+							<include>**/*Suite.java</include> 
+						</includes> 
+						<excludes> 
+							<exclude>**/BaseTestSuite.java</exclude> 
+							<exclude>**/*Test.java</exclude> 
+						</excludes> 
+					</configuration> 
+				</plugin>
+			</plugins> 				
+		</build>	
+	</profile>		
+
+		
+Configuration of SUREFIRE plugin:	http://maven.apache.org/plugins/maven-surefire-plugin/examples/inclusion-exclusion.html		
+
+----------------------------------------------------------------------------------------------------------------------------
+Where can you find test reports?
+================================
+If you are running test in a Maven2 project, your test reports will be generated under:
+
+	<project>/target/surefire-reports
+
+
+----------------------------------------------------------------------------------------------------------------------------
+Howto set add constraints to database objects?
+==============================================
+- <<Unique>> stereotype of object attribute				--> unique field in database
+
+- Attribute Multiplicity [0..1]	of object attribute		--> not null in persistence
+
+- <<Nullable>> stereotype for operation parameters		--> parameter of an operation can be null
+
+- <<Identifier>> stereotype of object attribute			--> explicit ID in entity
+
+
+----------------------------------------------------------------------------------------------------------------------------
+Generating datasource configuration	
+===================================
+If you create a J2EE WEB application a default datasource configuration generates into:
+
+	web/src/main/resources/META-INF/context.xml 
+	
+			<?xml version="1.0" encoding="UTF-8"?>
+			<Context path="/testapp" docBase="testapp-web-1.0"
+			 debug="99" reloadable="true" antiJARLocking="true" antiResourceLocking="false">
+
+			<Resource name="${dataSource.name}" auth="Container" type="javax.sql.DataSource"
+					  maxActive="100" maxIdle="30" maxWait="10000"
+					  driverClassName="${jdbc.driver}"
+					  username="${jdbc.username}" password="${jdbc.password}"
+					  url="${jdbc.url}"
+					  defaultAutoCommit="false" removeAbandoned="true"
+					  removeAbandonedTimeout="60" logAbandoned="true"/>
+			</Context>
+
+Expressions will be resolved by maven during deployment - if resource filtering is active (by default)
+see web/pom.xml:
+			
+		<resource>
+			<directory>src/main/resources</directory>
+			<targetPath>../${pom.artifactId}-${pom.version}</targetPath>
+			<filtering>true</filtering>
+		</resource> 	
+		
+		
+----------------------------------------------------------------------------------------------------------------------------
+ClassCastException on page generates list from VO array
+=======================================================
+Stack trace on error:		
+	17:35:02,196 ERROR [[Faces Servlet]] Servlet.service() for servlet Faces Servlet threw exception 
+	java.lang.ClassCastException: java.lang.Long 
+	   at oracle.adfinternal.view.faces.uinode.FireActionBoundValue.getValue(FireActionBoundValue.java:93)		
+		....
+		
+You gen an error is you want to create a value list from VO array on a client side state, and you want to use this
+list to choose an item from a list so you create an outgoing signal with parameter ID as Long (as it's recommended by 
+Getting started Java). Tutorial works with Struts cartridge well, but not with JSF cartridge because of a bug in ADF.
+
+Fix 1:
+	Tutorial ask to create a tablelink this way:
+	
+		Add a tag on the transition called 
+			
+			@andromda.presentation.web.action.tablelink=<table>
+		
+		and set its value to the name of incoming table parameter. This tag ensures that the details trigger will occur on the table 
+		that displays incoming array. Also since we are not specifying any attribute in this value (such as table.id) 
+		a separate column will be created with buttons named Details.		
+
+	Instead of this specify ID property of table as well:
+	
+		@andromda.presentation.web.action.tablelink=<table>.<property>
+		
+	, but this <table>.<property> column has to be shown and it will contain action GUI control (e.g. link).
+	
+Fix 2:
+	Change type of outgoing field and corresponding table field to String (so String ID in VO object).
+	
+	
+See also:
+	http://galaxy.andromda.org/forum/viewtopic.php?t=3720&highlight=		
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to generate table for item selection?
+=========================================
+1. If you specify an ARRAY or COLLECTION as form variable a TABLE WILL BE RENDERED. 
+
+	By default every property of item will be rendered as colunmn value. To hide a column see 
+	'How to hide columns of a rendered table?'.
+
+2. Item selection:
+	You can choose one or more values (generally the key) to send when an action occured on an item of table. 
+	If an action fired on an item, item properties will be mapped into outgoing signal parameters.
+
+	Selector GUI:
+	1. Link on item value
+	2. Additional selector control at the end of record (link, button).
+	
+	
+WARNING:
+	With JSF cartridge set the type of selectable column in incoming record to String otherwise a ClassCastException will be 
+	thrown because of an ADF error (see: ClassCastException on page generates list from VO array).
+
+- To link an outgoing value to a table by specifying tagged value:
+	
+	@andromda.presentation.web.action.tablelink=<table>[.<property>]
+
+, where:
+	- table			: name of incoming variable (an array, collection, etc.) containing values to render into table 
+	- property 		: selector column - rendered as link, 
+	
+	
+- If you specify a separated column (table property) this column will be rendered as selector control as a link
+
+- If you DON'T add selector column, you can secify type of selector control with tagged value:
+	
+	@andromda.presentation.web.action.type=<type>
+		
+	,where type:
+	- hyperlink (default)		: anchor
+	- form 						: button
+	- image						: ?
+	- table						: ?
+	- popup						: ?
+			
+----------------------------------------------------------------------------------------------------------------------------
+How to hide columns of a rendered table?
+========================================
+Method 1
+--------
+If you pass a Collection of values to a client page as page variable you can hide colums using tagged value:
+			
+	Applied on: Parameter of type datatype::Collection going into an action state carrying the <<FrontEndView>> stereotype			
+			
+	@andromda.presentation.view.table.columns=<col1>,<col2>,....<colN>
+			
+So you will need to make sure all objects HAVE ACCESSOR METHODS FOR THE PROPERTY you list in this tagged value. 
+
+Warning:
+	ONLY WORKING WITH COLLECTIONS, AND NOT WITH ARRAYS.
+			
+			
+Method 2
+--------
+Use CSS styles to hide a column (in manual editable code).
+
+Method 3
+--------
+Remove column in manual editable code (JSP/xhtml).
+
+----------------------------------------------------------------------------------------------------------------------------
+How to limit rows returned in result set?
+=========================================
+Using criteria:
+- Create a search criteria (class with <Criteria> stereotype).
+- Create a query method in an entity using this criteria as parameter.
+- Call this query from a service - instantiate criteria, set maximum result size 
+  and use in DAO query:
+
+	SearchBestUserCriteria criteria = new SearchBestUserCriteria();
+	criteria.setMaximumResultSize(maxRows);
+	Collection c = dao.findBestUsers(UserDao.TRANSFORM_BESTUSERVO, criteria);
+
+Using query:
+- override query implementation DAO method with the same code, but 
+	set max results:
+
+	org.hibernate.Query queryObject = super.getSession(false).createQuery(queryString);
+	queryObject.setMaxResults(10);
+
+	
+----------------------------------------------------------------------------------------------------------------------------
+Howto activate generating of WEB container based security constraints?
+======================================================================
+You can model usecase access permissions for JSF cartridge.
+If you draw an association between a usecase and a role, usecase will be accessible 
+only by users who are member of this role.
+
+But this function is disabled by default. To activate this uncomment securityRealm variable 
+of jsf namespace:
+
+	<!-- uncomment to enable web tier security
+	<property name="securityRealm">${application.id}</property>
+	--> 
+
+----------------------------------------------------------------------------------------------------------------------------
+How to set a criteria field to optional?	
+========================================
+If you want to add a NON-mandatory criteria field you have to set multiplicity field to [0..1].
+Othervise server method which have a criteria parameter will throw an IllegalArgumentException.
+
+There is a tagged value of criteria fields:
+
+	@andromda.hibernate.criteria.nullable
+	
+but it has a quite different meaning:
+
+	If this tagged value is set to true , the tagged attribute will be considered in the search EVEN IF IT IS NULL. 
+	Use this feature to query entities that have attributes that may be NULL (in the sense of SQL).		
+
+----------------------------------------------------------------------------------------------------------------------------
+How to force a many-to-many association endpoint to be the parent?
+==================================================================
+Change normal many-to-many association into many-to-many aggregation.
+
+WARNING!
+This adds an extra entity lifecycle behavior. If you delete parent, child element will be deleted as well 
+(because cascade="delete" is in parent).
+
+----------------------------------------------------------------------------------------------------------------------------
+How to generate/start UML2 project for MagicDraw 11 (or higher)
+===============================================================
+1. During generating AndroMDA project choose:
+
+		uml2
+
+2. Call mvn in generated projects to downloaded AndroMDA profiles into 
+
+		$HOME/.m2/repository/org/andromda/profiles/uml2
+	
+	if not downloaded previously (build will be unsuccessful because there is no <APPNAME>.uml - it will be created during
+	first 'EMF UML(v2.x) XMI' export).
+	
+2. Start MagicDraw
+
+4. Convert model (<APPNAME>.uml2) into UTF-8 (see 'How to fix UTF8 problem when loading modell 1st time into MagicDraw 11 (or higher)?')	
+	
+5. Load model into MagicDraw.
+
+	If maven2.repository environment variable not set previously, you will be asked to specify:
+	
+		C:/Documents and Settings/<USER>/.m2/repository
+		
+	(See Options/Environment/Path Variables for variables)
+
+	AndroMDA UML profile modules have to be loaded in.
+
+	If modules not found:
+	
+		- Look for path variable variable in <importedProfile> tags, e.g:
+		
+			<mdElement elementClass='FileProperty'>
+				<value>&lt;maven2.repository&gt;/org/andromda/profiles/uml2/andromda-profile-process/3.2</value>
+				<selectionMode xmi:value='1'/>
+			</mdElement>	
+		
+		- Check paths entries, check version of profiles as well it MUST be 3.2 exactly.
+		
+- After changing modell you have to export it for AndroMDA into EMF UML(v1.x) XMI format into:
+
+		mda/src/main/uml 
+	
+	directory. Choose 'project.dir' path variable for resolving export destination later.
+	(Choose 'project.dir' from list and press 'Use selected').
+	
+	----> *.uml2 will be created.
+	
+
+3. Add 
+
+		m2repository 
+		
+	variable if not exists (Options/Environment/Path Variables).
+	
+	IMPORTANT!!!
+
+
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to fix UTF8 problem when loading modell 1st time into MagicDraw 11 (or higher)?
+===================================================================================
+If you try first time load modell into MagicDraw 12 you could get an UTFDateFormatException.
+
+Fix: Convert into UTF-8.
+
+You can do it using arbitrary editor which supports UTF-8 format (e.g. EditPlus).
+- load modell XML in
+- save as UTF-8 
+
+----------------------------------------------------------------------------------------------------------------------------
+Howto call a usecase in JSF project?
+====================================
+Usecase entry points are the followings:
+	- .../<USECASE_PACKAGE>/<USECASE>.jsf			: main entry point usable in URL
+
+----------------------------------------------------------------------------------------------------------------------------
+How to set stereotype of a class property in MagicDraw 11?
+==========================================================
+You cannot reach stereotype of a class properties from diagram symbol.
+
+	- Select property from Containment tree (Ctrl-b)
+	- Right mouse/Stereotype
+
+	
+----------------------------------------------------------------------------------------------------------------------------
+'SQL command not properly ended' message during launching SQL scripts in Oracle
+===============================================================================
+Message:	
+	[WARNING] java.sql.SQLException: ORA-00933: SQL command not properly ended	
+
+Fix:
+	Remove whitespace characters from the end of the SQL command after ';'
+
+
+----------------------------------------------------------------------------------------------------------------------------
+How to set page size of GUI tables?
+===================================
+Code generated for GUI tables by default:
+
+	<af:table allDetailsEnabled="true" var="row" bandingInterval="1" banding="row" 
+		value="#{result}" rows="#{preferences.maxTableRows}" width="90%"> 
+	...
+	...	
+	
+, where <af:table> has a 'rows' parameter which will be set from preferences.
+
+
+You can replace value of page-size here, in your custom XHTML.
+
+----------------------------------------------------------------------------------------------------------------------------
+How to override generated text resource entries?
+================================================
+- Add a merge point to JSF catridge, like this:
+
+	<!--
+		This next mapping will merge the entire messages.properties into the generated
+		messages.properties
+	-->
+	<mapping>
+		<from><![CDATA[# custom-messages merge-point]]></from>
+		<to>
+			<path>
+				../../../../../web/src/main/properties/messages.properties
+			</path>
+		</to>
+	</mapping>
+
+- Put your custom texts into 
+
+	web/src/main/properties/messages.properties
+	
+- It is even possible to override the default generated ones by simply REPEATING THEM IN YOUR CUSTOM RESOURCE BUNDLE. 
+
+- If you want you can specify multiple <path> elements, that way all of them will be merged.	
+	
+	
+See also:
+	http://galaxy.andromda.org/docs-3.1/andromda-bpm4struts-cartridge/howto10.html#Custom_Resources
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to expose your enties directly to your presentation tier?
+=============================================================
+Uncomment OpenSessionInViewFilter in 
+
+	mda/src/main/config/mappings/WebMergeMappings.xml 
+
+and set open-session-in-view variable.
+	
+It specifies the location to which the AndroMDA OpenSessionInViewFilter will be generated 
+(allows the Hibernate open-session-in-view pattern when you want to expose your enties directly 
+to your presentation tier - allows lazy-loading to occur that level).	
+
+See more:
+
+	file://localhost/D:/doc/software/tools/AndroMDA/andromda-docs-3.2/andromda-spring-cartridge/namespace.html#open-session-in-view
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to change usecase input parameter by request parameters?	
+============================================================
+Incoming variables of usecases can be specified by request parameters.
+If you add a parameter with a name existing in the first request-form of usecase, parameter will
+be populated into request form. In addition, this value will be overwrite value come from previous
+usecase.
+	
+If you use VO as signal parameter, you cannot set VO properties simply.
+In this case add a variable to first signal and write this parameter into form property
+in the first server-side state (using controller)m if this variable does contain any value.
+
+
+----------------------------------------------------------------------------------------------------------------------------
+Passing parameters and returning values via parameters in services
+==================================================================
+General rule in Spring services that YOU CANNOT USE MEBER VARIABLES, because services objects 
+are allocated only ONCE by default (similarly to servlets).
+
+Variables are passed BY VALUE in Java. So you are not able to return values through an object 
+type (e.g Integer, Boolean) since you cannot write value memeber of these object just you can 
+reallocate the whole object (e.g. new Boolean(true)). 
+
+So you can return a value only using object whose members are accessible.
+
+Conclusion:
+You have to write an extended object for type objects (e.g. BooleanEx).
+ 
+----------------------------------------------------------------------------------------------------------------------------
+Forcing eager loading of child entities in criteria queries
+===========================================================
+Example for problem: we have two entities: 
+Code:
+
+        *                      1 
+[Log] <----------------------------> [Person] 
+------                               ----------- 
+fromDate                             name 
+toDate 
+eventCode 
+
+
+I have to create a log-report where name of person has to be displayed. Report has a lot of optional input parameter , 
+it seems to be the most simple solution is a criteria query. 
+
+So criteria has the following fields: 
+- fromDate >= 
+- toDate <= 
+- person.name LIKE 
+
+The only problem is if location.name field of criteria has not been specified, generated query won't contain Person table, 
+so when we try to get name of person (log.getPerson() ) during filling log value objects new queries will be issued to 
+get child entities (n+1 queries problem). 
+
+So we need a solution to force loading child entities (Person) eagerly. 
+
+A have a very ugly workaround, I added a dummy criteria field: 
+- person.id <> -9999999 
+
+,but it would be great a more general solution (e.g. a special tagged value to force eager loading).
+
+----------------------------------------------------------------------------------------------------------------------------
+How to modify a cartridge?
+==========================
+1. Install source
+
+2. Go to cartridge source : $CARTRIDGE_HOME
+	(e.g C:/apps/andromda-3.2/cartridges/andromda-spring)
+
+3. Change cartridge template (e.g HibernateSearch.vsl)
+
+4. Build call
+
+	mvn clean
+	mvn
+	
+	in cartridge directory  -------------> you will get error first!
+	
+	You get an error during a test because expected generated code and 
+	current are different. 
+	
+5. Copy new code generated in
+
+		$CARTRIDGE_HOME/target/cartridge-test/actual
+	
+	into
+	
+		$CARTRIDGE_HOME/src/test/expected/cartridge-output.zip 		
+		
+		
+6. Try to build again		
+	
+	Cartidge will be deployed into local repository.
+
+7. Rename cartrige version to distinguise from original one, install into local repository
+		and change dependency version in pom.xml-s.
+		
+	For example:
+		
+		andromda-spring-cartridge-3.2.jar  -->  andromda-spring-cartridge-3.2.qs.jar
+		
+		
+	
+----------------------------------------------------------------------------------------------------------------------------
+Error message: The plugin '...' does not exist or no valid version could be found
+=================================================================================
+This is a plugin resolution error during build. 
+
+See more in [maven2-faq.txt].
+
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to set shape of minimized entity?
+=====================================
+
+Options -> Project -> Symbols properties styles -> Default -> Shapes
+
+	Show stereotypes : Shape image and text
+	
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to convert UML 1.4 modell to UML 2.0?
+=========================================
+- Open modell with UML2-capable MagicDraw (e.g. 15.0).
+
+- IMPORTANT: Choose UML 2.0 modules when modules are required dureing the first load.
+
+- Replace some values directly in XLM file:
+
+	- maven1.repository  -> maven2.repository
+	- uml14	-> uml2
+
+
+
+	
+	

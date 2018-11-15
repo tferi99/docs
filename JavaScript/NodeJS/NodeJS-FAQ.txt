@@ -1,0 +1,81 @@
+==========
+NodeJS FAQ
+==========
+
+- NodeJS quick start
+- How to debug NodeJS?
+- How to refresh resources of a running NodeJS application?
+
+
+--------------------------------------------------------------------------------------------------------------
+NodeJS quick start
+==================
+- install componentsNodeJS
+	- NodeJS
+	- IDE (Idea, WebStormm VS-Code)
+	- MongoDB (optional)
+
+- create project directory and go there
+
+- create project:
+
+	npm init
+	
+	It creates basic package.json
+	
+- To install the current package context (package.json) with dependencies locally 
+
+	npm install 
+	OR
+	npm i 
+
+- To install a package locally
+
+	npm i <package name>
+
+	Current version of npm saves any specified packages into dependencies by default. 
+	With old versions:	npm i <package> --save
+	You can find packages here:	https://www.npmjs.com/
+	
+- Start IDE 
+	- set JS version minimum ES6
+	- create a NodeJS start configuration
+	- you can start application with LiveEdit mode and with JS debugger
+	
+
+
+--------------------------------------------------------------------------------------------------------------
+How to debug NodeJS?
+====================
+
+Method 1:
+
+	node --inspect [--debug-brk] index.js
+
+	Before v7.4 you can connext to URL printed here, but after v8 you can use this:
+
+		chrome://inspect
+		
+		
+	With --debug-brk you can stop debugger on the 1st line if it's a simple script. 
+	Otherwise script is not stopped. With an event driven webapp (like app using Express) you dont need it.
+	
+Method 2:	
+
+	node debug index.js
+
+
+--------------------------------------------------------------------------------------------------------------
+How to refresh resources of a running NodeJS application?	
+=========================================================
+IDEA:
+
+	Ctrl-F5 ....
+	
+	
+
+
+	
+
+	
+	

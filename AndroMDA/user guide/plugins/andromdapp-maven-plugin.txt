@@ -1,0 +1,806 @@
+[INFO] Scanning for projects...
+[INFO] Reactor build order: 
+[INFO]   Association Test
+[INFO]   Association Test MDA
+[INFO]   Association Test Common
+[INFO]   Association Test Core Business Tier
+[INFO]   Association Test Web
+[INFO] Searching repository for plugin with prefix: 'help'.
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Association Test
+[INFO]    task-segment: [help:describe] (aggregator-style)
+[INFO] ----------------------------------------------------------------------------
+[INFO] [help:describe]
+[INFO] Plugin: 'org.andromda.maven.plugins:andromdapp-maven-plugin:3.3-SNAPSHOT'
+-----------------------------------------------
+Group Id:  org.andromda.maven.plugins
+Artifact Id: andromdapp-maven-plugin
+Version:     3.3-SNAPSHOT
+Goal Prefix: andromdapp
+Description:
+
+A plugin for running AndroMDA's AndroMDApp application generator
+        to generate Maven2 AndroMDA powered applications.
+
+Mojos:
+
+===============================================
+Goal: 'clean-structure'
+===============================================
+Description:
+
+Removes the an AndroMDApp generated application structure.
+
+Implementation: org.andromda.maven.plugin.andromdapp.AndroMDAppCleanMojo
+Language: java
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: configurationUri
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+The URI to an optional AndroMDApp configuration file.
+
+-----------------------------------------------
+
+[1] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[2] Name: propertyFiles
+Type: java.util.List
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[3] Name: settings
+Type: org.apache.maven.settings.Settings
+Required: true
+Directly editable: false
+Description:
+
+The current user system settings for use in Maven. (allows us to pass the user
+settings to the AndroMDA configuration).
+
+-----------------------------------------------
+
+This mojo doesn't have any component requirements.
+===============================================
+
+
+===============================================
+Goal: 'generate'
+===============================================
+Description:
+
+AndroMDA application generator Mojo.
+
+Implementation: org.andromda.maven.plugin.andromdapp.AndroMDAppMojo
+Language: java
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: configurationUri
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+The URI to an optional AndroMDApp configuration file.
+
+-----------------------------------------------
+
+[1] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[2] Name: propertyFiles
+Type: java.util.List
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[3] Name: settings
+Type: org.apache.maven.settings.Settings
+Required: true
+Directly editable: false
+Description:
+
+The current user system settings for use in Maven. (allows us to pass the user
+settings to the AndroMDA configuration).
+
+-----------------------------------------------
+
+This mojo doesn't have any component requirements.
+===============================================
+
+
+===============================================
+Goal: 'build'
+===============================================
+Description:
+
+A Mojo used for executing the build goals from the top level project.
+
+Implementation: org.andromda.maven.plugin.andromdapp.BuildMojo
+Language: java
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: baseDirectory
+Type: java.io.File
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[1] Name: environmentVariablePrefix
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+The prefix environment variables must have.
+
+-----------------------------------------------
+
+[2] Name: executionProperties
+Type: java.util.Properties
+Required: false
+Directly editable: true
+Description:
+
+Any execution properties.
+
+-----------------------------------------------
+
+[3] Name: goals
+Type: java.util.List
+Required: false
+Directly editable: true
+Description:
+
+The default module goals to execute.
+
+-----------------------------------------------
+
+[4] Name: modules
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+A comma seperated list of modules to execute in the form:
+<em>-Dmodules=mda,core,common</em> or if you want to specify the goals
+to execute as well:
+<em>-Dmodules=mda:[goal1+goal2+goal3],core:[goal1]<em>.
+
+-----------------------------------------------
+
+[5] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[6] Name: session
+Type: org.apache.maven.execution.MavenSession
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[7] Name: startConsole
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+If defined starts the build console (i.e. keeps maven loaded and running)
+
+-----------------------------------------------
+
+Component Requirements:
+
+-----------------------------------------------
+[0] Role: org.apache.maven.project.MavenProjectBuilder
+
+-----------------------------------------------
+[1] Role: org.apache.maven.lifecycle.LifecycleExecutor
+
+-----------------------------------------------
+===============================================
+
+
+===============================================
+Goal: 'deploy'
+===============================================
+Description:
+
+Provides the deployment of applications to a given directory.
+
+Implementation: org.andromda.maven.plugin.andromdapp.DeployMojo
+Language: java
+Bound to Phase: install
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: deploy
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+Indicates whether or not this plugin should perform the deploy.
+
+-----------------------------------------------
+
+[1] Name: deployLocation
+Type: java.lang.String
+Required: true
+Directly editable: true
+Description:
+
+The location (i.e. path) to deploy.
+
+-----------------------------------------------
+
+[2] Name: excludes
+Type: java.lang.String[]
+Required: false
+Directly editable: true
+Description:
+
+Any files to exclude in the deploy.
+
+-----------------------------------------------
+
+[3] Name: includes
+Type: java.lang.String[]
+Required: false
+Directly editable: true
+Description:
+
+Any additional files to include in the deploy liked datasource files etc
+(the files must reside in the project build directory).
+By default nothing besides the file artifact is deployed.
+
+-----------------------------------------------
+
+[4] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+This mojo doesn't have any component requirements.
+===============================================
+
+
+===============================================
+Goal: 'eclipse'
+===============================================
+Description:
+
+Writes the necessary .classpath and .project files
+for a new eclipse application.
+
+Implementation: org.andromda.maven.plugin.andromdapp.EclipseMojo
+Language: java
+Bound to Phase: generate-sources
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: classpathArtifactTypes
+Type: java.util.Set
+Required: false
+Directly editable: true
+Description:
+
+The artifact types which should be included in the generated Eclipse classpath.
+
+-----------------------------------------------
+
+[1] Name: classpathMerge
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+Allows non-generated configuration to be "merged" into the generated .classpath file.
+
+-----------------------------------------------
+
+[2] Name: excludes
+Type: java.lang.String[]
+Required: false
+Directly editable: true
+Description:
+
+Defines the POMs to exclude when generating the eclipse files.
+
+-----------------------------------------------
+
+[3] Name: includes
+Type: java.lang.String[]
+Required: false
+Directly editable: true
+Description:
+
+Defines the POMs to include when generating the eclipse files.
+
+-----------------------------------------------
+
+[4] Name: localRepository
+Type: org.apache.maven.artifact.repository.ArtifactRepository
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[5] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[6] Name: repositoryVariableName
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+The name of the variable that will store the maven repository location.
+
+-----------------------------------------------
+
+[7] Name: resolveTransitiveDependencies
+Type: boolean
+Required: false
+Directly editable: true
+Description:
+
+Whether or not transitive dependencies shall be included in any resources (i.e. .classpath
+that are generated by this mojo).
+
+-----------------------------------------------
+
+[8] Name: session
+Type: org.apache.maven.execution.MavenSession
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+Component Requirements:
+
+-----------------------------------------------
+[0] Role: org.apache.maven.project.MavenProjectBuilder
+
+-----------------------------------------------
+[1] Role: org.apache.maven.artifact.resolver.ArtifactResolver
+
+-----------------------------------------------
+[2] Role: org.apache.maven.artifact.factory.ArtifactFactory
+
+-----------------------------------------------
+[3] Role: org.apache.maven.artifact.metadata.ArtifactMetadataSource
+
+-----------------------------------------------
+===============================================
+
+
+===============================================
+Goal: 'maven'
+===============================================
+Description:
+
+Allows the execution of maven from a given project (searches
+for nested pom.xml files and executes Maven)
+
+Implementation: org.andromda.maven.plugin.andromdapp.MavenExecuteMojo
+Language: java
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: aggregateGoals
+Type: boolean
+Required: false
+Directly editable: true
+Description:
+
+Whether or not goals should be aggregated when executing the projects
+(i.e. whether goals should be executed together per project or seperate for
+each project).
+
+-----------------------------------------------
+
+[1] Name: baseDirectory
+Type: java.io.File
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[2] Name: excludes
+Type: java.lang.String[]
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[3] Name: includes
+Type: java.lang.String[]
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[4] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[5] Name: session
+Type: org.apache.maven.execution.MavenSession
+Required: false
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+Component Requirements:
+
+-----------------------------------------------
+[0] Role: org.apache.maven.project.MavenProjectBuilder
+
+-----------------------------------------------
+[1] Role: org.apache.maven.lifecycle.LifecycleExecutor
+
+-----------------------------------------------
+===============================================
+
+
+===============================================
+Goal: 'schema'
+===============================================
+Description:
+
+Provides the ability to drop database schemas.
+
+Implementation: org.andromda.maven.plugin.andromdapp.SchemaMojo
+Language: java
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: executeScripts
+Type: boolean
+Required: false
+Directly editable: true
+Description:
+
+Whether or not scripts should be executed (if this is set to false, they will
+only be generated, but not executed).
+
+-----------------------------------------------
+
+[1] Name: jdbcConnectionUrl
+Type: java.lang.String
+Required: true
+Directly editable: true
+Description:
+
+The JDBC connection URL.
+
+-----------------------------------------------
+
+[2] Name: jdbcDriver
+Type: java.lang.String
+Required: true
+Directly editable: true
+Description:
+
+The name of the JDBC driver class.
+
+-----------------------------------------------
+
+[3] Name: jdbcDriverJar
+Type: java.lang.String
+Required: true
+Directly editable: true
+Description:
+
+The jar containing the JDBC driver.
+
+-----------------------------------------------
+
+[4] Name: jdbcPassword
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+The JDBC password for the database.
+
+-----------------------------------------------
+
+[5] Name: jdbcUsername
+Type: java.lang.String
+Required: true
+Directly editable: true
+Description:
+
+The JDBC username for the database.
+
+-----------------------------------------------
+
+[6] Name: localRepository
+Type: org.apache.maven.artifact.repository.ArtifactRepository
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[7] Name: pluginArtifacts
+Type: java.util.List
+Required: true
+Directly editable: true
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[8] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[9] Name: properties
+Type: java.util.Properties
+Required: false
+Directly editable: true
+Description:
+
+The properties that can be passed to the schema task.
+
+-----------------------------------------------
+
+[10] Name: propertyFiles
+Type: java.lang.String[]
+Required: false
+Directly editable: true
+Description:
+
+Any property files that should be loaded into the schema properties.
+
+-----------------------------------------------
+
+[11] Name: scripts
+Type: java.util.List
+Required: false
+Directly editable: true
+Description:
+
+Defines the location(s) of any SQL scripts to be executed.
+
+-----------------------------------------------
+
+[12] Name: taskType
+Type: java.lang.String
+Required: true
+Directly editable: true
+Description:
+
+The type of the create schema task to execute.
+
+-----------------------------------------------
+
+[13] Name: tasks
+Type: java.lang.String
+Required: false
+Directly editable: true
+Description:
+
+The schema task to execute (create, drop, update, validate)
+
+-----------------------------------------------
+
+Component Requirements:
+
+-----------------------------------------------
+[0] Role: org.apache.maven.artifact.resolver.ArtifactResolver
+
+-----------------------------------------------
+[1] Role: org.apache.maven.artifact.factory.ArtifactFactory
+
+-----------------------------------------------
+===============================================
+
+
+===============================================
+Goal: 'instrument-scripts'
+===============================================
+Description:
+
+Allows for the {@link ScriptClassGenerator} mojo to be invoked.
+on one or more given classes.
+
+Implementation: org.andromda.maven.plugin.andromdapp.ScriptClassGeneratorMojo
+Language: java
+Bound to Phase: compile
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: localRepository
+Type: org.apache.maven.artifact.repository.ArtifactRepository
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[1] Name: locations
+Type: org.andromda.maven.plugin.andromdapp.Location[]
+Required: true
+Directly editable: true
+Description:
+
+Defines the java files who's classes will be instrumented.
+
+-----------------------------------------------
+
+[2] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+[3] Name: scriptWrapper
+Type: java.lang.String
+Required: true
+Directly editable: true
+Description:
+
+Defines the fully qualified class name of the script wrapper implementation.
+
+-----------------------------------------------
+
+Component Requirements:
+
+-----------------------------------------------
+[0] Role: org.apache.maven.artifact.factory.ArtifactFactory
+
+-----------------------------------------------
+===============================================
+
+
+===============================================
+Goal: 'undeploy'
+===============================================
+Description:
+
+Provides the undeployment of applications from a given directory.
+
+Implementation: org.andromda.maven.plugin.andromdapp.UndeployMojo
+Language: java
+
+Parameters:
+-----------------------------------------------
+
+[0] Name: deployLocation
+Type: java.lang.String
+Required: true
+Directly editable: true
+Description:
+
+The location (i.e. path) to deploy.
+
+-----------------------------------------------
+
+[1] Name: project
+Type: org.apache.maven.project.MavenProject
+Required: true
+Directly editable: false
+Description:
+
+Unknown
+
+-----------------------------------------------
+
+This mojo doesn't have any component requirements.
+===============================================
+
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1 second
+[INFO] Finished at: Sun Feb 18 21:56:27 CET 2007
+[INFO] Final Memory: 3M/6M
+[INFO] ------------------------------------------------------------------------

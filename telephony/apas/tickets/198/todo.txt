@@ -1,0 +1,11 @@
+types are:
+	- received
+	- placed
+	- busy
+	- missed
+
+- refactoring DB operations to DAO
+
+- modifying current queries to support new parameters
+
+- adding 

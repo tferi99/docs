@@ -1,0 +1,6 @@
+==========================================
+How to list active logged users of phones?
+==========================================
+- Device/Phone
+- Choose "Actively Logged In Device Report" from the drop-down list box in the upper, right corner and Go
+- Set filter and click Find

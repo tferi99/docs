@@ -1,0 +1,7 @@
+- WEB app context: andphone
+- get gwt dir from WEB-app
+- /etc/tomcat5/tomcat-users.xml
+- Global/licenses: E2KAS-KAKBC-F2H4R-B4AAL
+- Module.java 342 - comment
+- tomcat mem: -Xms512m -Xmx1024m -Xss1m  -XX:PermSize=128m -XX:MaxPermSize=512m
+- database settings: andphone.properties

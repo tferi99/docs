@@ -1,0 +1,26 @@
+===================
+Queue and pre-queue
+===================
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+How does it work?
+=================
+
+PRE-QUEUE:
+	- If you call a pilot and pre-queue media this media will be played by RP to caller device
+
+CALL DISTRIBUTION:
+	- If there is no free agent
+		- all unavailable -> call will be terminated
+		- one of them busy -> call will be sent into queue
+		- one of them is in break and 'Queue calls during Break' is true -> call will be sent into queue
+		
+	- If there is free agent call distribution forwards the call by distribution algorythm	
+	
+QUEUE:
+	- If queue media configured this media will be played by RP to caller device
+	
+	
+	
+	
+	

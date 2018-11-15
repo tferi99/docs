@@ -1,0 +1,381 @@
+=========
+JTAPI FAQ
+=========
+
+- Terminology
+
+Patterns
+--------
+- Getting provider
+- Closing provider
+- Steps of call
+- Provider queries 
+- Observers should be registered 
+
+Development
+-----------
+- How to get event reason code names?
+
+Security
+--------
+- CAPF for application
+- How to setup secure JTAPI?
+
+Troubleshooting
+---------------
+- JTAPI troubleshooting tools
+- Error during getting provider: Unable to create provider -- Invalid message header info
+- CiscoJTAPITestTool cannot be started
+- CiscoJTAPITestTool: Address restricted
+- Troubleshooting secure JTAPI
+- Error: Unable to create provider -- Certificate Compromised
+
+-----------------------------------------------------------------------------------------------------------
+Terminology
+===========
+- CAPF : Certificate Authority Proxy Function
+
+	CAPF = CA Server for CUCM and Phones
+
+- CTL : Certificate Trust List
+	
+	CTL = List of Servers that the CAPF "Trusts"
+
+-----------------------------------------------------------------------------------------------------------
+Key codes
+=========
+**#		: lock/unlock configuration
+**#**	: reset
+
+
+
+
+-----------------------------------------------------------------------------------------------------------
+How to add a phone to CM?
+=========================
+1. Add phone and line(s) to CM
+
+	Phone configuration elements
+	----------------------------
+	Location 				: System/Location
+	Partition 				: Call Routing/Class of Control/Partition
+	Calling Search Space 	: Call Routing/Class of Control/Calling Search Space
+	Directory Number		: Call Routing/Directory Number
+	Phone					: Device/Phone
+	Assigning DN			: Device/Phone
+	
+2. Set TFTP server on (physical) phone.
+	- Settings/Network configuration/IPv4 Configuration/TFTP Server 1
+	
+3. Clean old CTL file
+	- Settings/Security Configuration[/Trust List]/CTL File
+		Unlock and press 'Erase'.
+
+4. Restart phone (from CM admin or **#**).
+
+Steps of initialization:
+	- Configuration will be downloaded from TFTP server.
+	- IP address and other information will be set by DHCP server.
+	- Firmware will be upgraded (optional).
+	- Lines will be configured.
+
+-----------------------------------------------------------------------------------------------------------
+Getting provider	
+================
+1. Getting peer
+2. Getting provider
+3. Adding ProviderObserver to provider
+4. Capturing events in providerChangedEvent() and waiting for ProvInServiceEv
+5. Ready to use now!!!
+
+-----------------------------------------------------------------------------------------------------------
+Closing provider
+================
+Application has to call:
+
+	provider.shutdown()
+	
+and application will get ProvShutdownEv.
+
+-----------------------------------------------------------------------------------------------------------
+Steps of call
+=============
+
+Sample JTAPI Application Flow - JTAPI applications typically perform these actions: 
+	Obtain a reference to a Provider.
+	Investigate the call model objects available to the application.
+	Determine the "Capabilities" of relevant call model objects.
+	Register "Observers" - event handlers that will be notified of state changes in "interesting" call model objects.
+	Make JTAPI requests.
+	Begin and end Calls.
+
+
+- Getting provider
+- Add CallObserver to SOURCE address.
+- Create call
+- Connect call 
+		
+
+-----------------------------------------------------------------------------------------------------------
+Error during getting provider: Unable to create provider -- Invalid message header info			
+=======================================================================================
+Possible error can be a bad JTAPI JAR version.
+
+Fix:
+	- Download jtapi.jar from Call Manager (CN):
+	
+		http://host/plugins/jtapi.jar
+		
+	- Add to application (e.g. to Apas)
+
+	
+-----------------------------------------------------------------------------------------------------------
+Howto call AXL SQL queries?
+===========================
+Method1:
+	- Download AXL SQL toolkit from CM: https://CM_HOST:8443/plugins/axlsqltoolkit.zip
+	- Call AxlSqlToolkit (see README.txt)
+	
+Method2:
+	- Get WSDL from AXL SQL Toolkit (e.g. schema/7.1/WSDL-AXIS/AXLAPI.wsdl)
+	- Load WSDL into SoapUI
+	- Add CCMSERVERNAME to hosts file
+	- Call executeSQLQuery method
+	
+Method3:
+	- Login into CM with SSH as user 'admin'
+	- call:
+	
+		run sql <SQL>
+	
+-----------------------------------------------------------------------------------------------------------
+Howto capture packets from a Cisco IP phone?
+============================================
+- Connect PC the Cisco IP Phone via PC port.
+- Enable the PC port (device configuration in CM)
+- Enable Span to PC port (device configuration in CM)
+- Capture the packets with wireshark, for example:
+	
+		(ip.src == 192.168.5.154 or ip.dst == 192.168.5.154) and sip
+		
+-----------------------------------------------------------------------------------------------------------
+How to add an XML service to a phone?
+=====================================
+Enterprise level setting:	System/Enterprise parameters/Phone URL Parameters/URL Services field
+
+Device level setting:	Phone Configuration page/External Data Locations Information/Services field
+
+Service configuration:	Device/Device Settings/Phone services
+			
+			- add new service
+			- set enterprise to false
+			- enable it
+			- go to a device
+			- choose 'Subscribe/Unsubscribe services' from related links combo (top-right)
+			- subscribe to service
+			- apply
+			
+NOTE: sometimes you have to set service provisioning if service menu doesn't work (Phone Configuration page/Device Information/Services Provisioning combo)
+	Settings 'Both' will work with all phone models.
+
+-----------------------------------------------------------------------------------------------------------
+How to reset admin password?	
+============================
+Log in to the system with the following username and password: You must have the Physical Access to the system to perform this operation. 
+Log in to the System via the Console with the below username and Password.
+
+• Username: pwrecovery
+• Password: pwreset
+
+
+
+-----------------------------------------------------------------------------------------------------------
+CiscoJTAPITestTool cannot be started
+====================================
+What can be the problem if you start CiscoJTAPITestTool and submit login form but nothing will be happened:
+
+
+
+-----------------------------------------------------------------------------------------------------------
+Observers should be registered 
+==============================
+Cisco Unified JTAPI perceives calls only when a CallObserver attaches to the TERMINALS and ADDRESSES
+of the provider. 
+
+This means that methods such as Provider.getCalls() or Address.getConnections() will
+return null, even when calls exist at the address, unless a CallObserver attaches to the address. The
+system also requires adding a CallObserver to the address or terminal that is originating a call via the
+Call.connect() method.
+
+
+-----------------------------------------------------------------------------------------------------------
+JTAPI troubleshooting tools
+===========================
+- Download and install JTAPI tools from CUCM/Application/Plugins/[
+
+- First set configuration with:
+
+	jtprefs
+	
+- To trace JTAPI use 'jtrace':
+
+	java jtrace.JTrace <CUCM IP> <app user> <password> <DN1> [<DN2>...<DNn>]
+	
+	NOTE: you have to add lib/jtapi.jar to CLASSPATH (or irst call jtprefs, it sets classpath in your shell - in Win)
+
+
+-----------------------------------------------------------------------------------------------------------
+How to setup secure JTAPI?
+==========================
+- Prerequisites:
+	- Mixed mode CUCM (getting:  CUCM/System/Enterprise Paramaters/[Security Parameters]/(Cluster Security Mode))
+	- Enable the Certificate Authority Proxy Function (CAPF), Certificate Trust List Provider (CTL), and CTIManager services.
+	- TFTP server enabled
+	- Application user with roles:  CTI Enabled, CTI Secure Connection, and CTI Allow Reception of SRTP Key Material 
+	
+	NOTE:
+		Adding the user to the Secure CTI and SRTP Key Material groups means that this JTAPI user will ONLY be allowed to connect on the secure 
+		port of 2749 using certs. To connected on a non secure port later, remove the user from these secure groups.
+		
+- Create CAPF profile for user:
+	- CUCM/User management/Application user CAPF profile
+		- associate a user
+		- instance Id : arbitrary string - it will be referred by client later
+		- set 'Certificate Operation' to Install/Upgrage
+		- Generate 'Authentication String' - it will be referred by client later
+		- Save
+		- 'Certificate Operation Status' will be 'Operation Pending' first. 
+			After configuring client 'Certificate Operation Status' will be 'Upgrade Success' and 'Certificate Operation' will be 'No Pending Operation' again.
+	
+I will test secure JTAPI with JtapiTools:
+	
+- jtprefs configuration:
+	- JTPREFS/Security
+		- set 'Enable Secure Connection'
+		- User name:	application user
+		- Instance ID:	specified in CAPF profile
+		- Authentication String: generated in CAPF profile
+		- TFTP and CAPF server points to CUCM by default
+		- Certificate Path:		local directory for downloaded certificate
+		- OK
+		
+		Client will connnect to TFTP server to download CTL (Certificate Trust List) and certificate. 
+		It can be traced in Wireshark:
+			
+				2307	2.308313000	192.168.5.113	192.168.150.17	TFTP	70	Read Request, File: CTLCAPFC0A89611.tlv, Transfer type: octet
+	
+		Files downloaded into certificate path:
+
+			- CTL file:		CTLFile.tlv.sgn
+			- Certificate:	JtapiClientKeyStore-<appuser>-<instance id>
+				
+					e.g:	JtapiClientKeyStore-TOTH_APAS-test2024
+		
+		
+Testing:		
+	If these settings are not configured when you perform the tasks that are described
+	in this chapter, CTIManager and the application connect via a nonsecure port, port 2748.
+	Good configuration will use the secure port: 2749
+	
+	Validate it with WireShark.
+		
+SEE ALSO: 
+	Configuring and Troubleshooting Secure JTAPI.mht
+
+-----------------------------------------------------------------------------------------------------------
+Troubleshooting secure JTAPI
+============================
+SEE BEFORE:		JTAPI troubleshooting tools
+
+- Error 'Unable to create provider -- User not authorized for security':
+
+	Maybe your user not in 'Standard CTI Secure Connection' group.
+	
+NOTE: 
+	If you configure secure connection it will download CTL file and certificate into Certificate Path. 
+	It can be performed only once. If you call jtprefs again and save changes you gets an error:
+	
+		java.lang.Exception: java.lang.Exception:  JTAPIProperties.updateCertificate : Certificate update failed, reason= 7 UpdateCertificate failed
+		
+	which means certificate cannot be saved again.
+
+- If you lose certificate go into CAPF profile and re-generate a new 'Authentication String' (you have to set 'Certificate Operation' to 'Install/Upgrage' before).
+
+- Error 'Unable to create provider.User connected on an invalid port'
+
+	This error is generally encountered when the Application user the monitored device is associated with is granted Standard CTI Secure Connection permission, 
+	but is using a non-secure (TLS) port (and hence complains that the port is invalid). This error can be resolved by removing the Standard CTI Secure Connection 
+	permission from the list of groups.
+	
+
+-----------------------------------------------------------------------------------------------------------
+Error: Unable to create provider -- Certificate Compromised
+===========================================================
+
+	com.cisco.jtapi.PlatformExceptionImpl: Unable to create provider -- Certificate Compromised
+		at com.cisco.jtapi.CiscoJtapiPeerImpl.getProvider(CiscoJtapiPeerImpl.java:420)
+		at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2477)
+		at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2341)
+		at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:461)
+
+CTI tracks the number of provider connections that are created per client certificate. Applications can
+create only one provider by using a client certificate. If more than one instance of a provider is created,
+both providers get disconnected from CTI and go out of service. JTAPI will retry the connection to CTI
+to bring the original provider in service; however, if both instances of provider continue to exist, after a
+certain number of retries, provider gets permanently shut down, and the client certificate is marked as
+compromised. Any further attempt to create a provider by using this client certificate fails. Applications
+must contact the administrator to configure a new instanceId and download a new client certificate to
+resume operation.	
+	
+	
+-----------------------------------------------------------------------------------------------------------
+How to get event reason code names?	
+===================================
+From classes:
+	Event feature reason codes:			com.cisco.jtapi.extensions.CiscoFeatureReason
+
+Docs:
+	Get 'Troubleshooting Cisco Unified JTAPI' section of 'Cisco Unified JTAPI Developers Guide - 9.1.1.pdf'
+	or Troubleshooting Cisco Unified JTAPI - 9.1.pdf
+	
+SEE MORE:
+	ReasonCodes_CallStates.xlsx
+
+	
+-----------------------------------------------------------------------------------------------------------
+CAPF for application
+====================
+(CAPF : Certificate Authority Proxy Function)
+
+Cisco Unified Communications Manager allows you to secure the signaling connections and media streams
+between CTIManager and CTI/JTAPI/TAPI applications.
+
+CTIManager and the application verify the identity of the other party through a mutually authenticated TLS
+handshake (certificate exchange). When a TLS connection occurs, CTIManager and the application exchange
+QBE messages via the TLS port, port 2749.
+
+How to application gets certificate?
+- Before the application attempts to connect to CTIManager, the application downloads the CTL file from the TFTP server.
+	(CTL : Certificate Trust List - list of Servers that the CAPF "Trusts")
+
+- The first time that the JTAPI/TSP client downloads the CTL file from the TFTP server, the JTAPI/TSP client
+	trusts the CTL file. Because the JTAPI/TSP client does not validate the CTL file, Cisco strongly recommends
+	that the download occur in a secure environment.
+	
+-----------------------------------------------------------------------------------------------------------
+CiscoJTAPITestTool: Address restricted
+======================================
+When yiu want to add call obvserver to line, you get an error message:		Address restricted
+
+Possible reasons:
+	- missing application user group
+	- 'Allow Control of Device from CTI' not checked on device
+	- 'Allow Control of Device from CTI' not checked on line
+	
+	
+
+
+
+
+	
+	

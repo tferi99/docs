@@ -1,0 +1,9 @@
+ProvInServiceEv			: provider startup
+ProvShutdownEv			: provider startup
+
+ProvEv
+	CiscoTermCreatedEv
+	CiscoAddrCreatedEv		: If a device is added to the user control list after the JTAPI application starts
+
+
+

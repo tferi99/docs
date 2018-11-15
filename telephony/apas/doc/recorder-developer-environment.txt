@@ -1,0 +1,22 @@
+=========================================
+Development environment for APAS recorder
+=========================================
+
+- JDK6
+- ant 1.7.1
+
+Packages:
+- make
+- cmake
+- gcc
+- g++
+- libpcap-dev
+- libmysqlclient-dev
+- libboost-dev
+- libboost-filesystem-dev
+- libopal-dev
+
+Other:
+- create softlink 
+	
+	/usr/bin/gmake -> /usr/bin/make

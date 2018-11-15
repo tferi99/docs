@@ -1,0 +1,26 @@
+======================
+#457
+======================
+Request:
+
+	If a call falled back it should be added to APAS - Desktop Client communication.
+
+Environment:
+	- 3 phones, one of these is in ACD (9000), others are external (9001, 9010) 
+	- ACD pilot (9040) with agents (9000, ..., ...), but only target agent should be active
+	- desktop client for ACD phone (9000)
+	- configured ACD queue and pilot for desktop client
+	- set expire time of ACD queue
+	
+		
+Scenario:	
+	- You calls ACD from external phone(9001 -> 9040) it will be redirected to target agent (9000)
+	- Agent with desktop client will transfer call to another phone (-> 9010)
+	- External target wont pick up, and 
+
+Additional settings:
+	- log4j.logger.com.andtek.andphone.communicator.ClientConnectionMina=DEBUG
+	- Possible breakpoints:
+			com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(CiscoTerminal term, Address line, CiscoCall call, String state)
+			
+			

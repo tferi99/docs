@@ -1,0 +1,17 @@
+==========
+FTP client
+==========
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+FTP server connection test
+==========================
+ServerGenericWindow		button "Test connection"
+	--> RemoteTestServerConnection()
+		--> RPCglobalServiceImpl.RemoteTestServerConnection(...)
+			--> genericServerFromGwtServer(gwtserver)				// getting server
+				if type = AndGWTGenericServerIF.SERVER_TYPE_FTP >>> FTPServer returned
+			--> FTPServer.testConnection()
+				--> FTPServer.testingConnection()
+					if NO SSL
+					--> FTPClient.connect(ip, port);				>>> exception
+					--> FTPClient.login(username, password)			>>> boolean

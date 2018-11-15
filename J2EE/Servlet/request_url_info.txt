@@ -1,0 +1,24 @@
+================================
+GETTING PATH VALUES FROM SERVLET
+================================
+
+URL:
+	http://localhost:8080/ServletInfo/info/something?a=1&b=2
+
+
+httpServletRequest.getRequestURL()		: http://localhost:8080/ServletInfo/info/something?a=1&b=2
+ServletRequest.getRequestURI()			: /ServletInfo/info/something?a=1&b=2
+
+servletRequest.getScheme()				: http
+servletRequest.getServerName()			: localhost
+servletRequest.getServerPort()			: 8080
+httpServletRequest.getContextPath()		: /ServletInfo
+httpServletRequest.getPathInfo()		: /something
+httpServletRequest.getPathTranslated()	: D:\usr\eclipse\eclipse-jee-europa\j2ee\.metadata\.plugins\org.eclipse.wst.server.core
+												\tmp0\wtpwebapps\ServletInfo\something
+httpServletRequest.getServletPath()		: /info
+
+servlet.getServletContext().getRealPath("/")	: D:\usr\eclipse\eclipse-jee-europa\j2ee\.metadata\.plugins\org.eclipse.wst.server.core
+														\tmp0\wtpwebapps\ServletInfo\
+														
+request.getSession().getServletContext().getRealPath(MEDIA_DIR)

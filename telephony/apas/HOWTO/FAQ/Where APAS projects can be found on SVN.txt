@@ -1,0 +1,14 @@
+========================================
+Where APAS projects can be found on SVN?
+========================================
+You can find SVN directories of projects in Jenkins configuration.
+
+1. Go to Jenkins (http://192.168.150.10:8080/).
+
+2. Choose version (e.g. APAS-Trunk).
+
+3. Here you can find projects. Choose one of them.
+
+4. Call 'Configure' option from left menu.
+
+5. SVN directory:	[Source Code Management]/Repository URL

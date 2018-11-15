@@ -1,0 +1,61 @@
+==================
+Queue media upload
+==================
+
+APAS/Global/Media/(Add)
+
+- A metadata record will be inserted into 'media' DB table about uploaded media.
+- Uploaded media will be saved into media directory, file name contains metadata ID:
+
+	APAS_WEB_APP/modules/global/media/<ID>_ulaw.wav
+
+
+Media List
+----------
+
+	UI rendering 
+	------------
+		medialist_gwtappMain.onModuleLoad()
+			--> RemoteGetDataRowsFromMediaTable()
+				--> RPCServletService.RemoteGetDataRowsFromMediaTable(...)
+					-- RPC --> RPCglobalServiceImpl.RemoteGetDataRowsFromMediaTable()						<<< it reads uploaded media from DB 'media'
+						-- CALLBACK --> onSuccess
+							--> buildDynamicListGrid(datarows);												
+								- rendering 'Add' and 'Delete' button
+								- building media list table 
+								- listners on edit icon click and dblclick on row ===> calls media dialog
+								
+	Event handling
+	--------------
+	- 'Delete' button
+		- collecting IDs of selected rows into ',' separated list
+		--> confirm message box
+			-- CALLBACK --> execute
+				--> RemoteDeleteRowsMediaTable(getKeys())
+					--> RPCServletService.RemoteDeleteRowsMediaTable(keys, new AndGWTAsyncCallback()
+						-- RPC --> RPCglobalServiceImpl.RemoteDeleteRowsMediaTable()
+							- it deletes media ONLY FROM DATABASE
+						
+	- edit icon or DblClick in row
+		--> row = getDataRowByKey(key);
+		--> buildDynamicFormPanel(row, "edit");															<<< rendering media dialog
+		
+	
+		
+Media Dialog
+------------
+	UI rendering 
+	------------
+	medialist_gwtappMain.buildDynamicFormPanel()
+	- rendering upload components and OK button
+	
+	Event handling
+	--------------
+	- Button 'OK'
+		--> medialist_gwtappMain.onFormPanelSubmitEvent(...)
+			--> AndGWTStandardFormPanel.getForm().submit(...);
+				- URL:	/andphone/Admin?module=global&page=medialist&func=gwtedit
+					--> com.andtek.andphone.global.Admin.medialist_gwtedit()
+						- adding/updating database record for uploaded media (into 'media' DB table)
+						--> Wav2uLaw.convert(...)
+							- converting uploaded media into uLaw and saving into media directory

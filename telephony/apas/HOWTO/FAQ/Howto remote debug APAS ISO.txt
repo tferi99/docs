@@ -1,0 +1,64 @@
+============================
+Howto remote debug APAS ISO?
+============================
+
+Prerequisities:
+	- ISO and your system should use exactly the same JAVA version.
+	- Binaries should be consistent to sources.
+	- Add JPDA to Tomcat starter 
+
+Steps are:	
+
+1. Deploy
+	- Build your apas to create binaries and GWT.
+	- Create packages:
+		binary:		webinf.tgz
+			- WebContent/WEB-INF/lib
+			- war/WEB-INF/classes
+		
+		GWT:	gwt.tgz
+			- WebContent/gwt
+
+	- Update your ISO files with that packages (move old content into BACKUP before!!!)
+
+	
+2. Start	
+	- Change Tomcat starting scripts:
+
+		OLD:
+			Change Tomcat starter script in ISO (/etc/init.d/tomcat):
+				Search for this fragment
+				
+					${TOMCAT_SCRIPT} start
+					
+					and add 'jpda' option
+					
+					${TOMCAT_SCRIPT} jpda start
+	 
+		NEW (Tomcat 6):
+			Add this variables to start script (/usr/sbin/tomcat6):
+			
+				JPDA_TRANSPORT="dt_socket"
+				JPDA_ADDRESS="8000"
+				JPDA_SUSPEND="n"
+				JPDA_OPTS="-agentlib:jdwp=transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND"
+
+			Add JPDA_OPTS to JAVA starter line:
+			
+				if [ "$1" = "start" ]; then
+					${JAVACMD} $JAVA_OPTS $CATALINA_OPTS $JPDA_OPTS \
+					...
+					...
+		
+	- Restart Tomcat		
+
+3. Debug		
+	- Start remote debugging in eclipse:
+
+		- Run/Debug Configurations...
+		- Add new 'Remote Java Application'
+			- host: APAS host address
+			- port:	8000
+			
+	Eclipse will connecting to remote Tomcat and will be stopped on breakpoints.
+

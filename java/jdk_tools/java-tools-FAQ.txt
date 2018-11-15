@@ -1,0 +1,39 @@
+==============
+Java Tools FAQ
+==============
+
+How to start jstatd?
+
+-----------------------------------------------------------------------------------------------------------------
+How to start jstatd?
+====================
+
+	AccessControlException
+
+- create policy file into rt/lib/security/jstatd.all.policy
+	
+	grant codebase "file:${java.home}/../lib/tools.jar" {
+	   permission java.security.AllPermission;
+	};
+
+	where codebase points to tools.jar	
+	
+	
+	To use this policy, copy the text into a file called jstatd.all.policy and run the jstatd server as follows: 
+
+- call jstatd specifying policy file:
+
+	jstatd -J-Djava.security.policy=jstatd.all.policy [-p <port>]
+	
+IMPORTANT!
+If remote server is behind firewall you have to forward port to your local machine.
+BUT jstatd opens multiple ports (2 and one of them is specified by -p).
+Call 'netstat -anp' to get open ports, and forward them.
+
+Test:
+
+	jps rmi://<host:port>
+	
+	
+In VisualVM add specified port as jstatd connection to Local or Remote list.
+

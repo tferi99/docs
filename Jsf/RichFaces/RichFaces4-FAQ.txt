@@ -1,0 +1,88 @@
+===============
+RichFaces 4 FAQ
+===============
+
+Configuration
+-------------
+- How to configure RichFaces 4?
+
+Actions, events, processing
+---------------------------
+
+Rendering
+---------
+
+JavaScript
+----------
+
+Validation
+----------
+
+Debug
+-----
+
+Errors
+------
+- RichFaces not found JS error
+- ExtendedDatamodel: datascroller Received 'error@malformedXML'
+
+Misc
+----
+
+Troubleshooting
+---------------
+- How to trace ajax errors?
+
+---------------------------------------------------------------------------------------
+How to configure RichFaces 4?
+=============================
+You don't have to add anything to web.xml and faces-config.xml except default JSF2 entries.
+
+You have to add header with namespaces, <h:head> and <h:body>.
+Recommended patter for base layouts:
+
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:h="http://java.sun.com/jsf/html"
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui">
+
+	<f:loadBundle basename="org.ftoth.myrichfacesdemo.resource.messages" var="msg" />
+
+	<h:head>
+	</h:head>
+
+	<h:body>
+		<f:view contentType="text/html">
+
+		</f:view>
+	</h:body>
+
+	</html>
+	
+---------------------------------------------------------------------------------------
+RichFaces not found JS error
+============================
+Maybe <h:head> is missing.
+
+
+---------------------------------------------------------------------------------------
+ExtendedDatamodel: datascroller Received 'error@malformedXML'
+=============================================================
+If you get somthing like this:
+
+	error[11:37:58.450]: Received 'error@malformedXML' event from <span id=video-overview:video-list-scroller class="rf-ds" ...>
+	error[11:37:58.450]: [200] undefined: undefined
+
+Check your code: ExtendedDatamodel does not work together with the <rich:dataTable/>. I changed <rich:dataTable> against <rich:extendedDataTable/> and it works like expected.
+	
+	
+---------------------------------------------------------------------------------------
+How to trace ajax errors?
+=========================
+Add <a4j:log/> to page.
+
+
+
+

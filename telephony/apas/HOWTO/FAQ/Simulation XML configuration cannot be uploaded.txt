@@ -1,0 +1,7 @@
+===============================================
+Simulation XML configuration cannot be uploaded
+===============================================
+Generally Eclipse destroyes $APP/modules/testing/simulations directory during Clean.
+
+Create this directory, restart application and try upload again.
+Or copy XML there manually.

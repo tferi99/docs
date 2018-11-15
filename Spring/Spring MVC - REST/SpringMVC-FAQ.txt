@@ -1,0 +1,90 @@
+==============
+Spring MVC FAQ
+==============
+
+- How to ignore null fields during mapping into json?
+
+Troubleshooting
+---------------
+- Spring MVC not returning JSON content - Error 406
+- Spring MVC not returning XML content - Error 406
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+How to ignore null fields during mapping into json?
+===================================================
+Depending on version of Jaskcon you use:
+
+on class:
+		@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+	OR
+		@JsonInclude(JsonInclude.Include.NON_NULL)
+
+or in global config:
+
+	<mvc:annotation-driven>
+		<!-- to remove null values from json -->
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+						<property name="serializationInclusion">
+							<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+Spring MVC not returning JSON content - Error 406
+=================================================
+To return JSON response from @ResponseBody-annotated method, you need 2 things:
+
+	- <mvc:annotation-driven /> (you already have it)
+	- Jackson JSON Mapper in the classpath for JSON
+	
+You don't need ContentNegotiatingViewResolver and headers in @RequestMapping.
+
+E.g. in Maven:
+
+		<!-- =============================== json mapper =============================== -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.12</version>
+		</dependency>
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+Spring MVC not returning XML content - Error 406
+=================================================
+To return XML response from @ResponseBody-annotated method, you need 3 things:
+
+	- <mvc:annotation-driven /> (you already have it)
+	- JAXB in the classpath for XML
+	- XML format is more strict than JSON, here you have to specify XML root elements with @XmlRootElement annotation on DTOs
+		which will be returned as root elements.
+	
+You don't need ContentNegotiatingViewResolver and headers in @RequestMapping.
+
+E.g. in Maven:
+
+		<!-- =============================== xml mapper =============================== -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.2.12</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.1</version>
+		</dependency>
+
+
+				

@@ -1,0 +1,22 @@
+==================================
+How to configure Tomcat8 for APAS?
+==================================
+
+Tomcat 8 for APAS requires some changes:
+
+	- tomcat-dbcp.jar should be removed
+	
+	- copy these JARs from APAS:
+		- commons-collections-3.2.1.jar
+		- commons-dbcp-1.4.jar
+		- commons-pool-1.6.jar
+		
+	- copy postgresql-9.2-1002.jdbc4.jar here
+	
+	
+	- replace connector with this in server.xml:
+	
+		<Connector acceptCount="100" connectionTimeout="20000" disableUploadTimeout="true" maxThreads="500" port="8080" protocol="org.apache.coyote.http11.Http11NioProtocol" redirectPort="8443"/>
+		
+		
+	

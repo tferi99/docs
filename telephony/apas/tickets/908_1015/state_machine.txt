@@ -1,0 +1,22 @@
+Calculation steps:
+	1. buildTablesFromAcdHistory(sm, categoryType) 				: Building category total and history tables from ACD history using a state machine.
+	2. calculateVariables(sm, categoryType)						: Calculating category statistics variables from total and history tables.
+	
+	sm : StateMachine
+	categoryType : current category type for calculation is performing
+	
+buildTablesFromAcdHistory()
+	1. collecting category information into categoriesTotal
+
+	---------------------------------- loop on ACD call history (ACDCallState items) ------------------------------------------
+	INIT
+		- initialization of state machine with current ACDCallState
+		- getting pilot from current ACDCallState
+		- on last ACD state get end timestamp
+		- checking if it's an external outgoing call
+		- getting site of caller DN
+		- finding category for the current ACD history entry
+		- setting busy state of call 
+		condition: if category not found but we are not in the last ACD entry then: CONTINUE LOOP
+	
+	

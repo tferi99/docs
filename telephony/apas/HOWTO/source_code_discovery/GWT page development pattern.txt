@@ -1,0 +1,25 @@
+============================
+GWT page development pattern
+============================
+- Module descriptor:
+
+	com.andtek.andphone.<module>.gwtapp - <page>_gwtappMain.gwt.xml
+	
+	It contains GWT entry point JAVA to generate asynchronous JS.
+
+- Entry point:
+
+	com.andtek.andphone.<module>.gwtapp.client.<page>_gwtappMain
+	
+- onModuleLoad()
+	- registers asynchronous RPC service, e.g:
+		
+		RPCServletService = (RPCcommunicatorServiceAsync) GWT.create(RPCcommunicatorService.class);
+		ServiceDefTarget endpoint = (ServiceDefTarget) RPCServletService;
+		String RPCServiceURL = AndGWTCommonFunctions.GetAPASURL(MODULE_BASE_URL) + "RPCcommunicatorService";
+		endpoint.setServiceEntryPoint(RPCServiceURL);
+		
+	where 
+		com.andtek.andphone.<module>.gwtapp.client.<RPC service> 		: service interface for registering client side service stub
+		<RPC service>Async	: client side service stub
+		<RPC service>Impl 	: server side 

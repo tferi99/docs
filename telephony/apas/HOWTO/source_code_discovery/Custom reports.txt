@@ -1,0 +1,204 @@
+==============
+Custom reports
+==============
+
+- General
+- Initialization
+
+
+Common
+------
+- JasperreportsCustomReportEngine
+
+Specific Reports
+----------------
+- REPORT: Call Classification
+- REPORT: Call Classification (group by period)
+- REPORT: Call Classification (group by queue/period)
+- REPORT: Category Calculation log
+- REPORT: GASS CSV Export
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+General
+=======
+Custom reports are:
+- built-in reports - registered statically 
+- uploaded dynamically from CONTEXT_PATH/modules/reports/rpt
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Initialization
+==============
+
+--> RPCreportsServiceImpl.RemoteGetInitializedNEWScheduleReportBean()
+	--> getDirectoryFileNames(String path, String ext)  (JTAPIThread.config.getString("reports","RPT_Path"), "rpt")
+		path = CONTEXT_PATH/modules/reports/rpt
+		ext = rpt
+		
+		List of templates:
+		- reading files from path with extension
+		- names from ReportSchedule.CUSTOM_REPORT_NAMES 
+			where CUSTOM_REPORT_NAMES is a String array:
+				item[0]: customName
+				item[1]: displayName
+				item[2]: report engine class name which extends AbstractCustomReportEngine 
+
+Initialization of ReportSchedule.CUSTOM_REPORT_NAMES
+----------------------------------------------------
+ReportSchedule.CUSTOM_REPORT_NAMES contains built-in custom reports
+
+Items are added to this array:
+--------------------------- APAS4 -----------------------------------		
+--> ReportSchedule static {...}
+	--> initCustomReportNamesArray()
+		- Category Calculation Log (AdvancedCategoryCalculationReportEngine)
+		
+--> GASS_report.jsp
+	- GASS CSV Export (GassCategoryReportEngine)
+	- GASS Calls CSV Export (GassAcdCallReportEngine)
+
+--------------------------- APAS5 -----------------------------------				
+--> ReportSchedule static {...}
+	--> initCustomReportNamesArray()
+		- Call Classification (CallClassificationReport)
+		- Call Classification (group by period) (CallClassificationReportExt)
+		- Call Classification (group by queue/period) (CallClassificationReportExt2)
+		- Category Calculation Log (AdvancedCategoryCalculationReportEngine)
+
+--> AcdCategoryCalculationServiceImpl.initCustomReportDefinitions()
+	- Category ACD Call History CSV (GassAcdCallReportEngine - "GASS Calls CSV Export" in APAS4)
+		
+	--> AcdCalculationPlugin.initCustomReports() 
+		==> GdisAcdCalculationPlugin.initCustomReports()
+			- GASS CSV Export (GassCategoryReportEngine - "GASS CSV Export" in APAS4)
+		
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+JasperreportsCustomReportEngine		
+===============================
+- It calls a JasperReports report from
+
+	/modules/reports/rpt/<reportName>/<reportName>.jasper
+	
+- datasource provided by the caller class (not embedded into report template)
+
+
+Rendering by direct call 'View' button:
+---------------------------------------
+URL:/ReportViewer --> ReportViewerServlet.service()
+	--> ReportConfig.initConfig(HttpServletRequest request)
+		Getting report parameters from HTTP parameters
+	--> additionalParams = getAdditionalParameters(cfg)
+		Getting additional parameters
+	
+	- for Crystal reports
+		reportGenerator = new ReportGeneratorCrystal();
+	- for Jasper:
+		reportGenerator = new ReportGeneratorJasper();
+	- for custom reports:
+		reportGenerator = new ReportGeneratorCustom();	<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< this is the case for custom reports
+		
+	--> reportGenerator.generateReport(request, response, cfg, additionalParams);
+		==> ReportGeneratorCustom.generateReport(request, response, cfg, additionalParams);
+			--> reportEngine = AbstractCustomReportEngine.getInstance(cfg.rpt_template, cfg.exportformatStr, cfg.nameprefix);
+				--> className = ReportSchedule.getCustomReportClassName(customReportID);
+				It instantiates report engine.
+			--> reportEngine.generateReport(request, response, cfg.start, cfg.end);
+				==> JasperreportsCustomReportEngine.generateReport(request, response, cfg.start, cfg.end)
+					--> reportName = getReportName();
+					--> reportStream = getReportTemplateStream(context, reportName);
+						It loads JasperReports template from /modules/reports/rpt/<reportName>/<reportName>.jasper
+					--> params = createDefaultParameterMap(...)	
+					--> ds = initDataSources(params);
+					--> customizeReport(jasperReport);
+					--> JasperFillManager.fillReport(...)
+			
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+REPORT: Call Classification		
+===========================
+Generator:		CallClassificationReport (=> JasperreportsCustomReportEngine)
+
+Template:		callClassification.jasper
+
+Datasource:
+	CallClassificationReport
+		--> CallClassificationReportDataSource
+			--> AcdCallClassificationService.getAcdClassificationReport(...)
+				--> CallDataDao.getClassificationReportData(..)
+
+				SQL from tables: acdQueue, acdCallClassification, acdCallClassification2Tag, acdCallTag, acdCallTagGroup, acdCall
+				
+				
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+REPORT: Call Classification (group by period)
+=============================================
+Generator:		CallClassificationReportExt (=> CallClassificationReport => JasperreportsCustomReportEngine)
+
+Template:		callClassification.jasper
+
+Additional parameters:
+				String:period=<hours>
+
+Datasource:
+	CallClassificationReport
+		--> CallClassificationReportDataSource
+			--> AcdCallClassificationService.getAcdClassificationReport(...)
+				--> CallDataDao.getClassificationReportData(..)
+
+				SQL from tables: acdQueue, acdCallClassification, acdCallClassification2Tag, acdCallTag, acdCallTagGroup, acdCall
+				
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+REPORT: Call Classification (group by queue/period)
+===================================================
+Generator:		CallClassificationReportExt2 (=> CallClassificationReport => JasperreportsCustomReportEngine)
+
+Template:		callClassification2.jasper
+
+Datasource:
+	CallClassificationReport
+		--> CallClassificationReportDataSource
+			--> AcdCallClassificationService.getAcdClassificationReport(...)
+				--> CallDataDao.getClassificationReportData(..)
+
+				SQL from tables: acdQueue, acdCallClassification, acdCallClassification2Tag, acdCallTag, acdCallTagGroup, acdCall
+								
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+REPORT: Category ACD Call History CSV
+=====================================
+Generator:		GassAcdCallReportEngine (=> AbstractCustomReportEngine)
+
+Template:		-
+								
+Datasource:		GassAcdCallReportEngine.generateReport(...)
+					SQL from tables: acdCallHistoryKey, acdCallHistoryData
+					
+	NOTE:
+		ACD history report will be written into database at the and of calculation - into acdCallHistoryKey and acdCallHistoryData tables, if:
+		- doReportAcdCalls = true (category is GROUP)
+		- reporting is enabled (AcdCallReportingEnabled config)
+		- call is not an intrasite call
+					
+					
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+REPORT: Category Calculation log
+================================
+Generator:		AdvancedCategoryCalculationReportEngine (=> AbstractCustomReportEngine)
+					
+Template:		-
+								
+Datasource:		AdvancedCategoryCalculationReportEngine.generateReport(...)
+					SQL from tables: category_calc_result, category_calc_result_vars
+					
+					
+					
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+REPORT: GASS CSV Export
+================================
+Generator:		GassCategoryReportEngine	 (=> AbstractCustomReportEngine)
+
+Template:		-
+								
+Datasource:		GassAcdCallReportEngine.generateReport(...)
+					SQL from tables: acdCategoryStatsHistory
+

@@ -1,0 +1,32 @@
+==================================
+Howto configure silent monitoring?
+==================================
+SEE MORE:	doc\software\tools_and_languages\telephony\Apas\config\02_ADMIN-REC_4-3-1c_enA4.pdf 
+
+1. Configure route point under
+
+	APAS/Recorder/Configuration/[Phone Playbeck Configuration]/(Route Point)
+
+2. Create supervisor user with DN which phone is used for monitoring
+
+	APAS/Global/Users/[Add]
+	
+	where:
+		- extension of phone where you do monitoring
+		- assign role:	Recorder/Archive
+		- Click on role for further editing
+			- Set Auto Monitor to 'off' to enable monitoring with 'off' default
+			- Add agent DNs which are allowed to be monitored.
+			
+3. Create rule for silent monitoring
+
+	Set actions of a recording rule:
+		- monitor calling
+		- monitor called
+
+	under APAS/Recorder/Rules
+	
+4. Add phone service for monitoring
+	
+
+	http://APAS:8080/andphone/Recorder?page=monitor&dev=#DEVICENAME# 

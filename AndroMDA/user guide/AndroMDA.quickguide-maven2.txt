@@ -1,0 +1,457 @@
+
+AndroMDA 3.x quick HOWTO for maven2
+===================================
+(by Ferenc Toth)
+
+1. Installation
+2. Goals in Andromda project
+3. Creating projects
+4. Building
+5. Generated classes 
+6. Customizing/configurating generation
+6.1 andromda.xml
+8. Database operations
+9. Server
+10. Code generation
+10.1 Metafacades
+10.2 Matching Stereotypes to Cartridges
+10.3 Generating code from templates
+11. Mappings
+11.1 Customizing the default mappings
+12. Profiles 
+
+
+
+1. Installation
+---------------
+1. Install Java
+
+2. Maven
+		- uncompress maven-2.0.4-bin.zip
+		
+3. Set the following environment variables:
+M2_HOME 	to maven directory
+
+M2_REPO		to $HOME/.m2/repository
+
+JAVA_HOME 	Java installation directory, e.g. C:\Program Files\Java/jdk1.5.0 (REQUIRED)
+
+MAVEN_OPTS 	Parameters to pass to the Java VM when running Maven. Set this value to: 
+
+			-XX:MaxPermSize=128m -Xmx512m 
+
+		(required to build large maven projects such as AndroMDA itself) (NOT REQUIRED)
+PATH 		This makes sure the system will search for console commands in the directories listed here. 
+		If this property already exists you should simply add %JAVA_HOME%\bin;%MAVEN_HOME%\bin
+		(REQUIRED)
+
+
+4. Install AndroMDA for Maven
+
+Method1:
+	From binary:
+	- Unzip the contents of the installer into your Maven repository at C:\Documents and Settings\your user name\.m2\repository.
+	- Verify that the following directory was created:
+		C:\Documents and Settings\your user name\.m2\repository\org\andromda\maven\plugins\andromda-maven-plugin
+		
+Method2:		
+	From source: 
+	If you cannot install AndroMDA with the previous way, try in install from source:
+	- uncompress andromda-src-3.2.zip source distribution 
+	- call mvn
+	- wait... :)
+
+Method3:
+	From binary - tip from forum (http://galaxy.andromda.org/forum/viewtopic.php?t=3465):
+	
+	1. Start with a clean slate. Delete the entire andromda directory from your maven 
+		repository - .m2\repository\org\andromda 
+
+	2. Unzip the AndroMDA Application plugin (downloaded from the tutorial) at .m2\repository. 
+		This should create .m2\repository\org\andromda\... 
+
+	3. Create the following pom.xml file in any directory of your choice: (see: pom-to-install.xml)
+
+	4. Open a Command Prompt in the directory where this pom.xml is and run the command "mvn" 
+		without any arguments. Make sure the command runs successfully. 
+
+	5. Now run the command from the tutorial to create the starter app: 
+
+		mvn org.andromda.maven.plugins:andromdapp-maven-plugin:generate
+
+	This should now ask all the prompts to create the starter app.
+
+
+	
+4. Building
+-----------
+Creating project:
+	
+	mvn org.andromda.maven.plugins:andromdapp-maven-plugin:generate
+
+First you have to call:
+
+	mvn
+
+	
+	
+	
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! revisited !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
+	
+	
+	
+	
+	
+	
+, if any neccesary file has not been downloaded yet, but after every dependencies are solved, you can call it offline:
+
+	maven -o
+
+You can generate only source files:
+
+	maven -o mda
+
+Clean:
+	
+	maven clean
+
+	It cleans generated files from target directories, src directories will be untouched, these files have to 
+	be deleted manually.
+
+Clean all:
+
+	maven nuke
+
+	It deletes every generated files (target and src as well).
+
+Buiding DB schema:
+
+	maven -o create-schema
+
+
+5. Generated classes 
+--------------------
+1. <entity>
+	Entity class. Always regenerated.
+
+2. <entity>Impl extends <entity>
+	Class to add implementation of business logic for entity class. Generated only once 
+	(if you add business operation to entity in model).
+	ADD YOUR CUSTOM CODE HERE - BUT UNDER core/src 
+
+3. interface <entity>Dao
+	It specify DAO functions for entity. Always regenerated.
+
+4. abstract <entity>DaoBase extends <persistence base> implements <entity>Dao
+	Implements base DAO functions for entity. Always regenerated.
+
+5. <entity>DaoImpl extends <entity>DaoBase 
+	It makes possible to add additional DAO functions to entity. Generated only once 
+	(if you add business operation to entity in model).
+	ADD YOUR CUSTOM CODE HERE - BUT UNDER core/src 
+
+
+6. Customizing/configurating generation
+---------------------------------------
+
+6.1 andromda.xml
+----------------
+- AndroMDA is configured through a single XML file:	andromda.xml
+- XML must adhere to this XML Schema:	resources/andromda-xml.xsd
+
+Settings:
+<properties>	: global properties (validation ON/OFF, external logger, etc.)
+<server>	: AndroMDA server settings
+<repositories>	: it aggregates all repository elements and is used to to tell AndroMDA what repository(s) 
+		  to use when processing a model. Here's an example of what the <repositories> element might contain.
+<models>	: location of source model(s)
+<namespaces>	: The <namespace> element is used to do two things: 
+		  - Activate a cartridge (if a cartridge resides within the given namespace) 
+		  - Customize the properties of a plugin (cartridge, translation-library, etc). These properties 
+		    can be used to define the location to which generated files are written, what mapping files to 
+		    use for different language type (i.e. JavaMappings.xml, DotNetMappings.xml, etc.), and any 
+		    other aspect that a property might be used to configure.
+
+
+
+This file contains property settings for cartridges (namespace tags).
+
+
+6.2 Properties
+
+Project properties, module versions		: $APP/build.properties
+	- application name, package, version
+	- JAR library versions (Hibernate, Spring, Struts, Commons, etc.)
+
+Datasource settings				: $APP/project.properties
+	- JNDI
+	- JDBC driver, mapping, dialect
+
+Locations, Hibernate settings			: $APP/mda/project.properties 
+	- inheritance starategy
+	- showSql
+	- key generator
+
+The file $APP/project.properties contains Maven properties that are passed down to andromda.xml 
+(and other parts of the build scripts) that are project wide settings (regardless of which 
+developer is currently building the system, and which version is being built).  
+These include things such as JDBC configuration settings, which database dialect 
+you want Hibernate to use (e.g. Hypersonic, mySQL, etc.).
+
+The file $APP/build.properties contains Maven properties that are specific to
+the version being built.
+
+
+7. Database operations
+----------------------
+You can access database via data source.
+Direct JDBC connection is suitable to create/drop schema.
+
+Available mapping names are in $DOC/mappings/*.xml
+Database mapping configuration:		sql.mappings in $APP/project.properties
+
+Generating schema:
+
+	M1:	maven -o create-schema
+	M2:	?
+
+
+
+
+9. Server
+---------
+In order to get the best performance out of AndroMDA some improvements have been implemented that 
+will significantly speed-up the generation process, one of these improvements is the AndroMDA server.
+
+The server has been designed to (re)load the UML model in the background thereby minimizing the resources 
+needed to keep track of the latest changes. There are at least two advantages: 
+
+1. Since the model is kept in memory all the time, the initialization routines required to load it need 
+only to be executed once. Especially in the case where you're regenerating multiple times per day the 
+performance gain is tremendous.
+
+2. Changes to the model are loaded in the background, in a seperate process, and this is done automatically 
+when the server detects the model has been changed. That way the new model will already have been reloaded 
+by the time you want to generate code from it.
+
+Starting:
+
+	M1:	maven start-andromda-server 
+	M2:	?
+
+Settings:	<server> tag in andromda.xml	
+
+
+
+
+
+10. Code generation
+-------------------
+Loading metamodel ---> Looking for stereotypes ---> Identifying templates ---> Generating code
+
+
+1. All of the cartridges that the project requires are loaded by the engine. 
+
+2. The engine then parses the UML model’s XMI file, CREATING AN OBJECT TREE of the model for use by the engine and the cartridge templates.  
+   Metafacades are created to simplify the work of the cartridge templates. 
+
+    The AndroMDA engine uses the Netbeans MDR (MetaData Repository) to load the UML model into memory.
+
+3. The engine traverses the object tree, looking for classes tagged with STEREOTYPES it recognizes.
+
+4. For each class located, the appropriate cartridge template(s) are identified and dispatched to generate code.  
+   Multiple source code files may be generated for each tagged class in the model: more than one template in a 
+   given cartridge may generate code for any given class; more than one cartridge may generate code for any given class.
+   The default templates for a cartridge may be used, or a customized version may be used, depending on your configuration. 
+
+5. Step #4 is repeated for every class in the model.
+
+10.1 Metafacades
+----------------
+The act of generating code from the UML model requires some computation not easily handled by the simple scripting capabilities.
+These all require computation handled easier in Java.
+To simplify the source code templates, the Facade design pattern is used to create helper classes that shield the complexities 
+of the MDR from the template.  These helper classes are called Metafacades (for meta data facades).  Each cartridge used by the 
+AndroMDA engine usually contains its own set of Metafacades to aid in platform specific code generation.  It is the engine’s 
+responsibility to instantiate these Metafacades for use by the source code templates.
+
+
+10.2 Matching Stereotypes to Cartridges
+---------------------------------------
+After initializing, the AndroMDA engine traverses the UML model, LOOKING FOR CLASSES MARKED WITH A SPECIFIC STEREOTYPE.  
+When it finds a stereotype it recognizes (or more specifically, a stereotype that a cartridge is known to recognize), 
+the appropriate CARTRIDGE(S) IS CALLED TO GENERATE THE CODE.
+
+- /META-INF/andromda/cartridge.xml in cartridge JAR		: cartridge descriptor
+- Inside the Cartridge Descriptor, there are <template> tags
+- Inside each <template> tag is a <modelElements> tag.
+- Each <modelElement> is used to specify (among other things) the stereotype the template maps to.  
+  This specification is done in one of two ways:
+
+  1. Directly via an attribute of the <modelElement> tag named 'stereotype'. 
+     The value of the stereotype attribute specifies the stereotype the template maps to.
+
+  2. Indirectly via a <type> inner node.
+	- The <type> node specifies the name of the Metafacade class the template uses.
+	- The Metafacade’s definition is found in the Metafacade Descriptor – a file in the cartridge JAR 
+	  file named /META-INF/andromda/metafacades.xml .
+	- The Metafacade Descriptor contains <metafacade> tags for each metafacade used by the cartridge.  
+	- Each <metafacade> tag in turn contains a <stereotype> tag which defines the name of the stereotype the metafacade maps to.
+
+
+10.3 Generating code from templates
+-----------------------------------
+Once the AndroMDA engine has identified a class from the UML model and matched it to a cartridge,
+the appropriate templates are called to generate code. 
+
+To see all of the templates available from a particular cartridge, examine the contents of the 
+cartridge’s Cartridge Descriptor file (/META-INF/andromda/cartridge.xml).
+
+By default, AndroMDA uses the Apache Software Foundation’s Velocity template engine to generate code. 
+
+Each template available for use in the cartridge is defined in a <template> node inside the Cartridge Descriptor.  
+The <template> node contains several pieces of important information:
+
+- path			: specifies the complete path (inside of the cartridge .JAR file) to the template file
+- outlet		: attribute specifies (indirectly) the sub-directory where the source file will be written to.
+			  It is actually the NAME OF A PROPERTY found in the cartridge’s namespace in the andromda.xml 
+			  configuration file
+- overwrite		: specifies whether or not the template will overwrite pre-existing source files
+- <modelElements>	: defines the Metafacade used by the template
+- <type>		: specifies the Metafacade class that the template will use
+			  The <type> tag may optionally contain <property> tags. 
+- <property>		: does not contain a value, then that property simply must be defined.  
+			  The property might be a namespace property defined in the andromda.xml config file.
+
+
+11. Mappings
+------------
+When modeling applications in UML for AndroMDA you will never use language or technology specific types directly. 
+Instead you will use platform independent datatypes which will be mapped onto the ones you need during the code generation process. 
+This allows you to target different platforms without having to edit your model.
+
+ALL MAPPINGS CAN BE FOUND IN THE ANDROMDA-PLUGIN JAR, JUST UNZIP IT AND GO INTO /PLUGIN-RESOURCES/ANDROMDA/MAPPINGS , 
+YOU CAN UNZIP THEM INTO YOUR OWN LOCATION, EDIT THEM, AND USE THEM TO OVERRIDE THE DEFAULTS AS EXPLAINED ABOVE.
+
+Mappings are configured using properties. See  default namespace in mda/conf/andromda.xml:
+
+	<namespace name="default">
+		<properties>
+		    ...
+		    <!--
+			here we configure the mappings to be used,
+			we specify the logical names for each mapping
+		    -->
+		    <property name="languageMappingsUri">Java</property>
+		    <property name="wrapperMappingsUri">JavaWrapper</property>
+		    <property name="sqlMappingsUri">${sql.mappings}</property>
+		    <property name="jdbcMappingsUri">JDBC</property>
+		    ...
+		</properties>
+	</namespace>
+
+The logical names can be found in the mapping file itself, at the top of the file, as shown here: 
+
+    <mappings name="Java">
+        ..
+        <mapping>
+            <from>datatype::String</from>
+            <to>java.lang.String</to>
+        </mapping>
+        ...
+    </mappings>
+
+
+11.1 Customizing the default mappings
+-------------------------------------
+Overriding:
+
+Change prperties in default namespace (from logical name to URI):
+
+	<property name="languageMappingsUri">file:${maven.src.dir}/mappings/MyJavaMappings.xml</property>
+	<property name="wrapperMappingsUri">file:${maven.src.dir}/mappings/MyJavaWrapperMappings.xml</property>
+	<property name="jdbcMappingsUri">file:${maven.src.dir}/mappings/MyJdbcMappings.xml</property>
+	<property name="sqlMappingsUri">file:${maven.src.dir}/mappings/MySqlMappings.xml</property>
+
+
+Extending:
+
+	<mappings name="HibernateExtension">
+		<extends>Hibernate</extends>
+		...
+		<mapping>
+		    <from>datatype::boolean</from>
+		    <from>datatype::Boolean</from>
+		    <to>yes_no</to>
+		</mapping>
+		...
+	</mappings>
+
+
+	????? but where ?????
+
+
+12. Profiles 
+------------
+XML configuration file (which is typically located at 
+
+	META-INF/andromda/profile.xml 
+	
+with a cartridge or metafacade jar) 
+allows someone using AndroMDA to map stereotypes, tagged values, and data types to ANY names he or she wants without 
+having to change ANY code.
+
+Overriding Profile Values:
+
+- create your own profile mapping, for example mda/conf/mappings/CustomizedProfileMappings.xml:
+
+	<profile>
+	    ...
+	    <element name="ENTITY">
+		<value>entity</value>
+	    </element>
+	    ...
+	</profile>
+
+- you'd then define the location of this mappings file as the namespace property profileMappingsUri 
+  (within the mda/conf/andromda.xml file), like we do here (notice that the path must be a URI): 
+
+
+	<namespace name="default">
+	    <properties>
+		...
+		<property name="profileMappingsUri">file:${basedir}/mda/conf/mappings/CustomizedProfileMappings.xml</property>
+		...
+	    </properties>
+	</namespace>
+
+
+13. Plugins, goals
+------------------
+Getting info:
+	mvn help:describe -DgroupId=org.andromda.maven.plugins -DartifactId=<plugin> -Dfull | grep 'Goal:'	
+
+andromdapp-maven-plugin
+	'clean-structure'
+	'generate'
+	'build'
+	'deploy'
+	'eclipse'
+	'maven'
+	'schema'
+	'instrument-scripts'
+	'undeploy'
+
+andromda-maven-plugin
+	'run'
+	'start-server'
+	'stop-server'
+	'export2emf'
+
+andromda-multi-source-plugin
+	'add-source'
+
+maven-resources-plugin
+	'resources'
+	'testResources'
+	

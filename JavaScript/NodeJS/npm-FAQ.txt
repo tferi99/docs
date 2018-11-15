@@ -1,0 +1,77 @@
+=======
+npm FAQ
+=======
+
+- What is npm?
+
+- How to install packages?
+- How to update packages?
+- How to create package.json?
+
+- Useful commands
+- Full list of commands
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+What is npm?
+============
+- npm is a package manager for JavaScript, and is the default for Node.js. 
+- As of Node.js version 0.6.3, npm is bundled and installed automatically with the environment.[2] 
+- npm runs through the command line and manages dependencies for an application. 
+- It also allows users to install Node.js applications that are available on the npm registry. 
+- npm is written entirely in JavaScript 
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Useful comands
+=====================
+npm -l					: full list of commands
+npm ls [-g]				: list of installed packages, it draws a dependency tree
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to install packages?
+========================
+npm install <package>
+
+	It installs a package into local node_modules directory
+
+npm install -g <package>
+
+
+	In global mode (ie, with -g or --global appended to the command), it installs the current package context 
+	(ie, the current working directory) as a global package.
+	
+	c:\Users\<USER>\AppData\Roaming\npm\node_modules 
+
+To install a specific version of a package:
+	
+	npm install <package>@<version>	
+	
+	
+To list installed packages:
+
+	npm ls [-g]
+	
+	Without -g it lists packages installed into the current directory (current project).
+	With -g it lists global packages.
+	
+	
+npm install --save
+
+	It installs module and adds it to package.json dependencies.
+	
+npm install --save-dev
+	
+	It installs module and adds it to package.json DEVELOPMENT dependencies, it won't be shipped with production package.
+	
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to update packages?	
+=======================
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+How to create package.json?
+===========================
+To initialize a project and create package.json call:
+
+	npm init
+	
+

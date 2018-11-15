@@ -1,0 +1,69 @@
+==========
+Jabber-FAQ
+==========
+
+- How to setup Jabber for an end user?
+- How to change user in Jabber with SSO?
+
+- Troubleshooting
+	- Where are local logs of Jabber?
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------
+How to setup Jabber for an end user?
+=====================================
+- Install Jabber (for Windows)
+
+- Configure end user in CUCM
+	- add roles:
+		- Standard CTI Enabled
+		- Standard CCM End Users
+		
+- Assign IM and Presence capabilities to users
+	In end user config set flag:
+		
+		[Service Settings]/Enable User for Unified CM IM and Presence (Configure IM and Presence in the associated UC Service Profile)
+		
+	
+- Create a Cisco Unified Client Services Framework (CSF) device.	
+	
+
+- Associate the CSF device with the end user in CUCM
+
+	- set user as Owner User ID in device settings
+
+	IMPORTANT NOTE: If you want to use Jabber with multiple users you have to create multiple CSF devices.
+
+------------------------------------------------------------------------------------------------------------------------------------------
+How to change user in Jabber with SSO?
+======================================
+- If you want change user you have to stop Jabber first.
+
+- Next time when you try to login with a different user in SSO login page you get an error message:
+
+	You heve attempted to sign in as a different user. To switch user you must reset Cisco Jabber.
+	
+- Reset Jabber in File menu.
+
+- Set network manually again in Advanced settings (Cisco Communication Manager 9 or later/IP of CUCM - and NOT of CIMP).
+
+- Specify another end user (which associated to a CSF device) with long (domain) format in Jabber login page. (e.g. ssotest1@andtek.cee.eilab.biz)
+
+	NOTE: This user will be saved by Jabber, next time you don't have to specify again.
+	
+- Specify end user short name (e.g. ssotest1) and password in IDP SSO login page.
+	
+- Unfortunatly because you have reset Jabber you have to re-create custom 
+	
+	For example:  	http://apas_test.com:8080/andphone/webuser/sso/index.jsp
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------
+Where are local logs of Jabber?
+===============================
+Here:
+	"HOME\AppData\Local\Cisco\Unified Communications\Jabber\CSF\Logs\jabber.log" 
+	
+Log are rotated.
+
+	

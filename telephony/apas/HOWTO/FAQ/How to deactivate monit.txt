@@ -1,0 +1,15 @@
+========================
+How to deactivate monit?
+========================
+
+During development tests you often want to restart tomcat, recvorder, etc. automativally.
+Restart performed by monit.
+
+To get status of services:
+
+	monit status
+	
+To deactivate a service:
+
+	monit unmonitor <service name from status list>
+	

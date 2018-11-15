@@ -1,0 +1,48 @@
+Adding Oracle database URL
+--------------------------
+
+Database pilot (DbPilot.exe, DbPilotW.exe) reads 
+
+	bin\dbpilot.config 
+
+file to initialize itself during startup.
+
+
+You have add database driver package to classpath of application with an
+entry in config file, for example:
+
+	addpath c:\Oracle\Ora81\jdbc\lib\classes111.zip 
+
+
+Then add a new URL:
+
+--> File/New
+
+You can choose Oracle driver from list (oracle.jdbc.driver.OracleDriver).
+
+NOTE:
+	If databse driver is visible for database pilot it will be displayed in 
+	driver list in black (invisible drivers are in red). 
+
+When the Oracle driver is selected in the Driver box, the Browse button next to the 
+URL box will be enabled to help you construct an URL, as well as to build "thin" URLs. 
+If JBuilder is able to find the Oracle file tnsnames.ora, you can browse to and select 
+Oracle data sources. 
+If JBuilder is unable to locate the tnsnames.ora file, then no Oracle databases 
+will be available to browse. If you know the location of the tnsnames.ora file and 
+JBuilder is unable to find it, you can explicitly specify the location 
+of the file by adding the following line 
+to the dbpilot.config file: 
+
+	jbuilder.datapilot.tnsnames=<fully qualified filename of tnsnames.ora>
+
+for example, 
+
+	jbuilder.datapilot.tnsnames=//usr//orant//net80//admin//tnsnames.ora
+
+
+Or see 'Oracle Setup' tab in View/Options.
+
+
+You can choose 'thin' or OCI driver (NOTE: OCI was tested by me, and worked well :)
+

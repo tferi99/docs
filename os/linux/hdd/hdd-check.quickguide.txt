@@ -1,0 +1,18 @@
+============
+HDD Checking
+============
+
+fsck <device>
+		In  actuality,  fsck is simply a front-end for the various
+		file system checkers (fsck.fstype) available under  Linux.
+		The  file system-specific checker is searched for in /sbin
+		first, then in /etc/fs and /etc, and finally in the direc­
+		tories  listed  in  the PATH environment variable.  Please
+		see the file system-specific checker manual pages for fur­
+		ther details.
+
+e2fsck <device>
+
+e2fsck -c <device>	: call badblocks during checking
+
+badblocks <device>

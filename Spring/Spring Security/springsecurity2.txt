@@ -1,0 +1,17 @@
+Default processing of authentication
+------------------------------------
+
+<authentication-manager> = ProviderManager
+
+<authentication-provider> = DaoAuthenticationProvider (extends AbstractUserDetailsAuthenticationProvider)
+
+1. ProviderManager -> DaoAuthenticationProvider.authenticate() (AbstractUserDetailsAuthenticationProvider.authenticate())
+2. AbstractUserDetailsAuthenticationProvider.authenticate() -> retrieveUser() (DaoAuthenticationProvider.retrieveUser())
+3. DaoAuthenticationProvider.retrieveUser() -> UserDetailsService().loadUserByUsername();
+4. AbstractUserDetailsAuthenticationProvider.authenticate() -> additionalAuthenticationChecks() (DaoAuthenticationProvider.additionalAuthenticationChecks())
+		- password comparation performed here!
+5. AbstractUserDetailsAuthenticationProvider.authenticate()	- return createSuccessAuthentication(principalToReturn, authentication, user);
+	----> returned a new UsernamePasswordAuthenticationToken filled with authorities
+	
+	
+		

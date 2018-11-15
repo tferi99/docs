@@ -1,0 +1,19 @@
+=====================================
+How to add an XML service to a phone?
+=====================================
+Enterprise level setting:	System/Enterprise parameters/Phone URL Parameters/URL Services field
+
+Device level setting:	Phone Configuration page/External Data Locations Information/Services field
+
+Service configuration:	Device/Device Settings/Phone services
+			
+			- add new service
+			- set enterprise to false
+			- enable it
+			- go to a device
+			- choose 'Subscribe/Unsubscribe services' from related links combo (top-right)
+			- subscribe to service
+			- apply
+			
+NOTE: sometimes you have to set service provisioning if service menu doesn't work (Phone Configuration page/Device Information/Services Provisioning combo)
+	Settings 'Both' will work with all phone models.

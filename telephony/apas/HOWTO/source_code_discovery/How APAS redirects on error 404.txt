@@ -1,0 +1,22 @@
+
+- On error 404 WEB appication calls /Admin:
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/Admin?error=2</location>
+  </error-page>
+  
+
+- /Admin catched by SecurityFilter:
+  
+   <filter-mapping>                                                                                                                                                                                                                          
+      <filter-name>Admin Security Filter</filter-name>                                                                                                                                                                                       
+      <url-pattern>/Admin</url-pattern>                                                                                                                                                                                                      
+   </filter-mapping>                                                                                                                                                                                                                         
+
+   
+- It's configured in securityfilter-admin.xml    
+
+
+
+If you want to switch it of temporarly put <error-page> tag into comment.

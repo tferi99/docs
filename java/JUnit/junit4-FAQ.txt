@@ -1,0 +1,33 @@
+==========
+JUnit4 FAQ
+==========
+
+- How to ignore test classes?
+- Best practices for testing
+
+----------------------------------------------------------------------------------------------------------------------------------
+How to ignore test classes?
+===========================
+Surfire maven plugin calls test cases a little bit different way as Eclipse. 
+It recognize test cases not only by @Test annotations but by name of classes as well.
+
+Classes with name '*Test*' also suspected as test cases.
+
+Fix:
+If you want to ignore a class from calling by Surfire add @Ignore annotation to it.
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+Best practices for testing
+==========================
+- Place test classes in the same package but different source folder as the class they are testing.
+	That allows the test to have access to protected methods and attributes.
+	
+- Make private methods protected in cases where you want to control access and yet still access
+	the method for testing.	
+	
+- When using JUnit 4, you do not need to extend junit.framework.TestCase. Any plain old
+	java object (POJO) can be run as a test with the appropriate annotations.	
+	
+	
+

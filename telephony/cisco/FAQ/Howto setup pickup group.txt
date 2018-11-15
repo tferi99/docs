@@ -1,0 +1,11 @@
+=========================
+Howto setup pickup group?
+=========================
+- CUCM/Call Routing/Call Pickup Group/(Add New)
+- Add an usused DN as 'Call Pickup Group Number'
+- Save
+- Go to lines and assign pickup group to phones one by one
+	
+		[Call Forward and Call Pickup Settings]/Call Pickup Group
+		
+To check assigned lines call 'Dependecy Records' of pickup group.

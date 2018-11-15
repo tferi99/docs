@@ -1,0 +1,259 @@
+==============
+PrimeFaces FAQ
+==============
+
+Ajax
+----
+- What are steps of Ajax processing? 
+- How can I specify component to update?
+- How to navigate to a new page conditionally after Ajax request?
+
+JavaScript
+----------
+- How to get validation status in oncompleted JS handler?
+- How to send validation result from JAVA to oncompleted JS handler?
+- How to log JavaScript?
+
+Troubleshooting
+---------------
+- Component is not updated as expected after Ajax response.
+- How can I fix the "PrimeFaces not found" javascript error? 
+- Why my PrimeFaces application does not work well using Safari/Chrome? 
+- Why navigations do not work with PrimeFaces commandButton and commandLink?
+- <p:datatable> selection problem in with Chrome with Facelets
+- How to setup FacesTrace?
+
+-------------------------------------------------------------------------------------------------------
+What are steps of Ajax processing? 
+==================================
+
+    - Ajax request
+    - Action listener handler
+    - Action handler
+    - Ajax response
+    - Ajax DOM update
+    - oncomplete JS handler
+
+-------------------------------------------------------------------------------------------------------
+How can I specify component to update?
+======================================
+In JSF client IDs has the following structure:
+
+	namingContainerId:componentId
+	
+- In the same naming container simply use id of component:
+
+	update="lblName"
+
+- In a different naming container:	
+	- Specify  prependId="true" on form to disable prepending naming container ID in client ID, but
+		it can occur ID collition.
+	
+	- The suggested way using separator char as a prefix, note that this uses same search algorithm as 
+		standard JSF 2 implementation:
+		
+		update=":frmTest:lblName"
+		
+	- Using absolute clientIds will also work as a PrimeFaces extension however we might remove it in a
+		future release to align with JSF spec.
+
+		update="frmTest:lblName"
+		
+Naming containers are:
+	h:form
+	p:tabView
+	
+If you have multiple nested naming container, use absolute path:
+	
+		update=":frmTest:tabViewTest:lblName"
+	
+!!! IMPORTANT WARNING !!!
+TabView also a naming container but it doesn't have prependId property so you have to specify full ID-path 
+to address it.
+If you want to get jQuery object from object included into TabView you have to use escaped client ID
+in jQuery selector, e.g.:
+
+	<p:tabView id=tabvTest>
+		<p:outputPanel id="pnlTest">
+			...
+	<p:/tabView>
+
+	$("#tabvTest\\:pnlTest").hide();
+	
+	
+-------------------------------------------------------------------------------------------------------
+Component is not updated as expected after Ajax response
+========================================================
+- 
+
+- Check components are really updated in partial response:
+	- Use FireBug
+	- Go to Net tab.
+	- Choose XHR output filter (menu)
+	- Clear output
+	- Fire an Ajax request and check result. You have to watch 'Response' tab.	
+	- Find <update> tags and check 'id' attributes. All of updated conponent has it's own update tag.
+		e.g:
+	
+		<partial-response><changes><update id="pnlCategoryBrowserHeader"><![CDATA[<span id="pnlCategoryBrowserHeader" ....
+
+	- If you cannot find component to be updated check IDs in 'update' attribute of PF component. 
+		Maybe you missed a naming container.
+	
+		See more: 'How can I specify component to update?'
+-------------------------------------------------------------------------------------------------------
+How can I fix the "PrimeFaces not found" javascript error? 
+==========================================================
+Make sure to have h:head tag in your page.
+
+As 'Getting Started' mentioned in home page:
+
+	<html xmlns="http://www.w3.org/1999/xhtml"  
+		xmlns:h="http://java.sun.com/jsf/html"  
+		xmlns:p="http://primefaces.prime.com.tr/ui">  
+	  
+		<h:head>  
+			...
+		</h:head>  
+		  
+		<h:body>  		  
+			...			  
+		</h:body>  
+	</html>  
+
+-------------------------------------------------------------------------------------------------------
+Why my PrimeFaces application does not work well using Safari/Chrome? 
+=====================================================================
+You need to enfore contentType by adding f:view contentType="text/html" to your page. 
+Best place to define this is your template, here is an example one.
+Why navigations do not work with PrimeFaces commandButton and commandLink? 
+
+-------------------------------------------------------------------------------------------------------
+Why navigations do not work with PrimeFaces commandButton and commandLink?
+==========================================================================
+PrimeFaces does not support forward based navigations within an ajax request, 
+you need to do redirect instead or set ajax to false.
+I'm using x component library in my project. Can I also add PrimeFaces? 
+
+
+
+-------------------------------------------------------------------------------------------------------
+<p:datatable> selection problem in with Chrome with Facelets
+============================================================
+With facelets some components like charts do not work in Safari or Chrome but there's no problem with Firefox.
+The common reason is the response mimeType when using with PrimeFaces with facelets. 
+
+You need to make sure responseType is "text/html". 
+
+With facelets you can use the 
+
+	<f:view contentType="text/html"> 
+	
+to enforce this setting.
+
+
+-------------------------------------------------------------------------------------------------------
+How to log JavaScript?
+======================
+Use <p:log/>.
+
+It inserts Blackbird JavaScript log console.
+See more: http://www.gscottolson.com/blackbirdjs/
+
+Handful keyboard shortcuts:
+
+	F2				: show/hide
+	Shift-F2		: move
+	Alt-Shift-F2	: clear
+	
+
+
+
+-------------------------------------------------------------------------------------------------------
+How to get validation status in oncompleted JS handler?
+=======================================================
+Chack args.validationFailed flag is true:
+
+	<h:form>
+		<<<< some input fields here with validation >>>>
+		
+		<p:commandButton value="..." actionListener="..." update="..." oncomplete="callSubjectViewAction(xhr, status, args)"/>
+	<h:form>
+
+	<script type="text/javascript">
+	//<![CDATA[
+		function callSubjectViewAction(xhr, status, args)
+		{
+			if(!args.validationFailed) {
+				// do something here if validation OK
+			}
+		}
+	//]]>
+	</script>
+
+	
+-------------------------------------------------------------------------------------------------------
+How to pass argumments from JAVA controller to JavaScript handlers?
+===================================================================
+RequestContext provides a useful API to pass parameters from JSF backing beans in json format to ajax 
+callbacks like oncomplete, execute javascript from server side and add components to update programmatically.
+
+	
+-------------------------------------------------------------------------------------------------------
+How to navigate to a new page conditionally after Ajax request?
+===============================================================
+If you have an Ajax form but you want to navigate to other on submit, you hava to 
+use an additional form for navigation:
+	
+	<!-- ========== this is main Ajax form to submit business data ================== -->
+	<h:form>
+		<<<< some input fields here with validation >>>>
+		
+		<p:commandButton value="..." actionListener="..." update="..." oncomplete="callSubjectViewAction(xhr, status, args)"/>
+	<h:form>
+
+	<!-- ========== this is helper - non-Ajax - form to perform a browser request  ================== -->
+	<h:form prependId="false" style="display: none;">
+		<h:commandButton id="btnCallSubjectView" action="subjectView"/>
+	</h:form>
+	
+	<script type="text/javascript">
+	//<![CDATA[
+		function callSubjectViewAction(xhr, status, args)
+		{
+			// checking result of navigation
+			if(!args.validationFailed) {
+				// submitting helper form
+				$('#btnCallSubjectView').click();
+			}
+		}
+	//]]>
+	</script>
+
+-------------------------------------------------------------------------------------------------------
+How to setup FacesTrace?
+========================
+1. Download facestrace
+
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>facestrace</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+2. Copy CSS and JS from WEB applicsation and load into pages:
+
+	<link href="<%=request.getContextPath()%>/theme/facesTrace.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" language="JavaScript" src="<%=request.getContextPath()%>/scripts/facestrace.js"></script>
+	
+3. Add taglib declaration to pages:	
+	
+	...
+	xmlns:ft="http://primefaces.prime.com.tr/facestrace"
+	...
+	
+4. Add tag to include trace info into page:
+
+	
+	
+

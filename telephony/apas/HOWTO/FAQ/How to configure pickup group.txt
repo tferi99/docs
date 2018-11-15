@@ -1,0 +1,16 @@
+==============================
+How to configure pickup group?
+==============================
+
+- Create a group
+
+- Assign members
+
+- Set 
+
+	APAS/Group/GroupL List/[Group Attributes]/(Popup Pickup Service)
+	
+	
+If you call any member of this group a pickup popup will be displayed on other members, too.
+So other members will be able to pick up the call.
+

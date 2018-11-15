@@ -1,0 +1,28 @@
+=======================
+How announcement works?
+=======================
+
+How does it work in a nutshell?
+-------------------------------
+- Announcement media played by RP (route point) before starting recording the call
+- First caller or called party calls RP with a consultative call
+- Then it changes this call into conference
+- And finally originally call will be merged into this conference call and RP starts playing announcement media 
+
+
+
+Playing announcemant
+--------------------
+Announcement started by JTapi:
+
+	EVENT:	CallCtlTermConnTalkingEv
+		--> com.andtek.andphone.recorder.annunciator.CallObserverBase.callChangedEvent(CallEv[] eventList)
+			--> com.andtek.andphone.recorder.annunciator.RecordingAnnouncementHandler.onCallCtlTermConnTalking(CallCtlTermConnTalkingEv eev)
+				--> internalOnCallCtlTermConnTalking(CallCtlTermConnTalkingEv eev)
+					on state: STATE_ANNUNCIATOR_CALL_STARTED
+					--> playAnnouncement(CallCtlTermConnTalkingEv eev)
+						--> completeConference()
+							-->	recordedCall.conference(this.annunciatorCall)				<<<<<<< join call together
+							
+							
+							

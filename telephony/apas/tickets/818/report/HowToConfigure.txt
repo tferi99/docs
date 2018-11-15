@@ -1,0 +1,35 @@
+
+    ----------------------------------------------------
+      HOW TO CONFIGURE AND USE ACD CALL CSV REPORTING
+    ----------------------------------------------------
+
+
+1) edit JSP in the Group->Category page
+  
+   - add a configuration entry for "AcdCallHistoryKeepTime":
+
+	// deletes call history entries from the DB which are older than keep-time in days 
+	AcdCategory.ACD_REPORT_CONFIG.put("AcdCallHistoryKeepTime", "7");
+	// enable or disable ACD call reporting into DB
+	AcdCategory.ACD_REPORT_CONFIG.put("AcdCallReportingEnabled", "false");
+
+
+
+   - add an entry for reporting type: "GASS Calls CSV Export":
+
+	// add Gass Call History CSV Export custom report 
+	String[] report02 =  { "CUSTOM:GASS_CSV_EXPORT_02", "GASS Calls CSV Export", "com.andtek.andphone.partner.acd.categories.report.GassAcdCallReportEngine" }; 
+	ReportSchedule.CUSTOM_REPORT_NAMES.add(report02); 
+
+
+
+
+2) Create a schedule report entry in the Reporting->Schedule Reports
+
+   - Choose Report Template "GASS Calls CSV Export"
+   - Select schedule when report must be generated
+   - set prefix name
+   - check only APAS as report type
+   - Select report time range form the list
+   - Select FTP server from the list if it is required
+

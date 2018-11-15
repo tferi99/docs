@@ -1,0 +1,287 @@
+================================
+Log analysis of recordings - FAQ
+================================
+
+SEE MORE:  doc\software\tools_and_languages\telephony\Apas\HOWTO\source_code_discovery\Recording.txt 
+
+
+- Test call info
+- Steps of analysis
+- Structure of log files
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Test call info
+==============
+Use case:
+
+	- configuration:
+		- there is a configured SIP trunk recording with rules
+		- logs are on DEBUG level
+		- jmf.log enabled
+		- no announcement
+	- not-recorded calling party calls a recorded called party
+	- talking
+	- terminated by calling party
+
+
+	
+Recorded call	
+-------------
+APAS:			192.168.5.245
+Call ID:		99720/1
+Time:			[2017-05-03 08:56:47,577] - [2017-05-03 08:57:25,025]	: ~38 secs
+Calling party:	9030			SEP100000009030
+Called party:	9000			SEP64A0E714F271
+RTP 1 (calling):	192.168.5.245:39575
+RTP 2 (called):		192.168.5.245:39923
+DB ID:			208		
+	
+	
+RECORDING[0][sip99720/1, SEP64A0E714F271] : 2017-05-03 08:56:56 - 2017-05-03 08:57:24, DB:308
+   - callingPartyName=
+   - srcIP=192.168.5.245
+   - callID=sip99720/1
+   - calledPartyName=Cicamica
+   - stopOut=1
+   - terminal=SEP64A0E714F271
+   - originalCalledParty=9000
+   - srcPort=39923
+   - initiated=false
+   - dstIP=192.168.5.245
+   - lastRedirectingParty=
+   - callingParty=9030
+   - originalCallingParty=9030
+   - dstPort=39575
+   - calledParty=9000 	
+	
+	
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------------
+Steps of analysis
+=================
+NOTE: scripts (*.sh) are in APAS_SRC_SIR/development/log-analysis.
+
+	1. Get time range information from log files
+	
+	2. Locating a call in logs (getting call ID, time, calling/called party)
+
+	3. Checking start of recording on APAS side
+
+	4. Checking start of recording on sniffer side
+
+	5. Check SIP IP/port information on APAS side
+	
+	6. Check recording in database 
+
+	7. Check start of recording a stream and starting disk thread on sniffer
+	
+
+1. Get time range information from log files
+--------------------------------------------
+TIP:	call:
+
+	createTimeRangeReport.sh <log-dir>
+
+Get time ranges from first and last lines which has time. Be aware of rotated logs.
+
+	
+	
+2. Locating a call in logs
+--------------------------
+TIP: call:
+
+		getCalls.sh <log-dir> detailed
+
+
+- Get call from CiscoJtapi*.log
+
+	Pattern (regex):
+	
+		<TIME>.*received Event: com.cisco.cti.protocol.NewCallEvent
+	
+	
+	CallID can be retrieved from 'callID' field of NewCallEvent object.
+	
+	
+		1909: May 03 08:56:47.006 CEST %JTAPI-PROTOCOL-7-UNK:(P1-192.168.5.18) received Event: com.cisco.cti.protocol.NewCallEvent {
+			  eventSequence                     = 68
+			  lineCallManagerID                 = 1
+			  lineID                            = 19256
+			  lineHandleSpecified               = true
+			  deviceName                        = SEP64A0E714F271					<<< called party device
+			  callCallManagerID                 = 1
+			  callLegID                         = 31117820
+			  globalCallManagerID               = 1
+			  callID                            = 99720
+			  callingParty                      = 9030
+			  calledParty                       = 9000
+			  originalCalledParty               = 9000 		
+			  ....
+			  callingPartyDeviceName            = SEP100000009030
+			  ....
+		
+- Get call from andphone.log.*
+
+
+
+	Pattern (regex):
+	
+		<TIME>.*recorder.PhoneCallObserver.*RCCO-CC.*CallActiveEv
+	
+	
+	
+		[2017-05-03 08:56:47,577] [DEBUG] [ObserverThread(com.andtek.andphone.ANDCallObserver@650c178e)] [ANDCallObserver.java:425] - ACO:Received (P1-TOTH_APAS) 99720/1 CallActiveEv [#109] Cause:106 CallCtlCause:0 CiscoCause:0 FeatReason:12 for  callID=101 Cause:CAUSE_NEW_CALL Reason:REASON_NORMAL | callChangedEvent() METHOD_STARTED
+
+
+		Log entry about CallActiveEv contains call ID.
+		
+		
+- Get call from andphone_record.log:
+
+
+		Pattern (regex):
+	
+		<TIME>.*->recordCall: <recordCall.*callID=
+
+			2017-May-03 08:56:57.094: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" callingParty="9030" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9030" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
+
+			
+
+3. Checking start of recording in APAS side			
+-------------------------------------------
+Log:		andphone.log
+
+First:
+	Pattern:
+			Sending XML to recorder [\(]sip[\)]
+		OR
+			Sending XML to recorder [\(]sip[\)].*<CALL_ID>
+
+Then:
+	Pattern:		XML_SOCKET:sending XML.*<CALL_ID>
+		
+
+
+4. Checking start of recording in sniffer side
+----------------------------------------------
+Log:		andphone_record.log
+
+Pattern:
+
+		[\<]recordCall
+	OR
+		[\<]recordCall.*<CALL_ID>
+	
+	--- start ---
+	1982	2017-May-03 08:56:57.094: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" callingParty="9030" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9030" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
+	2059	2017-May-03 08:56:58.123: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip99720/1" dbID="308" state="1"/>
+	2061	2017-May-03 08:56:58.123: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" dstIP="192.168.5.245" dstPort="39575"/>
+	2078	2017-May-03 08:56:58.135: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip99720/1" dbID="308" state="1"/>
+	2080	2017-May-03 08:56:58.135: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" srcIP="192.168.5.245" srcPort="39923"/>
+	2093	2017-May-03 08:56:58.138: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip99720/1" dbID="308" state="1"/>
+	--- end ---
+	4127	2017-May-03 08:57:24.487: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="csip31117820" stopOut="1" />
+	4130	2017-May-03 08:57:24.487: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+	4132	2017-May-03 08:57:24.557: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" stopOut="1" />
+	4143	2017-May-03 08:57:24.557: 1: worker::send(<recordCallResponse code="100" string="Call removed"/>
+	4169	2017-May-03 08:57:24.559: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="csip31117820" stopOut="1" />
+	4174	2017-May-03 08:57:24.561: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>		
+
+
+	- APAS sends calling information, RTP IPs and ports
+	- sniffer returns database ID of recording
+
+
+5. Check SIP IP/port information on APAS side
+---------------------------------------------
+From PCAP by Wireshark (Telephony/SPI Flows - copy as CSV):
+
+"Start Time","Stop Time","Initial Speaker","From","To","Protocol","Duration","Packets","State","Comments"
+
+"21.286949","49.341986","192.168.5.18","<sip:9000@192.168.5.18;x-nearend;x-refci=31117820;x-nearenddevice=SEP64A0E714F271;x-farendrefci=31117819;x-farenddevice=SEP100000009030;
+	x-farendaddr=9030","<sip:9245@192.168.5.245","SIP","00:00:28","7","COMPLETED","INVITE 200"
+	
+"21.306881","49.362335","192.168.5.18","<sip:9000@192.168.5.18;x-farend;x-refci=31117820;x-nearenddevice=SEP64A0E714F271;x-farendrefci=31117819;x-farenddevice=SEP100000009030;
+	x-farendaddr=9030","<sip:9245@192.168.5.245","SIP","00:00:28","6","COMPLETED","INVITE 200"
+
+
+
+Log:		andphone.log
+
+Pattern:
+		FAREND sip trunk connection.*<CALL_ID>
+		NEAREND sip trunk connection.*<CALL_ID>
+
+[2017-05-03 08:56:57,417] [DEBUG] [APAS-defaultWorker-13] [RecorderSipTrunk.java:375] - FAREND sip trunk connection from SEP64A0E714F271, callID=99720/1, ip=192.168.5.245, port=39575
+[2017-05-03 08:56:57,417] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" dstIP="192.168.5.245" dstPort="39575"/>]
+...
+[2017-05-03 08:56:57,418] [DEBUG] [APAS-defaultWorker-11] [RecorderSipTrunk.java:395] - NEAREND sip trunk connection from SEP64A0E714F271, callID=99720/1, ip=192.168.5.245, port=39923
+[2017-05-03 08:56:57,418] [DEBUG] [APAS-defaultWorker-11] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" srcIP="192.168.5.245" srcPort="39923"/>]
+
+- FAREND connection sends dstIP and dstPort to sniffer
+- NEAREND connection sends srcIP and srcPort to sniffer
+
+	
+	
+6. Check recording in database 	
+------------------------------
+- APAS sends recordCall XML tags
+- sniffer inserts/updates entry in rec_call table for recorded call
+- sniffer responses a recordCallResponse XML with callID and associated DB entry ID
+
+
+	select * from rec_call where id = 308
+
+
+	 id     start                          end                            lastaction                     callingparty     calledparty     phoneip                   remoteip                  status     initiated     initiator     filename     filesize     signaling     codec     keep     custom     recorder     callingpartyname     calledpartyname     duplicate     gcid        origcallingparty     origcalledparty     admin     rec_password                      lrp                       lrp_name                 
+	 -----  -----------------------------  -----------------------------  -----------------------------  ---------------  --------------  ------------------------  ------------------------  ---------  ------------  ------------  -----------  -----------  ------------  --------  -------  ---------  -----------  -------------------  ------------------  ------------  ----------  -------------------  ------------------  --------  --------------------------------  ------------------------  ------------------------ 
+	 308    2017-05-03 08:56:57.897747+02  2017-05-03 08:57:24.559072+02  2017-05-03 08:57:28.618583+02  9030             9000            192.168.5.245             192.168.5.245             4          0                           308.rec      56480        16            2         10       (null)                                       Cicamica            0             sip99720/1  9030                 9000                (null)    853AE90F0351324BD73EA615E6487517                                                     
+
+
+
+
+7. Check start of recording a stream and starting disk thread on sniffer
+------------------------------------------------------------------------
+	Setting up Disk_thread for call dbId:	
+
+
+	Log:		andphone_record.log
+	
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------------
+Structure of log files
+======================
+There are free text log entries but there are specific patters in log files that can be recognized during analysis
+
+
+andphone_record.log
+-------------------
+- Every log entry begins with date-time and level:
+
+	2017-May-03 08:47:58.215: 2:
+
+- Found UDP packet, without call:
+
+	Patterns:	[|]source:.*len:.*seq:
+
+	2017-May-03 08:54:04.648: 3: |source: 192.168.5.201 len: 96 port source: 137  dest: 137 seq: 10512 ts: 65536 flags: 8730
+	
+- Found UDP(RTP) packet, associated to a call:
+
+	Patterns:	[|]source:.*len:.*seq:.*[|]found Call_
+
+	2017-May-03 08:56:58.168: 3: |source: 192.168.5.206 len: 200 port source: 26258  dest: 39575 seq: 4851 ts: 4172826698 flags: 0880|found Call_0 0,db:308 880 (9030,9000) [21]
+	
+- Found UDP(RTP) packet, FIRST packet which is associated to a call:
+
+	Patterns:	[|]source:.*len:.*seq:.*[|]found Call_.*Resyncing RTP
+
+	2017-May-03 08:56:58.134: 3: |source: 192.168.5.206 len: 200 port source: 26258  dest: 39575 seq: 4850 ts: 4172826538 flags: 0880|phoneIPnotfound ce05a8c0,f505a8c0!=00000000|found Call_0 0,db:308 880 (9030,9000) [0]Resyncing RTP because new stream detected [call-id=308/sip99720/1, dir=0, ssrc=615472046]
+	
+	
+	
+	
+	
+	

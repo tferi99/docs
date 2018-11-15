@@ -1,0 +1,113 @@
+==============
+My home router
+==============
+
+USB drives
+----------
+- installation:
+
+	- run:
+		ipkg install kmod-usb-core 
+		ipkg install kmod-usb2 
+		ipkg install kmod-usb-storage 
+		ipkg install kmod-usb-printer 
+		ipkg install kmod-usb-uhci
+
+	- add:
+		usbcore 
+		ehci-hcd 
+		uhci 
+		scsi_mod 
+		sd_mod 
+		sg 
+		usb-storage 
+		printer		
+
+		to /etc/modules.
+	
+	- check hot-plug mount process:
+	
+		logread -f
+		
+		USB pen-drive will be mounted to /mnt/disc0_1 .
+		
+	- If you want to mount to a different mount point:
+		Mount point is specified in /etc/hotplug.d/usb/01-mount . 
+		Don't change script, create a simlink for /opt pointing to new mount point instead.
+
+		ln -s /mnt/disc0_1 /opt
+
+
+- automount USB drive see:
+
+	scripts/etc/init.d/S50usb 
+
+		
+Installation of packages
+------------------------
+Install packages into /opt . To prepare system for this do the followings:
+
+- Mount a USB drive to /otp (see above)
+- Change /etc/ipkg.conf, add:
+
+	dest opt /opt
+	
+- Add entries to path variables:
+
+	export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin:/opt/sbin:/opt/usr/bin:/opt/usr/sbin
+	export LD_LIBRARY_PATH=/lib:/usr/lib:/opt/usr/lib:/opt/lib 
+	
+- Install packeges this way:
+
+	ipkg -d opt install < package-name >
+	
+	
+
+WEB administration
+------------------
+- Install XWRT:
+
+	ipkg install http://ftp.berlios.de/pub/xwrt/webif_latest_stable.ipk
+	
+
+Setting WIFI
+------------
+	nvram set wl0_infra=1
+	nvram set wl0_ifname=eth1
+	nvram set wl0_mode=ap
+	nvram set wl0_ssid=tferi
+	nvram set wl0id=0x4320
+	nvram set wl0_wpa_psk=yourpassword
+	nvram set wl0_wep=tkip
+	nvram set wl0_radio=1
+	nvram set wl0_auth_mode=psk
+	nvram set wl0_crypto=tkip
+
+	nvram commit
+	reboot
+
+FTP server
+----------
+- installation:
+
+	ipkg install vsftpd
+	ln -s /etc/init.d/vsftpd /etc/init.d/S50vsftpd
+	
+- using:
+	Use account of an existing user (Using root in insecure, create a new user instead).
+
+	
+Midnigth Commander
+------------------
+ipk package mc and ncurses used /opt dir for install , you must write command 
+ipkg -d root ............., no ipkg -d opt !!!
+
+	ipkg -d root install http://ipkg.nslu2-linux.org/feeds/unslung/wl500g/ncurses_5.5-1_mipsel.ipk
+	ipkg -d root install http://ipkg.nslu2-linux.org/feeds/unslung/wl500g/mc_4.1.35-3_mipsel.ipk
+
+and set environment in /etc/profile
+
+	export TERMINFO="/opt/lib/terminfo"
+	export TERM="linux"
+
+	

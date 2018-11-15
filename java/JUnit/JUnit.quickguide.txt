@@ -1,0 +1,110 @@
+================
+JUnit kick guide
+================
+
+1. Without fixture
+2. With fixture
+3. Suite
+4. Usable assertions
+
+
+1. Without fixture
+------------------
+To run a single test case.
+
+1. Create a subclass of TestCase
+2. Override runTest in an anonymous subclass of TestCase.
+
+
+
+2. With fixture
+---------------
+What if you have two or more tests that operate on the same or similar sets of objects?
+
+1. Create a subclass of TestCase
+2. Add an instance variable for each part of the fixture
+3. Override setUp() to initialize the variables
+4. Override tearDown() to release any permanent resources you allocated in setUp
+
+	Each test runs in its own fixture and JUnit calls setUp and tearDown for 
+	each test so that there can be no side effects among test runs.
+
+5. Add  test case methods. Write a public void method in the fixture class. By convention, the name of the method begins with "test".
+
+	
+		public void test...()
+
+	It can throw excptions. Tests will be called through reflection.
+
+6. To run a single test case manually, you execute: 
+
+		TestResult result = (new MoneyTest("testMoneyMoneyBag")).run();
+
+
+3. Suite
+--------
+Once you have several tests, organize them into a Suite.
+
+NOTE:
+	To keep simple things simple, the test runner automatically creates a TestSuite if you don’t provide one of your own.
+
+	
+Which tests to run?
+
+Manual mode:
+	In our test suite, we’ve explicitly defined which tests to run. That means as we write more tests, we’ll 
+	need to add them to the test suite. By explicitly defining the TESTS TO RUN, we also define the ORDER IN WHICH THEY RUN.
+
+		TestSuite suite = new TestSuite();
+		suite.addTest(new MoneyTest("testMoneyEquals"));
+		suite.addTest(new MoneyTest("testSimpleAdd"));
+		TestResult result = suite.run();
+	
+Automatic mode:
+	Alternately, YOU CAN AUTOMATICALLY DISCOVER the test cases by using reflection. This means you write the test suite once, 
+	and on each execution, it dynamically determines which tests are available and runs them. 
+	The downside is:
+		- you can’t exclude tests to run, 
+		- you can’t control the order in which the tests are executed. 
+	
+	However, reflection does ensure that you don’t skip a step in creating the test cases by not adding the test to the suite.	
+	
+	
+		TestSuite suite = new TestSuite();
+		suite.addTest(MoneyTest.class);
+		TestResult result = suite.run();
+
+		
+4. Usable assertions
+--------------------
+This is a list of the different types of assertion statements that are used to test your code. 
+Any Java data type or object can be used in the statement. These assertions are taken from the JUnit API. 
+
+assertEquals(expected, actual)
+assertEquals(message, expected, actual)
+assertEquals(expected, actual, delta) - used on doubles or floats, where delta is the difference in precision
+assertEquals(message, expected, actual, delta) - used on doubles or floats, where delta is the difference in precision
+assertFalse(condition)
+assertFalse(message, condition)
+assertNotNull(object)
+assertNotNull(message, object)
+assertNotSame(expected, actual)
+assertNotSame(message, expected, actual)
+assertNull(object)
+assertNull(message, object)
+assertSame(expected, actual)
+assertSame(message, expected, actual)
+assertTrue(condition)
+assertTrue(message, condition)
+fail()
+fail(message)
+failNotEquals(message, expected, actual)
+failNotSame(message, expected, actual)
+failSame(message)
+
+
+5. Running tests
+----------------
+java -cp junit.jar junit.swingui.TestRunner TestCalculator
+
+

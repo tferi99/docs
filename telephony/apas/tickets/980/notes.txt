@@ -1,0 +1,53 @@
+check call IDs:            134854*
+
+BAD
+	1348547
+
+OTHER GOOD
+	1348540
+	1348549
+	1348548
+	1348547
+	134854
+	134854
+	134854
+
+Call ID:	1348547
+Caller:		4971166005310
+Pilot:		4971166005380
+
+ACDCall
+3115	removeCall()
+3253	runGc()
+3273	-> 293	remove()
+	309 -> 2298 	setStatisticsValues()
+	357 log: inserted into DB
+3278	log: GC removed 
+
+--->
+2298 	setStatisticsValues()
+2313	reasonCode = setCategoryValues(c);
+592	setCategoryValues(int cat) 
+608	log: removeCallId=
+613	log: skip continue setCategoryValues() method -> return
+651	loop on history
+677	log: SITE_INFO: callerSite is
+733	log: CAT_STATS: Processing state
+744	log: SITE_INFO: found targetSite by number
+755	log: SITE_INFO: callerSite
+733
+744
+755
+733
+746
+755
+------------ end of state machine ------------
+--------------- loop on collected cats ----------------
+1599	log: CATEGORY_DATA: ACDCall: ACDCall[...
+1603	log: CATEGORY_DATA: Category ... intraSite=true
+
+
+
+
+
+

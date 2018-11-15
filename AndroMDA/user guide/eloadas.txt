@@ -1,0 +1,43 @@
+MDA		
+---
+- goals of frameworks ?
+- what is MDA
+- UML basics
+- available tools (AndroMDA, OptimalJ)
+
+
+AndromMDA
+---------
+- -----------> andromda.org/What is AndroMDA
+- Architecture -------------> Getting started Java (3.2)
+
+
+- A Bird’s Eye view of AndroMDA
+	- Project development cycle
+	- How AndroMDA generates code?
+		- Loading the Cartridges to use
+		- Matching Stereotypes to Cartridges
+		- Generating code from templates
+	- Customizing existing cartridges / Writing your own cartridges
+
+-----------> AndroMDA-kick-start.txt
+
+
+
+Spring --------------> spring-kick-guide.txt
+------
+- IoC, Dependency injection
+
+
+Example project
+---------------
+- console andromdapp:generate
+
+
+
+AndroMDA web site
+-----------------
+- doc
+- forum
+
+

@@ -1,0 +1,9 @@
+=========================================
+How to get IP address of a phone in APAS?
+=========================================
+
+You need RIS service to be activated. Validate it on APAS/Global/Support page first.
+
+Then:
+		DeviceListX deviceListX = jtapi.getDeviceListX();
+		HashMap<String, DeviceListXDevice> deviceIpMap = deviceListX.getAllDevices();

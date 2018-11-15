@@ -1,0 +1,66 @@
+===========================
+Howto add MA configuration?
+===========================
+MA : Manager/Assistant
+
+MA features
+-----------
+- caller knows DN of manager but it cannot call it directly
+- caller calls manager, but an RP routes call to an assistant or a manger directly
+- if call routed to an assistant it can make a consultative call to manager and can bind caller to manager later
+
+Configuration
+-------------
+CM:
+	- Managers and assistants must be in the same partition (e.g. PT_Phones).
+	- add CTI Route point with proxy DN which is the same as DN of manager but with brackets (e.g. 900[1]) and add it to a different partition (e.g. PT_Managers)
+		- add RP to your application user
+	- CTI RP name prefix should be: APH_RP_GROUP 
+		or change prefix in APAS (Apas/Group/Settings/Manager Assistant Options - Route Points Prefix)
+		
+	- you need at least 2 partitions:
+		- for manager RP (PT_Managers)
+		- for manager, assistants, caller (PT_Phones)
+		
+	- you need at least at least 2 CSS:
+		- CSS assigned to caller, where order of partitions: PT_Managers, PT_Phones (CSS_MA_clients)
+			It won't be able to access manager directly
+		- CSS assigned to manager-RP, manager, assistants
+			They can access manager directly
+		
+		--------------------------------------------------------------------------------
+		PT_Phones:
+			- manager, assistants, caller
+		
+		PT_Managers
+			- manager-RP
+		
+		CSS_MA_clients
+			- PT_Managers
+			- PT_Phones
+			
+		CSS_Intern
+			- PT_Phones
+		
+		
+		
+Apas:
+	- Add MA configuration:		APAS/Group/Manager List
+		
+		- Manager Extension: same as DN in RP - e.g. 900[0]
+		- Partition for Manager Phone is 'None' in a simple scenario
+		- Assign assistants
+		- Set other options
+
+
+How does it work?
+-----------------
+	- caller calls manager DN which will call RP
+	- if requirement is calling manager directly RP will call the same DN but this DN will be found in PT_Phones partition (e.g. VIP caller)
+	OR
+	- RP will call an agent in PT_Phones partition 
+
+		
+SEE ALSO:	
+	telephony/Apas/doc/images/ma-apas.png
+

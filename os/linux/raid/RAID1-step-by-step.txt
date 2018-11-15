@@ -1,0 +1,274 @@
+			 RAID 1 léterhozása 10 lépésben
+
+0. RAID 1 == tükrözés
+
+1. Diskek partícionálása
+
+A példában a /dev/hda-n és a /dev/hdc-n vannak azok a partíciók, amiket
+tükrözni kell. A /dev/hda-ra installálod az alap linux rendszeredet,
+ezért azt ennek megfelelõ file rendszereknek készítsd elõ. Akár azt is
+választhatod, hogy mindent egy partícióra telepíted az egészet.
+
+A hdc-t már úgy kell partícionálni, ahogy a végleges rendszereden
+szeretnéd a partíciókat. A példában a következõk vannak:
+
+hdc1	/boot
+hdc2	/swap
+hdc3	/
+hdc5	/var
+hdc6	/var/spool
+hdc7	/home
+
+FONTOS! Miden partíciónak a típusa 'Linux raid autodetect' (hexa kódja:
+FD) legyen a hdc-n. A hda-n egyelõre mindegy mi van.
+
+2. A Linux telepítése az egyik diskre
+
+Telepítsd fel a rendszeredet hda-ra, és bootolj be. Érdemes csak a
+legalapvetõbb dolgokat feltelepíteni, mert akkor nem tart sokáig majd
+a másolás.
+
+3. Kernel fordítása
+
+Az alap Linux rendszereden fordíts egy olyan kernelt, amiben van RAID 1
+támogatás.
+
+CONFIG_MD_RAID1=y
+
+Bootold be az új kernelt. Ellenõrizd hogy a RAID támogatás megvan-e:
+cat /proc/mdstat. Ha létezik a /proc/mdstat, akkor ok.
+
+4. raidtools2 installálása
+
+apt-get install raidtools2
+
+FONTOS! A raidtools2-t kell telepíteni, nem a raidtools-t
+
+5. /etc/raidtab
+
+Konfiguráljuk fel a raid tömbünket a /etc/raidtab létrehozásával. Ez legyen a
+tartalma:
+
+--
+raiddev /dev/md1
+        raid-level 1
+        nr-raid-disks 2
+        nr-spare-disks 0
+        chunk-size 4
+        persistent-superblock 1
+        device /dev/hda1
+        failed-disk 0
+        device /dev/hdc1
+        raid-disk 1
+
+raiddev /dev/md2
+        raid-level 1
+        nr-raid-disks 2
+        nr-spare-disks 0
+        chunk-size 4
+        persistent-superblock 1
+        device /dev/hda2
+        failed-disk 0
+        device /dev/hdc2
+        raid-disk 1
+
+raiddev /dev/md3
+        raid-level 1
+        nr-raid-disks 2
+        nr-spare-disks 0
+        chunk-size 4
+        persistent-superblock 1
+        device /dev/hda3
+        failed-disk 0
+        device /dev/hdc3
+        raid-disk 1
+
+raiddev /dev/md5
+        raid-level 1
+        nr-raid-disks 2
+        nr-spare-disks 0
+        chunk-size 4
+        persistent-superblock 1
+        device /dev/hda5
+        failed-disk 0
+        device /dev/hdc5
+        raid-disk 1
+
+raiddev /dev/md6
+        raid-level 1
+        nr-raid-disks 2
+        nr-spare-disks 0
+        chunk-size 4
+        persistent-superblock 1
+        device /dev/hda6
+        failed-disk 0
+        device /dev/hdc6
+        raid-disk 1
+
+raiddev /dev/md7
+        raid-level 1
+        nr-raid-disks 2
+        nr-spare-disks 0
+        chunk-size 4
+        persistent-superblock 1
+        device /dev/hda7
+        failed-disk 0
+        device /dev/hdc7
+        raid-disk 1
+--
+
+Bevetettünk egy olyan trükköt, hogy a hda-n lévõ partíciókat failed-nek mondjuk.
+Így nem bántja a raid addig a disket, amíg mi nem akarjuk. A hdc viszont
+raid-disk, tehát annak segítségével hozzuk létre a RAID tömböt.
+
+5. RAID device-ok letrehozasa
+
+mkraid /dev/md1
+mkraid /dev/md2
+mkraid /dev/md3
+mkraid /dev/md5
+mkraid /dev/md6
+mkraid /dev/md7
+
+cat /proc/mdstat
+
+Ha megjelennek a tömbök, akkor ok.
+
+6. RAID fs-ek elkeszitese
+
+Formázzuk meg a raid partíciókat, csináljuk meg a swap-et:
+
+mke2fs -j /dev/md1
+mkswap /dev/md2
+mke2fs -j /dev/md3
+mke2fs -j /dev/md5
+mke2fs -j /dev/md6
+mke2fs -j /dev/md7
+
+7. File-ok másolása
+
+Másoljuk át a file-okat a megfelelõ helyre:
+
+# mount /dev/md1 /mnt
+# cp -a /boot/* /mnt
+# umount /mnt
+# mount /dev/md3 /mnt
+# mkdir mnt proc boot var home
+# cp -a /bin /cdrom /dev /etc /floppy /initrd /lib /opt /root /sbin /tmp /usr /mnt/
+# umount /mnt 
+# mount /dev/md5 /mnt
+# cp -a /var/* /mnt
+# rm -r /mnt/spool
+# umount /mnt
+# mount /dev/md6 /mnt
+# cp -a /var/spool/* /mnt
+# umount /mnt
+# mount /dev/md7 /mnt
+# cp -a /home/* /mnt
+# umount /mnt
+
+8. Sysconfig és LILO a raid tömbön
+
+Konfiguráljuk fel a rendszert a raid tömbön:
+
+# mount /dev/md3 /mnt
+# cd /mnt/etc
+# vi fstab
+
+/dev/md3        /               ext3    errors=remount-ro       0       1
+/dev/md2        none            swap    sw                      0       0
+/dev/md1        /boot           ext3    errors=remount-ro       0       1
+/dev/md5        /var            ext3    errors=remount-ro       0       1
+/dev/md6        /var/spool      ext3    errors=remount-ro       0       1
+/dev/md7        /home           ext3    errors=remount-ro       0       1
+proc            /proc           proc    defaults                0       0
+/dev/fd0        /floppy         auto    user,noauto             0       0
+/dev/hde        /cdrom          iso9660 ro,user,noauto          0       0
+
+
+
+Két LILO configot kell csinálni
+
+
+# vi lilo.conf
+
+lba32
+disk=/dev/md0
+bios=0x80
+boot=/dev/hdc
+root=/dev/md3
+install=/boot/boot-menu.b
+map=/boot/map
+delay=20
+vga=normal
+default=Linux
+image=/boot/vmlinuz-2.4.24-new
+        label=Linux
+        read-only
+
+# vi lilo.conf.hda
+
+lba32
+disk=/dev/md0
+bios=0x80
+boot=/dev/hda
+root=/dev/md3
+install=/boot/boot-menu.b
+map=/boot/map
+delay=20
+vga=normal
+default=Linux
+image=/boot/vmlinuz-2.4.24-new
+        label=Linux
+        read-only
+
+# lilo -C /mnt/etc/lilo.conf
+# lilo -C /mnt/etc/lilo.conf.hda
+# cd /
+# umount /mnt
+
+7. Reboot
+
+Elméletileg most már raid tömbbrõl bootol a rendszer. Ezt mount-tal
+tudod ellenõrizni:
+
+# mount
+/dev/md3 on / type ext3 (rw,errors=remount-ro)
+proc on /proc type proc (rw)
+devpts on /dev/pts type devpts (rw,gid=5,mode=620)
+/dev/md1 on /boot type ext3 (rw,errors=remount-ro)
+/dev/md5 on /var type ext3 (rw,errors=remount-ro)
+/dev/md6 on /var/spool type ext3 (rw,errors=remount-ro)
+/dev/md7 on /home type ext3 (rw,errors=remount-ro)
+
+Ha így van, akkor ok.
+
+8. Elsõ disk partíciótípusainak változtatása
+
+Hozz létre a hda-n pontosan ugyanakkora partíciókat, mint a hdc-n,
+a típusa most már legyen 'Linux RAID autodetect' tükrözni kívántaknak.
+
+Ha kész, akkor...
+
+9. /etc/raidtab megint
+
+A failed-disk -eket írd át raid-disk -re
+
+10. Elsõ disk partícióinak hozzáadása a RAID tömbhöz
+
+... add hozzá a hda partícióit a megfelelõ RAID tömbhöz:
+
+raidhotadd /dev/md1 /dev/hda1
+raidhotadd /dev/md2 /dev/hda2
+raidhotadd /dev/md3 /dev/hda3
+raidhotadd /dev/md5 /dev/hda5
+raidhotadd /dev/md6 /dev/hda6
+raidhotadd /dev/md7 /dev/hda7
+
+Ellenõrizd a /proc/mdstat-ban, hogy zajlik-e a szinkronizálási, dõlj
+hátra a szinkron végéig.
+
+A biztonság kedvéért még egyszer:
+
+# lilo -C /etc/lilo.conf
+# lilo -C /etc/lilo.conf.hda

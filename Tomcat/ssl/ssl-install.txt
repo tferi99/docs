@@ -1,0 +1,14 @@
+1. Downloading, installing JSSE
+
+	NOTE:
+	JSSE integrated into the Java 2 SDK, Standard Edition, v 1.4
+
+2. Create a certificate keystore by executing the following command:
+
+	$JAVA_HOME/bin/keytool -genkey -alias tomcat -keyalg RSA
+
+	Password must be: changeit
+	It will create ---> $HOME/.keystore
+
+3. Uncomment the "SSL HTTP/1.1 Connector" entry in $CATALINA_HOME/conf/server.xml
+   and tweak as necessary.	

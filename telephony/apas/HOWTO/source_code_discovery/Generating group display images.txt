@@ -1,0 +1,111 @@
+===============================
+Generating group display images
+===============================
+- Group display logic
+- Call flows
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Group display logic
+===================
+Destination device by DN
+------------------------
+- If a device is part of a group as DN group will be displayed on that device
+- If a device is part of multiple groups as DN group which is selected as 'Preferred' will be displayed on that device
+
+Destination device by expression
+--------------------------------
+- If a device NOT part of a group by DN, but part of a queue 
+	- and this queue is 'Primary Queue' of this agent
+	- and a group is assigned to queue as 'Agent Group'
+  assigned group will be displayed on device.
+
+IMPORTANT NOTES: 
+	- DN has priority over 'Agent Group' association.
+		So if a device is assigned as DN to a group but it also member of a queue where 'Agent Group' assigned, group assigned as DN will be displayed.
+	- If a device is agent of a queue but not in primary queue, assigned group won't be displayed.
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Call flows
+==========
+There are 2 different solution to handle group changes:
+
+Solution 1 - backup in group contains DN only:
+
+	ANDCallObserver.callChangedEvent(CallEv[] eventList)	
+		--> processCallChangedEvent(jtapi, eventList)			on CallCtlConnInitiatedEv
+			--> initiated( (CallCtlConnInitiatedEv) eventList[i])
+				it gets PGroupMember by address:
+				--> PGroupMember member=jtapi.getPGroupMemberbyAddress(caller)
+				then updates groups:
+				--> PGroupMember.updateStatusAllGroups(PGroupMember.BUSY, null)
+					--> PGroupMember.internalUpdateStatusAllGroups(callerid)
+					----------------------------------- loop on groups (???) ---------------------------------
+						--> PGroupMember.groupTerminals = getGroupTerminals(currentGroup, true)
+						--> PGroupMember.sendPushDataToTerminals(groupTerminals, this)
+							--> PGroupMember.doSendPushDataToTerminals(outterm, pgm)
+								--> PGroupMember.JTAPIThread.pushQueue.add(PassThruObject.TYPE_GROUPDISPLAY, ot.term, ot.data.getBytes(charset);
+								
+
+								
+Solution 1 - backup in group contains expressions:
+
+	EventQueueWorker.run()
+		--> handleEvent(EventQueueWorkerEntry entry)		on QueueVariableEvent
+			--> Queue.handleEvents(APASEvent[] event, Object observer)
+				--> ApasRegistrySubscriberIF.registryVariableBulkEv(ApasVariableEvent[] events) =====> PGroupMember.registryVariableBulkEv(...)
+					--> PGroupMember.doPGroupUpdate(ev)
+						--> PGroupMember.updatePhoneStatus(clientUpdate, event)
+							--> PGroupMember.updateStatus(null, null, updateData);
+								--> PGroupMember.updateStatus(addon, callerid, 0, updateData)
+									--> PGroupMember.addOutTerm(outterm, group, (callerid != null), true)
+									--> loop
+									--------------------------------------------- loop on terminals ------------------------------------
+										--> JTAPIThread.pushQueue.add(PassThruObject.TYPE_GROUPDISPLAY, term, data.getBytes(charset));
+
+
+
+
+
+
+
+
+
+
+
+
+
+<CiscoIPPhoneExecute> to CUCM (!!!) via 
+...
+....
+
+
+	- Phone asks APAS to send image by calling a servlet:
+
+		/andphone/PhoneDisplay?png=status&dev=SEP64A0E714F271
+
+		--> com.andtek.andphone.ANDServlet.service(HttpServletRequest request, HttpServletResponse response)
+			- processing parameters
+			--> ANDServlet.handleRequest(ConnectionBean connection, HttpServletRequest request, HttpServletResponse response, int securitytype) 
+				--> [1]
+			OR
+			-->	handleSecureRequest(connection, request, response, securitytype);
+				--> [1]
+
+
+	[1] PhoneDisplay.request(ConnectionBean connection, HttpServletRequest request, HttpServletResponse response)
+		--> com.andtek.andphone.partner.PhoneDisplay.doRequest(ConnectionBean connection, HttpServletRequest request, HttpServletResponse response)
+			
+			
+			--> respondWithStatusDisplayAsPNG(response, phoneType, group);
+				--> PGroupDisplay.getDisplayPNG(phoneType, response.getOutputStream())
+					--> PGroupDisplay.UpdateCache()
+						--> PGr/oupDisplay.doUpdateCache()
+							on expressions
+							--> DNstr = PGroupMember.applyVariableExpression(DNstr);
+							
+					--> display.getDisplayPNG(phoneType, out)
+						--> doGetDisplayPNG(phoneType, os)
+						
+						

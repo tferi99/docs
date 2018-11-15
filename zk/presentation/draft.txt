@@ -1,0 +1,113 @@
+Name:	
+	ZKOss = ZK Open Source Software
+
+
+What is
+	- ZK is an open-source, all Java, Ajax Web application framework that enables rich UI for Web applications 
+	with no JavaScript and little programming. 
+	- ZK takes the so called server-centric approach that the content synchronization of components and the event 
+	pipelining between clients and servers are automatically done by the engine and Ajax plumbing codes are completely 
+	transparent to web application developers. 
+	- ZK maintains its own look and feel across browsers.
+
+
+	- ZK is an event-driven
+	- component-based framework to enable rich user interfaces for Web applications. 
+	- the server-side component GUI framework that allows you to write applications like you would a desktop app. 
+	- ZK includes an AJAX-based event-driven engine, a rich set of XUL and XHTML components and a markup 
+	language called ZUML (ZK User Interface Markup Language).
+	- server side
+	- Unlike most of other AJAX frameworks, as far as ZK is concerned, AJAX is a behind-the-scene technology. 
+		The synchronization of component content and the pipelining of events are done automatically by the ZK engine.
+	
+What is NOT	
+	- It is only aimed at the presentation tier. 
+	- It does not require or suggest any other back-end technologies
+	- ZK doesn't enforce developers to use MVC or other design patterns. Whether to use them is the developer's choice.
+	- ZK is not a framework aiming to bring XUL to Web applications. It is aimed to bring the desktop programming model to Web applications. 
+
+
+Start
+	http://www.potix.com/
+	http://www.pathf.com/blogs/2006/06/an_interview_wi-2/
+	
+An Interview with ZK Creator Tom Yeh:
+	"...
+	DK: How did you come up with the idea for ZK, i.e. an AJAX framework that allows you to write webapps like you would a desktop app?
+
+	TY: As I mentioned in http://zk1.sourceforge.net/faq.html#Why, it is the result of frustration. 
+	...
+	Why? Frustrated user experiences and excessive development costs. In other words, it is too costly to develop a 
+	Web UI from scratch or add-on to 'legacy' apps, and people won't use the Web UI even if it is provided.
+	..."
+
+	
+Concept
+- Traditional Web Applications <traditional_web.jpg>
+vs
+- ajax <ajax.jpg>
+	
+- ZUML
+	ZUML (ZK User Interface Markup Language) is a markup language for rich user interfaces definition.
+	ZUML is designed for non-programmers to design user interfaces efficiently with the ZUML markup
+	ZUML allows developer to meld different markup languages, such as Mozilla XUL language and XHTML, seamlessly into the same page.
+	ZUML allows developers to embed script in pure Java language (interpreted by BeanShell) and use EL expressions to manipulate 
+	the components and access data.
+	ZUML is supported by ZK.
+
+	
+	
+XUL
+	- XUL (pronounced zool ([zu:l])), the XML User Interface Language, is an XML user interface markup 
+	language developed by the Mozilla project As its main benefit, 
+	- XUL provides a simple and portable definition of common widgets		
+
+	This piece of code shows 3 buttons stacked on top of each other in a vertical box container:
+	
+			<?xml version="1.0"?>
+			<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+		 
+			<window id="vbox example" title="Example"
+			xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+		 
+			<vbox>
+			  <button id="yes" label="Yes"/>
+			  <button id="no" label="No"/>
+			  <button id="maybe" label="Maybe"/>
+			</vbox>
+			 
+			</window>
+	
+
+
+ZK
+--
+Features:
+
+Architecture:
+	- <zk_architecture.jpg>
+
+
+What are the goals of the ZK project?
+- The same or better rich and interactive user interfaces as that of desktop applications. 
+- The same or better simplicity to develop Web applications as that of desktop applications. 
+
+Features
+- desktop-like
+- event driven
+- easy-to-learn
+
+- Over 70 XUL and 80 XHTML components are supported, including list boxes, tree, drag-and-drop, auto-completion, sliders, timer, combo boxes, audio and many others.
+- Server centric. Visual representation and content are synchronized automatically between clients and servers.
+- The best way to use Ajax is not to know its existence.
+- Script in Java and EL expressions. No JavaScript. No compilation. No proprietary expressions or scripts.
+- Simple threading model. No prerequisite of handling threading and concurrent accesses. Yet no limitation to apply any sophisticated threading on your demand.
+- Flexible threading model. Easy to suspend and resume your application without blocking users. Supports true server-side modal dialogs.
+- Easy to develop new components with supports of template and synchronization technologies.
+- Easy to encapsulate a pure-client JavaScript widget into a server-centric Java component, such as FCKeditor and Dojo.
+- Easy to power applications with versatile components, as simple as dropping jar files into the class path.
+- An open community to share components, themes and utilities.
+- Zero configurations and compilation. Maintaining ZUML pages is as easy as maintaining HTML pages.
+- No prerequisite of any design patterns. For fast protyping, you could embed Java codes directly in ZUML pages. For sophisticated applications, you could apply MVC or others. The choice is yours, not framework.
+
+

@@ -1,0 +1,6 @@
+---------------------------------------------------------------------------------------------------------------------
+Phone cannot tap with silent monitor
+====================================
+
+Possible reasons:
+- SM based on Recording, agent you want to tap has to filtered by a recording rule where "monitor calling/monitor called" flags are set.

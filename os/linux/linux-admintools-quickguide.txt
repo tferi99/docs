@@ -1,0 +1,13 @@
+ps
+top
+vmstat
+time
+hdparm
+lsmod
+lspci
+lsscsi
+lsdev
+lsraid
+lsusb
+
+cat /proc/...

@@ -1,0 +1,116 @@
+=========
+RNL popup
+=========
+
+- ANDCallObserver receives CallCtlConnAlertingEv
+- PGroupMember updates 
+- PGroupMember notifies subscribers
+- calculates group update message
+- sending PGroupMemberChangedEvent
+
+
+----------------------------------------------------------------------------------------------------------------
+Triggering popup
+================
+
+------ TermConnRingingEv ------------
+--> WebClientCallObserver.callChangedEvent(CallEv[] eventList)
+	--> WebClientCallObserver.alerting(CallCtlConnAlertingEv ev)
+		--> WebClientLookupThread.createLookupThreadForTerminal(...)			// to create and start lookup thread
+			==> WebClientLookupThread.run()				// in returns result only for RNL
+				--> results = KirkDirectorySearchSession.search(dirs,inputItems,doOr,phoneNumber,called,username)
+				--> resultListener.searchResult(results, custom, custom1, null)			// resultListener == WebClientCallObserver
+				
+				==> WebClientCallObserver.searchResult(Map<String, DirSearchResult> result, Object custom, Object custom1, String error)
+							custom (info): DirCallObserver.SearchInfo[SEP64A0E714F271, CalledId: 9000, CallerId9002]
+							result: TreeMap 
+							
+							e.g: 
+								
+								{14 t9002=DirSearchResult: display:14 t9002, directory: com.andtek.andphone.directory.ASCIIDirectory@7df78040, 
+									DN: 14, attributes{telnr=telnr: 9002, user=user: , email=email: 9002@a.b, telnr2=telnr2: 9002, lastname=lastname: , firstname=firstname: t9002, asciiid=asciiid: 14}} 
+										-> converted:Key:14 t9002 value: DirSearchResult: display:14 t9002, directory: com.andtek.andphone.directory.ASCIIDirectory@7df78040, DN: 14, attributes{telnr=telnr: 9002, 
+										user=user: , email=email: 9002@a.b, telnr2=telnr2: 9002, lastname=lastname: , firstname=firstname: t9002, asciiid=asciiid: 14}
+								
+						--> notifyWebUsers(info, result)
+							--> EventBroadcaster.broadcastToTerminal(...)
+									- it lookups a broadcaster by terminal name
+									
+									{
+									  "name" : "PopupWebEvt",
+									  "contacts" : {
+										"totalResults" : 1,
+										"pageSize" : 0,
+										"pageIndex" : 0,
+										"contacts" : [ {
+										  "shortName" : "14 t9002",
+										  "editable" : true,
+										  "id" : "14",
+										  "directoryId" : "3",
+											... ... ... ...
+											... ... ... ...
+										  }
+										} ]
+									  },
+									  "terminalName" : "SEP64A0E714F271",
+									  "cgpn" : "9002",
+									  "cdpn" : "9000",
+									  "lrp" : ""
+									}				
+									
+						====== Atmosphere EVENT(PopupWebEvt) ========> WebClient
+		
+		
+WebClient
+	--> event:PopupWebEvt ==> directive:showPopup
+		--> $window.open(url)
+			- url = "#/popup"	--> templateUrl:partials/popup.html', controller: PopupCtrl			// renders popup window
+		--> starting time to close window, timeout comes from CONFIG.rnlPopupTimeout
+	
+	
+----------------------------------------------------------------------------------------------------------------
+UI
+==
+- app.js : URL-page mapping
+- controller_popup.js : PopupCtrl controller definition
+- partials/popup.html : view template of popup window
+- directives.js : contains definition of 'showPopup' directive
+- controller_app.js : CONFIG
+
+index.html (of a module)
+	
+	<div>
+		<show-popup closeafter="{{CONFIG.rnlPopupTimeout}}"></show-popup>
+	</div>
+	...
+
+
+
+app.js:
+
+	.config(['$routeProvider','$translateProvider','$provide', function($routeProvider, $translateProvider, $provide) {
+		...
+		$routeProvider.when('/popup', {templateUrl: 'partials/popup.html', controller: PopupCtrl}); 
+		...
+
+		
+		URL:		/popup
+		template:	partials/popup.html
+		controller:	PopupCtrl					<-- from controller_popup.js
+		
+		
+
+Passing parameters to RNL popup:
+	PopupWebEvt(dummy, msg)
+	
+OLD:	
+	msg -> $window.contactData -> $window.opener.contactData -> $scope.d
+	settings -> $window.settings -> $window.opener.settings
+	scope -> $window.dialogCallerScope
+	
+NEW:
+	var callInfo = $window.rnl.<callId>
+
+	msg -> callInfo.rnlresult
+	
+	

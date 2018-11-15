@@ -1,0 +1,22 @@
+==============================
+How to configure a Busy Pilot?
+==============================
+Busy pilot is a normal pilot where queue doesn't have any agents and DN of pilot has been added to busy pilot list.
+
+In ACD if you want to detect 'no agent' state as busy you have to bind a busy pilot to your queue.
+In this case if there is no agent in ACD queue (all agents are in break, unavailable, ...), call will be forwarded to busy pilot.
+The role of busy pilot is just playing a pre-queue media and its DN can be add to busy pilot list of statistics configuration.
+
+
+Configure:
+- Add a line to ACD route point.
+- Add a queue without agents.
+- Set Pre-queue-media.
+- Add a new pilot and associate queue.
+- Specify pilot DN as 'No Agents Target' of the last ACD queue.
+- Add busy pilot DN to statistics report descriptor JSP. This JSP can be edited/uploaded here:
+
+	APAS/Group/Category List/(Edit JSP Content).
+	
+	Here find BusyPilot... variables.
+

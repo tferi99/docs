@@ -1,0 +1,14 @@
+====================================
+Howto install Wireshark to ISO APAS?
+====================================
+
+	yum install wireshark
+
+		If you get a conflict regarding to 'libpcap' package because Wireshark needs an older version of it
+		(0.9.4-15 instead of 0.9.8-2), first downgrade it.
+	
+		yum downgrade libpcap
+		
+	yum install wireshark-gnome
+	
+	

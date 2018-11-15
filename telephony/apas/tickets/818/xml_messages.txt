@@ -1,0 +1,15 @@
+Data message about category counters
+------------------------------------
+
+<tableData widgetName="category_$CATID">
+		<table name="category_$CATID_cat_gscall_sum" displayName="Call Summary">
+			<row id="1">
+				<column colid="1" name="cat_gscs_label" displayName="Type">
+					<value color="none" displayTime="" displayValue="GASS">GASS</value>
+				</column>
+				<column colid="2" name="cat_gscs_waiting_calls" displayName="Waiting">
+					<value color="none" displayTime="" displayValue="0">0</value>
+				</column>
+				<column colid="3" name="cat_gscs_incom_calls" displayName="Incoming">
+					<value color="none" displayTime="" displayValue="1">1</value>
+				</column>

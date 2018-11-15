@@ -1,0 +1,13 @@
+=================
+Observers in APAS
+=================
+
+- com.andtek.andphone.ccm.jtapi.LineObserver
+
+	Installed for Address-es to implement CallObserver and CallControlCallObserver.
+	
+- com.andtek.andphone.recorder.PhoneCallObserver
+
+	Observes all call events for lines/terminals involved in a recording session.
+	
+	

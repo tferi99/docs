@@ -1,0 +1,614 @@
+==============================
+How to configure SSO for APAS?
+==============================
+- Basics
+- How to configure OpenAM SAML2 SSO with HTTPS?
+- Steps of SAML2 based SSO configuration
+- How to use SSO in WebClient
+- How to disable SSO?
+
+Troubleshooting
+---------------
+- Network problems
+
+- Certificate problems
+	- ERROR: SSL peer failed hostname validation for name: null
+	- ERROR:  Response issue time is either too old or with date in the future...
+	- ERROR: PKIX path construction failed for untrusted credential
+	- ERROR:  Error during CUCM SSO test in test popup: Error while processing SAML Response.
+
+--------------------------------------------------------------------------------------------------------				
+Basics
+======
+Security Assertion Markup Language 2.0 (SAML 2.0) is a version of the SAML standard for exchanging authentication and authorization data between security domains. 
+SAML 2.0 is an XML-based protocol that uses security tokens containing assertions to pass information about a principal (usually an end user) between a SAML authority, 
+named an Identity Provider, and a SAML consumer, named a Service Provider. SAML 2.0 enables web-based, cross-domain single sign-on (SSO), 
+which helps reduce the administrative overhead of distributing multiple authentication tokens to the user.
+
+APAS support SAML2 SSO and it can be added to a SAML2 based SSO Circle of Trust (COT).
+
+Partners in COT share metadata in whatever form and by whatever means possible. 
+In any case, at least the following metadata must be shared:
+	- Entity ID
+	- Cryptographic Keys
+	- Protocol Endpoints (bindings and locations)
+
+All SAML2 capable IDP can be used (e.g. MS ADFS, OpenAM).
+But detailed description of how to configure an IDP is not in scope of this documentation.	
+
+
+Metadata is information used in the SAML protocol to expose the configuration of a SAML entity, like a SP or IdP. 
+Metadata define things like what service is available, addresses and certificates. Metadata is defined in XML. 
+A SP uses the metadata to know how to communicate with the IdP and vise versa.
+
+Exhange can be dynamic or static:
+	- dinamic mode: you configure URL where server entities can download metadata XML from the opposit side
+	- static mode: XML metadata is downloded from URLs manually and imported into server entities manually.
+		
+	NOTE: 
+		APAS currently supports only dynamic mode.
+	
+
+
+--------------------------------------------------------------------------------------------------------		
+How to configure OpenAM SAML2 SSO with HTTPS?
+==============================================
+Using HTTPS in APAS SSO:
+
+	- default configuration contains HTTP URLs
+	
+	- if you want to force access WebClient with HTTPS via SSO your SP metadata should contain 
+		HTTPS URL for backward redirecting.
+
+	- to force HTTPS on APAS set Global/Security/(Redirect HTTPS): ON
+		- APAS accessed via https://....:8443/...
+		- SP metadata will contain HTTPS URLs
+		- after activating HTTPS redirect restart APAS and send SP metadata again to IDP and add to COT of CUCM
+
+This section describes steps of configuration.
+Especially certificate exchange among SSO components since SSL (HTTPS) trusts based on certificates.
+
+SSO components:
+	- OpenAM (IDP)
+	- CUCM/Presence (SP)
+	- APAS (SP)
+
+Pre-requisities:
+----------------
+- Installed AD with test users
+- Installed CUCM and Presence where AD configured as LDAP directory, endusers are syncronized into CUCM from AD
+- Installed APAS
+- Installed OpenAM
+	- HTTPS enabled in Tomcat
+	- APAS/development/sso-idp-helper-scripts are deployed
+	
+!!! IMPORTANT !!!
+Always call server entities (OpenAM, APAS, CUCM, Presence) with HTTPS URL otherwise SAML entities and metadata will be created with HTTP URLs.
+	
+Steps:
+------
+1. Check APAS settings - use FQDN as host
+
+	APAS host name configuration parameters should contain FQDN which can be resolved by DNS server into valid IP address 
+	of APAS (e.g. ceerd-ftoth-apas1.andtek.cee.cs.eilab.biz).
+
+	- Host name in Linux should contain FQDN:
+	
+		APASCLI/System settings/Hostname
+		
+		It changes 
+			/etc/hostname
+			/etc/hosts entry
+	
+	- AndPhone server configuration in APAS config should contain the same FQDN:
+		
+		APAS/Global/Configuration/[AndPhone Server]/(Name/IP)
+
+2. Check APAS certificate - it should contain FQDN in CN and sign it by CA
+
+		APAS/Global/Security/[Certificate List]/andphone
+	
+	If it's still the expired self-signed certtificate re-create it and download CSR (andphone.csr) to sign it with CA.
+	
+	This certificate should contain FQDN of APAS as CN field in Subject.
+	
+	!!! IMPORTANT !!!
+	Old versions of APAS shipped with an EXPIRED and self-signed certificate. 	
+	Generate a new APAS certificate and sign it with CA (it can be your test CA in OpenAM.	
+	See more: APAS_SRC/development/sso-idp-helper-scripts).
+
+3. Collect trust certificates for IDP
+	
+	- get trust certificates from CUCM
+		- go to CUCM/OS Administration/Security/Certificate Management
+		- select 'tomcat' certificate
+		- Download .PEM File
+		- rename downloaded file to cucm-tomcat.pem
+		
+	- get trust certificates from Presence
+		- go to Presence /OS Administration/Security/Certificate Management
+		- select 'tomcat' certificate
+		- Download .PEM File
+		- rename downloaded file to presence-tomcat.pem
+	
+	- get trust certificates request from CUCM 
+		- go to APAS/General/Security/Certificate List
+		- Check subject and validity (see 1. and 2.)
+		- Create APAS Certificates
+		- Fill fields, submit forms and 'Download' certificate request (andphone.csr)
+		
+	
+	- copy these files into root directory of OpenAM (next to scripts from sso-idp-helper-scripts)
+	
+	
+4. Call OpenAM certificate management scripts:
+	It creates:
+		- CA key
+		- SSL trust certificate
+		- metadata signer certificate
+	It creates keystores
+		- for OpenAM Tomcat
+		- OpenAM SSO
+
+	and signs all certificates with CA (by default - .sso_config.sh contains flags to custmize behavior)
+		
+	Usage:
+	
+		CLEANUP.sh		: to put environment into initial state. It deletes old content (optional task).
+		
+		ALL.sh			: build keystores, and create CA signed certificates.
+		
+				- create CA key and certificate -> CA-CERT.pem
+				- sign APAS CSR with CA and create certificate	-> ANDPHONE-SIGNED.pem
+				- create Tomcat keystore, sign Tomcat self-signed certificate with CA and import CUCM certificates into Tomcat keystore -> ~/keystore.jks
+				- create OpenAM keystore, sign Tomcat self-signed certificate with CA -> ~/openam/openam/keystore.jks
+				- export certificates for other servers -> OPENAM-TRUST.pem, OPENAM-SIGNER.pem
+		
+		Note: You can keep previous CA key by answering with 'n' but existing keystores are re-generated.
+		
+		!!! IMPORTANT !!!	
+		After bulding new certificates restart Tomcat in OpenAM.
+	
+	Finally, management script sends a message about actions what you have to do manually:
+
+			
+		###################################################################
+		###################################################################
+		#
+		# Keystores and certificates have been created successfully.
+		#
+		# Do these manual tasks:
+		#    Browser:
+		#    - import ./out/CA-CERT.pem into browsers as trusted root certificate
+		#
+		#    CUCM:
+		#    - import ./out/CA-CERT.pem into CUCM as Tomcat trust certificate
+		#    - import ./out/OPENAM-TRUST.pem into CUCM as Tomcat trust certificate
+		#
+		#    APAS base:
+		#    - import ./out/ANDPHONE-SIGNED.pem into APAS as APAS certificate
+		#
+		#    APAS general:
+		#    - import ./out/CA-CERT.pem into APAS as General trust certificate
+		#    - import ./out/OPENAM-TRUST.pem into APAS as General trust certificate
+		#
+		#    APAS SSO:
+		#    - import ./out/CA-CERT.pem into APAS as SSO trust certificate
+		#    - import ./out/OPENAM-SIGNER.pem into APAS as SSO trust certificate
+		#
+		###################################################################
+		###################################################################
+	
+	
+6. Import root CA certificate (CA-CERT.pem) into browsers (into tructed root CA list):
+	
+	Chrome:
+		- MENU/Settings/Advanced (at the bottom of the list)/Manage certificates/[Trustesd Root Certificate Authorities]
+		- Check if CA already imported before (where 'Issued To' and 'Issued By' are ca.openam.example.com) and delete it if exists
+		- Import CA-CERT.pem
+		- Restart:	chrome://restart
+
+	Firefox:
+		- MENU/Options/[Certificates]/(View Certificates...)/[Authorities]
+		- Find section 'Andtek'
+		- Check if CA already imported before (where 'Certificate Name' is ca.openam.example.com) and delete it if exists
+			- OPTIONAL: check if old certificate deleted successfully (restart as described below and check it again)
+		- Import CA-CERT.pem, set all trust options in import dialog
+		- Restart:	MENU/Exit
+		
+	IE:
+		- MENU/Internet options/[Content]/[Certificates]/(Certificates)[Trustesd Root Certificate Authorities]
+		- Check if CA already imported before (where 'Issued To' and 'Issued By' are ca.openam.example.com) and delete it if exists
+		- Import CA-CERT.pem
+
+		NOTE: installing CA into IE is important for Cisco Jabber, too.
+		
+		
+	Possible problems if HTTPS cannot work:
+		- maybe old CA not deleted old new CA not imported successfully (validate serial numbers/expiration/subject of certificates)
+		- CA (CA-CERT.pem) not imported before as truster root CA 
+		- browser not restarted properly after CA import
+		- in Firefox set all checkbox in trust settings of CA certificate
+	
+	
+7. Deploy CA certificate and CA-signed OpenAM trust certificate into CUCM
+
+	NOTE: before starting certificate exhange:
+		- disable SSO
+		- go to CUCM/OS Administration/Security/Certificate Management and list certificates
+		- delete CA certificate and CA-signed OpenAM if imported before (both of them are tomcat-trust certificates)
+		
+	- go to CUCM/OS Administration/Security/Certificate Management and import certificates (button 'Upload certificate/Certificate chain')
+		- import CA-CERT.pem as tomcat-trust
+		- import OPENAM-TRUST.pem as tomcat-trust
+	
+	- restart CUCM and CIMP
+
+8. Enable SSO on CUCM
+		- re-create hosted IDP and add to COT (if not added during creation)
+		- export metadata from IDP
+		- Start SSO on CUCM
+			- go to CUCM/System/SAML Single Sign-On
+			- Select 'Per node' mode
+			- click 'Enable SAML SSO' and follow instructions
+				- import IDP metadata
+				- export metadata files (ZIP) from CUCM (button 'Download Trust Metadata File')
+				- import CUCM/Presence metadata file into OpenAM:
+					- goto OpenAM/FEDERATION/[Entity Providers]
+					- Import Entity... (with 2 files)
+					- Check if files imported into proper realm
+					- finally don't forget to add imported entities to COT
+				- finally start Test SSO Setup
+					- select user (which has administrator permission)
+					- click 'Run SSO Test...'
+						NOTE: test will be launched in a browser popup - enable/configure it
+					- if test has been completed a message displayed: SSO Test Successed
+			- Enable bypass URLs in CUCM/Presence (if not enabled during SSO test)
+				- goto CUCM CLI
+				- utils/sso/resovery-url/enable
+				
+				- goto CIMP CLI
+				- utils/sso/resovery-url/enable
+
+9. Configure Jabber				
+	- Set network manually again in Advanced settings (Cisco Communication Manager 9 or later/IP of CUCM - and NOT of CIMP).	
+	- Specify end user (which associated to a CSF device) with long (domain) format in Jabber login page. (e.g. ssotest1@andtek.cee.eilab.biz)
+
+		NOTE: This user will be saved by Jabber, next time you don't have to specify again.
+		
+	- Specify the same end user short name (e.g. ssotest1) and password in IDP SSO login page.				
+
+10. Import CA, CA signed APAS certificate and CA signed IDP trust into APAS
+	CA is required for other certificates and if you or any 3rd party component want to access APAS via SSL (HTTPS).
+	
+	- APAS/Global/Security/[Security Configuration]
+	- set: 	Redirect HTTPS
+
+	- Import CA, APAS, trust and signer certificates:
+		- call APAS/General/Security/[Certificate List]/(Import APAS Certificate) and import ANDPHONE-SIGNED.pem as General certificate
+		- call APAS/General/Security/[Certificate List]/(Import Trusted Certificate) and import CA-CERT.pem as General certificate
+		- call APAS/General/Security/[Certificate List]/(Import Trusted Certificate) and import OPENAM-TRUST.pem as General certificate
+		- call APAS/General/Security/[Certificate List]/(Import Trusted Certificate) and import CA-CERT.pem as SSO certificate
+		- call APAS/General/Security/[Certificate List]/(Import Trusted Certificate) and import OPENAM-SIGNER.pem as SSO certificate
+	- Restart APAS 
+		
+11. Enable SSO in APAS
+	
+	- Configure SSO
+	
+		APAS/Global/Security/Single Sign On (SSO)
+		- set SSO Enabled
+		- set SAML2 IDP metadata URL, e.g.:
+		
+			https://ceerd-openam.andtek.cee.cs.eilab.biz:8443/openam/saml2/jsp/exportmetadata.jsp?entityid=https://ceerd-openam.andtek.cee.cs.eilab.biz:8443/openam&realm=/MSAD
+
+		- Save
+		- restart APAS
+		
+		AFTER RESTART:
+		- if you have certificate problems delete log files before restarting and check andphone_error.log after restarting		
+		- try to fix problems until you have metadata issues in log during startup
+		
+			OPTIONAL: maybe you have to deploy CA root cert into APAS as 'Certificate for SSO', too.
+				- click 'Import Trusted certificate'
+				- choose CA-CERT.pem and choose 'Certificate for SSO' with alias ca_root_sso
+		
+		- If metadata downloaded from IDP export APAS SAML2 metadata:
+		
+			APAS/Global/Security/[Single Sign On (SSO)]/(Export SP metadata)
+			
+			NOTE: check protocol of URLs in metadata, it should be 'https'
+		
+		- Import APAS metadata as SP entity into OpenAM federation and add to COT
+			- goto OpenAM/FEDERATION/[Entity Providers]
+			- Import Entity...
+			- Check if files imported into proper realm
+			- finally don't forget to add imported entities to COT
+
+10. Test WebClient SSO
+	Pre-requisities:
+		- configure SSO test users into AD
+		- assign phone devices to these users in CUCM
+		- configure WebClient or use default settings (latest versions)
+		
+	Configure 
+	With browser:
+		- open a browser
+		- login into OpenAM (using COT realm) with SSO test user
+		- on another tab call WebClient via SSO entry point, e.g:
+		
+			https://ceerd-ftoth-apas1.andtek.cee.cs.eilab.biz:8443/andphone/webuser/sso/index.jsp
+			
+		- if SSO configured successfully WebClient will be started authenticated with the same SSO test user automatically
+		
+--------------------------------------------------------------------------------------------------------				
+Steps of SAML2 based SSO configuration
+======================================
+APAS:
+	1. Enable SAM2 based SSO in APAS by setting this checkbox:
+	
+		APAS/Global/Security/[Single Sign On (SSO)]/SSO Enabled
+		
+	2. Set metadata URL of IDP:
+	
+		APAS/Global/Security/[Single Sign On (SSO)]/SAML2 IDP metadata URL
+		
+		You can find this URL probably in documentations or in administration page of IDP.
+		
+	2. Export SP metadata XML as file using this link:
+	
+			APAS/Global/Security/[Single Sign On (SSO)]/Download SP metadata
+	
+		OR use this URL from link as metadata URL in IDP:
+	
+			http://APAS_HOST:8080/andphone/webuser/sso/saml/metadata
+
+	3. Set name of attribute which contains user ID in SAML response.
+
+		It can be specified in SAML assertion attribute mepping in IDP or you can get it from XML message directly.
+		For example assertion in OpenAM:
+		
+
+		<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+						ID="s28d8c78f5b67f9e42b2738a0bb380d9a7077ca474"
+						InResponseTo="a210ha330eef857h10h8e26jj46jjec"
+						Version="2.0"
+						IssueInstant="2018-02-22T16:23:44Z"
+						Destination="http://localhost:18080/saml/SSO">
+						
+			...
+			<saml:AttributeStatement>
+			  <saml:Attribute Name="uid">														<<<<<<<<<<<<<<<<<<<<<< user ID attribute is here!
+				<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+									 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+									 xsi:type="xs:string">test1</saml:AttributeValue>
+			  </saml:Attribute>
+			  <saml:Attribute Name="mail">
+				<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+									 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+									 xsi:type="xs:string">test1@andtek2.local</saml:AttributeValue>
+			  </saml:Attribute>
+			  <saml:Attribute Name="sn">
+				<saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"
+									 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+									 xsi:type="xs:string">Test</saml:AttributeValue>
+				...
+			</saml:AttributeStatement>
+			...
+		</samlp:Response>
+
+	
+IDP:	
+	1. Import SP metadata into IDP (static mode) or specify SP metadata URL (dynamic mode).
+	
+		
+		
+--------------------------------------------------------------------------------------------------------		
+How to use SSO in WebClient
+===========================
+In APS SSO is only supported by WebClient now. Possible SSO use cases are:
+
+- in Jabber:
+	If you logged into Cisco Jabber with an SSO user (CUCM end-user from AD which configured into IDP) 
+	and you start WebClient in a Jabber browser tab you will be logged in automatically.
+
+- in general browser:
+	Or if you are logged into another WEB application which part of the SAME SSO federation (e.g. CUCM Administration)
+	and you start WebClient in another tab of the same browser you will be logged in automatically.
+
+WebClient has 2 entry points:
+	- general (non-SSO) login URL:
+	
+		http://APAS_HOST:8080/andphone/webuser/app/
+		
+		If you call this address, you can login with default login dialog displayed by the application itself.
+		
+	- SSO login URL:
+	
+		localhost:8080/andphone/webuser/sso/index.jsp
+
+			
+--------------------------------------------------------------------------------------------------------		
+How to disable SSO?
+===================
+Set config(global/SSOEnabled) = false
+
+	update config set val = 'false' where param = 'SSOEnabled';
+
+Sometimes you need to disable SSL (HTTPS), too:
+
+	update config set val = 'false' where param = 'redirectHTTPS';
+
+--------------------------------------------------------------------------------------------------------		
+Network problems
+====================
+ERROR: java.net.UnknownHostException during IDP metadata download
+
+java.net.UnknownHostException: CEE-CS-DC001.Andtek.CEE.CS.Eilab.biz
+        at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:184) ~[?:1.8.0_144]
+        at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392) ~[?:1.8.0_144]
+        at java.net.Socket.connect(Socket.java:589) ~[?:1.8.0_144]
+        at sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:673) ~[?:1.8.0_144]
+        at org.opensaml.ws.soap.client.http.TLSProtocolSocketFactory.createSocket(TLSProtocolSocketFactory.java:193) ~[openws-1.5.1.jar:?]
+        at org.springframework.security.saml.trust.httpclient.TLSProtocolSocketFactory.createSocket(TLSProtocolSocketFactory.java:97) ~[spring-security-saml2-core-1.0.2.RELEASE.jar:1.0.2.RELEASE]
+        at org.apache.commons.httpclient.HttpConnection.open(HttpConnection.java:707) ~[commons-httpclient-3.1.jar:?]
+
+		
+Cause: maybe missing DNS configuration
+		
+		
+Fix: 
+	- APASAdminCLI / 1) Network settings / 5) DNS Configuration
+	- add DNS entries
+	- restart APAS
+
+
+
+--------------------------------------------------------------------------------------------------------		
+Certificate problems
+====================
+Matadata like any other resources is signed with PrivateKeyEntry of WEB server (Tomcat with OpenAM). So SP should contain a certificate which can verify signed resource.
+Certificates are identified by CN field.
+
+The Common Name (CN), also known as the Fully Qualified Domain Name (FQDN), is the characteristic value within a Distinguished Name. 
+
+The Common Name (also CN) identifies the host name associated with the certificate, for example www.example.com or example.com.
+It consists of a single host name in case of a single-name certificate (e.g. example.com, www.example.com), or a wildcard name 
+in case of a wildcard certificate (e.g. *.example.com). In all cases, it is not an URL and therefore it doesn’t include any protocol 
+(e.g. http:// or https://), port number, or pathname.
+
+The common name represents the name protected by the SSL certificate. The certificate is valid only if the request hostname matches the certificate common name. 
+Most web browsers displays a warning message when connecting to an address that does not match the common name in the certificate.
+
+	E.g:	
+		if URL: 
+		
+			 https://idp2.example.com:8443/openam/saml2/jsp/exportmetadata.jsp?entityid=https://idp2.example.com:8443/openam&realm=/MSAD
+			 
+		then you need something like this:
+	
+			Alias name: tomcat
+			Creation date: Jul 19, 2018
+			Entry type: PrivateKeyEntry
+			Certificate chain length: 1
+			Certificate[1]:
+			Owner: CN=idp2.example.com, OU=Tomcat, O=Tomcat, L=Tomcat, C=HU					<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			Issuer: CN=idp2.example.com, OU=Tomcat, O=Tomcat, L=Tomcat, C=HU
+			Serial number: 216629f6
+			Valid from: Thu Jul 19 16:08:07 CEST 2018 until: Sun Dec 03 15:08:07 CET 204
+			Certificate fingerprints:
+					 MD5:  81:A0:17:05:18:5B:F9:38:A4:47:FE:A5:B5:4A:E9:2B
+					 SHA1: 04:FF:BC:1B:61:B9:AA:66:D7:05:A1:58:89:A2:C5:3B:4B:83:6F:23
+					 SHA256: 20:29:92:64:21:8C:11:4A:52:1F:8A:1D:BF:C0:0B:91:E6:0F:26:52:39:84:92:B1:92:E2:50:40:12:16:2E:88
+					 Signature algorithm name: SHA256withRSA
+					 Version: 3
+
+
+
+ERROR: SSL peer failed hostname validation for name: null
+---------------------------------------------------------
+Error in andphone.log:
+
+[2018-07-20 07:42:00,088] [ERROR] [localhost-startStop-1] [CertPathPKIXTrustEvaluator.java:111] - PKIX path construction failed for untrusted credential: [subjectName='CN=idp2.example.com,OU=Tomcat,O=Tomcat,L=Tomcat,C=HU']: unable to find valid certification path to requested target
+[2018-07-20 07:42:00,089] [ERROR] [localhost-startStop-1] [HTTPMetadataProvider.java:273] - Error retrieving metadata from https://idp2.example.com:8443/openam/saml2/jsp/exportmetadata.jsp?entityid=https://idp2.example.com:8443/openam&realm=/MSAD
+        at org.opensaml.ws.soap.client.http.TLSProtocolSocketFactory.verifyHostname(TLSProtocolSocketFactory.java:233) ~[openws-1.5.1.jar:?]
+        at org.opensaml.ws.soap.client.http.TLSProtocolSocketFactory.createSocket(TLSProtocolSocketFactory.java:194) ~[openws-1.5.1.jar:?]
+        at org.springframework.security.saml.trust.httpclient.TLSProtocolSocketFactory.createSocket(TLSProtocolSocketFactory.java:97) ~[spring-security-saml2-core-1.0.2.RELEASE.jar:1.0.2.RELEASE]
+        at org.apache.commons.httpclient.HttpConnection.open(HttpConnection.java:707) ~[commons-httpclient-3.1.jar:?]
+        at org.apache.commons.httpclient.HttpMethodDirector.executeWithRetry(HttpMethodDirector.java:387) ~[commons-httpclient-3.1.jar:?]
+		...		
+Caused by: javax.net.ssl.SSLPeerUnverifiedException: SSL peer failed hostname validation for name: null
+        at org.opensaml.ws.soap.client.http.TLSProtocolSocketFactory.verifyHostname(TLSProtocolSocketFactory.java:233) ~[openws-1.5.1.jar:?]
+        at org.opensaml.ws.soap.client.http.TLSProtocolSocketFactory.createSocket(TLSProtocolSocketFactory.java:194) ~[openws-1.5.1.jar:?]
+		...
+		
+Cause:	
+	- IDP metadata cannot be downloaded from URL with HTTPS because certificate cannot be identified because host information cannot found in CN field of Owner attribute of any certificate.
+	
+		Fix: .........
+		
+	- Missing metadata signing certificate in APAS
+	
+		Fix: 
+			Export IDP signing certificate from IDP ('test' certificate from OpenAM keystore) and install into APAS with 'Import trusted certificate' as 'Certificate for SSO'.
+	
+Fix:
+	1. If you want to download HTTPS resource from IDP then SP needs certificate from WEB-server of IDP. Export it from Tomcat and import it into keystore of SP application (CUCM, APAS)
+		- For example with OpenAM export PrivateKeyEntry certificate from Tomcat (alias: tomcat) 		
+		- Export into APAS 
+		
+	2. 
+
+
+ERROR:  Response issue time is either too old or with date in the future...
+---------------------------------------------------------------------------
+Error in andphone_error.log:
+
+se
+[2018-10-18 10:14:42,719] [ERROR] [http-nio-8443-exec-17] [SamlAuthenticationFailureHandler.java:23] - Error during SSO authentication
+org.springframework.security.authentication.AuthenticationServiceException: Error validating SAML message
+        at org.springframework.security.saml.SAMLAuthenticationProvider.authenticate(SAMLAuthenticationProvider.java:100) ~[spring-security-saml2-core-1.0.2.RELEASE.jar:1.0.2.RELEASE]
+        at org.springframework.security.authentication.ProviderManager.authenticate(ProviderManager.java:156) ~[spring-security-core-3.2.5.RELEASE.jar:3.2.5.RELEASE]
+        at org.springframework.security.saml.SAMLProcessingFilter.attemptAuthentication(SAMLProcessingFilter.java:87) ~[spring-security-saml2-core-1.0.2.RELEASE.jar:1.0.2.RELEASE]
+        at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:211) ~[spring-security-web-3.2.5.RELEASE.jar:3.2.5.RELEASE]
+        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:342) ~[spring-security-web-3.2.5.RELEASE.jar:3.2.5.RELEASE]
+        at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:192) ~[spring-security-web-3.2.5.RELEASE.jar:3.2.5.RELEASE]
+        ...
+		Caused by: org.opensaml.common.SAMLException: Response issue time is either too old or with date in the future, skew 60, time 2018-10-18T08:13:30.000Z
+        at org.springframework.security.saml.websso.WebSSOProfileConsumerImpl.processAuthenticationResponse(WebSSOProfileConsumerImpl.java:126) ~[spring-security-saml2-core-1.0.2.RELEASE.jar:1.0.2.RELEASE]
+        at org.springframework.security.saml.SAMLAuthenticationProvider.authenticate(SAMLAuthenticationProvider.java:87) ~[spring-security-saml2-core-1.0.2.RELEASE.jar:1.0.2.RELEASE]
+        ... 36 more
+
+Cause:	too big time difference between IDP and APAS.
+
+Fix:	
+	- Check time-zone and daylight-saving settings in OpenAM and APAS and fix problems.
+	- Install ntp if not installed yet to synchronize time.
+
+	
+ERROR: PKIX path construction failed for untrusted credential
+-------------------------------------------------------------
+Error in andphone.log or in catalina.out:
+		
+2018-10-16T13:56:02,022|ERROR|localhost-startStop-1|org.springframework.security.saml.trust.CertPathPKIXTrustEvaluator|PKIX path construction failed for untrusted credential: [subjectName='CN=ADFS Signing - CEE-CS-DC001.Andtek.CEE.CS.Eilab.biz']: unable to find valid certification path to requested target
+2018-10-16T13:56:02,023|ERROR|localhost-startStop-1|org.opensaml.saml2.metadata.provider.SignatureValidationFilter|Signature trust establishment failed for metadata entry http://CEE-CS-DC001.Andtek.CEE.CS.Eilab.biz/adfs/services/trust
+2018-10-16T13:56:02,024|ERROR|localhost-startStop-1|org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider|Error filtering metadata from https://CEE-CS-DC001.Andtek.CEE.CS.Eilab.biz/federationmetadata/2007-06/federationmetadata.xml
+org.opensaml.saml2.metadata.provider.FilterException: Signature trust establishment failed for metadata entry
+        at org.opensaml.saml2.metadata.provider.SignatureValidationFilter.verifySignature(SignatureValidationFilter.java:327) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.SignatureValidationFilter.processEntityDescriptor(SignatureValidationFilter.java:178) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.SignatureValidationFilter.doFilter(SignatureValidationFilter.java:156) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.AbstractMetadataProvider.filterMetadata(AbstractMetadataProvider.java:493) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider.processNonExpiredMetadata(AbstractReloadingMetadataProvider.java:395) [opensaml-2.6.1.jar:?]
+	...
+Caused by: org.opensaml.saml2.metadata.provider.MetadataProviderException: Error filtering metadata from https://CEE-CS-DC001.Andtek.CEE.CS.Eilab.biz/federationmetadata/2007-06/federationmetadata.xml
+        at org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider.processNonExpiredMetadata(AbstractReloadingMetadataProvider.java:399) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider.processNewMetadata(AbstractReloadingMetadataProvider.java:355) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider.refresh(AbstractReloadingMetadataProvider.java:261) ~[opensaml-2.6.1.jar:?]
+        ... 9 more
+Caused by: org.opensaml.saml2.metadata.provider.FilterException: Signature trust establishment failed for metadata entry
+        at org.opensaml.saml2.metadata.provider.SignatureValidationFilter.verifySignature(SignatureValidationFilter.java:327) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.SignatureValidationFilter.processEntityDescriptor(SignatureValidationFilter.java:178) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.SignatureValidationFilter.doFilter(SignatureValidationFilter.java:156) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.AbstractMetadataProvider.filterMetadata(AbstractMetadataProvider.java:493) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider.processNonExpiredMetadata(AbstractReloadingMetadataProvider.java:395) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider.processNewMetadata(AbstractReloadingMetadataProvider.java:355) ~[opensaml-2.6.1.jar:?]
+        at org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider.refresh(AbstractReloadingMetadataProvider.java:261) ~[opensaml-2.6.1.jar:?]
+        ... 9 more
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+UNDER CONSTRUCTION
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+		
+	
+ERROR:  Error during CUCM SSO test in test popup: Error while processing SAML Response.
+---------------------------------------------------------------------------------------
+		
+		
+		
+		

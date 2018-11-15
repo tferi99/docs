@@ -1,0 +1,133 @@
+===================
+Call classification
+===================
+
+Configuration
+-------------
+- create tag group
+
+	APAS/Call Center/Call Classification
+
+- assign tag group to a queue
+
+	APAS/Call Center/Queues/[Queue Settings]/Tag group
+
+- use default profile
+
+- activate classification popup
+
+	APAS/Client/Profiles/[General Profile Parameters]/Call Classification		-> On
+
+- call an agent via pilot - call DC only renders popup for real ACD calls (but not for direct calls!)
+
+
+
+DB
+==
+             1    *                        *    1                           *    1             *    1                   0.1  *   
+    acdCall <------ acdCallClassification <------ acdCallClassification2Tag ------> acdCallTag ------> acdCallTagGroup <------ acdQueue
+                     - created                    - fk_acdcallclassification        - fk_tagGroup                              - fk_acdcalltaggroup
+                     - queueId                    - fk_acdcalltag                   - name
+                     - agentDn                                                      - customId
+					 
+- You can assign a tag-group to one or more queue
+- Tag group contains tags
+
+
+(1) Sending tag group list to DC during startup
+
+	--> ClientConnectionMina.sendTagGroupList(boolean installObserver)
+		getting XML:
+		--> DesktopClient.getTagGroupList(AcdCallTagGroupChangedObserver observer, boolean installObserver)
+		
+		APAS -> DC during startup:
+				
+			<tagGroupList showpopup="off">
+				<tagGroup id="7" name="Grp1" queueID="28">
+					<tags>
+						<tag id="41" displayID="11" name="tag1" shortDescription="Tag 1 h" longDescription="Taaaaaaaaaggggggggg 1" isDefault="true"/>
+						<tag id="45" displayID="22" name="tag2" shortDescription="Tag 2" longDescription="Taaaaag 2" isDefault="true"/>
+						<tag id="43" displayID="33" name="tag3" shortDescription="Tag 3" longDescription="Taaaaag3 " isDefault="false"/>
+					</tags>
+				</tagGroup>
+			</tagGroupList>
+			
+			
+	DEBUGGING: 
+		level:		DEBUG
+		logger:		com.andtek.andphone.communicator.ClientConnectionMina
+		prefix:		"CMINA_XML:"
+			
+			
+(2) Call classification
+
+	At the end of call DC displays a dialog with associated tag group with one or more tags.
+	Here user choses one or more items and submits dialog. Call classification will be sent to APAS as XML message
+	and it stores data into database.
+
+	- Normal case at live system: XML message received from client (classifyAcdCall)	
+	
+			<classifyAcdCall callID="12345/1" queueID="5" agentDN="1202">
+		      <tags>
+			    <tag id="1" />	   												//id attribute is DB id!!! NOT displayID!!!
+			    <tag id="2" />
+			   </tags>
+			</classifyAcdCall>
+
+	
+		--> com.andtek.andphone.utils.events.EventQueueWorker.run()
+			--> com.andtek.andphone.communicator.ClientConnectionMina.handleEvents(APASEvent[] events, Object object)
+				EVENT: classifyAcdCall
+				--> ClassifyAcdCallCommandHandler.processMessage()
+		- getting input
+		--> [1]
+		- sending response XML to DC
+				
+				<classifyAcdCallResponse error=\"\" errorCode=\"0\" />
+		
+		
+		
+	- Testing: acdclassification.jsp (for testing purposes)
+		--> AcdClassificationJspHelper.classifyCall()
+			--> [1]
+	
+
+	[1] AcdCallClassificationService.classifyCall(String cucmCallId, List<Integer> tagIds, int queueId, String agentDn)
+		- if call already has been terminated, classification can be saved immediately
+		- if call not terminated yet but under removing it can be saved immediately, too
+		
+		- if save immediately:
+			--> AcdCallClassificationService.saveCallClassification(AcdCallClassification cl)
+				--> acdCallClassificationDao.insert(cl);
+	
+				
+(3) cleanup, deleting old data
+
+	com.andtek.andphone.Admin.background()
+		--> com.andtek.andphone.utils.Modules.maintenance(JTAPIThread jtapi)
+			--> maintenance(JTAPIThread jtapi, String moduleName)
+				--> com.andtek.andphone.partner.acd.Module.maintenance(JTAPIThread jtapi)
+					--> com.andtek.andphone.partner.acd.Module.deleteOldAcdCalls(int days)
+						It deletes old ACD call entries and dependencies.
+						--> AcdCallClassificationService.deleteOldClassifications(int days);
+			
+			
+----------------------------------------------------------------------------------------------------------------------------------------			
+Testing
+-------
+
+Cleanup
+-------
+- Cleanup called by maintenance
+	
+		com.andtek.andphone.Admin.background(JTAPIThread jtapi)
+		
+Here put 
+
+		Modules.maintenance(jtapi);
+		
+into '10 seconds' section ()
+		
+- The most simple 
+
+			

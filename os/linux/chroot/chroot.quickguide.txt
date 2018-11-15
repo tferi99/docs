@@ -1,0 +1,3 @@
+
+
+chroot <dir>		:  running ``${SHELL} -i'' (default: /bin/sh)

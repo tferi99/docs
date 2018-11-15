@@ -1,0 +1,115 @@
+====================
+Log analysis of APAS
+====================
+
+- Locating a call
+- To get calling/called party
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Locating a call
+===============
+
+Possible input information:
+	- Call ID
+	- Start of call
+	- End of call
+	- Calling party
+	- Called party
+	- Original called party
+
+Log files:
+	- andphone.log*
+	- CiscoJtapi*.log
+	
+	
+- WITH CALL ID:		andphone.log:
+	Most simple: you have call ID
+	- Global search for call ID on andphone.log* files
+	- After locating file load it into LogExpert and open a search tab with call ID
+	- You can get start/end time from the first/last item of search tab 
+	
+		[2017-03-07 11:04:01,801] [DEBUG] [ObserverThread(LineObserver)] [LineObserver.java:264] - LO:Received (P1-APASjtapi) 15703731/16 CallActiveEv [#4692854] Cause:106 CallCtlCause:0 CiscoCause:0 FeatReason:12 for 
+		...
+		[2017-03-07 11:04:26,112] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.AgentCallObserver@3d25e973)] [AgentCallObserver.java:231] - RCCO-CC:Received[0] - DEBUG_ACD_MSG: jtapiLogFormat(): [(P1-APASjtapi) 15703731/16 CallObservationEndedEv [#4692963] Cause:100 CallCtlCause:0 CiscoCause:0 FeatReason:12, com.cisco.jtapi.CallObservationEndedEvImpl, cgpn: [441189244147], cdpn: [441189240000], call: [(P1-APASjtapi) GCID=(16,15703731)->INVALID], callID: [15703731/16 (15703731)], [FeatReason:12 Cause:100 CiscoCause:0]]
+		
+- - WITHOUT CALL ID:	CiscoJtapi*.log:
+	Not so simple: you don't have call ID but only time:
+
+	- Get call from CiscoJtapi*.log
+
+		Pattern (regex):
+		
+			<TIME>.*received Event: com.cisco.cti.protocol.NewCallEvent
+		
+		
+		CallID can be retrieved from 'callID' field of NewCallEvent object.
+		
+		
+			1909: May 03 08:56:47.006 CEST %JTAPI-PROTOCOL-7-UNK:(P1-192.168.5.18) received Event: com.cisco.cti.protocol.NewCallEvent {
+				  eventSequence                     = 68
+				  lineCallManagerID                 = 1
+				  lineID                            = 19256
+				  lineHandleSpecified               = true
+				  deviceName                        = SEP64A0E714F271
+				  callCallManagerID                 = 1
+				  callLegID                         = 31117820
+				  globalCallManagerID               = 1
+				  callID                            = 99720
+				  callingParty                      = 9030
+				  calledParty                       = 9000
+				  originalCalledParty               = 9000 		
+				  ....
+			
+			
+	- Get call from andphone.log.*
+
+
+
+		START Pattern (regex):			<TIME>.*recorder.PhoneCallObserver.*RCCO-CC.*CallActiveEv
+		
+		
+			[2017-05-03 08:56:47,577] [DEBUG] [ObserverThread(com.andtek.andphone.ANDCallObserver@650c178e)] [ANDCallObserver.java:425] - ACO:Received (P1-TOTH_APAS) 99720/1 CallActiveEv [#109] Cause:106 CallCtlCause:0 CiscoCause:0 FeatReason:12 for  callID=101 Cause:CAUSE_NEW_CALL Reason:REASON_NORMAL | callChangedEvent() METHOD_STARTED
+
+
+			Log entry about CallActiveEv contains call ID.
+			
+		END Pattern (regex):			<TIME>.*recorder.PhoneCallObserver.*RCCO-CC.*CallObservationEndedEv 
+		
+		
+			[2017-05-03 08:56:47,577] [DEBUG] [ObserverThread(com.andtek.andphone.ANDCallObserver@650c178e)] [ANDCallObserver.java:425] - ACO:Received (P1-TOTH_APAS) 99720/1 CallActiveEv [#109] Cause:106 CallCtlCause:0 CiscoCause:0 FeatReason:12 for  callID=101 Cause:CAUSE_NEW_CALL Reason:REASON_NORMAL | callChangedEvent() METHOD_STARTED
+
+
+			Log entry about CallActiveEv contains call ID.
+			
+			
+			
+	- Get call from andphone_record.log if you have recording:
+
+
+			Pattern (regex):			<TIME>.*->recordCall: <recordCall.*callID=
+
+				2017-May-03 08:56:57.094: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" callingParty="9030" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9030" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
+
+		
+---------------------------------------------------------------------------------------------------------------------------------------------
+To get calling/called party
+===========================
+			
+
+	- Global search for call ID on CiscoJtapi*.log files
+	- After locating file load it into LogExpert and open a search tab with call ID
+	- You can get a lot of information from the first item search tab 
+
+	82574817: Mar 07 11:04:01.800 UTC %JTAPI-CTI-7-UNK:(P1-APASjtapi){Line:AC_UK_TVP_1:441189240000:EMEA_ptn:(15,436)|Call:[GCID=(15703731/16),CID=272472200]} NewCall [state=OFFERING auxData=1 destCM=16 destType=IN_CLUSTER 
+		unCg=441189244147 unCd=441189240000 unOrigCd=441189240000 unLRP= cg=441189244147 cgN=HR Central Number ed=441189240000 edN=Attendant orig=441189240000 origN=Attendant lrp= lrpN= origin=INBOUNDINTERNAL reason=DIRECTCALL 
+		activeTone=0 devN=AC_UK_TVP_1 RIU=false Priv=false Select=0 CgPI=True CgNPI=True CdPI=True CdNPI=True OrigPI=True OrigNPI=True LRPPI=True LRPNPI=True UcodeCgPN=HR Central Number Locale=1 UcodeCdPN=Attendant Locale=1 
+		CgIP=172.23.26.27 CgIPv6=null LineIdDn=441189244147 Parti=EMEA_ptn globCg=441189244147 CdNType=0 CgPNType=0 Pre=true Priority=1 UniqueIdentifier=0000000000EF9EB3103D988800000000 cgHuntDN=: cdHuntDN=null:null 
+		cgPat=2 cdpat=2 cgVideoCap=0 cgTelepresInfo=0 cgNoScreens=-1 cdVideoCap=0 cdTelepresInfo=0 cdNoScreens=-1 pCall=null CallType=0]
+		
+		callig:			unCg=441189244147 
+		called:			unCd=441189240000 
+		orig called:	unOrigCd=441189240000 
+		
+		

@@ -1,0 +1,36 @@
+=============================
+ACD Group Category management
+=============================
+If we save a category configuration all DC will be notified where associated line DN is supervisor of changed category 
+(NOTE: you have to restart DC if you change supervisors.)
+				
+
+	<AcdCategoryList>
+		<category id="$CATID" name="Dep1" type="1" typeName="Department" supervisor="9000">
+			<supervisors>
+				<supervisor dn="9000"/>
+			</supervisors>
+		</category>
+		<category id="3" name="Grp1" type="3" typeName="Group" supervisor="9000">
+			<supervisors>
+				<supervisor dn="9000"/>
+			</supervisors>
+		</category>
+	</AcdCategoryList>
+
+	Sending:
+	
+		<=== AgentUpdatedEvent
+		EventQueueWorker.run()
+			--> Queue.handleEvents(APASEvent[] events, Object object)		// observer = ClientConnectionMina
+				--> ClientConnectionMina.QueueChanged(QueueChangedEvent[] events)
+					--> sendQueueList(boolean sendWidgetDefinition)
+						--> sendAcdCategoryList()
+
+INTERESTING NOTE, that it's not clear what message is used by DC, maybe <queueList> or both.
+
+						
+SEE MORE:
+	http://devel.andtek.com/apas/wiki/ProjectGassReporting
+	tools_and_languages\telephony\Apas\tickets\818 
+

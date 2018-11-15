@@ -1,0 +1,32 @@
+================
+Spring Cartridge
+================
+(by Ferenc Toth)
+
+
+The Spring framework envelopes a 3-tier J2EE application architecture, 
+the AndroMDA Spring cartridge however focuses on the PERSISTENCE and BUSINESS tier only. 
+
+
+X. Summary
+----------
+Hibernate POJO 				class 		add the <<Entity>> stereotype 	
+
+Stand-alone Spring POJO Service		class 		add the <<Service>> stereotype 	
+OR Spring POJO Service wrapped 
+with an EJB Session Bean 	
+
+Value object 				class 		add the <<ValueObject>> stereotype, draw a dependency from an <<Entity>> to 
+							this class in order to have a transformation method generated in the entity's DAO 	
+
+Enumeration 				class 		assign a class with the <<Enumeration>> stereotype as the type of an entity's attribute 	
+
+Hibernate QL 				operation 	add an OCL body on an operation with the UML query flag set to true 	
+
+Unique attribute 			class 		add the <<Unique>> stereotype to an attribute, the attribute's class must carry the 
+							<<Entity>> stereotype 	
+
+Nullable parameter 			operation	only useful on operations modeled for <<Entity>> and <<Service>> classes
+					parameter 	
+
+

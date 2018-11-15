@@ -1,0 +1,212 @@
+Hi Christian,
+
+"keytool -changealias -alias 2 -destalias tomcat -keystore .keystore -storetype pkcs12"
+
+It's usable to change alias name if the name of source alias is '2'. But we cannot know the name. First we have to query alias names. Then we can call this command with the proper -alias option.
+
+Please send my LAST email back to me about this topic where I've explained steps more exactly, for example how to get alias names.
+
+There is the answer you need.
+
+Regards
+Ferenc
+
+-----Original Message-----
+From: Christian Sedlmeier [mailto:csedlmeier@andtek.com]
+Sent: Thursday, June 21, 2012 11:45 AM
+To: dev@andtek.com
+Subject: WG: ANDTEK Support: Warten auf Antwort [case:1334136566]
+Importance: High
+
+Hello all.
+
+I really need now an answer for this fort the customer. If something is not clear please send me an answer and I will respond as soon as possible.
+
+Kind regards
+
+Christian
+
+-----Ursprüngliche Nachricht-----
+Von: Christian Sedlmeier [mailto:csedlmeier@andtek.com]
+Gesendet: Dienstag, 19. Juni 2012 09:15
+An: 'ftoth@andtek.com'
+Betreff: AW: ANDTEK Support: Warten auf Antwort [case:1334136566]
+Wichtigkeit: Hoch
+
+Hello Ference.
+
+I seam Roland change the E-Mail. This is the reason why you did not recive my question. Can you please take a look and answer me soon ?
+
+Kind regards
+
+Christian
+
+-----Ursprüngliche Nachricht-----
+Von: Christian Sedlmeier [mailto:csedlmeier@andtek.com]
+Gesendet: Freitag, 8. Juni 2012 13:19
+An: 'ftoth@andapps.com'
+Betreff: WG: ANDTEK Support: Warten auf Antwort [case:1334136566]
+
+Hello Ferenc.
+
+The customer did the following:
+
+**********************************
+
+- New installation of server      	 APAS-4.1.2-x86_32-Setup.iso
+- UPGrade 			APAS-x86_32-42-OS201102-Update.pkg
+- UPgrade to  			APAS-x86_32-441a-483-Update.pkg
+- PKCS12 Stores
+- keytool -changealias -alias 2 -destalias tomcat -keystore .keystore -storetype pkcs12
+- Upgrade APAS-x86_32-441h-11-Update.pkg
+- upload backup  to server
+
+Everything up and running
+
+Now the question from customer:
+
+Is it possible to do ith with the following command ?
+
+ROOT Access and  "keytool -changealias -alias 2 -destalias tomcat -keystore .keystore -storetype pkcs12"
+
+************************************************
+
+Maybe you can anser the question ?
+
+Kind regards
+
+Christian
+
+
+
+-----------------------------------------
+Von: Ferenc Toth [mailto:ftoth@andapps.com]
+Gesendet: Donnerstag, 17. Mai 2012 16:01
+An: csedlmeier@andtek.com
+Cc: Zoltan Balogh
+Betreff: APAS keystore tests 
+
+Hi Christian, 
+
+I walked through all of steps but following more exactly original steps and versions. 
+Finally I found the possible origin of problem and I provided a possible solution. 
+
+The customer did the following steps: 
+1. APAS-4.1.2h-x86_64-Setup.iso
+2. APAS-x86_64-42-OS201102-Update.pkg
+3. APAS-x86_64-441a-373-Update.pkg
+4. Restore backup_20120417.pkg
+5. Installation of pkcs12 Store (company cert)
+<--- Here the APAS was running ---> 
+
+Upgrade: 
+
+6. APAS-x86_64-441g-482-Update.pkg
+<--- Here no https acces was working ---> 
+
+My steps were : 
+
+1.	APAS-x86_64-412h-19-Setup.iso 
+
+TLS config from server.xml: 
+
+maxThreads=\"150\" minSpareThreads=\"25\" maxSpareThreads=\"75\" 
+enableLookups=\"false\" disableUploadTimeout=\"true\" 
+acceptCount=\"100\" scheme=\"https\" secure=\"true\" 
+clientAuth=\"false\" sslProtocol=\"TLS\" keystoreType=\"PKCS12\" /> 
+
+
+aPKCS12, default alias (tomcat), default password (changeit) 
+
+
+keytool -list -storetype pkcs12 
+
+Keystore type: PKCS12
+Keystore provider: SunJSSE 
+
+Your keystore contains 1 entry 
+
+tomcat, May 16, 2012, PrivateKeyEntry,
+Certificate fingerprint (MD5): 28:33:D5:47:1D:78:52:40:44:0E:AB:2F:E8:8F:E4:D1 
+
+
+2.	APAS-x86_64-42-OS201102-Update.pkg 
+
+3.	APAS-x86_64-441a-373-Update.pkg 
+
+TLS config from server.xml: 
+
+maxThreads=\"150\" minSpareThreads=\"25\" maxSpareThreads=\"75\" 
+enableLookups=\"false\" disableUploadTimeout=\"true\" 
+acceptCount=\"100\" scheme=\"https\" secure=\"true\" 
+clientAuth=\"false\" sslProtocol=\"TLS\" keystoreType=\"PKCS12\" /> 
+
+
+e	PKCS12, default alias (tomcat), default password (changeit), so TLS configuration has not been changed. 
+
+Keystore content has not been changed. 
+
+4.	I did not have any backup so I didn’t restore anything here. 
+
+5.	Then I’ve generated a self-signed PKCS12 cert, and imported it into APAS: 
+
+TLS config has not been changed in Tomcat, only keystore has been replaced with uploaded file: 
+
+
+keytool -list -storetype pkcs12 –v 
+
+Keystore type: PKCS12 
+Keystore provider: SunJSSE 
+
+Your keystore contains 1 entry 
+
+Alias name: 2 
+Creation date: May 16, 2012 
+Entry type: PrivateKeyEntry 
+Certificate chain length: 1 
+Certificate[1]: 
+Owner: EMAILADDRESS=l@a.b, CN=Lajos, OU=Devs, O=Internet Widgits Pty Ltd, L=Budapest, ST=Some-State, C=HU 
+Issuer: EMAILADDRESS=l@a.b, CN=Lajos, OU=Devs, O=Internet Widgits Pty Ltd, L=Budapest, ST=Some-State, C=HU 
+Serial number: a127549889cbcb31 
+Valid from: Wed May 16 15:03:41 CEST 2012 until: Sat May 14 15:03:41 CEST 2022 
+Certificate fingerprints: 
+MD5: 66:A1:73:B4:30:E1:B9:FE:FF:71:08:D6:DB:9B:81:6D 
+SHA1: CC:5E:D7:0D:61:60:A5:06:60:2C:A0:D7:9A:55:74:92:83:5D:3E:B6 
+Signature algorithm name: SHA1withRSA 
+Version: 1 
+
+
+YESSSSSSSS, step 5 removes old alias ‘Tomcat’ from keystore. I suspect that this step can be responsible for problem. 
+Question here: is there a specification for importing a PKCS12 keystore? 
+Zoltan said that imported keystore will be replace old one as-is (so not imported but overwritten). New keystore can contain any alias. Maybe it’s not a problem with PKCS12. 
+I tested HTTPS with this new keystore and it works!!! It’s strange, but works. 
+
+
+6.	APAS-x86_64-441g-482-Update.pkg 
+
+During update I’ve got the following error message in /var/log/update.log 
+
+Entry for alias 1 successfully imported. 
+Import command completed: 1 entries successfully imported, 0 entries failed or cancelled 
+keytool error: java.lang.Exception: Alias does not exist 
+
+
+o	APAS-x86_64-441g-482-Update.pkg contains tomcat5-apas-config-1.0.0.0-1.AP.noarch.rpm which contains a script to convert the old PKCS12 into JKS keystore. 
+o	After conversion old ‘tomcat’ keystore alias will be renamed into ‘andphone’ but because missing ‘tomcat’ alias the new ‘andphone’ alias won’t be created. 
+
+
+
+
+Conclusion: 
+The problem generated during importing a PKCS12 keystore into APAS-x86_64-441a-373 because here there is no any validation to check imported keystore. 
+The bug is activated only if user imports a PKCS12 key into APAS older than APAS-x86_64-441g and APAS will be updated then to APAS-x86_64-441g. 
+
+The most simple solution can be to adding this warning to the specification: 
+
+The key alias in PKCS12 keystore to be imported should be: tomcat 
+
+The problem automatically solved in APAS-x86_64-441g or higher because these versions contain JKS keystore and there is no keystore conversion (from PKCS12). 
+
+Regards 
+Ferenc
+

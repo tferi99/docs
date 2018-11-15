@@ -1,0 +1,115 @@
+========
+APAS FAQ
+========
+
+Linux
+-----
+- How are services automatically restarted in live Linux?
+- How to change password policies in APAS6?
+
+General
+--------
+- Telephony abbreviations
+- APAS Definitions
+
+JTAPI
+-----
+- Observers in APAS
+- How to configure secure JTAPI?
+
+Configuration
+-------------
+- Which group should be assigned to application user for APAS?
+- Howto configure phone menu?
+- Howto add MA configuration?
+- Howto configure silent monitoring?
+- Where stored database connect configuration?
+- Howto configure Transfer Queues?
+- Howto associate a phone to a Client Profile?
+- Howto activate JMF log?
+- How to configure a Busy Pilot?
+- Howto configure group display?
+- Howto add custom values to group display?
+- SIP trunk configuration
+- How to manage High Availability (HA)?
+- How to remove SSL from APAS?
+- How to configure JTAPI presence?
+- How to configure pickup group?
+- How to update JTAPI JAR manually?
+- How to configure and make conference call?
+- How to configure Reverse Number Lookup popup in WebClient?
+- How to configure directory mapping and notes?
+- How to configure Tomcat8 for APAS?
+- How to configure SSO for APAS?
+- How to configure Exchange Calendar?
+
+ACD
+---
+- Howto configure ACD?
+- Queue and pre-queue
+
+Recording
+---------
+- Howto configure recorder?
+- Recorder1 vs recorder2
+- Howto build recorder?
+- Howto configure recorder announcement?
+- Howto test recorder with tcpreplay?
+
+Network/Security
+----------------
+- APAS-CUCM certificate exchange
+- How to test APAS certificate against CUCM?
+- How to access database remotely?
+- How to setup secure JTAPI?
+- How to trace PassThroughRequest messages sent by APAS to phones?
+
+Troubleshooting
+---------------
+- Simulation XML configuration cannot be uploaded
+- Phone menu does not work
+- Service URLs contain 127.0.0.1 as host
+- Phone cannot tap with silent monitor
+- Inconsistent group display in Desktop Client
+- Group display is not displayed in simulator
+- Error - User connected on an invalid port
+- How to enable JMX on APAS?
+
+Development
+-----------
+- How to get history of APAS branches?
+- How to re-create database?
+- Howto remote debug APAS ISO?
+- Howto get MAC address by DN from APAS?
+- JRebel remoting for APAS
+- Howto add APAS autologin for developers?
+- Problems during build
+- APAS Tweaks
+- Where APAS projects can be found on SVN?
+- Building APAS projects
+- Where can I download APAS update packages?
+- How to upgrade an ISO APAS to the latest version.txt
+
+ISO
+---
+- APAS 4 ISO configuration details
+- Where are ISO images stored?
+- Howto use update packages?
+- 64bit ISO in vmWare
+- Howto install Wireshark to ISO APAS?
+- How to get SVN revision number from APAS version?
+- How to deactivate monit?
+	
+Desktop Client
+--------------
+- How connects Desktop Client to the system?	
+- How CDP dynamic association works on Desktop Client?
+- How to activate developer widget?
+	
+WebClient
+---------
+- How to config WebClient authentication?
+
+WEB services
+------------
+- APAS REST WEB services

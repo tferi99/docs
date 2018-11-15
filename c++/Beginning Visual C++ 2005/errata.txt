@@ -1,0 +1,388 @@
+
+Chapter Page Details Date
+ 
+ 14 Misspelled Word
+Paragraph 2, line 4 (or sentence 3), near the end reads:
+
+"... the solution folder has the came name as the project."
+
+The word "came" probably should be "same" and read "the solution folder has the same name as the project.  3/3/06  
+ 
+ 
+ 14 Misspelled Word
+Paragraph 2, line 4 (or sentence 3), near the end reads:
+
+"... the solution folder has the came name as the project."
+
+The word "came" probably should be "same" and read "the solution folder has the same name as the project.  3/3/06  
+ 
+ 
+1 18 Replace Sentence
+The second sentence on the page should be replaced by the following:
+
+In the left pane of the Options dialog that is displayed, extend the 
+Text Editor item by clicking the +, do the same for the C/C++ item 
+and select General. If you then check the Line numbers box in the 
+right pane and click the OK button, line numbers will be displayed.  6/08/06  
+ 
+ 
+ 21 Error in Text
+Second line from the bottom:
+
+Text reads:
+click Code in the right pane, and C++ File(.cpp) in the right pane.
+
+Should read:
+click Code in the left pane, and C++ File(.cpp) in the left pane.  7/25/06  
+ 
+ 
+ 77, 84, ... Error in Text
+The bitwise OR should be " | " rather than the " > ". 04/26/2006  
+ 
+ 
+ 82, 84, 85 Errors in Code
+Every occurent of the bitwise OR operator, which is described as '<', should be '|'. 04/08/2006  
+ 
+ 
+ 84-85 Incorrect Symbol
+The section on the Bitwise OR uses a greater-than symbol:
+>
+
+It should use:
+the Bitwise OR symbol |.  4/25/06  
+ 
+ 
+ 90 Typo
+The third line in the third paragraph is:
+"if you use duplicate names makes, it very easy to hide variables"
+should be:
+"if you use duplicate names, it makes it very easy to hide variables"
+ 9/13/06  
+ 
+ 
+ 91-92 Error in Figure
+On page 91 the text references Figure 2-12; and then discusses "the variable VALUE1 which appears at the beginning..." There is no such variable VALUE1 in Figure 2-12, or VALUE4. *see download  03/29/2006  
+ 
+ 
+ 99 Error in Text
+Toward the bottom of page in the section titled "C++/CLI Specific: Fundamental Data Types", the table below it reads:
+
+long long | 8 | From 9,223,372,036,854,775,808 to 9,223,372,036,854,775,808 in the row. 
+
+It should read:
+
+long long | 8 | From -9,223,372,036,854,775,808 to 9,223,372,036,854,775,808  05/25/2006  
+ 
+ 
+ 100 Error in Text
+Under the Fundamental Type Column is reads:
+"ool" 
+
+It should read:
+"bool"  05/24/2006  
+ 
+ 
+ 108 Error in Code
+The code line in the middle of the page that reads:
+ConsoleKeyInfo keyPress = Console ReadKey(true);
+
+should be:
+ConsoleKeyInfo keyPress = Console::ReadKey(true);  4/08/06  
+ 
+ 
+ 116 Error in Text
+In the second line of the paragraph at the top of the page the text reads:
+"bool:true" 
+
+Should read:
+"bool::true"  04/08/2006  
+ 
+ 
+ 164 Error in Text
+"Under "Using Objects", 2nd paragraph:
+one ouse based on a given blueprints
+
+Should be:
+one ouse based on a given set of blueprints  3/18/06  
+ 
+ 
+4 175 Error in Example
+The output for the example is from a debug version, so the pointer values differ by more than 4. A typical output for a release version of the program is:
+
+number1 = 66 &number1 = 0012FF70 number1 = 990 pnumber = 0012FF74 *pnumber = 99  6/08/06  
+ 
+ 
+ 199 Error in Text
+2nd paragraph:
+left parenthesis
+
+should be:
+em dash.  04/24/2006  
+ 
+ 
+ 201 Error in Text
+7th line down:
+left parentheses
+
+should be:
+em dashes  4/24/2006  
+ 
+ 
+ 206 Error in Text
+How It Works on the 3rd line: left parenthesis
+
+should be:
+em dash.  4/24/2006  
+ 
+ 
+ 210 Error in Text
+3rd line:
+'place'
+
+should be:
+'placed'.  4/24/2006  
+ 
+ 
+ 213 Error in Text
+13th line:
+left parenthesis
+
+should be:
+an em dash.  4/24/2006  
+ 
+ 
+ 216 Error in Punctuation
+3rd Paragraph:
+there should be a period at the end of the sentence.  4/24/06  
+ 
+ 
+ 216 Error in Text
+3rd paragraph:
+left parenthesis
+
+should be:
+an em dash  4/24/2006  
+ 
+ 
+ 216 Error in Text
+Last paragraph:
+the first left parenthesis
+
+should be:
+an em dash.  4/24/06  
+ 
+ 
+ 217 Error in Text
+2nd to last paragraph:
+left parenthesis
+
+should be:
+an em dash  4/24/2006  
+ 
+ 
+ 220 Error in Text
+third word on the third line:
+trim()
+
+should be:
+Trim()  4/10/06  
+ 
+ 
+ 220 Error in Text
+6th paragraph, 2nd to last sentence:
+left parentheses
+
+should be:
+em dashes  4/24/06  
+ 
+ 
+ 222 Error in Code
+In the 2nd code fragment of the page, {0] should be {0}. 4/24/2006  
+ 
+ 
+ 225 Error in Code
+4th paragraph 'stackValue' should be 'trackValue'. 4/24/2006  
+ 
+ 
+ 226 Error in Text
+5th paragraph in the middle of the page, in the 2nd sentence. 'This' should be 'Thus'. 4/24/2006  
+ 
+ 
+ 227 Error in Code
+In the second to last paragraph the code reads:
+!pstart > pend
+
+It should read:
+!(pstart > pend)  03/19/2006  
+ 
+ 
+ 235 Error in Text
+2nd paragraph, left parenthesis should be an em dash. 4/24/2006  
+ 
+ 
+ 247 Error in Text
+1st paragraph, left parenthesis should be an em dash. 4/24/2006  
+ 
+ 
+5 253 Error in Example
+In the example Ex5_10.cpp:
+the first argument is missing from the sum() function call in each of 
+the two statements in the main() function.
+The statements should be:
+
+cout << sum(6, 2, 4, 6, 8, 10, 12) << endl;
+cout << sum(9, 11, 22, 33, 44, 55, 66, 77, 66, 99) << endl; 
+
+AND
+
+The output shown following the example is also incorrect.
+It should be:
+42
+473
+Press any key to continue . . .  6/05/06  
+ 
+ 
+ 278 Error in Text
+4th paragraph before Try It Out, in the 2nd sentence there is 'or' missing so it should read: 
+'If you initialize a parameter to a function in the prototype, or if...'  4/24/2006  
+ 
+ 
+ 283 Error in Text
+4th paragraph, the three left parentheses should be em dashes. 4/24/2006  
+ 
+ 
+ 287 Error in Text
+In the first sentence - the two left parentheses should be em dashes. 4/24/2006  
+ 
+ 
+ 296 Error in Figure
+Figure 6-5, In the third block down:
+/0
+
+should be:
+\0  7/19/06  
+ 
+ 
+ 309 Error in Text
+7th paragraph 'al' should be 'all'. 4/24/2006  
+ 
+ 
+ 311 Error in Code
+In the // comment in the code, 'found' has spilled on to the next line. 4/24/2006  
+ 
+ 
+ 313 Error in Text
+2nd from last paragrah the two left parentheses should be em dashes. 4/24/2006  
+ 
+ 
+ 324 Error in Text
+1st paragraph, 2nd to last sentence 'structs' last 's' should be of a different type. 4/24/2006  
+ 
+ 
+ 338 Error in Code
+Last cout should have a space between << and endl; 4/24/2006  
+ 
+ 
+ 359 Error in Code
+In main, in the declaration for CBox cigar there should be a space before the last initializing value. 4/24/2006  
+ 
+ 
+ 360 Error in Text
+2nd from last paragraph, the left parenthesis in the last sentence should be an em dash. 4/24/2006  
+ 
+ 
+ 361 Error in Code
+In the first code frapgment, there should be a space preceding the last initial value, 1.0. 4/24/2006  
+ 
+ 
+ 388 Error in Text
+5th paraph in the last, last sentence, one of the two successive 'the' should be deleted. 4/24/2006  
+ 
+ 
+ 419 Error in Text
+Just below the middle of the page following the code fragment the left parenthesis should be an em dash. 4/24/2006  
+ 
+ 
+ 444 Error in Text
+In point 2 at the bottom of the page the left parenthesis should be an em dash. 4/24/2006  
+ 
+ 
+ 446 Error in Text
+In the paragraph preceding the section heading the left parenthesis should be an em dash. 4/24/2006  
+ 
+ 
+ 448 Error in Text
+4th paragraph, "'real" has a spurious single quote. 4/24/2006  
+ 
+ 
+ 449 Error in Text
+In the last sentence - 'the' in code font should be in normal paragraph font. 4/24/2006  
+ 
+ 
+ 452 Error in Text
+2nd paragraph, the left parenthesis should be an em dash. 4/24/2006  
+ 
+ 
+ 454 Error in Text
+Last paragraph, in the 2nd to last sentence there should be a space between 'as' and 'Header File (.h)'. 4/24/2006  
+ 
+ 
+ 473 Error in Text
+In the 1st sentence there should have comma between 'programming' and 'class inheritance'. 4/24/2006  
+ 
+ 
+ 523 Error in Text
+In the last point 'A class that contains...' has a spurious space. 4/24/2006  
+ 
+ 
+ 536 Error in Code
+In the 2nd code fragment there should be a space preceding the last initial value for newBox. 4/24/2006  
+ 
+ 
+ 549 Error in Code
+In the code for the Try It Out:
+the first }
+
+should be:
+{  4/24/2006  
+ 
+ 
+ 579 Error in Text
+In the 1st sentence at the top of the page 'NDEBUG are defined' should be 'NDEBUG is defined' 4/24/2006  
+ 
+ 
+ 584 Error in Code
+p584 In the body of main() the statement defining pName should be: 
+char* pName = new char[myName.getNameLength()];
+
+(This is deliberately incorrect at this stage. The correct statement is therefore an error.)  4/24/2006  
+ 
+ 
+ 603 Error in Text
+All references to 'categoryname' in the tables should be 'category'. 4/24/2006  
+ 
+ 
+ 605 Error in Text
+In the 1st point, 'segment' should be 'segments'. 4/24/2006  
+ 
+ 
+ 615 Error in Text
+MDI parent window & parent window client area point to the same thing. 4/24/2006  
+ 
+ 
+ 616 Error in Text
+In the first paragraph of the new section on the page the first sentence should read:
+'When you write a Windows application, your program is ...'  4/24/2006  
+ 
+ 
+ 618 Error in Text
+The HANDLE description should begin:
+'Ahandle to an object - a handle is a 32-bit integer value that records the location of an object in memory.  4/24/2006  
+ 
+ 
+ 623 Error in Text
+The struct name should be WNDCLASSEX. 4/24/2006  
+ 
+ 
+ 721 Error in Text
+There should be a space between BLACK.BRUSH and WHITE_BRUSH. 4/24/2006 

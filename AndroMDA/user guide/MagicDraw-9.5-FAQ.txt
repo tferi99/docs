@@ -1,0 +1,33 @@
+========================
+MagicDraw 9.5 FAQ & Tips
+========================
+
+---------------------------------------------------------
+Q: How to hide 'Tagged values' of classes?
+
+A: For a symbol:
+	- select a symbol
+	- right mouse/Symbol(s) properties (or Alt-Enter)
+	- general/Show tagged values
+
+   You can choose all of symbols with Alt-A, and set properties.
+
+---------------------------------------------------------
+Q: How to hide 'Tagged values' of class attributes?   
+
+A: 
+	- right mouse/Symbol(s) properties (or Alt-Enter) on class 
+	- Set 'Show Attributes Properties' to False
+	
+---------------------------------------------------------
+Q: How to change the order of attributes in a class?
+
+A: You can do it in class rectagle by drag&drop.
+---------------------------------------------------------
+
+Q: What defaults are in MagincDraw (in UML)?
+
+A:
+	Default multiplicity in associations		: 1-1
+	Default navigation of association ends		: navigable
+	Default visibility of association ends		: private	:(

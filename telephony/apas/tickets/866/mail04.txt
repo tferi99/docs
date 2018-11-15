@@ -1,0 +1,208 @@
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com] 
+Sent: Mittwoch, 13. Juni 2012 11:06
+To: 'Prem Bejjam'
+Cc: attach@cisco.com; 'ds-ipcbu(mailer list)'
+Subject: RE: SR 620824565
+
+Hi Prem,
+
+so I generated a new certificate with the discussed options using openssl.
+It is still not working, the error remains the same.
+Are you sure you know how a working certificate should look like or if secure sip is even working?
+
+Attached you find a new trace, a screenshot from CUCM as well as the certificate.
+In the trace, look for communication between 192.168.150.170 (application
+server) and 192.168.5.17 (cucm).
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+Hello Jens,
+
+Any further updates?
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: Prem Bejjam [mailto:prebejja@cisco.com]
+Sent: Friday, June 08, 2012 9:52 AM
+To: 'ANDTEK Support'
+Cc: attach@cisco.com; 'ds-ipcbu(mailer list)'
+Subject: RE: SR 620824565
+
+Hello Jens,
+
+Thanks for the update.
+
+Regards,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Friday, June 08, 2012 9:28 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com
+Subject: RE: SR 620824565
+
+Hi Prem,
+
+we are on it. I will update you as soon as we made some progress.
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+Hello Jens,
+
+
+Hope you are having a great day. I just wanted to check up with you and see if you were able to implement the workaround. Please let me know if you need any more help or have any more questions.
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+-----Original Message-----
+From: Prem Bejjam [mailto:prebejja@cisco.com]
+Sent: Thursday, May 31, 2012 11:54 AM
+To: 'ANDTEK Support'
+Cc: 'attach@cisco.com'
+Subject: RE: SR 620824565
+
+Hello Jens,
+
+If you are using java version 7 and the keytool command to generate certificates, it looks like the "certificate sign" attribute can be set.
+Check this link:
+
+http://docs.oracle.com/javase/7/docs/technotes/tools/windows/keytool.html
+
+The option to use is "-ext".
+
+Can you use openssl instead?
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Thursday, May 31, 2012 8:17 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com
+Subject: RE: SR 620824565
+
+Hi Prem,
+
+no news so far. It turns out we use a java API to create the certificate and it is not really easy to find out if this API supports the requested changes and if yes, how to do it.
+We are still investigating.
+
+I will inform you, if there is any progress.
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+-----Original Message-----
+From: Prem Bejjam [mailto:prebejja@cisco.com]
+Sent: Mittwoch, 30. Mai 2012 18:54
+To: 'Jens Blumenstein'
+Cc: attach@cisco.com; 'ds-ipcbu(mailer list)'
+Subject: RE: SR 620824565
+
+Hello Jens,
+
+Any update on this issue?
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: Jens Blumenstein [mailto:support@andtek.com]
+Sent: Wednesday, May 23, 2012 9:07 AM
+To: Prem Bejjam
+Subject: RE: SR 620824565
+
+Yes, I am available. Just send me a link where I can join the webex.
+
+
+Zitat von Prem Bejjam <prebejja@cisco.com>:
+
+> Hello Jens,
+>
+> Are you available?
+>
+> Thank you,
+> Prem Bejjam
+> prebejja@cisco.com
+> Cisco Developer Services
+>
+>
+> -----Original Message-----
+> From: Jens Blumenstein [mailto:support@andtek.com]
+> Sent: Wednesday, May 23, 2012 7:19 AM
+> To: Prem Bejjam
+> Subject: SR 620824565
+>
+> Hi Prem,
+>
+> when you start the webex, can you resent the invitation to me?
+> It cannot find the link to the webex anymore.
+>
+>
+> Kind Regards,
+>
+> Jens Blumenstein
+> System Engineer
+>
+> Support: +49 811 95949 610
+> E-Mail: support@andtek.com
+>
+> ANDTEK GmbH
+> www: http://www.andtek.com/
+>
+> ----------------------------------------------------------------
+> This message was sent using IMP, the Internet Messaging Program.
+>
+>
+
+----------------------------------------------------------------
+This message was sent using IMP, the Internet Messaging Program.
+
+
+
+

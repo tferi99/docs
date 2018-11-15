@@ -1,0 +1,27 @@
+================================
+Howto configure Transfer Queues?
+================================
+Transfer Queues:
+	If you transfer a call by Desktop Client and destination is busy, APAS queues the caller until destination is available.
+
+Steps:
+
+- Create a RoutePoint (TOTH_RP_COMM) for desktop client.
+
+- Assign this RP to client configuration:
+
+	APAS/Client/Configuration		[Desktop Configuration]/Route Point
+		
+- Create a transfer queue in APAS:	APAS/Group/Queue List
+	- Set 'Call Distribution' to 'Queued Transfer'
+	- Don't add any agents
+	- Specify 'Expire time' if you need expiration for queued transfers
+	
+- Create a pilot and assign transfer queue 	
+	For pilot number you have to add a new line to ACD Route Point.
+	
+	To get name of ACD RP go to: APAS/Group/Settings/[ACD Options]/Route Point name
+
+- Create/edit a client profile
+	Assign transfer pilot (assigned with transfer queue) to this profile (Queue Transfer Pilot combo).
+	

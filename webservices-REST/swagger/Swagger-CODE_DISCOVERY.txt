@@ -1,0 +1,174 @@
+======================
+Swagger Code Discovery
+======================
+- Swagger Spring MVC initialization
+- Swagger documentation rendering
+- How to register JSON serializer?
+- How to exclude elements from documentation by annotations
+
+--------------------------------------------------------------------------------------------------------------------------
+Swagger Spring MVC initialization
+=================================
+- Swagger config into Spring context:
+
+	<bean class="com.mangofactory.swagger.configuration.SpringSwaggerConfig" />
+
+- User defined custom configuration:
+
+	@Configuration
+	@EnableSwagger //Loads the spring beans required by the framework
+	public class CustomSwaggerConfig implements ServletContextAware
+	{
+		@Autowired
+		public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {
+			this.springSwaggerConfig = springSwaggerConfig;
+		}
+		
+		...
+		
+		@Bean
+		public SwaggerSpringMvcPlugin swaggerPlugin()		// plugin for group 1
+		{
+		}
+		
+		@Bean
+		public SwaggerSpringMvcPlugin swaggerPluginN()		// plugin for group N
+		{
+		}
+
+		@Override
+		public void setServletContext(ServletContext servletContext)
+		{
+			this.servletContext = servletContext;
+		}		
+	}
+
+- SpringSwaggerConfig points to default Swagger controller:
+
+	@ComponentScan(basePackages = {"com.mangofactory.swagger.controllers"})
+
+
+	
+
+--------------------------------------------------------------------------------------------------------------------------
+Collecting swagger data during initialization
+=============================================
+Swagger scans for documentation data during Spring initialization and stores it into a cache.
+
+SwaggerPluginAdapter implements ApplicationListener
+
+--> SwaggerPluginAdapter.onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) (ApplicationListener called by Spring)
+	if plugins empty 
+		- creating default SwaggerSpringMvcPlugin
+			where default swaggerGroup = "default"
+		- plugin.build().initialize();
+			--> [1]
+	else ------------------- LOOP on SwaggerSpringMvcPlugin plugins ------------------------
+		- plugin.build().initialize();
+			--> [1]
+
+[1] SwaggerApiResourceListing.initialize()
+	API LISTING REFERENCE
+	--> apiListingReferenceScanner.scan();
+		--> apiListingReferenceScanner.scanSpringRequestMappings()
+		
+			NOTE:
+			RequestMappingHandlerMapping contains request handlers and handler methods. It's created and populated by by SpringMVC. 
+			It's autowired into SpringSwaggerConfig and will be pushed into apiListingReferenceScanner.
+			
+			------------------------------------- loop on request handlers -----------------------------------------------
+				------------------------------------- loop on handler methods (all controller methods) -----------------------------------------------
+			
+				creating:
+					- resourceGroupRequestMappings
+					- apiListingReferences
+					
+			--> ClassOrApiAnnotationResourceGrouping.getResourceGroups(...)
+				--> extractAnnotation(...)
+					--> AnnotationUtils.findAnnotation(...)		(spring-core)
+
+
+
+	--> apiListingReferences = apiListingReferenceScanner.getApiListingReferences();
+	
+		collected: {path, desciption, position}
+		
+	API LISTING
+	-->	apiListings = apiListingScanner.scan()
+	
+
+
+		
+	
+	apiListings = apiListingReferenceScanner.scan()
+	--> swaggerCache.addApiListings(swaggerGroup, apiListings)
+	
+	RESOURCE LISTING
+	
+--------------------------------------------------------------------------------------------------------------------------
+Swagger documentation rendering
+===============================
+- Controller to render document
+
+	SwaggerPluginAdapter
+		- springSwaggerConfig : com.mangofactory.swagger.configuration.SpringSwaggerConfig
+			Component scan:	com.mangofactory.swagger.controllers
+				- DefaultSwaggerController
+					document base:	/api-docs
+
+- Resource listing				
+
+	/api-docs 										-> DefaultSwaggerController.getResourceListing()
+	
+- API listing				
+
+	/api-docs/{swaggerGroup}/{apiDeclaration}		-> DefaultSwaggerController.getSwaggerApiListing(swaggerGroup, apiDeclaration)
+
+	
+--------------------------------------------------------------------------------------------------------------------------
+How to register JSON serializer?	
+================================
+Swagger Spring MVC uses these serializers to generate JSON:
+	- SwaggerApiListingJsonSerializer
+	- SwaggerResourceListingJsonSerializer
+
+Registration of these:
+
+com.mangofactory.swagger.configuration.SpringSwaggerConfig
+	--> @Bean JacksonSwaggerSupport
+		--> @PostConstruct setup()
+			It registers serialization modules for message converter modules which are members of requestMappingHandlerAdapter.
+			
+			------------------------------------------- foreach conv : requestMappingHandlerAdapter.getMessageConverters() --------------------------------------
+			- if conv is MappingJackson2HttpMessageConverter
+				--> swaggerSerializationModule()
+					--> addSerializer(ApiListing)
+					--> addSerializer(ResourceListing)
+
+--------------------------------------------------------------------------------------------------------------------------
+How to exclude elements from documentation by annotations
+=========================================================
+Use SwaggerSpringMvcPlugin.excludeAnnotations
+
+Spring controllers or request mappings with these annotations will be excluded from the generated swagger JSON.
+
+- excludeAnnotations merged with mergedExcludedAnnotations and configured into requestMappingEvaluator
+
+- requestMappingEvaluator used by swaggerApiResourceListing and apiListingReferenceScanner:
+
+	swaggerApiResourceListing.setRequestMappingEvaluator(requestMappingEvaluator);  [1]
+	…
+	apiListingReferenceScanner.setRequestMappingEvaluator(requestMappingEvaluator);
+
+	-   requestMappingEvaluator.excludeAnnotations
+		o   classHasIgnoredAnnotatedRequestMapping()     : excluding classes
+		o   hasIgnoredAnnotatedRequestMapping()          : excluding methods
+
+
+[1] SwaggerApiResourceListing
+	- requestMappingEvaluator used by ApiListingScanner
+		   (SwaggerApiResourceListing.initialize())
+	-   ApiListingScanner.scan()
+	-   ApiDescriptionReader.execute()
+	-   requestMappingEvaluator.shouldIncludePath(pattern)) {
+

@@ -1,0 +1,37 @@
+From case-1335033605.mht:
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Hi Jens, 
+
+The G.729 problems that I found were: 
+ - when you are switching back to G.711 on the region settings of the CTI RP (Pilot queue), you can't make understand the prequeue media prompt 
+ - problems with regard to playing announcements when recording is on 
+
+Since we will not switch to G.711 in production (we are not forcing G.711, but using hw transcoders for the time being), and we don't use recording yet, we could wait until you get back. 
+All this also depends on when do you guys plan to release a next stable/production version that we could install on the production servers ? 
+Will this release date depend on our testing (Ex: G.729 scenarios) ? 
+
+What does the Oracle team feel about this (Maarten, Krystyna, Paul) ?
+
+Thanks, 
+------- 
+Dragos Frantz | Principal Service Design Engineer
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Hi everyone, 
+
+the original plan was and still is to fix all issues which are prio 1 on the list. 
+I think this is done in most parts, the rest is a matter of agreement. 
+
+I did not fully understand the problem with G.711. What I got is, that when you change the region setting probably from 
+G.729 to G.711 you cannot understand the prequeue media anymore, is this correct? 
+One reason could be, that we stream it in G.729 although we implemented a codec detection and the APAS should 
+recognize which codec is used. This could be a simple bug and this was, what I wanted to investigate with you in the WebEx. 
+
+The other issue with recording announcements in G.729: as I explained earlier this is currently not implemented and not supported. 
+The focues were lying on the ACD and I think this was, what we agreed on so far. 
+We are okay with placing G.729 streaming in the Recorder as another feature but it will be probably finished in a much later release. 
+
+
+Kind regards, 
+Jens BLUMENSTEIN

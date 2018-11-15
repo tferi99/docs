@@ -1,0 +1,7 @@
+==========================================
+How connects Desktop Client to the system?
+==========================================
+DC only connects to APAS via:	
+
+	tcp/31421
+

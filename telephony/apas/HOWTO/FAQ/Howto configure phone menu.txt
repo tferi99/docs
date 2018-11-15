@@ -1,0 +1,35 @@
+===========================
+Howto configure phone menu?
+===========================
+
+1. CUCM global setting
+----------------------
+	- In CM enter the Service URL in 
+	
+		System/Enterprise Parameters/Phone URL Parameters/URL Services
+	
+		http://APAS-IP:8080/andphone/PhoneMenu?menuid=1
+	
+	- Reset CM
+
+	DON'T USE FORE DEVELOPMENT - IT WILL AFFECT ALL PHONES IN CUCM
+	
+2. Phone level setting (1)
+--------------------------	
+Set URL per device:
+
+	Device/Phone/(Find)
+		- Choose a device
+			[External Data Locations Information]
+			
+	Set 'Secure Services URL' to service URL without device:
+	
+		http://APAS-IP:8080/andphone/PhoneMenu?menuid=1
+
+	
+3. Phone level setting (2)
+---------------------------
+	- Register a phone service with the phone menu service URL
+	- Subscribe it to phones 
+	
+	http://APAS-IP:8080/andphone/PhoneMenu?dev=#DEVICENAME#&menuid=<MENUID> 

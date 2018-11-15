@@ -1,0 +1,6 @@
+============================================
+Where stored database connect configuration?
+============================================
+WEB-INF/classes/andphone.properties:
+
+	dbloginUrl, dbloginUser, dbloginPasswd

@@ -1,0 +1,81 @@
+
+
+
+
+	
+X. Rules for modeling for JSF plugin
+------------------------------------
+Use cases
+---------
+- One and only one use-case must be marked as the application entry use-case. Currently this is done by adding the 
+  FrontEndApplication stereotype to it.
+
+- Each use-case needs one and only one activity graph
+
+- In order to avoid possible naming collisions at most one FrontEndUseCase per package is allowed. 
+  It is recommended to refactor your model. 
+  
+	---> You have to place every single usecase in a separated package.
+
+- You can use spaces in the name of usecases.
+
+- No two use-cases should have the same name.
+	
+Activity graph
+--------------
+- Your activity graph should be modeled as a CHILD ELEMENT of the use-case. In case your modeling tool does not support that you can add a 
+  tagged value to the use-case, making it point to the activity graph, like this: 
+  
+		@andromda.presentation.usecase.activity=My Activity Graph
+
+- An activity graph must have a controller class context to which (optionally) operations can be deferred. 
+  Make sure this graph's use-case has the FrontEndUseCase stereotype.
+		
+Initial state		
+-------------
+- Each use-case needs an initial state, only a single initial state is allowed per activity graph.
+
+Final state
+-----------
+- The name of this final state MUST NOT BE NULL and EXACTLY MATCH THE NAME OF A USE-CASE. 
+	Alternatively it is possible to reference a use-case using an hyperlink (some UML tools support this). 
+	In both cases that use-case MUST carry the FrontEndUseCase stereotype. Finally you may
+	also specify an actual hyperlink to an external resource, either in the final state's name, 
+	or as a webpage link as supported by some UML tools.
+	
+Server-side states
+------------------
+- Server-side action states do not need any stereotype but can only have a single outgoing transition.
+		
+  
+- Each activity graph must have an action transition exiting the initial state, this is the minimum required.
+
+- For each controller operation argument there must exist a parameter for each action deferring to that operation. 
+	This parameter must carry the same name and must be of the same type. 
+	
+	---> So you cannot add operation parameter to deferred controller operation which not mapped into form variable or
+		event parameter.
+
+
+Client-side states
+------------------
+- A "front-end" action state must have a non-empty name.
+
+- A "front-end" action state needs at most one outgoing transition that is not an exception-transition.
+		
+- Each action TRANSITION COMING OUT of a view must have a trigger (the name is sufficient), it 
+	is recommended to add a trigger of type 'signal'.
+		
+	---> You have to add signal events to outgoing transitions of client side states.
+
+- Transitions from FrontEndViews must transition into an ActionState, before a transition to a Decision Point can occur.
+	This is the case with Initial State, too. 
+	
+	---> Don'd draw transmissions from client side state into decision point directly.
+
+- Views cannot defer to operations. All deferrable events modeled on a front-end view will be ignored.
+
+	---> Don't add deferrable events to clienty side states.
+	
+- To pass values for next usecase NEVER bind client side state diretly to final state. In this case
+	values won't be populated into 

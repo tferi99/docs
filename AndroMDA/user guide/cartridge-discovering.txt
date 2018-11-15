@@ -1,0 +1,45 @@
+=============================
+Andromda cartride discovering
+=============================
+(by Ferenc Toth)
+
+
+Cartridge is discovered through namespace descriptor:
+
+See under:
+	$ANDROMDA_SOURCE/cartridges/<cartridge>/src/META_INF/andromda
+OR
+	$MAVEN1_REPO\andromda\jars\andromda-<CARTRIDGE>-cartridge-<VER>.jar\META_INF/andromda
+
+
+
+namespace.xml
+-------------                
+|                
+|                                        |-- <templateEngine> -- className=[TEMPLATE ENGINE]
+|                  |==> cartridge.xml----|-- <templateObject> -- className=[OBJECT AVAILABLE BY TEMPLATE]
+|                  |                     |-- <resource>-- ...
+|                  |                     |-- <property> -- reference=[NAMESPACE PROPERTY]
+|                  |                     |-- <condition> -- ..
+|                  |                     |
+|                  |                     |                |--- path=[TEMPLATE FILE]
+|                  |                     |-- <template> --|-- <modelElement> --|-- stereotype=[STEREOTYPE]
+|                  |                                      |-- <type> -- name=[METAFACADE CLASS]
+|                  |
+|-- <components> --|
+|                  |
+|                  |
+|                  |
+|                  |==> metafacades.xml-- <metafacades> --|-- <property> -- reference=[NAMESPACE PROPERTY]
+|                  |                                      |-- <metafacade> |-- class=[METAFACADE CLASS]
+|                  |                                                       |-- <mapping> --|-- <stereotype> ==> [STEREOTYPE]
+|                  |                                                                       |-- <context> ==> [METAFACADE CONTEXT]
+|                  |                                                                       |-- <property> -- reference=[NAMESPACE PROPERTY]
+|                  |
+|                  |
+|                  |
+|	           	   |==> profile.xml -- <elements> -- <elementGroup> -- <element> --|-- name=[PROFILE VARIABLE NAME]
+|                                                                                  |-- <value> ==> [PROFILE VARIABLE VALUE]
+|
+|
+|--------------------- <properties> -- ...

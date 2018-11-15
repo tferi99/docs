@@ -1,0 +1,36 @@
+===========
+APAS Tweaks
+===========
+
+- Developer mode
+- Device polling timers
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------	
+Developer mode
+==============
+There are some hidden feature can be utilized by developers. To activate set configuration
+
+	global/AndtekInternalUseFeatures = true
+	
+To get this flag get this variable from config:	
+	
+	JTAPIThread.config.getBoolean("global", "AndtekInternalUseFeatures");
+	
+OR BETTER use  helper class:
+
+	DeveloperTweaks.isDeveloperMode()
+	
+-----------------------------------------------------------------------------------------------------------------------------------------------------	
+Device polling timers
+=====================
+- Recorder Connect Check Interval:
+	
+	activate:
+		
+		insert into config(module, param, val) values ('developer', 'RecorderConnectCheckInterval', '1000')
+		
+	get:
+	
+		DeveloperTweaks.getRecorderConnectCheckInterval()
+		
+		

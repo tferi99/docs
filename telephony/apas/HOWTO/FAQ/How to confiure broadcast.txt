@@ -1,0 +1,64 @@
+==========================
+How to confiure broadcast?
+==========================
+Broadcast types:
+	- text
+	- media
+		- live
+		- uploaded
+
+		Depends on setting: 	APAS/Broadcast/Group List/(Media)
+	
+	
+You can call:
+	- with XML service:		http://192.168.5.113:8080/andphone/MCastService?group=<ID>&dev=#DEVICENAME#&silent=false
+	
+	- or by calling Rout Point DN configured in:	APAS/Broadcast/Group List/(Media)
+	
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------------	
+Configuration
+=============
+- Add Broadcast Group 	
+
+	APAS/Broadcast/Group List
+	
+
+- If you want to call Broadcasting via RoutePoint add a RP in:
+
+	APAS/Broadcast/Configuration/[Broadcast Configuration]/(Route Point)
+	
+	If you assign a line to RP, calling with this DN you can start broadcasting.
+
+	- Specify RP line DN in 
+	
+		APAS/Broadcast/Group List/<group>/[Group Parameter]/(RP-DN)
+		
+		
+- Set media type in:
+			
+	APAS/Broadcast/Group List/<group>/[Group Parameter]/(Media)
+	
+	- None (text-only):  text broadcast
+	- IP Phone Live Broadcast: by pressing and holding down push button (rendered into broadcast popup of initiator and targets) you can send voice messages (like WalkyTalky)
+	- you can choose uploaded media: it will be played as broadcast stream
+
+	Talk button:
+		If you want talk button (for IP Phone Live Broadcast) specify it in 
+		
+			APAS/Broadcast/Group List/<group>/[Group Parameter]/(Talk Button)
+			
+			
+- Target phones can call back initiator if 'Pickup' button rendered on popop if:
+
+	- broadcast started by calling RP
+	- talk button is specified (so NOT: 'No Talk button'
+	- Media is NOT 'IP Phone Live Broadcast'
+	
+	
+- Add messages and answers
+
+- Assign memebers and specify who can be initiator and terminator
+	
+	

@@ -1,0 +1,63 @@
+=====================================
+How SIP trunk based recordings works?
+=====================================
+
+SOURCE: 	Cisco Unified Communications Manager - Feature Services Guide - 9.1.1.pdf	
+
+- Basics
+- SIP details
+- SIP in APAS
+
+----------------------------------------------------------------------------------------------------------------
+Basics
+======
+- In IP phone-based call recording, recording streams are forked from an agent IP phone to the recorder.
+- The agent voice and the customer voice are sent separately.
+- The administrator configures the recorder in Cisco Unified Communications Manager as a SIP trunk device.
+- The administrator configures the recording option and recording profile on the agent line appearance. 
+	By default, the recording option specifies Call Recording Disabled.
+- When the recording option is set to either Automatic Call Recording Enabled or Selective Call Recording
+	Enabled, the line appearance can be associated with a recording profile. 
+- The recording profile specifies the following parameters: 
+	- Recording Calling Search Space
+	- Recording Destination Address.
+
+- NEAR end:	which recorded
+- FAR end: other endpoint (calling/called party)	
+
+
+----------------------------------------------------------------------------------------------------------------
+SIP details
+===========
+- Release 8.5(1) of Cisco Unified Communications Manager introduces enhancements to the SIP headers that
+	are used in the SIP messages that are sent to the recorder when call recording calls are made.
+	(Open Recording Architecture (ORA) Cisco MediaSense recorder)
+		
+Cisco MediaSense recorder.
+- Cisco Unified Communications Manager sends both the agent (near-end) and customer (far-end) call
+	information to the recorder via SIP messages. Messages travel through the SIP trunk.	
+	(Prior to this only near-end)
+	
+- The From header contains the near-end call info. The near-end call information contains refci or the call ID
+of the near-end party, near-end device name, near-end directory number or address.
+
+- With the SIP header enhancement, the far-end call information gets added to the INVITE message From
+header. The far-end call information contains farendRefCI or the call ID of the far-end party, far-end device
+name, and far-end directory number.
+
+- Previously, Cisco Unified Communications Manager only sent a SIP INVITE message to a recorder. Now,
+when the far-end call info changes due to feature interaction, Cisco Unified Communications Manager sends
+a SIP UPDATE message to the recorder.
+
+- The From header also includes an isfocus indicator, which indicates that an agent is in a conference call.
+Examples of the previous INVITE message and the new INVITE and UPDATE messages follow.
+		
+- Be aware that the two INVITE messages for the two separate voice streams contain the same near-end and
+far-end call information. The only difference in the two From headers is the first x- parameter, which indicates
+whether the call is for the near-end voice stream or for the far-end voice stream.	
+
+
+----------------------------------------------------------------------------------------------------------------
+SIP in APAS
+===========
+

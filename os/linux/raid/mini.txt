@@ -1,0 +1,18 @@
+Software RAID quickhelp
+=======================
+
+mdadm			: RAID administrator tool
+mdadm -D <dev>		: raid array info
+mdadm --monitor --mail=root@localhost --delay=1800 /dev/md2
+			: monitoring in interval of 1800 seconds and sending email critical problem
+			  to adminstrator
+
+/proc/mdstat		: raid status (this file must be exist if RAID is supported by kernel)
+			  It provides state information and a process status during rebuilding RAID array.
+
+
+raidhotadd		: adding a new device to array
+raidhotremove		: removing device from array
+
+raidsetfaulty		: simulating device error
+

@@ -1,0 +1,22 @@
+=================================================
+How to upgrade an ISO APAS to the latest version?
+=================================================
+
+Method 1 - update package (recommended)
+- go to Jenkins
+
+- get update package from /Jenkins/<APAS-Trunk OR version>/apas-<trunk|version>-x86_64
+	e.g. APAS-x86_64-583-11040-Update.pkg
+	
+- install update package in APAS
+
+	APAS/Global/Software Update
+
+
+Method2 - using your own developer environment:
+- SVN update
+- ant 
+- build in Eclipse and run
+- Compress deployement and push to server via SSH or use 
+
+

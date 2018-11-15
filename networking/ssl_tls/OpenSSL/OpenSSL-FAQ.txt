@@ -1,0 +1,91 @@
+===========
+OpenSSL FAQ
+===========
+
+- Features
+- Prototype for testing SSL
+- SSL cannot decrypted with Wireshark
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Features
+========
+OpenSSL is a cryptography toolkit implementing the Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) network protocols 
+and related cryptography standards required by them.
+
+The openssl program is a command line tool for using the various cryptography functions of OpenSSL's crypto library from the shell. 
+It can be used for:
+
+	 o  Creation and management of private keys, public keys and parameters
+	 o  Public key cryptographic operations
+	 o  Creation of X.509 certificates, CSRs and CRLs
+	 o  Calculation of Message Digests
+	 o  Encryption and Decryption with Ciphers
+	 o  SSL/TLS Client and Server Tests
+	 o  Handling of S/MIME signed or encrypted mail
+	 o  Time Stamp requests, generation and verification
+	 
+-------------------------------------------------------------------------------------------------------------------------------------
+Prototype for testing SSL	 
+=========================
+1. Create a server certificate with:
+
+		openssl req -new -x509 -keyout privkey.pem -out cert.pem -nodes -subj "/CN=localhost/OU=Dev/O=Andtek/C=HU"
+	
+2. Run a server using above:
+
+		openssl s_server -www -tls1 -cipher AES256-SHA -key privkey.pem -cert cert.pem -accept 8443
+	
+3. Connect to server with a client:
+
+		openssl s_client -tls1 -connect localhost:8443
+		
+		openssl s_client -tls1 -connect localhost:8443 -cert cert.pem -certform PEM -key key.pem -keyform PEM
+	
+	-cert certname
+		The certificate to use, if one is requested by the server. The default is not to use a certificate.
+	- certform format
+		The certificate format to use: DER or PEM. PEM is the default.
+	-key keyfile
+		The private key to use. If not specified then the certificate file will be used.
+	-keyform format
+		The private format to use: DER or PEM. PEM is the default.
+	
+
+3.A You can test it with browser, too.
+
+	NOTE: If server crashes with 'gethostbyname failure' add client IP to the hosts file of server.
+
+	
+4. Use Wireshark to analyze traffic:	
+	
+	ssl.desegment_ssl_records: TRUE
+	ssl.desegment_ssl_application_data: TRUE
+	ssl.keys_list: 127.0.0.1,4443,http,/path/privkey.pem
+	ssl.debug_file: /tmp/wireshark-log
+	
+	 
+NOTE: You can't capture on the local loopback address 127.0.0.1 with a Windows packet capture driver like WinPcap. Use a different machine as client.
+	 
+	 
+SEE ALSO:
+	doc\software\network\ssl_tls\SSL - The Wireshark Wiki.pdf
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+SSL cannot decrypted with Wireshark
+===================================
+- If you find this in ssl.log:		
+
+		ssl_restore_session can't find stored session
+	
+	This line indicates that the SSL session at hand is actually a reused
+	SSL session with a short handshake. Wireshark needs the full SSL handshake
+	to be able to calculate all the keys.
+
+	Best practice is to start capturing before you start up the browser. 
+	
+- If The SSL session is using a DiffieHellman cipher (0x39 = TLS_DHE_RSA_WITH_AES_256_CBC_SHA). 
+	This means the session key is transferred encrypted with a dynamically generated keypair (instead of encrypted with the public key from the certificate). 
+	This means you can't decrypt this session with wireshark by providing the private key.
+	
+	
+	

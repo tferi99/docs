@@ -1,0 +1,40 @@
+- Publikus osztályt nem tartalmazó állományt bárhogy elnevezhetünk.
+- Default hozzáféréssel rendelkezo osztályok elérhetoek az ugyanabban a csomagban lévo osztályokból.
+- A példánymetódusok felüldefiniálásakor (override) az új metódus nem dobhat bovebb (broader, azaz nem azonos vagy leszármazott) ellenorzött (checked) kivételeket.
+- A strictfp módosító osztályra és metódusra is alkalmazható.
+- Az enum deklaráció végén opcionális a pontosvesszo.Ha egy statikus metódust hívunk egy változón keresztül, a fordító a változó deklarációjában szereplo osztályra cseréli ki.
+- Java 5-tol kezdve a metódus felüldefiniálásakor a visszatérési érték lehet az eredeti visszatérési érték, vagy annak leszármazottai (covariant return)
+- Laza kötésre (loose coupling) és magas kohézióra (high cohesion) kell törekedni.
+- Az értékadó operátorok (pl. +=) automatikus típuskényszerítést végezhetnek
+- Az == használata autoboxing esetén trükkös, ugyanis byte, és -128 és 127 közötti Short, Integer értékek között egy pool van, így igazat fog visszaadni, e felett viszont hamist.
+- Egyenloségvizsgálatnál ha két különbözo osztályhierarchiában lévo osztály típusú változót hasonlítunk össze, már fordításkor elszáll
+- A switch esetén a case paraméterének fordítási idoben kiszámolhatónak kell lennie
+- Ha byte típust adok át egy switch-nek, és a case után nem fér bele a szám byte-ba, fordítási hiba keletezik
+- A default block középen is lehet
+- System.exit-nél nem fut le a finally
+- Assert Java 1.4-tol van
+- Nem szerializálható ososztályok konstruktora, inicializációja lefut deszerializáláskor. Statikus változó sosem kerül szerializálásra.
+- A StringBuffer equals() metódusa nincs felüldefiniálva, nem az értéket hasonlítja
+- A megtanulandó printf flag-ek: -, +, 0, "," , és (, formátumok: %b, %c, %d, %f, %s. A %b boolean-ra, true-t ad minden non-null vagy non-boolean értékre.
+- Autoboxing esetén az equals() csak akkor igaz, ha a primitív típusok és az értékek is megegyeznek.
+- Queue interfész, PriorityQueue osztály
+- NavigableSet, NavigableMap interfészek: Java 6
+- A HashMap beenged null-t, a Hashtable nem
+- LinkedHashMap sorrendje: beszúrás vagy utolsó hozzáférés
+- equals metódusnál kötelezo az Object típusú paraméter, compareTo-nál nem
+- headSet, subSet, tailSet - boolean paraméter - inclusive, ha nincs boolean, a kezdo mindig inclusive
+- Natural order: space, nagybetuk, kisbetuk
+- Generikus esetében a deklarációban és az értékadásban a generikus típusának pontosan meg kell egyeznie, amennyiben nem használunk wildcard karaktereket, azaz a List<Animal> aList = new ArrayList<Dog>(); nem fordul le, hiába a Dog az Animal leszármazottja 
+- Példányosításnál generics wildcard nem használható
+- new MyOuter().new MyInner(); vagy MyOuter.MyInner inner = mo.new MyInner();
+- MyOuter.this
+- A vizsga szempontjából metóduson belül definiált osztály módosítója vagy abstract vagy final.
+- JAR készítésekor az a könyvtár is belekerül, melyet paraméternek megadunk, nem csak az az alatti könyvtárak, állományok
+- A Runnable példánynak nincs referenciája a szálra, ami futtatja, ezt lehet elkérni a Thread.currentThread() metódussal
+- Ha egy szál el lett indítva, nem lehet többet újra elindítani
+- sleep, yield: statikus metódusok
+- sleep-nél nem vesznek el a lock-ok
+- Console a java.io csomagban van
+- Polimorfizmus csak a példánymetódusokra vonatkozik, se a statikus metódusokra, se bármilyen típusú változókra
+- A Throwable az osztály
+- Szerializációkor a pontos metódus: private void readObject(ObjectInputStream is) throws IOException, ClassNotFoundException

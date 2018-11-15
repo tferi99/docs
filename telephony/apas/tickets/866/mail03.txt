@@ -1,0 +1,286 @@
+
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Donnerstag, 14. Juni 2012 09:00
+To: 'Prem Bejjam'
+Cc: attach@cisco.com
+Subject: RE: SR 620824565
+
+Hi Prem,
+
+that is correct, I changed this now. At least the error message now is "decrypt error". New trace attached, certificate etc. remained the same as I sent you yesterday.
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+Hello Jens,
+
+From the wireshark traces, I see that the application server is presenting a certificate that is different from the one you attached in the email and it does not have certificate sign:
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            01:36:aa:c5:65:ec
+        Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=Germany, L=Hallbergmoos, CN=192.168.150.170
+        Validity
+            Not Before: Apr 13 08:15:15 2012 GMT
+            Not After : Apr 13 08:15:25 2013 GMT
+        Subject: C=Germany, L=Hallbergmoos, CN=192.168.150.170
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (1024 bit)
+                Modulus (1024 bit):
+                    00:88:3e:ee:52:5d:de:d5:95:d5:cd:c7:57:33:06:
+                    7d:72:96:d4:18:dc:0c:db:cf:ef:b1:2f:a4:af:71:
+                    4a:f8:46:5e:6f:7b:f5:23:6e:02:b3:60:da:42:07:
+                    01:43:87:e3:9e:cc:b1:f4:04:06:80:c5:90:53:ea:
+                    83:a6:b7:66:2c:b0:6a:67:4f:e3:58:34:08:4f:68:
+                    85:0f:ab:89:73:1e:86:24:60:ef:60:7b:98:1d:9e:
+                    f8:71:a4:6d:c9:d7:d8:e4:f9:94:2c:ac:68:28:db:
+                    8f:03:0d:3f:97:6e:b0:21:8f:25:98:75:98:0e:c2:
+                    76:ae:d3:8b:95:6c:f6:16:9d
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: critical
+                TLS Web Server Authentication
+            X509v3 Subject Alternative Name:
+                email:info@andtek.com
+    Signature Algorithm: sha1WithRSAEncryption
+        59:09:7e:77:09:58:af:d2:64:f5:74:da:6f:d9:9e:ad:c2:ce:
+        2f:bb:b3:66:c8:fc:7c:06:52:25:53:d9:d4:ae:a2:08:7c:03:
+        48:32:c8:ef:72:b6:1b:f4:1c:9e:ee:2b:d2:9c:8a:b8:d9:ef:
+        f5:c2:96:d7:48:4e:a9:2f:c3:91:1c:80:ab:07:6f:43:d9:c6:
+        a8:7f:ed:a3:39:33:99:76:83:01:88:a6:a7:70:85:7d:b7:b5:
+        a3:c7:c9:54:bb:9d:7d:ec:be:44:2a:05:32:f3:e9:43:bf:30:
+        77:d2:0b:69:2d:f7:64:cb:3c:f1:36:37:13:82:bf:8d:74:53:
+        5d:f1
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Wednesday, June 13, 2012 4:06 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com; 'ds-ipcbu(mailer list)'
+Subject: RE: SR 620824565
+
+Hi Prem,
+
+so I generated a new certificate with the discussed options using openssl.
+It is still not working, the error remains the same.
+Are you sure you know how a working certificate should look like or if secure sip is even working?
+
+Attached you find a new trace, a screenshot from CUCM as well as the certificate.
+In the trace, look for communication between 192.168.150.170 (application
+server) and 192.168.5.17 (cucm).
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+Hello Jens,
+
+Any further updates?
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: Prem Bejjam [mailto:prebejja@cisco.com]
+Sent: Friday, June 08, 2012 9:52 AM
+To: 'ANDTEK Support'
+Cc: attach@cisco.com; 'ds-ipcbu(mailer list)'
+Subject: RE: SR 620824565
+
+Hello Jens,
+
+Thanks for the update.
+
+Regards,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Friday, June 08, 2012 9:28 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com
+Subject: RE: SR 620824565
+
+Hi Prem,
+
+we are on it. I will update you as soon as we made some progress.
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+Hello Jens,
+
+
+Hope you are having a great day. I just wanted to check up with you and see if you were able to implement the workaround. Please let me know if you need any more help or have any more questions.
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+-----Original Message-----
+From: Prem Bejjam [mailto:prebejja@cisco.com]
+Sent: Thursday, May 31, 2012 11:54 AM
+To: 'ANDTEK Support'
+Cc: 'attach@cisco.com'
+Subject: RE: SR 620824565
+
+Hello Jens,
+
+If you are using java version 7 and the keytool command to generate certificates, it looks like the "certificate sign" attribute can be set.
+Check this link:
+
+http://docs.oracle.com/javase/7/docs/technotes/tools/windows/keytool.html
+
+The option to use is "-ext".
+
+Can you use openssl instead?
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Thursday, May 31, 2012 8:17 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com
+Subject: RE: SR 620824565
+
+Hi Prem,
+
+no news so far. It turns out we use a java API to create the certificate and it is not really easy to find out if this API supports the requested changes and if yes, how to do it.
+We are still investigating.
+
+I will inform you, if there is any progress.
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+-----Original Message-----
+From: Prem Bejjam [mailto:prebejja@cisco.com]
+Sent: Mittwoch, 30. Mai 2012 18:54
+To: 'Jens Blumenstein'
+Cc: attach@cisco.com; 'ds-ipcbu(mailer list)'
+Subject: RE: SR 620824565
+
+Hello Jens,
+
+Any update on this issue?
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: Jens Blumenstein [mailto:support@andtek.com]
+Sent: Wednesday, May 23, 2012 9:07 AM
+To: Prem Bejjam
+Subject: RE: SR 620824565
+
+Yes, I am available. Just send me a link where I can join the webex.
+
+
+Zitat von Prem Bejjam <prebejja@cisco.com>:
+
+> Hello Jens,
+>
+> Are you available?
+>
+> Thank you,
+> Prem Bejjam
+> prebejja@cisco.com
+> Cisco Developer Services
+>
+>
+> -----Original Message-----
+> From: Jens Blumenstein [mailto:support@andtek.com]
+> Sent: Wednesday, May 23, 2012 7:19 AM
+> To: Prem Bejjam
+> Subject: SR 620824565
+>
+> Hi Prem,
+>
+> when you start the webex, can you resent the invitation to me?
+> It cannot find the link to the webex anymore.
+>
+>
+> Kind Regards,
+>
+> Jens Blumenstein
+> System Engineer
+>
+> Support: +49 811 95949 610
+> E-Mail: support@andtek.com
+>
+> ANDTEK GmbH
+> www: http://www.andtek.com/
+>
+> ----------------------------------------------------------------
+> This message was sent using IMP, the Internet Messaging Program.
+>
+>
+
+----------------------------------------------------------------
+This message was sent using IMP, the Internet Messaging Program.
+
+
+
+
+

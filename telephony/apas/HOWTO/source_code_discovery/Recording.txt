@@ -1,0 +1,572 @@
+=========
+Recording
+=========
+You need a configured recording environment (see more: APAS-FAQ.txt/Howto configure recorder?)
+
+- On-demand recording
+- Automatic recording
+- Status page for recording
+- Recording protocol between APAS and recorder
+- Handling XML messages in recorder 
+- Handling encryption keys in recorder 
+- Packet sniffing
+- Post-processing recorded media
+- SIP management
+- Writing/changing rec_call table
+- Start time of recording
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+On-demand recording
+===================
+Participants are:
+	- caller
+	- called
+	- Route Point (RP)
+
+On demand recording can be started with XML service served by recording servlet:
+
+		http://<apas host:port>/andphone/Recorder?page=ondemand&dev=#DEVICENAME# 
+		
+		--> com.andtek.andphone.ANDServlet.service(HttpServletRequest request, HttpServletResponse response)
+			--> com.andtek.andphone.ANDServlet.Request(...)
+				--> com.andtek.andphone.recorder.RecorderService.Request(...)
+					PARAM_PAGE_ONDEMAND:
+					
+					calls = module.getSniffer().getCalls();																		<<<<<<<<<<<<<<<<<<<<<< getting calls from recorder
+					
+						############################## recorder ########################################
+						record.cpp	getCalls()
+							--> calls = getCallList()
+						################################################################################
+					
+					
+					--------------------------------- loop on current calls returned from recorder to find matching calls ------------------------------------------
+					- looking for mathing calls:
+						- a call is matching if any extension of current device is matching any party of the call (called/calling/original_calling party)
+						- a call is matching if an 'allow' permission value (extension) is matching any party of the call
+	
+						--------------------------------- loop on matching calls ------------------------------------------
+						Here will be an XML message build and sent to recorder to start/stop recording.
+						
+						--> module.getSniffer().sendXml(xml + " />");
+						
+						############################## recorder ########################################
+						################################################################################
+
+						
+			
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Automatic recording
+===================
+Recording started by sniffer if all required call information collected.
+Information came from JTAPI and SIP messages.
+APAS sends 'recordCall' XML message to sniffer with new information which updates call information in sniffer.
+
+JTAPI:
+
+
+	- com.andtek.andphone.recorder.PhoneCallObserver listens call events
+
+	- PhoneCallObserver is a singleton and associated only phones which has a line with recorder ruleset entry
+		- PhoneCallObserver registered in com.andtek.andphone.recorder.Module.initJTAPI(...) as terminal observer
+		
+	- PhoneCallObserver catches CiscoRTPOutputStartedEv event and calls sendStartCallToRecorder(...)
+		- it sends 'sip' XML message to recorder process
+
+	CiscoRTPOutputStartedEv ==>
+	--> com.andtek.andphone.recorder.PhoneCallObserver.terminalChangedEvent(TermEv[] eventList)
+		--> sendStartCallToRecorder(...)
+			--> isConfiguredSIPTrunkRecording()
+				--> xml = callInfo.getXML("sip", "");
+				--> LOG(Sending XML to recorder (sip))
+				--> recorderClientFactory.getRecorderClient().sendXml(xml)
+					--> LOG(XML_SOCKET:sending XML [<recordCall)
+					
+		<recordCall terminal="SEP64A0E714F271" callID="sip41789/1" callingParty="9002" calledParty="9000" callingPartyName="" calledPartyName="" 
+			originalCallingParty="9002" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
+
+
+SIP:
+
+		
+	com.andtek.andphone.sip.trunk.SIPServer
+	--> handleEvent(EventQueueWorkerEntry entry)
+		--> handleEvents(APASEvent[] events, Object observer)
+			--> observer.sipServerEvent(events)
+				--> com.andtek.andphone.recorder.RecorderSipTrunk.sipServerEvent(APASEvent[] events)
+					--> processAck(...)
+		
+		
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Recording protocol between APAS and recorder
+============================================
+Non-secured:
+------------
+1.	handling CiscoRTPOutputStartedEv on terminal 1
+
+	CiscoRTPOutputStartedEv ===> APAS
+	APAS === <recordCall> ===> recorder
+	recorder --> DB (insert into rec_call...)
+	recorder === <recordCallResponse> ===> APAS
+
+2.	handling CiscoRTPOutputStartedEv on terminal 2
+
+	SAME AS terminal 1
+	
+3. APAS gets SIP ACK events and sends information about FAREND 
+
+	- APAS gets media information from SIP message
+	APAS === <recordCall> ===> recorder (with ip and port)
+	recorder --> DB (updating rec_call with new info)
+	recorder === <call> ===> APAS
+	recorder === <recordCallResponse> ===> APAS
+	
+4. NEAREND
+
+	same as FAREND 
+		
+	
+[2017-05-03 08:56:56,616] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5c5820a6)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" callingParty="9030" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9030" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>]
+[2017-05-03 08:56:57,417] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" dstIP="192.168.5.245" dstPort="39575"/>]
+[2017-05-03 08:56:57,418] [DEBUG] [APAS-defaultWorker-11] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" srcIP="192.168.5.245" srcPort="39923"/>]
+[2017-05-03 08:57:24,487] [DEBUG] [APAS-defaultWorker-15] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="csip31117820" stopOut="1" />]
+[2017-05-03 08:57:24,553] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5c5820a6)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" stopOut="1" />]
+[2017-05-03 08:57:24,557] [DEBUG] [APAS-defaultWorker-17] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="csip31117820" stopOut="1" />]
+		
+		
+		
+------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Handling XML messages in recorder 
+=================================	
+- Server::callbacks contains function pointers to handlers which registered in main().
+- Handler methods are global and reside in record.cpp
+- name of methods are the same as XML tag names
+- handlers are:
+	- getStatus
+	- getCalls
+	- fetchConfig
+	- recordCall
+	- monitorCall
+	- setPcapCapture
+	- setLogConfig
+
+	
+--> Worker:run()
+		------------------------------------------ semi-infinite loop ---------------------------------------------------
+		--> Server::received(...)
+			------------------------------------------ loop on callbacks ---------------------------------------------------
+				--> callbacks[c].callback(...)
+				
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Status page for recording						
+=========================
+Based on Spring MCV.
+
+Configuration:
+- web.xml : 
+	- servlet:		springRecorder	(DispatcherServlet)
+	- pattern:		/recorder/*
+	
+- springRecorder-servlet.xml : Spring MVC config
+	- viewResolver:		org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver
+	- templateLoaderPath:	/jsp/recorder
+	
+- VIEW
+	- /jsp/recorder/status.flt
+	
+- CONTROLLER
+	- com.andtek.andphone.recorder.web.StatusCtrl
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Starting call recording
+=======================
+andphone_record (c++ process) records calls. It start calling if it gets "recordCall" XML commands.
+Here is a log of a recording start:
+
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" callingParty="9031" calledParty="9033" callingPartyName="" calledPartyName="" originalCallingParty="9031" originalCalledParty="9033" lastRedirectingParty="" initiated="false"/>
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" srcIP="192.168.5.36" srcPort="57364"/>
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" keyOut="40a8108e22508ca127fe0d1add34dad759e124ace9b563ad0dea3a2bf274" />
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" srcIP="192.168.5.36" srcPort="57364"/>
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" keyOut="40a8108e22508ca127fe0d1add34dad759e124ace9b563ad0dea3a2bf274" />
+	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" srcIP="192.168.5.36" srcPort="33105"/>
+	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" keyOut="e5d8f8187d0e8570b793f2da37b00f2dbd5491ae96ff2705542c3ea39e5c" />
+	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" srcIP="192.168.5.36" srcPort="33105"/>
+	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" keyOut="e5d8f8187d0e8570b793f2da37b00f2dbd5491ae96ff2705542c3ea39e5c" />
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" dstIP="192.168.5.36" dstPort="58884"/>
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" keyIn="3594b1286d63870762f78e231ba3ce03ad7949fe8147b6c229d2176e3170" />
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" dstIP="192.168.5.36" dstPort="58884"/>
+	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" keyIn="3594b1286d63870762f78e231ba3ce03ad7949fe8147b6c229d2176e3170" />
+	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" dstIP="192.168.5.36" dstPort="54105"/>
+	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" keyIn="ed121f8dad7dd417d85a9a2981a38a9fc25f03c104d700e3120de0ab634b" />
+	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" dstIP="192.168.5.36" dstPort="54105"/>
+	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" keyIn="ed121f8dad7dd417d85a9a2981a38a9fc25f03c104d700e3120de0ab634b" />
+
+- XML commands are handled by sniffer process with Server object which calls registered handler methods:
+
+		record.cpp main():
+		
+			server = new Server();
+			server->setCallback("getStatus", getXMLStatus);
+			server->setCallback("getCalls", getCalls);
+			server->setCallback("fetchConfig", fetchConfig);
+			server->setCallback("recordCall", recordCall);
+			server->setCallback("monitorCall", monitorCall);
+			server->setCallback("setPcapCapture", changePcapCapture);
+			server->setCallback("setLogConfig", setLogConfig);
+
+- To start recording APAS sends 'recordCall' message(s) to sniffer
+- Multiple messages are sent with differennt information about call, RTP stream information (src/dest IP/port), decryption key
+			
+	<recordCall .../> 
+		--> recordCall()
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Handling encryption keys in recorder 
+====================================
+How to create/get SRTP keys?
+	- SRTP out key is ALWAYS the same HARDCODED value:	RecorderSipTrunk.SRTP_OUT_KEY
+	- SRTP in key retrieved from SIP ACK SDP message:
+	
+		[2018-04-23 13:15:20,269] [>RECEIVED] [SIPServer-6] [ACK sip:APAS@192.168.150.142:5061;transport=tls]
+		ACK sip:APAS@192.168.150.142:5061;transport=tls SIP/2.0
+		...
+		a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:YeMbPF3M4z1/kANIEZGtXJ1e++W0uTgFws2zhKoo
+		...
+		
+During a secure call (when both of terminals has a Secure Device Profile) phones sends payload in SRTP.
+To encrypt data terminals has security key-pairs.
+
+	Terminal A incoming key --------------- Terminal B outgoing key
+	Terminal A outgoing key --------------- Terminal B incoming key
+
+	
+To get encryption information there are 4 (!!!!) ways in APAS:
+	
+1. Getting info from SIP protocol
+---------------------------------	
+SIP ships keys in SDP layer. You can trace SIP data in sip_protocol.log:
+
+	...
+	m=audio 40953 RTP/SAVP 0 8 9 18 101^M
+	a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:GpdRQofAGOXkvQQv+rNfL22n3P6ai4iToYpMffor^M
+	...
+	
+	Call flow of ACK handler to get keys:
+	
+	com.andtek.andphone.sip.trunk.SIPServer
+	--> handleEvent(EventQueueWorkerEntry entry)
+		--> handleEvents(APASEvent[] events, Object observer)
+			--> observer.sipServerEvent(events)
+				--> com.andtek.andphone.recorder.RecorderSipTrunk.sipServerEvent(APASEvent[] events)
+					--> processAck(...)
+						--> key = cryptoPart.substring("inline:".length());
+						
+							Keys are in base64 encoded format in SDP and will be written into RecorderSipTrunkApplicationData (data).
+						
+						--> data.setEncryptionKeyIn(StringUtils.toHexString(Base64.decode(key), ""));
+							data.setSrtp(true);
+
+						--> sendStartRecordToRecorder(data, fromNumber, deviceName, callID, dir, call)
+							
+							--> if (data.isSrtp())
+									getRecorderClient().sendXml(...);
+
+									XML will be sent to C++ recorder process with key information (in HEX coded format):
+									
+										<recordCall terminal="SEPEC44761F83FC" callID="sip9615/1" keyIn="95a42db42c584355fed07e8dab770d424bd04ac0c53221796fd816a8a6d1" />
+
+									and logged into andphone.log - too:
+									
+										[2015-06-12 09:40:03,389] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPEC44761F83FC" callID="sip9615/1" keyOut="5d5c1cb51ee663b7f2b4cd3cb4f6898be630784bc190f256d3ef21ec65ae" />]
+
+									
+								======> andphone_recorder (C++)
+								
+									--> record.cpp - recordCall(...)
+										- getting direction (dir) comes from attribute name: keyIn/keyOut
+										- allocating SRTP session record if does not exits (srtp_session[dir])
+										--> update_srtp_keys(call, attr, dir)
+											- it decodes HEXA encoded key into bytes
+											- keys written into call->srtp_key[dir]
+											- keys also referred by call->srtp_policy[dir].key
+											
+											Log written into recorder log:
+											
+
+2. Via JTAPI event
+------------------
+	Encryption status can be retrieved when an observer gets CiscoRTPInputKeyEv or CiscoRTPOutputKeyEv events:
+
+		ev.getCiscoMediaSecurityIndicator()
+
+	Keys can be retrieved with:
+
+		ev.getCiscoMediaEncryptionKeyInfo().getKey()
+		
+
+CiscoRTPInputKeyEv ==> PhoneCallObserver.terminalChangedEvent()
+	--> sendInputKeyToRecorderIfEncrypted(...)
+	
+CiscoRTPOutputKeyEv ==> PhoneCallObserver.terminalChangedEvent()
+	--> sendOutputKeyToRecorderIfEncrypted(...)
+		
+
+3. 
+		
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Packet sniffing
+===============
+By default there is no PCAP filter so ALL PACKETS will be captured by sniffer.
+- main() contains PCAP loop which calls back packet processor method (my_callback) where
+	- it identifies ethernet and 802.1q VLAN frames
+	- it recognises UDP packets
+	- and calls handle_udp()
+
+
+	main()
+		--> while(getopt(...))
+
+		LOG:
+			2017-May-03 08:46:47.614: 0: =======================================
+			2017-May-03 08:46:47.614: 0: andphone_record V5.7.4-403 started
+
+		--> db->connect()
+		-->pcap_loop(descr[0],  0, my_callback, args
+		---------------------------- loop while terminating -------------------------
+		--> my_callback(...)
+			- it processes sniffed packets
+				- identifies ethernet and 802.1q VLAN frames
+				- recognises UDP packets and...
+			--> handle_udp(...)
+				- LOG(|source:)
+					
+					2017-May-03 08:56:58.134: 3: |source: 192.168.5.206 len: 200 port source: 26258  dest: 39575 seq: 4850 ts: 4172826538 flags: 0880
+				
+				- ignoring RTP with DTMF tone
+				- finding call for packet
+				
+				
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Post-processing recorded media			
+==============================
+Log: andphone-bg.log
+			
+--> com.andtek.andphone.recorder.background.BackgroundThrd.run()
+	--> com.andtek.andphone.recorder.Admin.recorderBackgroundProcessing()
+		--> recorderBackgroundProcessing(false)
+			--> postProcessRecording(recmod, connForRead)
+				--> com.andtek.andphone.recorder.writeFile()
+					- mergewav
+						
+						/usr/bin/mergewav /var/lib/andphone_record/plugins /var/lib/andphone/tmp/4_in.wav /var/lib/andphone/tmp/4_out.wav /var/lib/andphone/tmp/4.wav
+						
+					- speex conversion
+					
+						/usr/bin/speexenc -n --quality 8 --comp 3 --nframes 1 --comment type=ANDPhoneRecording /var/lib/andphone/tmp/4.wav /var/lib/andphone/tmp/4.spx
+					
+
+					
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SIP management			
+==============
+- SipServer is a GenericServer which implements SipListener
+- it listening and waiting for SIP messages via SIP trunk
+- it sends 1 OK as response for 1 INVITE
+
+
+APAS - CUCM
+< INVITE
+> TRY
+< OK
+
+
+Event handling infrastructure:
+------------------------------
+
+SipServer
+
+
+INVITE:
+-------
+==> SIP INVITE
+	--> SipServer.processRequest(RequestEvent requestEvent) 					// waiting for SIP messages
+		SIP-PROTOCOL-LOG:
+		
+			[2018-03-16 14:22:58,893] [>RECEIVED] [SIPServer-3] [INVITE sip:897999999@10.89.63.20:5060]
+			INVITE sip:897999999@10.89.63.20:5060 SIP/2.0
+
+		LOG:
+			
+			... [EventScannerThread] [SIPServer.java:218] - Request INVITE received at SIPServer-3 with server transaction id null
+			
+		on Request.INVITE
+		--> processInvite(...)
+			LOG: 
+			
+				... [EventScannerThread] [SIPServer.java:702] - SIPServer[APAS](agent(10.89.63.20:5060, udp) ---> server[3](Sub_DCN, 10.89.62.16:5060) available:true - REQUEST: Invite
+				... [EventScannerThread] [SIPServer.java:717] - SIPServer[APAS](agent(10.89.63.20:5060, udp) ---> server[3](Sub_DCN, 10.89.62.16:5060) available:true: toUri=sip:897999999@10.89.63.20
+				... [EventScannerThread] [SIPServer.java:721] - SIPServer[APAS](agent(10.89.63.20:5060, udp) ---> server[3](Sub_DCN, 10.89.62.16:5060) available:true: number=897999999, fromNumber=+4920151793501
+				... [EventScannerThread] [SIPServer.java:728] - SIPServer[APAS](agent(10.89.63.20:5060, udp) ---> server[3](Sub_DCN, 10.89.62.16:5060) available:true: Sending Trying
+				... [APAS-defaultWorker-28] [RecorderSipTrunk.java:83] - com.andtek.andphone.recorder.RecorderSipTrunk@26ed4021: Invite received
+
+			
+			--> sendSipResponse(serverTransaction, response)		==> SIP Trying
+				SIP-PROTOCOL-LOG:
+				
+				[2018-03-16 14:22:58,895] [SENT>] [SIPServer-3] [100 Trying]
+				SIP/2.0 100 Trying
+
+			
+			--> sendEvent(new SipInviteReceivedEvent(this, requestEvent, serverTransaction)		================ internal event to APAS =======>
+			--> handleEvents(APASEvent[] events, Object observer) 
+				--> 				SIPServerObserver ob = (SIPServerObserver)observer;
+									ob.sipServerEvent((APASEvent[]) events);
+			
+			=> SipInviteReceivedEvent
+			
+			--> RecorderSipTrunk.sipServerEvent()
+				--> processInvite(SIPServer server, RequestEvent requestEvent, ServerTransaction serverTransaction)
+					--> sendInviteOK(ServerTransaction serverTransaction, Response okResponse)
+						LOG:	Dialog state before 200:
+						--> sendSipResponse(serverTransaction, okResponse)
+							--> SipProtocolLog.log(response, getSipStackName())
+							--> serverTransaction.sendResponse(response)
+						LOG: Dialog state after 200
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Writing/changing rec_call table
+===============================
+- GdprService			
+
+	...
+	--> GdprService.deleteRecordingEntry();				DELETE
+
+	
+- RecorderApiService 
+
+	--> RecorderController.updateRecording()
+		-->RecorderApiService.updateRecording()
+			--> RecorderApiService.saveRecording()		UPDATE *
+					
+
+	--> RecorderApiService.deleteRecording(int recid)		DELETE
+	
+		
+		
+- com.andtek.andphone.recorder.Admin
+
+		
+	--> Admin.processAction(ConnectionBean connection)		DELETE
+		
+		
+	--> Admin.recorderBackgroundProcessing()			UPDATE status, lastaction
+														DELETE
+		
+	
+	--> Admin.postProcessRecording(Module recmod, Connection connForRead) 			UPDATE status, lastaction, rec_password
+																					UPDATE rec_password, status, lastaction
+																					DELETE
+																					UPDATE status, lastaction, codec, filesize, callingpartyname, calledpartyname, filename
+																					UPDATE status, lastaction, codec, filesize
+	
+	--> Admin.updateStorageProfileOnRecord()		UPDATE keep, lastaction
+	
+	--> Admin.createTestRecording.createTestRecording(int count)		INSERT
+																					
+- AdminHelper
+	
+	--> dbDeleteRecording(int recID)		DELETE
+	
+	--> dbDeleteRecordingByStatusAndKeep(int status,int profileId)			DELETE
+	
+	--> dbUpdateRecordingStatus( int recID, int status)			UPDATE status, lastaction
+	
+- com.andtek.andphone.recorder.gwtapp.server.RPCrecorderServiceImpl
+
+	--> RemoteDeleteRecordingFiles 		DELETE
+	
+	--> RemoteGetArchivesList(...)		UPDATE filesize
+		
+	--> RemoteSetAdminNote(...)			UPDATE admin, lastaction
+										
+	--> RemoteSetStorageType(...)		
+		
+
+- RECORDER calls.cpp:
+
+	--> call_insert_db(...)		INSERT
+	
+		sql << "INSERT INTO rec_call (start," << db->mapColumn("end")
+		<<	",lastaction,status,initiated,signaling,keep,duplicate,"
+		<< "callingparty,calledparty,callingpartyname,calledpartyname,origcallingparty,origcalledparty,gcid) "
+		<< "VALUES (NOW(),NOW(),NOW(),"
+		<< call->status << ",1," << call->type << "," << call->keep << "," << call->duplicate
+		<< ",?,?,?,?,?,?,?)"; 
+		
+	--> call_keep(u_int32_t phoneIP)		UPDATE end, lastaction, keep, duplicate
+	
+	--> call_update_lastaction_db(...)		UPDATE end, lastaction
+	
+	--> call_update_keep_db(...)		UPDATE keep
+	
+	--> call_update_start_db(struct call * call)		UPDATE start, end, lastaction
+	
+	--> call_update_db(struct call * call, int requirelock)			UPDATE (see SQL below)
+	
+			sql_cmd << "UPDATE rec_call SET " << db->mapColumn("end") << "=NOW(),lastaction=NOW(),"
+			<< "phoneip=\'" << addr_buf << "\'"
+			<< ",remoteip=\'" << inet_ntoa(remoteIpAddress) << "\'"
+			<< ",status=" << call->status
+			<< ",initiated=" << call->initiated
+			<< ",initiator=\'" << call->initiator << "\'"
+			<< ",filename=\'" << call->filename << "\'"
+			<< ",filesize=" << call->filesize
+			<< ",signaling=" << call->type
+			<< ",codec=" << call->codec
+			<< ",duplicate=" << call->duplicate
+			<< ",callingparty=?, calledparty=?, callingpartyname=?, calledpartyname=?"
+			<< ",origcallingparty=?, origcalledparty=?, gcid=? "
+			<< "WHERE id=" << call->id; 
+			
+			'start' NOT updated here.
+			
+			
+			
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Writing/changing rec_call table
+===============================
+Start time of recording	- stored into rec_call/start database field.
+
+INSERTED:
+	calls.cpp:
+
+		--> call_insert_db(...)		
+		
+			sql << "INSERT INTO rec_call (start," << db->mapColumn("end")
+			<<	",lastaction,status,initiated,signaling,keep,duplicate,"
+			<< "callingparty,calledparty,callingpartyname,calledpartyname,origcallingparty,origcalledparty,gcid) "
+			<< "VALUES (NOW(),NOW(),NOW(),"
+			<< call->status << ",1," << call->type << "," << call->keep << "," << call->duplicate
+			<< ",?,?,?,?,?,?,?)"; 
+
+
+	Initial value of 'start' will be NOW() in CPP recorder. That means when recorder staring recording (not the start of call).
+	
+UPDATEED:
+	calls.cpp
+		--> call_set_onDemand(...)
+			------------- if(call->ondemand == 1) ---------------
+			--> call_update_start_db(struct call * call)		UPDATE start, end, lastaction
+	
+			        sprintf(sqlbuff,"UPDATE rec_call SET start=NOW(),%s=NOW(),lastaction=NOW() WHERE id=%d", db->mapColumn("end").c_str(), call->id); 
+					
+		If this method called (when an on-demand event received) 'start' updated with the current time.
+		
+		
+		
+	

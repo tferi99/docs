@@ -1,0 +1,381 @@
+===========
+keytool FAQ
+===========
+
+- Basics
+- PKI related file extensions
+- Certificate Chains
+- Howto generate keypair and self-signed certificate?
+- Howto print a certificate?
+- Howto print a certificate request?
+- Steps of creating a signed certificate
+- Howto import keys from KPCS12 to JKS?
+- Howto export the Public Key Certificate
+- Howto export/print a private key?
+- How to delete a certificate?
+- How to rename a certificate?
+
+SSL
+---
+- How to create and use your own test CA?
+- Troubleshooting SSL certificates 
+- Certificates for SSL
+
+------------------------------------------------------------------------------------------------
+Basics		
+======
+- keystore
+	Keystores are used by the JVM to store both public keys and private keys. The default Java keystore type is JKS or Java Key Stores. 
+	A Java application can choose to use an application specific keystore or it can use the JVM keystore "cacerts". 
+	Keys stored in the cacerts repository are visible to access for any Java application runs on that JVM if authenticated. 
+	Otherwise applications must have explicitly provided the location of other keystores to be used.
+
+- keytool is a key and certificate management utility
+	It enables users to administer their own public/private key pairs and associated certificates for use in self-authentication
+	
+- A certificate (also known as a public-key certificate) is a digitally signed statement from one entity (the issuer), saying that the public key (
+	and some other information) of another entity (the subject) has some specific value.
+
+	Certificates are used to distribute public keys. Usually certificates are issued by a trusted third party called Certificate Authorities (CA). 
+	But now the certificate generated here is a self signed certificate which would not be trusted by others. 
+	But if some party wishes to communicate with our application, then we can provide this certificate for them so they can get our public key.
+
+	So certificate contains:
+		- public key
+		- personal data of issuer
+		
+		subscribed by CA.
+
+- self-signed certificate
+	A self-signed certificate is one for which the issuer (signer) is the same as the subject (the entity whose public key is being authenticated by the certificate). 
+	Whenever the -genkey command is called to generate a new public/private key pair, it also wraps the public key into a self-signed certificate.
+
+- trusted certificate
+	
+- X.509	
+	In cryptography, X.509 is an ITU-T standard for a public key infrastructure (PKI) and Privilege Management
+	Infrastructure (PMI). X.509 specifies, amongst other things, standard formats for public key certificates, certificate
+	revocation lists, attribute certificates, and a certification path validation algorithm.
+
+- PEM
+	PEM is an abbreviation for Privacy Enhanced Mail (RFC 1421 - RFC 1424), an early standard for securing electronic mail (IRTF, IETF). PEM never has been widely adopted as Internet Mail Standard. 
+	The PEM format often is used for representing a certificate, certificate request, PKCS#7 object,... in US-ASCII by base64 encoding it and putting the encoding 
+	between the typical PEM delimiters) e.g.: 
+
+- PKI (Public-key infrastructure)
+
+- PKCS #12
+	Defines a file format commonly used to store private keys with accompanying public key certificates, protected with a password-based symmetric key. 
+	PFX is a predecessor to PKCS#12.
+	
+	.p12, .pfx
+	
+------------------------------------------------------------------------------------------------
+PKI related file extensions
+===========================
+.csr 
+	This is a Certificate Signing Request. Some applications can generate these for submission to certificate-authorities. 
+	It includes some/all of the key details of the requested certificate such as subject, organization, state, whatnot. These get signed by the CA and a certificate is returned. 
+	The returned certificate is the public certificate, which itself can be in a couple of formats.
+	
+.pem - (Privacy Enhanced Mail) Base64 encoded DER certificate, enclosed between "-----BEGIN CERTIFICATE-----" and "-----END CERTIFICATE-----"
+	
+.key
+	This is the private-key of a specific certificate. In apache installs, this frequently resides in /etc/ssl/private. 
+	The rights on this directory and the certificates is very important, and some programs will refuse to load these certificates if they are set wrong.
+	
+.pkcs12 .pfx .p12 
+	A passworded container format that contains both public and private certificate pairs. 
+	Every time I get one I have to google to remember the openssl-fu required to break it into .key and .pem files.
+		
+.cer, .crt, .der - usually in binary DER form, but Base64-encoded certificates are common too.
+	Fills the same function as a .pem file, but a different format. OpenSSL can convert these to .pem. 
+	
+.cert .cer 
+	A .pem file with a different extension. This extension is recognized by Windows Explorer as a certificate, which .pem is not.
+	
+.crl
+	A certificate revocation list. Certificate Authorities produce these as a way to de-authorize certificates before expiration.		
+		
+
+------------------------------------------------------------------------------------------------
+Certificate Chains
+==================
+- keytool can create and manage keystore "key" entries that each contain a private key and an associated certificate "chain". 
+- The FIRST CERTIFICATE in the chain contains the PUBLIC KEY corresponding to the private key.
+
+		
+------------------------------------------------------------------------------------------------
+Howto generate keypair and self-signed certificate?
+===================================================
+
+keytool -genkey -alias <alias> -keyalg <algorythm> [-keystore <keystore file>] [-dname <distinguish name>] [-storepass <keystore password>] [-keypass <key password>]
+
+e.g.
+	keytool -genkey -alias myalias -keyalg RSA -validity 365 -keystore keystore.jks -dname "cn=Ferenc Toth, ou=Development, o=Abc Inc., c=HU" -storepass 123456 -keypass 123456
+	
+	
+- Generates a key pair (a public key and associated private key). 
+- Wraps the public key into an X.509 v3 self-signed certificate, which is stored as a single-element certificate chain. 
+- This certificate chain and the private key are stored in a new keystore entry identified by alias.	
+
+------------------------------------------------------------------------------------------------
+Howto print a certificate?
+==========================
+From certificate file:
+
+	keytool -printcert -file <certificate file>
+
+	OR
+	
+	openssl x509 -in <certificate file> -text
+	
+From keystore file:	
+
+	keytool -list -v [-keystore <keystore file>] [-storetype <store type>]
+
+
+---------------------------
+---------------------------------------------------------------------
+Howto print a certificate request?
+==================================
+openssl req -in <certificate request (CSR) file> -text
+
+OR
+
+keytool -printcertreq -file <certificate request file>
+	
+------------------------------------------------------------------------------------------------
+Steps of creating a signed certificate                          
+======================================
+
+1. Create key
+
+	keytool -genkey -alias tomcat -keyalg RSA
+
+2. Create certificate request (CSR) for CA:
+
+	keytool -certreq -keyalg RSA -alias tomcat -file certreq.csr
+
+	
+3. Get the Chain Certificate (also called the Root Certificate) from the CA.
+	For example from here:
+		
+		www.verisign.com/support/install/intermediate.html
+	
+	The Chain Certificate is a self-signed certificate from the CA that contains its well-known public key.
+	
+4. Import the Chain Certificate into the keystore as trusted key:
+		
+		keytool -import -alias root -trustcacerts -file <filename_of_the_chain_certificate>
+	
+5. Finally, you import the new certificate retrieved from CA:
+
+		keytool -import -alias tomcat -trustcacerts -file <your_certificate_filename>		
+
+
+------------------------------------------------------------------------------------------------
+Howto export the Public Key Certificate
+=======================================
+Export into PEM (Internet RFC 1421 Certificate Encoding Standard - human readable) format:
+		
+	keytool -exportcert -keystore <KEYSTORE FILE> -alias <ALIAS> [-file <OUTPUT FILE>] -rfc
+		
+Export into DER (binary) format:
+
+	keytool -exportcert -keystore <KEYSTORE FILE> -alias <ALIAS> [-file <OUTPUT FILE>]
+		
+		
+------------------------------------------------------------------------------------------------
+Howto export/print a private key?
+=================================
+This works for JDK1.6 and later, but not directly. You have to export keystore into PKCS12 store and export keys from there using openssl.
+
+- Export the key to a PKCS#12 store, using -importkeystore:
+
+		keytool -importkeystore -srckeystore .keystore -destkeystore keystore.p12 -deststoretype pkcs12 -srcalias tomcat -srcstorepass tomcat -deststorepass tomcat
+
+- Export private keys and certificates: 
+		openssl pkcs12 -in keystore.p12 -passin pass:tomcat -nodes [-out keystore.pem] [-nokeys] [-nocerts]
+
+
+Troubleshooting:
+	NOTE: use the same keystore/key	password for source and destination otherwise you will get an error during next step something like this:
+	
+		Error outputting keys and certificates
+		2674688:error:06065064:digital envelope routines:EVP_DecryptFinal_ex:bad decrypt:evp_enc.c:539:
+		2674688:error:23077074:PKCS12 routines:PKCS12_pbe_crypt:pkcs12 cipherfinal error:p12_decr.c:104:
+		2674688:error:2306A075:PKCS12 routines:PKCS12_item_decrypt_d2i:pkcs12 pbe crypt error:p12_decr.c:130:
+
+	OR specify both store and key password for source and destination, too:
+	
+		keytool -importkeystore -srckeystore .keystore -destkeystore keystore.p12 -deststoretype pkcs12 -srcalias tomcat -srcstorepass tomcat -srckeypass tomcat -deststorepass 123456 -destkeypass 123456
+		
+------------------------------------------------------------------------------------------------
+Howto import keys from KPCS12 to JKS?
+=====================================
+
+	# create private key and certificate
+	openssl req -new -x509 -out cert.pem -nodes -keyout key.pem -subj "/CN=192.168.5.113/OU=Developers/O=FToth/L=BFured/C=HU"
+
+	# store into PKCS12
+	openssl pkcs12 -export -in cert.pem -inkey key.pem -passout pass:changeit > keystore.p12
+
+	# validate
+	keytool -list -storetype pkcs12 -keystore keystore.p12 -storepass changeit
+	 
+	# import 
+	keytool -importkeystore -srckeystore keystore.p12 -srcstoretype pkcs12 -alias 1 -srcstorepass changeit -destkeystore .keystore.jks -destalias andphone -deststorepass changeit 
+			
+
+------------------------------------------------------------------------------------------------
+How to delete a certificate?
+============================
+keytool -delete -alias keyAlias -keystore keystore-name -storepass password
+					
+					
+------------------------------------------------------------------------------------------------
+How to rename a certificate?
+============================
+keytool -changealias -alias "your-very-very-long-alias" -destalias "new-alias" -keypass keypass -keystore /path/to/keystore -storepass storepass
+
+	
+
+------------------------------------------------------------------------------------------------
+Troubleshooting SSL certificates 
+================================
+- If you have SSL problems call WEB developer tool (F12) and take a look at Security page to get information about possible problems.
+	For example if you created a trusted certificate for WEB server but Chrome blames it as an unsecure (not-trusted) item.
+
+- The problem is often a missing attribute or extension (e.g. Subject Alternate Name)
+
+	
+- After fixing certificate issues restart Chrome:
+
+			chrome://restart
+	
+	
+	
+------------------------------------------------------------------------------------------------
+How to create and use your own test CA?
+=======================================
+In short:
+---------
+	- Create test CA
+		- generate CA key
+		- generate self-signed CA certificate frm CA key
+		
+	- Create a keystore and PK for target system
+		
+	- Sign you certificate with CA certificate
+		- create certificate request (CSR) from target keystore		
+		- sign CSR with CA
+		- Import CA certificate into target keystore
+		- Import signed certificate and overwrite the original (non-signed) one
+		
+In details:
+-----------
+- Create test CA
+	- generate CA key:
+
+		openssl genrsa [-des3] -out ca.key 4096
+		
+		Using -des3 you can encrypt/protect private key.
+		
+	- generate self-signed CA certificate frm CA key
+
+		openssl req -new -x509 -days 3650 -key ca.key -out ca-cert.pem
+		
+		'req' basically generates a certificate request but with -x590 outputs a self signed certificate instead of a certificate request. 
+		This is typically used to generate a test certificate or a self signed root CA. 
+
+		Specify subject if you want eliminate interactive prompt:
+		
+			openssl req -new -x509 -days 3650 -key $CA_KEY -out $CA_CERT -subj "/C=HU/ST=Vp/L=BFured/O=Andtek/OU=Dev/CN=idp2.example.com"
+
+-  Create a keystore and PK for target system
+
+	basic method:
+	
+		keytool -genkeypair -alias test -keystore /root/openam/openam/keystore.jks -storepass changeit -keypass changeit -keyalg RSA -keysize 2048 -validity 9999
+
+		- Generates a key pair (a public key and associated private key). 
+		- Wraps the public key into an X.509 v3 self-signed certificate, which is stored as a single-element certificate chain. 
+		- This certificate chain and the private key are stored in a new keystore entry identified by alias.	
+		
+	extended method often required by SSL:
+	
+		keytool -genkeypair -alias test -keystore /root/openam/openam/keystore.jks -storepass changeit -keypass changeit -keyalg RSA -keysize 2048 -validity 9999 
+			-dname CN=idp2.example.com, OU=Devs, O=Andtek, L=Balatonfured, C=HU -ext SAN=dns:idp2.example.com,ip:192.168.5.110
+
+		- If you don't specify subject (-subj) it should be provide manually (typing-in).
+		- Subject contains Common Name (CN) which should contain FQDN of owner host (SEE ALSO: Certificates for SSL)
+		- Sometimes client 
+					
+- Sign you certificate with CA certificate					
+		- create certificate request (CSR) from target keystore
+			
+			keytool -certreq -keyalg RSA -alias tomcat -file /root/tomcat.csr -keystore /root/keystore.jks -storepass changeit -ext SAN=dns:idp2.example.com,ip:192.168.5.110
+
+		- sign CSR with CA
+
+			openssl x509 -req -days 3650 -in /root/tomcat.csr -CA /root/ca-cert.pem -CAkey /root/ca.key -CAcreateserial -out /root/tomcat-signed.pem -extensions v3_ca -extfile /root/cert-ext.cfg
+			
+			It generates a NEW certificate (tomcat-signed.pem) from CSR and CA info.
+
+		- Import CA certificate into target keystore:
+		
+			keytool -delete -alias ca -keystore /root/keystore.jks -storepass changeit
+			keytool -importcert -alias ca -keystore /root/keystore.jks -storepass changeit -file /root/ca-cert.pem
+
+		- Import signed certificate and overwrite the original (non-signed) one:
+			
+			keytool -importcert -alias tomcat -keystore /root/keystore.jks -storepass changeit -file /root/tomcat-signed.pem
+
+			
+- Test it by calling an HTTPS URL from target host.
+
+	BEFORE TESTING import CA certificate into browser's Trusted Root Certificates.
+
+---------------------------------------------------------------------------------------------------------------------------------
+Certificates for SSL
+====================
+Client should contain/access a certificate which can verify signed resources.
+Certificates are identified by CN field.
+
+The Common Name (CN), also known as the Fully Qualified Domain Name (FQDN), is the characteristic value within a Distinguished Name. 
+
+The Common Name (also CN) identifies the host name associated with the certificate, for example www.example.com or example.com.
+It consists of a single host name in case of a single-name certificate (e.g. example.com, www.example.com), or a wildcard name 
+in case of a wildcard certificate (e.g. *.example.com). In all cases, it is not an URL and therefore it doesn’t include any protocol 
+(e.g. http:// or https://), port number, or pathname.
+
+The common name represents the name protected by the SSL certificate. The certificate is valid only if the request hostname matches the certificate common name. 
+Most web browsers displays a warning message when connecting to an address that does not match the common name in the certificate.
+
+	E.g:	
+		if URL: 
+		
+			 https://idp2.example.com:8443/openam/saml2/jsp/exportmetadata.jsp?entityid=https://idp2.example.com:8443/openam&realm=/MSAD
+			 
+		then you need something like this:
+	
+			Alias name: tomcat
+			Creation date: Jul 19, 2018
+			Entry type: PrivateKeyEntry
+			Certificate chain length: 1
+			Certificate[1]:
+			Owner: CN=idp2.example.com, OU=Tomcat, O=Tomcat, L=Tomcat, C=HU					<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			Issuer: CN=idp2.example.com, OU=Tomcat, O=Tomcat, L=Tomcat, C=HU
+			Serial number: 216629f6
+			Valid from: Thu Jul 19 16:08:07 CEST 2018 until: Sun Dec 03 15:08:07 CET 2045
+			Certificate fingerprints:
+					 MD5:  81:A0:17:05:18:5B:F9:38:A4:47:FE:A5:B5:4A:E9:2B
+					 SHA1: 04:FF:BC:1B:61:B9:AA:66:D7:05:A1:58:89:A2:C5:3B:4B:83:6F:23
+					 SHA256: 20:29:92:64:21:8C:11:4A:52:1F:8A:1D:BF:C0:0B:91:E6:0F:26:52:39:84:92:B1:92:E2:50:40:12:16:2E:88
+					 Signature algorithm name: SHA256withRSA
+					 Version: 3
+
+
+
+					

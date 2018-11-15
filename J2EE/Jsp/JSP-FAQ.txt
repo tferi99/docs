@@ -1,0 +1,198 @@
+=======
+JSP-FAQ
+=======
+
+Servlets
+--------
+- ERROR: getOutputStream() has already been called for this response
+
+- How to collect checkbox values in JSP?
+- How to use JSP templates?
+- How to pass paramaters to JSP templates?
+
+JSP
+---
+- How to write XML-based JSP?
+
+-------------------------------------------------------------------------------------------------------
+ERROR: getOutputStream() has already been called for this response
+==================================================================
+If you write a servlet and gets output stream, you will get this error message if you have any character
+before getOutputStream() call. To get rid from this error you have to remove all characters - even new lines -
+from JSP page (and of cource from other included pages) before that row.
+
+If you have JSP actions before that rowm you have to join them together:
+
+<%@ include file="/_config.inc"%><%
+%><%@ include file="/jspapp/RecordExportDataVariables.inc"%><%
+%><%@ page import="jspapp.jsp.JspFunc"%><%
+%><%@ page import="jspapp.utils.*"%><%
+%><jsp:useBean id="b" scope="page" class="ProjectTime.beans.R300_ProjByUser"/><%
+%><%OutputStream out = response.getOutputStream();%>
+
+NOTE:
+This error can also happen if you forward from JSP to a servlet written in native Java.
+
+-------------------------------------------------------------------------------------------------------
+How to collect checkbox values in JSP?
+======================================
+- Add this to target JSP:
+
+	<jsp:setProperty name="b" property="*"/> 
+	
+	where 'b' points to controller bean.
+	
+- Add checkbox to JSP:
+
+	<c:forEach items="${b.roleNames}" var="role">
+		<input type="checkbox" name="roles" value="${role}">${role}<br>
+	</c:forEach>
+
+- Add target property to controller bean:
+
+    public String[] getRoles()
+    {
+        return roles;
+    }
+
+-------------------------------------------------------------------------------------------------------
+How to use JSP templates?
+=========================
+Create template under /WEB-INF/tags
+
+	<%@tag description="Overall Page template" pageEncoding="UTF-8"%>
+	<%@attribute name="header" fragment="true" %>
+	<%@attribute name="footer" fragment="true" %>
+	<html>
+	  <body>
+		<div id="pageheader">
+		  <jsp:invoke fragment="header"/>
+		</div>
+		<div id="body">
+		  <jsp:doBody/>
+		</div>
+		<div id="pagefooter">
+		  <jsp:invoke fragment="footer"/>
+		</div>
+	  </body>
+	</html>
+	
+	- put templates into /WEB-INF/tags (hardcoded)
+	
+	- extension of files should be .tag
+	
+	- start with @tag:
+	
+		<%@tag description="..." pageEncoding="UTF-8"%>
+	
+	- declare attributes:
+		
+		<%@attribute name="ATTRNAME" fragment="true" %>
+	
+	- insert attributes into template:
+	
+		<jsp:invoke fragment="ATTRNAME"/>
+		
+Use in JSP:
+	<%@page contentType="text/html" pageEncoding="UTF-8"%>
+	<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+
+	<t:genericpage>
+		<jsp:attribute name="header">
+		  <h1>Welcome</h1>
+		</jsp:attribute>
+		<jsp:attribute name="footer">
+		  <p id="copyright">Copyright 1927, Future Bits When There Be Bits Inc.</p>
+		</jsp:attribute>
+		<jsp:body>
+			<p>Hi I'm the heart of the message</p>
+		</jsp:body>
+	</t:genericpage>
+
+	
+	- declare taglib directory with prefix:
+	
+		<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+		
+	- insert template:
+	
+		<prefix:template_file_name_without_extension>
+		
+	- define attribute fragments with <jsp:attribute>
+	
+-------------------------------------------------------------------------------------------------------
+How to pass paramaters to JSP templates?
+========================================
+- As to EL, the ${pageContext.getAttribute("foo")} works in EL 2.2 only. 
+- Before that the right syntax is ${pageContext.foo} or just ${foo}
+
+Caller passing parameter in REQUEST attribute:
+
+	<% request.setAttribute("foo", "bar") %>
+	<custom:myTag />
+	
+Getting foo in tag:
+
+	<%= request.getAttribute("foo") %>
+	
+	OR
+	
+	${requestScope.foo}
+	
+	OR
+	
+	${foo}
+	
+Caller passing parameter in TAG attribute:	
+	
+	<custom:myTag foo="bar" />
+
+Getting foo in tag:
+
+	<%@attribute name="foo" required="true" %>
+	${pageContext.foo}
+	
+	OR
+	
+	<%@attribute name="foo" required="true" %>
+	${foo}	
+
+	
+You can pass arbitrary type of attribute if you specify type of attribute:
+
+Caller:
+	<%@taglib prefix="temp" tagdir="/WEB-INF/tags" %>
+	<temp:personList title="READABLE Persons" items="${b.entitiesReadable}"/>
+	
+	where controller method:
+	
+		public List<Person> getEntitiesReadable()
+		{
+			PersonService s = (PersonService) getSpringBean("personService");
+			return s.getAllReadable();
+		}
+
+Tag:
+	<%@attribute name="items" required="true" rtexprvalue="true" type="java.util.List" %>
+	
+	<c:forEach var="p" items="${items}">
+		...
+	</c:forEach>
+	
+-------------------------------------------------------------------------------------------------------
+How to write XML-based JSP?
+===========================
+- Comment has no XML syntax analog.
+
+- scriptlet:
+
+	JSP:	<% ... %>
+	XML:	<jsp:scriptlet> ... </jsp:scriptlet>
+	
+- expression:
+
+	JSP:	<%= ... %>
+	XML:	<jsp:expression> ... </jsp:expression
+	
+
+		

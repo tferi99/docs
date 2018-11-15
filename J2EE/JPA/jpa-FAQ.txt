@@ -1,0 +1,267 @@
+=======
+JPA FAQ
+=======
+
+PersistentManager
+-----------------
+- Where to place persistence.xml?
+
+Spring
+------
+- How to resolv conflict of multiple persistent.xml?
+
+Associations
+------------
+- ManyToMany
+
+Transactions
+------------
+- User transactions in container managed beans.
+
+Debug
+-----
+- How to log generated SQL?
+
+Errors
+------
+- JPQL Syntax error on entity name with full qualified package name
+- Message: cannot navigate collection valued association field 
+
+JPQL, queries
+-------------
+- Rules for JPA queries
+
+
+Model
+-----
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to resolv conflict of multiple persistent.xml?
+==================================================
+Using spring and jpa, and you get this error:
+
+	No single default persistence unit defined in {classpath*:META-INF/persistence.xml}
+
+
+Then the cause is simple: You may have other persistence.xml files as well in your lib/jars.
+Solution, add your persistenceUnitName to entityManager bean.
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="persistenceUnitName" value="blahblahYourName" />
+		......
+
+which matches the one in your persistence.xml
+
+	<persistence-unit name="blahblahYourName">
+
+	</persistence-unit>
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------
+ManyToMany
+==========
+
+	....
+	public class User
+	{
+		@ManyToMany(fetch = FetchType.LAZY)
+		Set<UserGroup> userGroups = new HashSet<UserGroup>();
+	}
+
+
+	...
+	public class UserGroup
+	{
+		@ManyToMany(mappedBy = "userGroups", fetch = FetchType.LAZY)
+		Set<User> users = new HashSet<User>();
+	}
+	
+	
+- We must pick one of the two entitiesto be the owner (User here). As in every other bidirectional relationship, 
+	the inverse side (UserGroup here) must use the mappedBy element to identify the owning attribute.
+	
+- It's enough to add inverse side entity to owner side collection:
+
+	user.getUserGroups().add(group);
+	
+- If you delete an owner, association also will be deleted automatically (it's not true for inverse side).
+
+- Note that no matter which side is designated as the owner, the other side should include the
+	mappedBy element; otherwise, the provider will think THAT BOTH SIDES ARE THE OWNER and that the
+	mappings are separate unidirectional relationships.
+	In this case 2 INDEPENDENT JOIN TABLES will be created, and entry will be inserted if an element 
+	has been inserted into ownser's collection - bad pattern!
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------
+Where to place persistence.xml?
+===============================
+- If you package the persistent unit as a set of classes in an EJB JAR file, persistence.xml
+	should be put in the EJB JAR’s META-INF directory.
+	
+- If you package the persistence unit as a set of classes in a WAR file, persistence.xml should be located in the WAR file’s 
+	WEB-INF/classes/META-INF directory.
+
+	foo.war:
+		WEB-INF/classes/META-INF/persistence.xml  //good
+		WEB-INF/classes/com/foo123/jpa/Project.class
+		WEB-INF/web.xml
+		index.jsp
+	You may also package entity classes and persistence.xml inside a library jar, which is packaged inside the war: WEB-INF/lib
+	foo.war:
+		WEB-INF/lib/my-entities.jar
+		WEB-INF/web.xml
+		index.jsp
+	
+- If you package the persistence unit in a JAR file that will be included in a WAR or EAR file,
+	the JAR file should be located in either
+		- The WEB-INF/lib directory of a WAR
+		- The EAR file’s library directory	
+		
+	my-entities.jar:
+		META-INF/persistence.xml  //good
+		com/foo123/jpa/Project.class		
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------
+How to log generated SQL?
+=========================
+Hibernate:
+
+	set logging level in log4j configuration (see Hibernate-FAQ)
+	
+EclipseLink:
+
+	set this property in persistence.xml:
+	
+		<property name="eclipselink.logging.level" value="FINE" />
+		<property name="eclipselink.logging.level.sql" value="FINE" />
+		<property name="eclipselink.logging.parameters" value="true"/>	
+	
+	In EclipseLink the following are the valid values for the use in the persistence.xml file and for the java.util.logging.Level: 
+	
+		OFF – disables logging.
+				You may want to set logging to OFF during production to avoid the overhead of logging. 
+		SEVERE – logs exceptions indicating that EclipseLink cannot continue, as well as any exceptions generated during login. This includes a stack trace. 
+		WARNING – logs exceptions that do not force EclipseLink to stop, including all exceptions not logged with severe level. This does not include a stack trace. 
+		INFO – logs the login/logout per sever session, including the user name. After acquiring the session, detailed information is logged. 
+		CONFIG – logs only login, JDBC connection, and database information.
+				You may want to use the CONFIG log level at deployment time. 
+		FINE – logs SQL.
+				You may want to use this log level during debugging and testing, but not at production time. 
+		FINER – similar to WARNING. Includes stack trace.
+				You may want to use this log level during debugging and testing, but not at production time. 
+		FINEST – includes additional low level information.
+				You may want to use this log level during debugging and testing, but not at production time. 
+		ALL – logs at the same level as FINEST.
+
+	To log into a file (default is console):
+	
+		<property name="eclipselink.logging.file" value="output.log"/>
+		
+See more:		Using EclipseLink JPA Extensions (ELUG) - Eclipsepedia.mht
+
+NOTEs:
+
+	- Some Glassfish versions require to config logging in 
+	
+		glassfish/domains/domain1/config/logging.properties 
+
+			org.eclipse.persistence.level = FINE
+			org.eclipse.persistence.sql.level = FINE
+
+	- Sometimes (not turned out when and why) log will be written into Glassfish log (maybe because of some logging setting of Glassfish).
+		So you can find it in
+		
+			glassfish/domains/domain1/logs/server.log 
+			
+		instead of file you have specified. Or instead of console of developer IDE.
+--------------------------------------------------------------------------------------------------------------------------------
+JPQL Syntax error on entity name with full qualified package name
+=================================================================
+Question:
+	I'm trying to use JPA with EclipseLink. 
+	JPQL query was:
+		select u from br.com.softcomex.model.base.entity.SwUsuario u where u.username = :username
+
+	With Hibernate, this query seems to work. But with eclipselink, I get an error:
+
+	Caused by: Exception [EclipseLink-8024] (Eclipse Persistence Services - 1.1.1.v20090430-r4097): org.eclipse.persistence.exceptions.JPQLException
+	Exception Description: Syntax error parsing the query [select u from br.com.softcomex.model.base.entity.SwUsuario u where username = :username], line 1, column 16: syntax error at [.].
+
+Solution:
+
+	Fully Qualified Entity Class names are not supported by the JPA specification.  It is a Hibernate extension.  
+	If you can alter the JPQL statement you would simply need :  select u from SwUsuario u where username = :username
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+Message: cannot navigate collection valued association field 
+============================================================
+
+SELECT SUM(s.items.value) FROM Subject s
+
+That's because java collection has not any relation to a column type on the DB. 
+A collection in a mapping class usually refers to a relation between tables, so here you should use the @OneToMany, 
+@ManyToMany, etc associations.
+
+You have to use a join to query across a collection.
+
+	SELECT SUM(i.value) FROM Subject s JOIN s.items i
+
+--------------------------------------------------------------------------------------------------------------------------------
+User transactions in container managed beans
+============================================
+To be able to manually begin and commit container transactions, the application must have an
+interface that supports it. The UserTransaction interface is the designated object in the JTA that
+applications can hold on to and invoke to manage transaction boundaries.
+
+UserTransaction instance can be injected into BMT components by using the @Resource annotation.
+
+	@Resource UserTransaction tx;
+	
+	tx.begin();
+	Query q = entityManager.createQuery(jpql);
+	int r = q.executeUpdate();
+	tx.commit();
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+How to generate JPA 2.0 metamodel?
+==================================
+	
+EclipseLink
+	org.eclipse.persistence.internal.jpa.modelgen.CanonicalModelProcessor 
+	http://wiki.eclipse.org/UserGuide/JPA/Using_the_Canonical_Model_Generator_(ELUG)
+	
+Hibernate
+	org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor
+	http://relation.to/Bloggers/HibernateStaticMetamodelGeneratorAnnotationProcessor
+	
+OpenJPA
+	org.apache.openjpa.persistence.meta.AnnotationProcessor6
+	http://openjpa.apache.org/builds/latest/docs/manual/manual.html#d0e11094
+	
+DataNucleus
+	org.datanucleus.jpa.JPACriteriaProcessor
+	http://www.datanucleus.org/products/accessplatform_2_1/jpa/jpql_criteria_metamodel.html	
+	
+--------------------------------------------------------------------------------------------------------------------------------
+Rules for JPA queries	
+=====================
+- Entity alias values in JPQL are not really aliases but 'identifier variables' which refer to entities in the rest of select statement,
+	and they are mandatory.
+	
+- Path expressions are used to navigate from an entity. There are 3 types of them: 	
+		- state field path	: to point to a property	(e.name)
+		- single-valued association path	: to address an entity (e.address)
+		- collection-valued association path	: to address an entity collection (e.departments)
+		
+- A path cannot continue from a state field or collection-valued association.
+
+- Path expressions can navigate into and across embedded objects as well as normal entities.
+
+- It is possible to select embeddable objects navigated to in a path expression, but returned objects will not be managed.
+
+- Single-value association field vs. field from joined entity

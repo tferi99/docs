@@ -1,0 +1,271 @@
+========================
+WebClient authentication
+========================
+
+- Authentication
+- SAML SSO
+- Setting up 'Easy' authentication
+- Checking authentication on the client side
+- Remember me
+- Troubleshooting
+
+
+
+NOTE: During refactoring some classes and configuration variables have been renamed.
+	- MyAuthenticationProvider -> NormalLoginAuthenticationProvider
+	- MyUserDetailsService -> RememberMeUserDetailsService
+	
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Authentication
+==============
+1. Authentication started by calling LoginSvc.logMeIn(), it's the FIRST operation of all page controllers.
+2. If authenticated it tries to get client profile and loads profile settings, 
+	profiles are bound to a user via authenticated security profile which is bound to a user pool, which referred from a client profile:
+	
+                                1          1              1             1 
+	    Authentication profile -------------- User pool ------------------ Client (web) profile
+	
+	
+	Data model:
+	
+		               1       1         1        1                    1   1
+        auth_profiles ----------- pools ------------ webuser_profiles ------- generic_profiles
+	
+NOTE:
+	There are not  contraints in database to protect associations but APAS tries to force association rules.
+	
+	
+3. Finally it loads user settings
+
+NOTE:
+	During authentication assigned pool name added as group to user dinamically.
+
+	
+LoginCtrl CONTROLLER
+	
+--> LoginSvc.logMeIn(userName)
+	- userName == undefined : get logged user 
+		--> getCurrentUser()
+			success:
+				--> fillProfile() [1]
+	- username specified
+		--> LoginSvc.login()
+			success:
+				--> fillProfile() [1]
+
+	success:
+		- if profile.id found
+			SettingsSvc.getUserSettings()
+		- if profile.id NOT found
+			MidflightAuth.requestAuth();				<<<<<<<<<<<< redirect to login page
+	error:
+		MidflightAuth.requestAuth();				<<<<<<<<<<<< redirect to login page
+
+[1]
+	--> LoginSvc.fillProfile()
+		--> ProfileSvc.getCurrentUserProfile()
+			GET:	/andphone/rest-api/users/profile
+				--> com.andtek.andphone.restapi.web.UserCtrl.getProfileForUser()
+					--> WebProfileServiceImpl.findProfileByLoggedInUser(HttpServletRequest request)
+						--> loggedInUser = SpringSecurityHelper.getLoggedInUser()
+						--> profiles = WebUserProfile.getProfiles()
+						----------------------- loop on profiles --------------------
+							- getting associated pool by ID from cached pools
+							--> Pool.getPool(userPoolID)
+							--> if pool contains logged user and profile enabled then profile found and returned
+							
+							NOTE: 
+								A user contained by a pool if:
+								- user added to the pool
+								- group name of a user's group is the same as pool name
+								
+								During authentication assigned pool name added as group to user dinamically.
+							
+		
+LoginSvc.login()
+----------------				
+WebClient authentication performed similarly to APAS authentication:
+- Usernap/password pair is authenticated AGAINST AUTHENTICATION PROFILES calling ANDRealm.authenticate(...).
+
+- Authentication profiles are in a list ordered by priority and authentication process iterates on this list till 
+	the FIRST successful authentication.
+	
+- Only difference is that WebClient calls this functionality via SpringSecurity and APAS directly from GWT.
+
+
+Types from AuthenticationProfileIF:
+		public static final int AUTH_PROFILE_LOCAL_USERS = 0;
+		public static final int AUTH_PROFILE_TOMCAT_USERS = 1;
+		public static final int AUTH_PROFILE_AD_DOMAIN = 2;
+		public static final int AUTH_PROFILE_CUCM_AXL = 3;
+		
+You can add only these profiles by APAS:
+	- Active Directory
+	- CUCM AXL
+	
+
+SpringSecurity configuration:  		applicationContext-security.xml
+
+		<form-login
+			...
+			login-processing-url="/rest-api/login"
+			...
+		/>
+		
+		<authentication-manager id="webClientAuthenticationManager">
+			<authentication-provider ref="customAuthenticationProvider" />
+		</authentication-manager>
+
+		<bean id="customAuthenticationProvider" class="com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider"/>
+
+CLIENT:		service_login.js
+	
+	LoginSvc.login({name, password, rememberme, forceLogin})
+		--> POST: /andphone/rest-api/login									<<<<<<<< SpringSecurity login-processing-url
+			j_username: loginData.name
+			j_password: loginData.password
+			_spring_security_remember_me:  loginData.rememberme
+			force_login: loginData.forceLogin
+			
+			Content-Type: 'application/x-www-form-urlencoded; charset=UTF-8'
+
+			
+
+			
+SERVER:
+
+		Spring Security model for authentication:
+			
+			authentication manager -> authentication provider -> userdetails service
+
+		APAS model for authentication:			
+			
+			webClientAuthenticationManager -> NormalLoginAuthenticationProvider -> ANDRealm -> authentication profiles
+			
+		--> webClientAuthenticationManager
+			--> customAuthenticationProvider:	com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider.authenticate(Authentication auth)
+				--> authResult = com.andtek.andphone.users.securityfilter.service.impl.LoginServiceImpl.authenticate(userName, password)
+					--> ANDRealm.authenticate(userName, password)
+					
+						SELECT * FROM auth_profiles WHERE enabled=? ORDER BY priority
+						
+						------------------------- loop on auth_profiles ------------------------
+						profile.authenticate(username, password, this)
+						
+							--> CucmAXLAuthenticationProfile.authenticate(String username, String password, ANDRealm andRealm)
+						
+						
+				authResult == NULL --> cache.invalidateByName(userName);
+				
+				--> UserDetails userDetails = new RememberMeUserDetails(userName, password, authResult)
+				--> cache.put(userName, userDetails)
+				--> adding to authorities
+				<== UsernamePasswordAuthenticationToken(userDetails, "", authorities)
+
+		APAS user object:
+		
+			ANDUser -> RememberMeUserDetails -> UsernamePasswordAuthenticationToken
+			
+				
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+SAML SSO
+========
+
+Spring Security SAML2 model for authentication:
+
+	ssoAuthenticationManager -> samlAuthenticationProvider (1) -> samlUserDetailsService (2)
+
+		1 : org.springframework.security.saml.SAMLAuthenticationProvider
+		2 : com.andtek.andphone.webuser.sso.SAMLUserDetailsServiceImpl
+		
+WebClient user requirements:
+- it has ROLE_USER authority
+- it has authority with the name of related user pool		
+				
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Setting up 'Easy' authentication
+================================
+User can authenticate with username/password via login page
+OR
+by calling login URL with device parameter:
+
+	http://192.168.5.113:8080/andphone/webuser/app/#/login?dev=SEP64A0E714F271
+
+If you specify 'dev' parameter you bypass normal authentication. It's a serious SECURITY HOLE, but 
+it was a customer request.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Checking authentication on the client side
+==========================================
+service_login.js
+	--> LoginSvc.getCurrentUser()
+		--> GET:	/andphone/rest-api/login/check[?dev=<device>]
+
+With 'dev' parameter it gets user by device wihout checking a real logged user.
+
+SEE:	'Easy' authentication
+		
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Remember me
+===========
+If you activate remember-me on login page next time you don't have to authenticate manually during WebClient start even you have restarted the browser.
+
+Based on SpringSecurity RememberMe feature.
+- Tokens are stored into inMemoryTokenRepository
+- Users are strored into cache during manual login first.
+- Users stored into cache and will be resored from cache by rememberMeUserDetailsService diring the next login (authenticated automatically).
+
+
+<http>
+	<remember-me key="rest-api" token-validity-seconds="31536000" token-repository-ref="inMemoryTokenRepository" user-service-ref="rememberMeUserDetailsService" />
+</http>
+
+<beans:bean name="inMemoryTokenRepository" class="org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl"/>
+<beans:bean id="rememberMeUserDetailsService" class="com.andtek.andphone.restapi.web.security.RememberMeUserDetailsService" />
+
+1. During first manual login authenticated user stored into cache
+
+	--> com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider
+		--> authResult = LoginServiceImpl.authenticate(userName, password)
+		--> if authResult == null
+			--> cache.invalidateByName(userName)
+		--> userDetails = new RememberMeUserDetails(userName, password, authResult)
+		--> cache.put(userName, userDetails)
+		
+2. SpringSecurity stores RememberMe token into cookie on the client side:	SPRING_SECURITY_REMEMBER_ME_COOKIE
+
+		
+3. After closing browser and during next WebClient start
+	- browser sends the SPRING_SECURITY_REMEMBER_ME_COOKIE to server side
+	- SpringSecurity gets user name by SPRING_SECURITY_REMEMBER_ME_COOKIE
+	- SpringSecurity calls RememberMeUserDetailsService to retrieve user details from cache and stores user into security context holder
+		
+		
+NOTE for implementation:
+Very strange that AuthenticationCacheFactory does not provide a singleton but always a new instance of AuthenticationCacheImpl.
+And very strange that you put something into one cache instance but you get it from another cache instance :(
+
+This is very weird and confusing. 
+
+If you go into AuthenticationCacheImpl it will be clear. 
+It uses a 3rd party API (JCS) which applies a singleton inside.
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+
+- Login POST can be tested with with Chrome Postman.
+
+		POST: /andphone/rest-api/login									<<<<<<<< SpringSecurity login-processing-url
+			j_username: loginData.name
+			j_password: loginData.password
+			_spring_security_remember_me:  loginData.rememberme
+			force_login: loginData.forceLogin
+			
+			Content-Type: 'application/x-www-form-urlencoded; charset=UTF-8'
+			
+			

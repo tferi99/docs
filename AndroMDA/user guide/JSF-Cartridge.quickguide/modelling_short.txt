@@ -1,0 +1,123 @@
+Steps of modelling usecases
+---------------------------
+1. Create service (if necessary)
+	- set <<Service>> stereotype to service
+	- add service to service diagram
+	- add service->DAO dependencies
+	- add service->exceptions dependencies
+	
+2. Create a separated package for usecase (<usecase>)
+
+3. Create a usecase into package (<UseCase>)
+	- set <<FrontEndUseCase>> stereotype to usecase 
+	- add usecase to usecase diagram
+	- add usecase-actor associations to usecase diagram if you want to restrict accessing usecase
+	(Default implementation of security is WEB container based, you can activate by uncommenting 'securityRealm' in andromda.xml)
+	
+4. Create a controller class into package (<UseCase>Controller)
+	- add controller to session-controllers diagram
+	- add controller->session dependencies to controllers diagram
+	- add controller to service-controllers diagram
+	- add controller->service dependencies to controllers diagram
+
+5. Create an activity diagram into usecase (<UseCase>)
+	- assign controller to activity diagram
+	
+6. Add initial/final states
+	- if you want to receive parameters from the previous usecase you have to:
+		- create a server side state and connect directly to initial state
+
+	- specify the next usecase for final state(es)
+		-- set the name of final state to the name of next usecase
+		OR
+		-- add a shortcut to final state pointing to next usecase
+	- add signal events to transitions which go out from a client side state, and add form fields
+		by specifying event parameters
+		
+7. Add action states
+	- set <<FronEndView>> stereotype to client side states (GUI pages)
+	- add a server side state before final state if you want to pass parameters
+	- add a server side state before decision points
+
+8. Implement and use controller methods
+	- add methods to controller, where name and type of parameters correspond to 
+		-- name/type of incoming/outgoing event parameter
+		-- name/type of outgoing page variables (if next state is a client side state)
+	- add deferrable events to server side state to call controller methods
+		(you can add more events so controller methods will be called in order you added events)
+
+	
+************************************* MODELLING IN SHORT *********************************************
+UseCase:
+	- Create one package per usecase
+	- Add usecase into package with <<FrontEndUseCase>> (and 1 with extra <<FrontEndApplication>>) stereotype
+
+Authorization:
+	- Add actors and draw dependencies from actors to usecases
+
+Activity graph:
+	- Add controller class to use-case package
+	- Create 1 and only 1 child activity graph into usecase
+	- Bind contoller and activity graph (RightMouse on controller/State Activity diagram/Assign...)
+
+Activity elements:
+	- Add starting point 
+	- Add server side and client side states (client side with <<FrontEndView>> stereotype) 
+	- Add end point 
+	- Draw transitions among them
+	
+Event parameters:	
+	- add the parameters to the OUTGOING transition's trigger of a <<FrontEndView>>
+	- this trigger should be of type 'signal'
+	- Add name(optional) and parameters (optional).
+		
+Form variables:
+	- add the parameters to the INCOMING transition's trigger of a <<FrontEndView>>
+	- this trigger should be of type 'signal'
+	- Add name(optional) and parameters (optional).
+		
+Controller:
+	- add a class with stereotype <<Controller>>
+	- add methods to implement user defined application flow functions
+	
+Binding controller functions:
+	1. Deferrable events - calling controller function in states
+		- add deferrable event in Detail tab of 'Action State Specification' dialog
+		- choose type: call
+		- choose a controller operation
+	2. Decision point - calling controller function before decision point
+		- add a controller operation with type String and appropriate parameters
+		- draw a decision point, incoming transition and outgoing transitions
+		- add a TRIGGER for INCOMING transition with type CALL, and choose controller operation
+		- add guards to outgoing transition transition - where guard condition body is the return value
+			String of controller operation (guard value will be dispalyed in [...])
+			
+			NOTE: Some modeling tools DO NOT PROPERLY SHOW THE NAME OF THE GUARD in the activity 
+				diagram (e.g. MagicDraw 9.5), in that case you might consider COPYING THE NAME 
+				ALSO IN THE GUARD'S BODY, this will be ignored by the cartridge and might show it 
+				on screen for clarity.
+	
+Passing parameters to next usecase:
+	- to pass a parameter add EVENT PARAMETER ON TRANSITION coming FROM SERVER SIDE STATE going INTO 
+		A FINAL STATE.
+		
+To receieve a parameter from previous usecase:
+	- add a SERVER SIDE STATE DIRECTLY after initial state
+	- add passed parameter as EVENT PARAMETER on transition COMING FROM THIS SERVER SIDE STATE 
+
+	NOTE: To process incoming parameter you can put deferrable event into this server side state.
+		
+	
+Decision point:
+	- add a server side state
+	- add a decision point 
+	- draw a transition between them
+	- implement a controller method with return type String, return type will provide navigation control value
+	- set guard for transitions going out from decision point with navigation control values 
+	NOTE: 
+		Some modeling tools (e.g. MagicDraw 9.5) do not properly show the name of the guard in the activity diagram,
+		in that case you might consider copying the name also in the guard's body (condition), this will be ignored 
+		by the cartridge and might show it on screen for clarity.
+
+******************************************************************************************************	
+

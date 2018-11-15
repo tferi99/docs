@@ -1,0 +1,110 @@
+======================
+ACD history management
+======================
+- ACD calls can be retieved from ACDCall.getACDCalls(). It returns Map<String, ACDCall> where key of map is call ID.
+- Call history can be retrieved by call.getHistory(). It returns ACDCallState[].
+
+ACD history is stored into ACDCall.acdCallHistory. 
+
+History entries are added here:
+-------------------------------
+	1. ACDCall.remove()	: STATE_ENDED, at the end of a call
+	2. ACDCall.setState()
+
+	[1] --> ACDCall.setState(ACDCallState state, CiscoCall call)
+		--> [2]
+	
+	[2] --> ACDCall.setState(ACDCallState state, CiscoCall call, boolean skipPostCall)
+		If state changing:
+		--> acdCallHistory.add(new ACDCallState(ACDCallState.STATE_ENDED, ...))						<<<<<<<<<<<<<<<<<<<<<<<
+	
+	
+1. End of a call
+	MediaRoutePoint.callChangedEvent(CallEv[] eventList)
+	event: CallCtlConnEstablishedEv
+	--> RPCallObserver.established(CallCtlConnEstablishedEv ev)
+		// call was somehow connected, end call and create new one
+		--> ACDCall.disconnected()
+			--> ACDCall.remove()
+				--> acdCallHistory.add(new ACDCallState(ACDCallState.STATE_ENDED, ...))					<<<<<<<<<<<<<<<<<<<<<<<
+
+2. setState()
+	AgentCallObserver.callChangedEvent(CallEv[] eventList)
+		CallCtlEv.CAUSE_UNHOLD
+			--> [1] STATE_CONNECTED
+		else
+			if outgoing {...}
+			else if currentAgent.PGroupDN == previousAgentDn {...}
+			else if currentTarget == previousAgentDn.DN {
+				if acdCall.state == STATE_TRANSFERRED {
+					if (previousAgent) {
+						--> [1] STATE_CONNECTED
+					}
+					else {
+						--> [2] STATE_FORWARDED_EXTERN
+					}
+				}
+				else {
+					--> [2] STATE_FORWARDED_EXTERN
+				}
+			}
+
+New ACDCall instance generated here:	
+------------------------------------
+	getNewACDCall()
+
+Call flow:
+
+[1] -->	getNewACDCall(Pilot pilot, Queue queue, CiscoCall call)
+	--> [2]
+	
+[2] --> getNewACDCall(Pilot pilot, Queue queue, CiscoCall call, Agent agent, boolean directCall, boolean outgoing, ACDCallState initialState)
+		--> new ACDCall(pilot, queue, call, null, directCall, outgoing, initialState);		<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< here is instantioa
+		
+[3] --> ACDService.queuedTransfer(...)
+	--> [1]
+
+
+1. Event processing
+
+	EventQueueWorker.run()
+		--> ClientConnectionMina.handleEvents(APASEvent[] events, Object object)
+			--> [3]
+
+2. Phone XML service (ACDService)
+
+	ACDServlet.service		
+		-->ACDServlet.request()		
+			--> ACDService.request()
+				--> [3]
+	
+
+[4]	--> AgenCallObserver.callChangedEvent(CallEv[] eventList)
+		--> [2]
+
+3. ?		
+...
+CMECall.sendObservationEndedEv(CallObserver observer)	
+	--> [4]
+
+4 ?
+...
+CMECall.sendSnapShot(CallObserver o)
+	--> [4]
+
+5 ?
+...
+ObserverManage.remove(CallObserver)
+	--> [4]
+	
+6. ?
+...	
+ObserverManage.sendEvents(CMECallEv[] evs)
+	--> [4]
+
+
+7. ?
+MediaRoutePoint.callChangedEvent(CallEv[]	<- CallCtlConnOfferedEv
+--> RPCallObserver.offered(CallCtlConnOfferedEv ev)
+	--> [2]
+

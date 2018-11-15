@@ -1,0 +1,15 @@
+=================================
+How to activate developer widget?
+=================================
+Put this tag into <Advanced>:
+	
+	<Internal>and33phone</Internal>
+	
+of file:
+
+	HOME/AppData/Roaming/Andtek/ANDDesktop/options.xml 
+	
+and restart DC.
+
+You can put a developer widget like other widgets.
+

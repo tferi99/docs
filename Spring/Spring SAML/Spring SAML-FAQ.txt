@@ -1,0 +1,312 @@
+===============
+Spring SAML-FAQ
+===============
+
+- Sample applications
+- SP Metadata management
+	- How to sign generate SP metadata?
+	- How to use static SP metadata file?
+	- How to download PS metadata?
+	- How to disable SP metadata download URL?
+	- How to change filename of generated metadata file?	
+- IDP Metadata management		
+- How to configure HTTP Client to accept certificates from the keystore for HTTPS verification 
+- SAML configuration in SP
+- Key management
+- Troubleshooting
+	- Problem: Signature is not trusted or invalid
+	
+----------------------------------------------------------------------------------------------------------------------------------------
+Sample applications
+===================
+\usr\general\saml\mysamltest
+\usr\general\saml\spring-boot-security-saml-sample
+
+Reverse engineering docs:
+	\usr\general\saml\spring-boot-security-saml-sample\dev-doc\README-DEV.txt
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------
+SP Metadata management	
+======================
+SP metadata registered as BEFORE filter into SpringSecurity chain.
+
+- Automatic metadata generation is enabled by including the following filter in the Spring Security configuration:
+
+	<security:custom-filter before="FIRST" ref="metadataGeneratorFilter"/>
+
+- How to sign generate SP metadata?
+
+	extendedMetadata.setSignMetadata(true);
+	
+- How to use static SP metadata file?
+
+	<bean class="org.springframework.security.saml.metadata.ExtendedMetadataDelegate">
+		<constructor-arg>
+		<bean class="org.opensaml.saml2.metadata.provider.ResourceBackedMetadataProvider">
+				<constructor-arg>
+					<bean class="java.util.Timer"/>
+				</constructor-arg>
+				<constructor-arg>
+					<bean class="org.opensaml.util.resource.ClasspathResource">
+						<constructor-arg value="/metadata/localhost_sp.xml"/>
+					</bean>
+				</constructor-arg>
+				<property name="parserPool" ref="parserPool"/>
+		</bean>
+	...
+	
+- How to download PS metadata?
+	
+	Metadata describing the default local application can be downloaded from URL:
+
+	https://www.server.com:8080/context/saml/metadata
+	In case the application is configured to contain multiple service providers metadata for each can be loaded by adding the alias:
+
+	https://www.server.com:8080/context/saml/login/alias/defaultAlias	
+	
+
+- How to disable SP metadata download URL?
+
+	URL for metadata download can be disabled by removing filter metadataDisplayFilter from the securityContext.xml (or java config).
+	
+- How to change filename of generated metadata file?
+
+	You cannot :(
+	Filename is hardcoded in MetadataDisplayFilter:
+		
+		response.addHeader("Content-Disposition", "attachment; filename=\"spring_saml_metadata.xml\"");	
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------
+IDP Metadata management	
+=======================
+Types:
+- File-based metadata provider
+- HTTP-based metadata provider
+
+
+	
+----------------------------------------------------------------------------------------------------------------------------------------
+SAML configuration in SP
+========================
+Entities:
+- keyManager
+- samlEntryPoint
+- samlFilter
+- samlIDPDiscovery
+- metadataGeneratorFilter
+- metadataGenerator
+- metadataDisplayFilter
+- extendedMetadata
+- metadataManager
+- samlUserDetailsService
+- logoutHandler
+- samlLogger
+- (TLSProtocolConfigurer)
+- parserPool
+- artifactBinding
+- samlProcessor
+
+Entity hierarchy with configuration properties
+----------------------------------------------
+- http
+	-> BEFORE filter: metadataGeneratorFilter
+		-> MetadataGenerator
+			-> extendedMetadata (1)	- for generating SP metadata
+				- IDP discovery enabled
+				- entityID (TOC)
+				- signMetadata (boolean, default: false)
+				- signingAlgorithm
+	-> AFTER filter:	samlFilter
+		-> samlEntryPoint
+			- defaultProfileOptions: WebSSOProfileOptions
+		-> samlLogoutFilter
+			-> successLogoutHandler
+				- defaultTargetUrl
+			-> logoutHandler
+			-> logoutHandler
+		-> metadataDisplayFilter
+		-> samlWebSSOProcessingFilter
+			-> authenticationManager
+			-> successRedirectHandler
+				- defaultTargetUrl
+			-> failureRedirectHandler
+				- useForward
+				- defaultFailureUrl
+		-> samlWebSSOHoKProcessingFilter
+			-> authenticationManager
+			-> successRedirectHandler
+				- defaultTargetUrl
+			-> failureRedirectHandler
+				- useForward
+				- defaultFailureUrl
+		-> samlLogoutProcessingFilter
+			-> successLogoutHandler
+				- defaultTargetUrl
+			-> logoutHandler
+		-> samlIDPDiscovery
+			- idpSelectionPath (points to IDP selection page)
+
+- authentication manager
+	-> samlAuthenticationProvider
+		- forcePrincipalAsString
+		-> samlUserDetailsService
+
+- keyManager
+	- keystore
+	- passwords
+	
+	
+- metadataManager
+	-> metadataDelegate
+		-> HTTPMetadataProvider
+			- IDP metadata URL
+			- idpMetadataRequestTimeout
+			-> parserPool
+		-> extendedMetadata (2)
+			- idpDiscoveryEnabled
+			- signMetadata
+			- ecpEnabled
+			
+
+		
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Key management
+==============
+SAML Extension requires configuration of security settings which include cryptographic material used for:
+- digital signatures and encryption
+- security profiles for configuration of trusted cryptographic material provided by remote entities
+- verifications of HTTPS connections.		
+	
+	
+Spring Security SAML provides 2 mechanisms for defining which signatures should be accepted 
+	- metadata interoperability mode 
+	- PKIX mode
+	
+	Signature verification:
+	1. Metadata interoperability profile (MetaIOP)
+		Signature is first checked for validity by comparing digital hash included as part of the signature with value calculated from the content.
+			
+	2. PKIX profile
+		Then it is verified whether party who created the signature is trusted by the recipient. 
+	
+
+Keystore contains these keys:
+
+		Keystore type: JKS
+		Keystore provider: SUN
+
+		Your keystore contains 2 entries
+
+		idp-idp.ssocircle.com, 2018.01.30., trustedCertEntry,
+		Certificate fingerprint (SHA1): A7:EE:99:02:CC:73:F9:03:DC:EA:A2:9B:48:AB:14:79:98:B4:F7:C5
+		apas, 2018.01.30., PrivateKeyEntry,
+		Certificate fingerprint (SHA1): C7:1E:DB:07:2D:89:05:FE:A7:14:2E:78:FE:EB:9C:5F:37:2B:4C:90
+
+PrivateKeyEntry:	private-public key pair of Spring (for sign certificates or encryption)
+trustedCertEntry:	trusted certificate from (for checking certificates sent by IDP, and decryption)
+
+Configuration of keymanager for SAML:	
+		
+		<bean id="keyManager" class="org.springframework.security.saml.key.JKSKeyManager">
+	        <constructor-arg value="${samlKeystoreFile}"/>									: keystore file
+	        <constructor-arg type="java.lang.String" value="andphone"/>						: keystore password
+	        <constructor-arg>
+	            <map>
+	                <entry key="apas" value="andphone"/>									: alias and password of SP PrivateKeyEntry
+	            </map>
+	        </constructor-arg>
+	        <constructor-arg type="java.lang.String" value="apas"/>							: default key (SP PrivateKeyEntry)
+	    </bean>
+		
+		
+----------------------------------------------------------------------------------------------------------------------------------------
+How to configure HTTP Client to accept certificates from the keystore for HTTPS verification 	
+============================================================================================
+- Add this configuration: 
+
+	    <bean class="org.springframework.security.saml.trust.httpclient.TLSProtocolConfigurer">
+	        <property name="sslHostnameVerification" value="default"/>
+	    </bean>
+
+- get IDP trust certificate and import into SP keystore
+
+	Export IDP certificate:
+
+		IDP_HOST=idp.ssocircle.com
+		IDP_PORT=443
+		CERTIFICATE_FILE=ssocircle.cert
+		openssl s_client -host $IDP_HOST -port $IDP_PORT -prexit -showcerts </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > $CERTIFICATE_FILE
+ 
+	Import into local (SP) keystore:
+	
+	
+
+		
+----------------------------------------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+
+- Problem: Signature is not trusted or invalid
+
+	Caused by: org.opensaml.xml.validation.ValidationException: Signature is not trusted or invalid
+		at org.springframework.security.saml.websso.AbstractProfileBase.verifySignature(AbstractProfileBase.java:272)
+		at org.springframework.security.saml.websso.WebSSOProfileConsumerImpl.verifyAssertionSignature(WebSSOProfileConsumerImpl.java:419)
+		at org.springframework.security.saml.websso.WebSSOProfileConsumerImpl.verifyAssertion(WebSSOProfileConsumerImpl.java:292)
+		at org.springframework.security.saml.websso.WebSSOProfileConsumerImpl.processAuthenticationResponse(WebSSOProfileConsumerImpl.java:214)
+
+	???????
+		
+		
+- Caused by: java.io.IOException: Keystore was tampered with, or password was incorrect		
+  ....
+  Caused by: java.security.UnrecoverableKeyException: Password verification failed
+  
+  This error comes during application startup when APAS tries to open keystore.
+  Cause: wrong keystore password configured
+  
+		
+- Can't obtain SP signing key
+
+	Maybe name of the alias or password of private key in SAML config is wrong:
+	
+		<bean id="keyManager" class="org.springframework.security.saml.key.JKSKeyManager">
+	        <constructor-arg value="${samlKeystoreFile}"/>
+	        <constructor-arg type="java.lang.String" value="andphone"/>
+	        <constructor-arg>
+	            <map>
+	                <entry key="apas" value="andphonE"/>			<------- HERE
+	            </map>
+	        </constructor-arg>
+	        <constructor-arg type="java.lang.String" value="apas"/>
+	    </bean>
+	
+- "java.lang.RuntimeException: Key for alias ... not found" exception during downloading/generating SP metadata
+
+	Bad default key parameter for JKSKeyManager (contructor parameter - see above).
+	
+	Default key (private key) used for signing outgoing SP metadata.
+	
+	
+- org.opensaml.saml2.metadata.provider.MetadataProviderException: No IDP was configured, please update included metadata with at least one IDP
+
+	Maybe IDP metadata was not able to be retrieved. Possible reasons:
+		- bad IDP URL
+		- HTTP Client is not configured to accept certificates from the keystore for HTTPS verification 
+			(SEE: How to configure HTTP Client to accept certificates from the keystore for HTTPS verification)
+	
+	
+- Error 'InResponseToField doesn't correspond to sent message' during SSO
+
+	Make sure that application uses the same HttpSession during sending of the request and reception of the response. Typically, this problem arises when the auhentication request is initialized from localhost address or http scheme, while response is received at a public host name or https scheme. E.g., when initializing authentication from URL https://host:port/app/saml/login, the response must be received at https://host;port/app/saml/SSO, not http://host:port/app/saml/SSO or https://localhost:port/app/saml/SSO.
+
+The checking of the InResponseToField can be disabled by re-configuring the context provider as follows:
+
+	<bean id="contextProvider" class="org.springframework.security.saml.context.SAMLContextProviderImpl">
+	  <property name="storageFactory">
+		<bean class="org.springframework.security.saml.storage.EmptyStorageFactory"/>
+	  </property>
+	</bean>
+		

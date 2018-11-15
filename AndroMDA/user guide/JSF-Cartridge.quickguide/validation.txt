@@ -1,0 +1,7 @@
+2.6 Validations
+---------------
+Input form is generated for every outgoing signal where input fields 
+name and type come from signal parameters. Some basic JavaScript validations are called 
+by ADF.
+
+Validation configuration file:		WEB-INF/validation.xml

@@ -1,0 +1,88 @@
+======================
+Using branch in WinCVS
+======================
+
+1. What is brach?
+2. Adding branch
+3. Working with brach
+4. Merging from a Branch
+5. How to merge from a branch several times?
+
+
+
+1. What is brach?
+-----------------
+CVS allows you to isolate changes onto a separate line of development, known as a branch. 
+When you change files on a branch, those changes do not appear on the main trunk or other branches.
+
+
+2. Adding branch
+----------------
+You can branch a single file, any group of files, or a whole project just as you can tag individual 
+files or any group of them. I USUALLY RECOMMEND BRANCHING A PROJECT.
+
+1. Select the top level directory of the project.
+2. Call Remote/Create a branch... menu
+3. Specify a name
+4. OK
+
+
+3. Working with brach
+---------------------
+To work with a branch you have to check out it into a separeted location.
+
+1. Remote/Checkout module...
+2. Set CVSROOT, module name and destination location.
+3. Set update option 'By revision/tag/brach' (in the 2nd tab) to name of branch.
+4. OK
+
+NOTE: CVS directories will contain an additional Tag file with the name of the branch.
+
+
+4. Merging from a Branch
+------------------------
+When you are satisfied with the changes you have done on a branch, you may want those changes to be available 
+on the main line of development. 
+To merge from a branch, do the following: 
+
+1. Select the top level directory of the project. 
+2. Click the right mouse button on the selction, and choose the Update selection menu item. 
+3. Make sure Create missing directories that exist in the repository is checked. 
+4. Select the Merge options tab. 
+5. Click the Only this rev./tag radio button. 
+6. In the Only this rev./tag input field, enter the tag name of the branch you want to merge from. 
+	If you want to merge from a given timestamp in this tag, check the Date radio button and type 
+	in your preferred timestamp as well. 
+7. Press the OK button.
+
+NOTE: You can only merge only ONCE this way! See more in next chapter.
+
+
+5. How to merge from a branch several times?
+--------------------------------------------
+The merge given above will try to merge changes FROM THE START OF THE BRANCH. If you do the 
+operation a second time (to merge changes done to the branch after the last merge), merging from 
+the start of the branch is not what you want, and it will most likely get you into trouble. 
+To get around this problem:
+
+1. ALWAYS give a new tag (e.g. mergeN, or merge-YYYYMMDD) to the branch BEFORE merging.
+2. Choose 'Merge differences between two rev./tags' option and choose the 2 LAST merge
+tags.
+
+For example:
+
+	cvs update -jmerge5 -jmerge6 (in directory D:\a\cvs_test\test\)
+	cvs update: Updating .
+	cvs update: Updating doc
+	cvs update: Updating src
+	M src/abc.txt
+	RCS file: /cvs/test/test/src/abc.txt,v
+	retrieving revision 1.1.2.6
+	retrieving revision 1.1.2.7
+	Merging differences between 1.1.2.6 and 1.1.2.7 into abc.txt
+
+This way only differences between the last version and the last merged version (in branch)
+will be merged into 
+
+See images in using_branch_images.
+

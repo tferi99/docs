@@ -1,0 +1,292 @@
+===============
+Spring Boot FAQ
+===============
+
+- How to generate project?
+- How to run Spring Boot application?
+- Base structure of Spring Boot application
+- How to trace auto-configuration?
+- Springboot application exits immediately
+
+Configuration
+-------------
+- How to configure SpringBoot?
+- How to change WEB server port?
+- How to get properties from application.properties?
+
+View
+----
+- How to 
+
+Packaging
+---------
+- Converting a Spring Boot JAR Application to a WAR
+- How to package SpringBoot JAR as simple library with Maven?
+
+
+Logging
+-------
+- How to set log level?
+- How to print auto-config report?
+- Getting Spring Boot color console logging working within IntelliJ IDEA?
+
+-------------------------------------------------------------------------------------------------------------------------
+How to generate project?
+========================
+From WEB:
+
+	http://start.spring.io/
+
+IntelliJ Idea:
+
+	File/New/Project/[Spring Initializer]
+
+	
+-------------------------------------------------------------------------------------------------------------------------
+How to run Spring Boot application?
+===================================
+
+mvn spring-boot:run
+
+
+-------------------------------------------------------------------------------------------------------------------------
+Base structure of Spring Boot application
+=========================================
+- Create a starter class with main method
+
+- Always put this class into a root package (never into default package).
+	The use of the 'default package' is generally discouraged, and should be avoided. It can cause particular problems for Spring Boot applications that use @ComponentScan, 
+	@EntityScan or @SpringBootApplication annotations, since every class from every jar, will be read. 
+	
+- starter class annotated
+
+		@Configuration
+		@EnableAutoConfiguration
+		@ComponentScan
+		
+	OR
+	
+		@SpringBootApplication
+
+- @ComponentScan scans all packages from the current package and child packages recursive
+		
+- Configuration with JAVA:
+	EITHER
+	- from a class with @Configuration you can import other config classes with @Import
+	OR
+	- or add @Configuration to every config class and load them whith conponent scan
+	
+- Configuration with XML:
+
+	If you absolutely must use XML based configuration, we recommend that you still start with a @Configuration class. 
+	You can then use an additional @ImportResource annotation to load XML configuration files.
+	
+
+-------------------------------------------------------------------------------------------------------------------------
+How to trace auto-configuration?
+================================
+JAVA/Eclipse:
+
+	Add 'debug' VM argument:
+	
+		-Ddebug
+
+	Info will be dumped into Tomcat log.
+		
+	In Idea:
+
+		Set checkbox:
+			'Run/Debug Configuration'/[Enable debug output]
+
+		does the same.
+
+Command line argument:
+
+	--debug
+	
+	
+Maven:	
+	
+	mvn spring-boot:run --debug
+	
+Actuator REST endpoint:
+
+	http://<APP_URL>/autoconfig
+	
+	
+	Info will be rendered as JSON response.
+	
+	Requirements:
+		- spring-boot-starter-actuator into POM
+		
+
+-------------------------------------------------------------------------------------------------------------------------
+Springboot application exits immediately	
+========================================
+Maybe you forgot to put this line into main():
+
+	ApplicationContext ctx = SpringApplication.run(Application.class, args);	
+	
+	
+-------------------------------------------------------------------------------------------------------------------------
+How to configure SpringBoot?
+============================
+Default settings can be changed with entries into application.properties or in application.yml (YAML).
+E.g:
+
+application.properties:
+
+	server.port = 18080
+	
+application.yml:	
+
+	server:
+		port: 48080
+
+-------------------------------------------------------------------------------------------------------------------------
+How to change WEB server port?
+==============================
+Put into application.properties:
+
+server.port = 18080
+
+
+-------------------------------------------------------------------------------------------------------------------------
+Converting a Spring Boot JAR Application to a WAR
+=================================================
+- change packaging of maven project:
+
+	<packaging>war</packaging>
+
+- initialize servlets:
+
+	- create a component which inherits SpringBootServletInitializer
+	- override configure() where you can assign configurator class to application
+	
+		package readinglist;
+		import org.springframework.boot.builder.SpringApplicationBuilder;
+		import org.springframework.boot.context.web.SpringBootServletInitializer;
+		
+		public class ReadingListServletInitializer extends SpringBootServletInitializer
+		{
+			@Override
+			protected SpringApplicationBuilder configure(SpringApplicationBuilder builder)
+			{
+				return builder.sources(Application.class);
+			}
+		}
+
+Altough	it is a WAR it can be started these ways:
+
+	java -jar <artifacact>.war
+	
+		OR
+		
+	mvn spring-boot:run
+	
+Or it can be simply deployed to an application server.
+
+
+-------------------------------------------------------------------------------------------------------------------------
+How to set log level?
+=====================
+The default log configuration will echo messages to the console as they are written. 
+By default ERROR, WARN and INFO level messages are logged.
+
+- You can also enable a “debug” mode by starting your application with a --debug flag.
+
+	$ java -jar myapp.jar --debug
+
+	
+-------------------------------------------------------------------------------------------------------------------------
+How to print auto-config report?
+================================
+- You can also enable a “debug” mode by starting your application with a --debug flag.
+
+	$ java -jar myapp.jar --debug
+
+- you can also specify debug=true in your application.properties
+
+- or enable DEBUG logging for 
+
+	org.springframework.boot.autoconfigure.logging.AutoConfigurationReportLoggingInitializer
+	
+	
+-------------------------------------------------------------------------------------------------------------------------	
+Getting Spring Boot color console logging working within IntelliJ IDEA?
+=======================================================================
+Using a Mac, Intellij Idea 14 and Spring Boot v1.2.2.RELEASE, all you have to do is set this property:
+
+	spring.output.ansi.enabled=ALWAYS
+
+OR 
+
+add this as a VM option 
+	
+	-Dspring.output.ansi.enabled=ALWAYS
+	
+In normal console disable this feature. 
+Messages contains ugly control characters which cannot be identified by pure console.
+
+-------------------------------------------------------------------------------------------------------------------------	
+How to package SpringBoot JAR as simple library with Maven?
+===========================================================
+By default, the repackage goal will replace the original artifact with the executable one. 
+If you need to only deploy the original jar and yet be able to run your app with the regular file name, 
+configure the plugin as follows:
+
+	<project>
+	  ...
+	  <build>
+		...
+		<plugins>
+		  ...
+		  <plugin>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-maven-plugin</artifactId>
+			<version>1.5.1.RELEASE</version>
+			<executions>
+			  <execution>
+				<goals>
+				  <goal>repackage</goal>
+				</goals>
+				<configuration>
+				  <attach>false</attach>
+				</configuration>
+			  </execution>
+			</executions>
+			...
+		  </plugin>
+		  ...
+		</plugins>
+		...
+	  </build>
+	  ...
+	</project>
+	
+This configuration will generate two artifacts: 
+- the original one 
+- and the executable counter part produced by the repackage goal. Only 
+
+the original one will be installed/deployed into Maven repository.
+
+
+-------------------------------------------------------------------------------------------------------------------------	
+How to get properties from application.properties?
+==================================================
+Use:
+	@Value("${PROP}")
+
+
+application.properties:
+	
+	pdk.populatedemo=true	
+	
+class:
+	
+	@Value("${pdk.populatedemo}")
+	private boolean populateDemo;
+
+
+
+

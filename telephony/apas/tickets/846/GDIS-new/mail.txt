@@ -1,0 +1,14 @@
+Hi Ferenc,
+
+I have an update regarding the situation at GDIS.
+The customer did further tests today and we found out, that not everytime the counting is missing in the teams.
+They found a scenario or to be more precise a pilot/queue where the counting works, but not correctly.
+The problem is, that in a simple overflow scenario the call is counted as lost, even when an agent in the overflow queue answered the call.
+I collected a ACD history page for such a call as well as a log. It is the last ACD call in the log, you can find.
+
+Let me know if you have questions
+
+Gruﬂ,
+
+Jens
+

@@ -1,0 +1,25 @@
+==================
+GWT event handling
+==================
+
+Form submissions
+----------------
+In APAS a submit button is submitted to Admin Servlet and URL is generally seems like this:
+
+	/andphone/Admin/?module=<module>&page=<page>&func=<func>
+
+e.g
+	
+	String certUploadURL = JTAPIThread.config.getString("global", "context") + "/Admin" + "?module=" + module + "&page=security&func=gwtcertimport";
+
+	
+It will call function in module Admin:
+
+	--> com.andtek.andphone.<module>.<page>_<func>(ConnectionBean connection)
+	
+--> com.andtek.andphone.Admin.doGet()
+		--> com.andtek.andphone.utils.Admin.getModuleAdminPage(connection);
+			--> getModuleAdmin(String module, ConnectionBean connection)
+				It instantiates Admin object of module (com.andtek.andphone.<moduleName>.Admin)
+			
+			--> com.andtek.andphone.<module>.<page>_<func>(ConnectionBean connection)						<< calling method with reflection

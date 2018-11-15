@@ -1,0 +1,27 @@
+========
+EJB3 FAQ
+========
+
+- How to call a session bean?
+
+----------------------------------------------------------------------------------------------------------------------------
+How to call a session bean?
+===========================
+
+1. @EJB
+-------
+
+No-interface:
+
+	@Stateless
+	public class ItemEJB {
+		...
+	}
+	
+	// Client code
+	@EJB
+	ItemEJB itemEJB;
+	
+One ort more interfaces:
+
+	

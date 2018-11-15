@@ -1,0 +1,10 @@
+============================================
+Howto capture packets from a Cisco IP phone?
+============================================
+- Connect PC the Cisco IP Phone via PC port.
+- Enable the PC port (device configuration in CM)
+- Enable Span to PC port (device configuration in CM)
+- Capture the packets with wireshark, for example:
+	
+		(ip.src == 192.168.5.154 or ip.dst == 192.168.5.154) and sip
+		

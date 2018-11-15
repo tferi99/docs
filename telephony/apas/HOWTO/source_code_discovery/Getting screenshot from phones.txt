@@ -1,0 +1,51 @@
+==============================
+Getting screenshot from phones
+==============================
+
+NOTE:	to enable getting screenshot enable Web access on device.
+
+
+screenshot_gwtappMain
+	--> onSubmitConfigurationForm(...)
+		--> RemoteSavePhoneControl(record)
+			--> RPCremotecontrolServiceImpl.RemoteSavePhoneControl(PhoneControlBean record)
+				--> com.andtek.andphone.testing.Admin.getScreenshot(ConnectionBean connection)
+					--> CiscoIPPhoneImage.getScreenShot(String username, String password, String ip, int scale, HttpServletResponse response)
+						
+						URL:	"http://" + ip + "/CGI/Screenshot"
+						
+						where:
+							- user = AuthProxy.getUser()
+							- password = AuthProxy.createToken(null)
+							
+							
+				
+--------------------------------------------------------------------------------------------------------------				
+Troubleshooting							
+===============
+
+<CiscoIPPhoneError Number="4" />
+---------------------------------
+It's generally an authentication-related error.
+
+	
+	URL should be something like this:
+
+		http://USER:PASSWORD@PHONE_HOST/CGI/Screenshot
+		
+
+		e.g:	http://test9001:12345@192.168.5.206/CGI/Screenshot
+
+	To validate user use this URL:
+
+		http://CUCM_HOST/ccmcip/authenticate.jsp?UserID=USER&Password=PASSWORD&devicename=PHONE_DEVICE
+
+		e.g:	http://192.168.5.18/ccmcip/authenticate.jsp?UserID=test9000&Password=12345&devicename=SEP64A0E714F271
+
+	For detailed information download console logs from phone device.
+
+	
+	If it UN-AUTHORIZED assign device to end-user:
+		- set end-user as owner in device settings
+		- add device to controlled device list of end-user
+		

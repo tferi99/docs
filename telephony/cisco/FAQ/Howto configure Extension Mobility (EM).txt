@@ -1,0 +1,39 @@
+========================================
+Howto configure Extension Mobility (EM)?
+========================================
+NOTE here: in some environment End users are replicated from extenal source (e.g. Active directory) 
+
+1. Create End User
+
+2. Enable EM in device:
+
+	CUCM/Device/Phone/[Extension Information]/Enable Extension Mobility
+
+3. Create a device profile
+	- CUCM/Device/Device Settings/Device profile/'Add new'
+	
+	- Choose 'Phone Button Template' for target device
+			[User Device Profile Information]/Phone Button Template
+			
+	- Add line(s) to that profile
+	
+	- Assign end user:
+	
+		[Logged Out (Default) Profile Information]/Login User Id		
+	
+4. Assign device profile(s) to end user
+	- In /UserManagement/End User/[Extension Mobility] drop entry/enties from 'Available Profiles' to 'Controlled Profiles'.
+	- You can choose default profile if you want (if you have multiple controlled profiles)
+	
+5. Add XML service to phone menu where you want to log in using this profile.
+	
+	http://192.168.5.18:8080/emapp/EMAppServlet?device=#DEVICENAME#
+	
+6. Calling this service you have to specify:
+	
+		end user name (only first time)
+		password
+		
+	After login assigned profile will be loaded into device and user settings/lines will overwrite default profile of device.
+
+

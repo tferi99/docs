@@ -1,0 +1,67 @@
+=====================
+angular-translate FAQ
+=====================
+
+- How to initialize angular-translate?
+- How to translate texts?
+- How to reload language database?
+
+--------------------------------------------------------------------------------------------------------------------
+How to initialize angular-translate?
+====================================
+During initialization translation tables are stored into provider and default (preferred) language will be specified:
+
+Creating manually:
+
+	app.config(function($translateProvider) {
+		$translateProvider.translations('en', {
+				HEADLINE: 'Hello there, This is my awesome app!',
+				INTRO_TEXT: 'And it has i18n support!'
+			})
+			.translations('de', {
+				HEADLINE: 'Hey, das ist meine großartige App!',
+				INTRO_TEXT: 'Und sie untersützt mehrere Sprachen!'
+			});
+
+			$translateProvider.preferredLanguage('en');
+		});
+
+Loading from text resource URL:
+	
+	var app = angular.module('provappApp', 
+            [ '$strap.directives', 'ui.highlight', 'ui.keypress', 'ui.validate', 'ui.select2', 'ui.bootstrap', 'ngResource', 'pascalprecht.translate'])
+	
+	app.config([ '$routeProvider', '$locationProvider', '$httpProvider', '$translateProvider', function($routeProvider, $locationProvider, $httpProvider, $translateProvider, REST_CONTEXT_PATH) {
+
+		$translateProvider.useUrlLoader("/provisioning/rest/textResource");
+		//$translateProvider.preferredLanguage('en');
+	}
+	
+To change language runtime:
+	
+	$scope.onChangeLanguage = function(lang) {
+		$scope.currentLanguage = lang;					// only for business logic
+		$translate.uses(lang);
+	}
+
+	
+--------------------------------------------------------------------------------------------------------------------
+How to translate texts?	
+=======================
+For static texts in HTML template use 'translate' filter:
+
+	{{<key> | translate}}
+
+In JavaScript use $translate(<key>):
+
+	var s = $translate.instant('page.inventoryAdd.msgDeviceName');
+	
+	
+--------------------------------------------------------------------------------------------------------------------
+- How to reload language database?
+==================================
+If text resource has been changed on the server side and you want to reload by the client side call:
+
+	$translate.refresh()
+	
+	

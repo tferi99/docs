@@ -1,0 +1,31 @@
+========
+JAXB FAQ
+========
+- "Class has two properties of the same name" issue
+
+-------------------------------------------------------------------------------------------------------
+"Class has two properties of the same name" issue
+=================================================
+When I added this before a field in a class, e.g.:
+
+	@XmlElement(required=true)
+	private String action;
+
+and then ran wsgen to generate the web service, it would always fail with
+Caused by: com.sun.xml.bind.v2.runtime.IllegalAnnotationsException:
+1 counts of IllegalAnnotationExceptions
+Class has two properties of the same name "action"
+
+However, if you move the annotation to the getter method, e.g.
+
+	@XmlElement(required=true)
+	public String getAction() {
+		return action;
+	}
+
+it works fine.
+
+In short, the answer is that unless you specify it, the XmlAccessorType will default to PUBLIC_MEMBER, which will cause JAXB 
+to bind public fields and public getter/setters. So a private instance variable won’t be bound unless you change the default 
+using @XmlAccessorType(XmlAccessType.FIELD) on the class. Not sure if I understand the message though - how come wsgen reports
+ two properties with the same name in this case? - but this is a workaround anyway.

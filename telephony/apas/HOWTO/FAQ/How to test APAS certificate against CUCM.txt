@@ -1,0 +1,35 @@
+==========================================
+How to test APAS certificate against CUCM?
+==========================================
+
+1. Create APAS keys and certificate
+
+2. Export APAS certificate
+
+3. Import APAS certificate into CUCM
+
+4. Export CUCM certificate
+
+5. Import CUCM certificate into APAS
+
+6. Prepare test: 
+
+	- Export private key and certificate from APAS keystore 
+
+		keytool -importkeystore -srckeystore .keystore.jks -destkeystore keystore.p12 -deststoretype pkcs12 -srcalias andphone -srcstorepass changeit -deststorepass changeit
+		openssl pkcs12 -in keystore.p12 -passin pass:changeit  -nodes -out keystore.pem
+		
+	- Copy private key and certificate from keystore.pem into separated PEM files:
+		private key -> key.pem
+		certificate -> cert.pem
+	
+7. Test certificate with SSL client:
+
+	 openssl s_client -tls1 -connect 192.168.5.17:5061 -cert cert.pem -certform PEM -key key.pem -keyform PEM
+	 
+
+
+SEE ALSO:
+	doc\software\tools_and_languages\telephony\Apas\HOWTO\FAQ\APAS-CUCM certificate exchange.txt
+	doc\software\tools_and_languages\telephony\Apas\HOWTO\source_code_discovery\Certificate management of APAS.txt
+	

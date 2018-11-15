@@ -1,0 +1,240 @@
+- Thread run() nem abstract, van default implementacioja, ami a target.run()-t futtat, ha van target (Thread(Runnable target) konstruktoros hivas utan).
+	Mast nem csinal.
+	
+    public void run() {
+		if (target != null) {
+			target.run();
+		}
+    }
+
+- Thread run() nem abstract, default implementacio:
+
+	    public void run() {
+			if (target != null) {
+				target.run();
+			}
+		}
+		
+- "static public ... class {}" deklaracios sorrend jo
+
+- csak Boolean("tRuE") ad (tehat 'true' non-case-sensitive) ad TRUE objektumot, minden mas FALSE
+
+- Formatter.format(), Console.printf()/.format(), PrintWriter.printf()/.format() metodusok ugyanazt a formazast
+	hasznaljak. A nagybetus konverzios karakterek a konverzio utan nagybetusse alakitanak (pl. %s helyett %S-t hivva).
+	
+	Conversions denoted by an upper-case character (i.e. 'B', 'H', 'S', 'C', 'X', 'E', 'G', 'A', and 'T') are the same as those for 
+	the corresponding lower-case conversion characters except that the result is converted to upper case.
+	
+- Formatting rounds, so
+
+	printf("%.1f", 3.78)	prints 3.8
+	
+	
+- WARNING '\s' nem regex, de nem is valos escape karakter, ezert compile error ('Illegal escape character').
+
+	'\\s' kell nyilvanvaloan.
+	
+	
+- File append konstruktorral lehetseges:
+
+		new FileWriter("file", true);		// append true
+		
+- Number wrapper osztalyok erteke nem valtoztathato.
+
+- Console readPassword declarations:
+
+	 char[]	readPassword();
+	 char[]	readPassword(String fmt, Object... args)
+	 
+- Number, StringBuffer, StringBuffer - hashCode(), equals() nincs override
+
+- Objektum KONSTRUKTOR es INICIALIZATOR nem hivodik de-serialize kozben. Static, tranzient nem serializalodik.
+	Ha nem serializalhato osben nincs default konstructor:
+	
+		java.io.InvalidClassException: org.tferi.scjpexam.Child; no valid constructor
+		
+- NumberFormat format() throws NumberFormatException (RuntimeException)	
+
+	"$3,000.12" formazasahoz currency format kell, ahol locale US
+	
+		try {
+			//NumberFormat nf = NumberFormat.getInstance();							// nem jo!!!!!
+			NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
+			Number n = nf.parse("$3,000.12");
+			
+			System.out.println(n + ", " + n.getClass().getName());
+		}
+		catch (ParseException e) {
+			e.printStackTrace();
+		}	
+
+		
+- regex \\d* mean 0 or more!  12abc will be tokenize: 12|a|b|c
+	
+	\\d+ will tokenize by numbers:		12|abc
+	
+	
+- Collection.toArray(...) 
+
+	public <T> T[] toArray(T[] a)				ezt nem kell cast-olni
+	
+	DE
+	
+	public Object[] toArray()					tehat ezt cast-olni kell!
+	
+	public static <T> List<T> asList(T... a)	ezt sem kell cast-olni
+	
+- TreeSet, TreeMap ConcurrentSkipListSet, ConcurrentSkipListMap constructors has Comparator argument.
+
+- Static member nem hasznalhat class-ban deklaralt generics type parametert. A type parameter peldany-specifikus nem a class-specifikus.
+	Static member method csak abban az esetben hasznalhat generics type parametert, ha sajat maganak deklaralra (generics method).
+	
+- Tomb argumentumos methodus csak tombbel hivhato, vararg argumentumos hivhato tombbel is valtozo szamu nem-tomb argumentummal is.
+	De tobb tombbel nem!
+	
+- sort() csak Arrays es Collections-ben van! nem Collection-ben
+
+- Maradekos osztas eredmenye negativ, ha a baloldal negativ, egyebkent pozitiv vagy 0.
+
+	-5 % -2 = -1
+	-5 % 2 = -1
+	5 % -2 = 1
+
+- final member valtozo hasonloan viselkedik a lokalis valtohoz: nincs default erteke, hasznalat elott kotelezo az erteket megadni.
+
+	class A
+	{
+		final int x;
+		final y;
+		
+		public A(int arg)
+		{
+			y = arg * x;		// konstuktor hivas elott x nincs inicializalva -> compile error
+		}
+	}
+	
+- protected member nem erheto el protected referencian keresztul az oroklottben sem! 
+	Csak kozvetlenul, vagy sajat referencian keresztul.
+	
+- finalize() Throwable-t dob, amit kezelni kell!
+
+
+	protected void finalize()
+	{
+		try {
+			super.finalize();
+		}
+		catch (Throwable e) {...}
+	}
+
+	
+- array.length, String.length() !!!!!
+	
+	
+- Variables are not overridden. Variables are chosen at COMPILE time depending on declared type of invoking object.
+
+- Abstract methods CANNOT be synchronized.
+
+- Abstract and non-abstract methods also can be overridden in anonymous inner classes.
+
+- Method local classes can access only FINAL local variables of parent member method.
+
+- Ha override-old metodusok hivasakor nem talalhato a hivasi parameternek megfelelo primitiv tipus, akkor a hozza
+	leginkabb hasonlito argumentumu hivodik - tehat ammibe cast nelkul beletoltheto lenne.
+	
+	pl short, float double argumentumu metodusok eseten az int hivas a float-ot hivja.
+	
+	short-ba csak cast-tal menne be, a double meg nagyobb, mint a float azt int-hez kepest.
+	
+- Byte(int)	konstrukror nem letezik, es kozvetlenul int nem adhato Byte(byte)-ba (cast!)
+	
+- Feltetel bal es jobboldalan barmilyen numerikus tipus allhat (wrapper class is!)
+	
+- Switch: Only convertible int values or enum constants are permitted (byte, char, short, int)	
+	
+- f(int... i) nem hivhato f(new Integer[] {1,2,3}) hivassal. Integer[] nem unbox-olhato int[] be.
+
+- enum nem bovitheto (NO extends), enum nem peldanyosithato (NO new)
+
+- Ha egy valtozo inicializalas soran kesobb inicializalt valtozot hasznal, akkor annak erteke 0 lesz, mivel sorban inicialozalodnak.
+
+- Nem lehet switch-ben duplikalt case, figyelni kell a kalkulalt ertekere is!
+
+	int final i = 4;
+	int final j = 5;
+	
+	switch(k) {
+		case i + 1:
+		case j:				// duplicate !!!
+	}
+
+- Float.NaN (not-a-number) magaval sem egyenlo! 
+
+- assert csak -ea vagy -enableassertions command line opcio hatasara engedelyezett.
+
+	Ha az assertion nem engedelyezett, akkor egyaltalan nem fut (a validation kiertekeles sem - tehat nem csak a AssertError lesz elnyomva).
+
+- Ha try-catch-finally finally-ban egyertelmuen kivetelt dobunk, akkor a szerkezet mogott nem lehet parancs (
+	Nem elerheto kod -> compile error.
+	
+- Egy nem void metodus is lehet jo, ha nincs benne return abban az esetben, ha egyertelmuen kivetelt dob.
+	Exception utan nem lehet tobb kod (Nem elerheto kod -> compile error).
+		
+- Ha az aktualis Thread-nek nincs lock-ja az objektumra, akkor IllegalMonitorStateException jon.
+
+	Szivatas:
+	
+		String s = "abc";
+		
+		synchronized(s) {
+			s = "123";
+			s.notify();			// itt mar nem az a String van, amire a lock a mienk!
+		}
+
+- Ha Thread egy lokalis, de literal String-re szinkronizal, akkor a fuggetlen thread-ek ugyanazt az objektumot lokkoljak,
+	mivel a String a pool-on van!
+	
+	public void run()
+	{
+		String a = "abc";		// minden threadre ugyanaz az objektum van itt!
+		
+		synchronized(a) {
+			...
+		}
+	}
+	
+- t1.join()	: az aktualis thread var t1 vegere
+
+
+	Thread t1 = new Thread();
+	t1.start();
+	t1.join();
+		
+
+- Thread.start() rogton visszater, run()-t aszinkron hivja. A Thread a run() vegen er veget.
+
+- synchronize(o) : o nem lehet primitiv, csak objektum!
+
+- Konstructor nem lehet synchronized! De konstructoron belul lehet synchronize(o){...} block.
+
+- Ha a szulo parameter nelkuli konstruktora checked kivetelt dob, akkor az oroklottben a default konstruktor nem
+	eleg, hanem itt is kell parameter nelkuli konstruktor, ami kezeli/dobja az exception-t.
+	
+- Ha overloaded metodusok hivasakor tobb fuggvenyre is raillik a hivas parametereinek tipusa, akkor a legspecialisabb
+	argumentumu hivodik.
+	
+	
+		void func(Object o) {}
+		void func(String o) {}
+		
+		func(null);			// func(String o) hivodik
+	
+	Ha nem tud donteni, akkor compile error.
+	
+		void func(Object o) {}
+		void func(String o) {}
+		void func(StringBuffer o) {}
+
+	Itt a String es StringBuffer nem egymas leszarmazottjai, nem tud donteni.
+	
+	

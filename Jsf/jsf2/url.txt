@@ -1,0 +1,3 @@
+http://www.coreservlets.com/JSF-Tutorial/jsf2/
+http://skillsmatter.com/podcast/java-jee/exploring-javaserver-faces-2-0-and-primefaces
+http://www.vogella.com/articles/JavaServerFaces/article.html

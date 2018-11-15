@@ -1,0 +1,7 @@
+Q: How to delete item from Location combo?
+
+A: 
+	1. Open combo list.
+	2. Choose item.
+	3. Press Del key.
+-------------------------------------------------------------------------

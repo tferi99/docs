@@ -1,0 +1,43 @@
+From: /cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase2/logs//andphone.log*
+END: sip103184/1, SEPA45630BB1748 - 2017-05-31 11:59:58
+START: sip103185/1, SEP64A0E714F271 - 2017-05-31 12:03:03
+START: sip103185/1, SEPA45630BB1748 - 2017-05-31 12:03:03
+END: sip103185/1, SEP64A0E714F271 - 2017-05-31 12:03:26
+END: sip103185/1, SEPA45630BB1748 - 2017-05-31 12:03:26
+END: csip26595003, SEP64A0E714F271 - 2017-05-31 12:03:26
+END: csip26595003, SEP64A0E714F271 - 2017-05-31 12:03:26
+END: csip26595002, SEPA45630BB1748 - 2017-05-31 12:03:26
+END: csip26595002, SEPA45630BB1748 - 2017-05-31 12:03:26
+=======================================
+RECORDING[0][sip103185/1, SEPA45630BB1748] : 2017-05-31 12:03:03 - 2017-05-31 12:03:26, DB:9
+   - callingPartyName=
+   - srcIP=192.168.5.169
+   - callID=sip103185/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=9000
+   - srcPort=36151
+   - initiated=true
+   - dstIP=192.168.5.169
+   - lastRedirectingParty=
+   - callingParty=9001
+   - originalCallingParty=9001
+   - dstPort=41359
+   - calledParty=9000
+RECORDING[1][sip103185/1, SEP64A0E714F271] : 2017-05-31 12:03:03 - 2017-05-31 12:03:26, DB:
+   - callingPartyName=
+   - srcIP=192.168.5.169
+   - callID=sip103185/1
+   - calledPartyName=Cicamica
+   - stopOut=1
+   - terminal=SEP64A0E714F271
+   - originalCalledParty=9000
+   - srcPort=57599
+   - initiated=false
+   - dstIP=192.168.5.169
+   - lastRedirectingParty=
+   - callingParty=9001
+   - originalCallingParty=9001
+   - dstPort=54243
+   - calledParty=9000

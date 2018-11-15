@@ -1,0 +1,4 @@
+1. For TOmcat read tomcat-instructions.mht
+
+2. You have to switch off 'WAR validator' under 'Project'/Properties/Validation'.
+

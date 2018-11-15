@@ -1,0 +1,31 @@
+=================
+Broadcast details
+=================
+
+Broadcast types
+---------------
+- Text
+- Media
+
+Starting broadcast
+------------------
+
+Default value of page:	main
+
+	
+- Text broadcast: 	
+
+	REQ1:	http://HOST:PORT/andphone/MCastService?group=1&dev=#DEVICENAME#
+	--> MCastService.request(...)
+		page=main
+		--> handleStartOrMain()
+		--> handleMain()
+			- broadcast initilization prompt
+			- buttons:
+				- Start	-> REQ2
+				- Exit
+		
+	REQ2: http://HOST:PORT/andphone/MCastService?page=start&group=1&dev=#DEVICENAME#
+		page=start
+		--> handleReceiveOrStart()
+		--> handleStart()

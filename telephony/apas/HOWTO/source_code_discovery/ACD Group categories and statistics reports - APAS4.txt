@@ -1,0 +1,356 @@
+===================================================
+ACD Group categories and statistics reports - APAS4
+===================================================
+
+- Initialization
+- Configuration
+- Important source locations
+- Call Summary/Agent Summary calculation
+- Saving ACD category calculation configuration into JSP
+- Loading ACD category calculation configuration during startup
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Initialization
+==============
+In APAS4 ACD category initialization based on JSP files which can be uploaded in
+
+	Group/Categories/[Edit JSP Content]
+	
+File fill be uploaded into:		
+
+	modules/groupacd/report/report.jsp 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Configuration
+=============
+APAS/Group/Category List/
+	
+              1    *
+	Site      ------ DN
+              1    *
+    Team      ------ DN
+              1    *
+   Department ------ queue
+              1    1
+    Group     ------ queue
+
+	
+There is no direct association between objects. Only DNs and queues associate them together logically.
+	- a DN is part of a site if DM matches 'Phone Number Prefix' of site.
+	- a group is part of a department if its queue contained by department 
+	- a Team specified by its DNs
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Important source locations
+==========================
+ACDCall.setCategoryValues()								: setting category counters by ACD call history
+ApasClientCoreImpl.fetchAcdCategoryStatisticsData()		: calculating table data is sent to Desktop client as XML message
+StatisticsTableBean										: data transfer object for a category statistics table filled by fetchAcdCategoryStatisticsData()
+acdstatvalues.jsp										: debug page for ACD category statistics counters
+APAS\modules\groupacd\report\report.jsp					: deployed ACD category statistics descriptor JSP, uploaded by user in APAS/Group/Category list/(Edit JSP Content)		
+andphone4/GassProject/GASS_report.jsp 					: sample(!) ACD category statistics descriptor JSP
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Call Summary/Agent Summary calculation
+======================================
+1. Statistics are calculated at the end of ACD calls. 
+2. Data will be sent to DC as XML message
+3. Data will be displayed in 'Call Summary' row of Supervisor Widget table
+
+(1) Statistics are calculated at the end of ACD calls. 
+
+	[1] --> ACDCall.remove(callId)
+			--> setStatisticsValues()
+				------------------------------ loop on category types ----------------------------
+				--> setCategoryValues(catType)	
+					- detecting some flags:
+						- getting category if still no agent
+						- isBusy	: true if call has been forwarded to busy pilot
+						- catInfo, nextCatInfo 
+							//		catInfo		: current category
+							//		nextCatInfo	: placeholder for next category 
+							// If category not changed in this loop step:
+							//		nextCatInfo = catInfo		: current category
+							//
+							//	If category is just changing:
+							//		catInfo 	: previous (current) category 
+							//		nextCatInfo	: next category
+						- targetSite, callerSite
+						- OVERRUN detection
+							If some ROUTED action found in ACD history it means call is forwarded from a queue to another queue (overrun).
+							
+					---------------------------------------------- loop on ACD call state history  (state machine) -------------------------------------------
+					Here will be built 2 collections (stacks):
+					- total value stack (categoriesTotal)
+					- history stack (categoriesHistory)
+					
+					NOTE: 
+					Category values are saved into total stack entries. Categories added only once to 'total' stack.
+					History stack only used to save category change history (e.g. supporting looping).
+					If there is no category transition loops (1 category only touched only once in ACD history), these stacks contains the same number of entries.
+					
+					
+					---------------------------- loop on TOTAL VALUE stack -----------------------------
+					Here will set category flags and counters 
+
+			--> Queue.sendAcdCallEndedEvent(ACDCall call)												<<<<<<<<<<<< it fired BUT NOT USED 
+				It sends CallEndedEvent
+				
+				--> Queue.sendApasEvent(QueueChangedEvent[] event)
+					--> EventQueue.getDefaultQueue().add(event, observers)
+
+	NOTE:
+		ACD history report will be written into database - into acdCallHistoryKey and acdCallHistoryData tables, if:
+		- doReportAcdCalls = true (category is GROUP)
+		- reporting is enabled (AcdCallReportingEnabled config)
+		- call is not an intrasite call
+
+					
+	-------------------------- [1] -----------------------------------
+	- MediaRoutePoint.callChangedEvent() - CallCtlConnEstablishedEv
+		--> RPCallObserver.established(CallCtlConnEstablishedEv ev)
+			--> ACDCall.disconnected()
+				--> [1]
+
+	- NOT USED			
+		--> ACDCall.lost()
+			--> [1]
+			
+	- ACDCallObserver.callChangedEvent() - CallInvalidEv													<<<<<<<< called this event on call termination
+		--> ACDCall.removeCall(String callId)	
+			--> ACDCall.runGc()
+				--> [1]
+
+
+(2) Data will be sent to DC as XML message
+
+	Statistics values are retrieved/calculated here:
+
+		ApasClientCoreImpl.fetchAcdCategoryStatisticsData()
+
+	ACD statistics values are displayed in DC with Supervisor widgets. Widgets get data from XML messages sent by APAS here:
+
+	[1]	--> ApasClientCoreImpl.fetchAcdCategoryStatisticsData()											- to get statistics tables filled with data as CoreStatsTableBean
+			--> AcdCategoryTypeStatsTables.getAllStatsTablesByType(category.getType())
+			
+				 * Returns table descriptions (metadata) for given category type.
+				 * 
+				 * Result is list of table descriptors (1 StatisticsTableBean = 1 table).
+				 * 
+				 * DEFAULT_STATS_TABLE_DEFINITION contains default table definitions. It comes from descriptor JSP.
+				 * It contains the same table definitions for every category. 
+				 * Handling of exceptions is implemented here. 
+				 * 
+				 * Here you can hide some tables, columns or rows.
+
+				--------------------------------- loop on table definitions -----------------------------------------
+				- choosing calculation algorithm by table name and calculating:
+					- category statistics
+					- call summary
+					- agent summary
+					
+	-------------------------- [1] : fetchAcdCategoryStatisticsData() -----------------------------------
+	<===================== ApasEvent, where message contains an XML and root tag is "getAcdCategoryStatsData"
+	-> ClientConnectionMina.handleEvents(APASEvent[] events, Object object)
+		--> ClientConnectionMina.sendAcdCategoryDataResponse(...)
+			--> [1]
+		
+	[2] --> ClientConnectionMina.refreshWidgetTableData(DesktopWidgetsInfoBean widgetInfo, String widgetName, String targetDesc)
+			--> ClientConnectionMina.sendTableData(DesktopWidget widget)
+				--> [1]
+				--> sendXml(message);										<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< sending <tableData ...>
+
+			Data for a single category:
+			
+				<tableData widgetName="category_$CATID">
+						<table name="category_$CATID_cat_gscall_sum" displayName="Call Summary">
+							<row id="1">
+								<column colid="1" name="cat_gscs_label" displayName="Type">
+									<value color="none" displayTime="" displayValue="GASS">GASS</value>
+								</column>
+								<column colid="2" name="cat_gscs_waiting_calls" displayName="Waiting">
+									<value color="none" displayTime="" displayValue="0">0</value>
+								</column>
+								<column colid="3" name="cat_gscs_incom_calls" displayName="Incoming">
+									<value color="none" displayTime="" displayValue="1">1</value>
+								</column>
+				....
+			
+	-------------------------- [2] : ClientConnectionMina.refreshWidgetTableData() -----------------------------------
+	[3] --> queue.agentUpdated(this)
+			--> sendApasEvent(... new AgentUpdatedEvent(this,agent) ... )			
+				============> AgentUpdatedEvent
+				
+	AgentUpdatedEvent <============												
+	--> event received <=== AgentUpdatedEvent										
+		EventQueueWorker.run()
+			--> Queue.handleEvents(APASEvent[] events, Object object)		// observer = ClientConnectionMina
+				--> ClientConnectionMina.queueChanged(QueueChangedEvent[] events)
+					-------------------- loop on events -------------------------
+					--> sendQueueList(false);
+						sending XMLs about client related queues:			=====================> <queueList>
+						--> xml = client.getQueueList(this)
+						--> sendXml(xml)
+							
+							
+						--> sendAcdCategoryList()
+							sending XMLs about client related categories
+							--> xml = DesktopClient.getAcdCategoryList(this, this, this) 
+								----------------------------------- loop on terminals of desktop clients --------------------------------------
+								getting addresses
+									------------------------------------- loop on addresses ------------------------------------------------------
+									--> getAcdCategoriesBySuperVisorDN()
+										-------------------------------------- loop on categories -------------------------------------------------
+										qxml = AcdCategory.appendAcdCategory(category, sv)
+							--> sendXml(xml)
+							
+							
+					-------------------- loop on widgets -------------------------
+					- getting category of a widget if widget source is AcdCategory
+					- if category contains the current queue which just changed
+					  OR if one agent associated to category is member of gueue
+						--> [2]
+		
+	- ClientConnectionMina.handleEvents(APASEvent[] events, Object object)		<== CMD_GETWIDGETDATA : request from DC
+		--> [2]
+	
+	- ClientConnectionMina.registryVariableBulkEv(ApasVariableEvent[] events)
+		--> [2]
+
+	- ClientConnectionMina.registryVariableEv(ApasVariableEvent[] events)
+		--> [2]
+			
+	-------------------------- [3] : queue.agentUpdated(this) -----------------------------------
+	[5] --> Agent.setBusy(boolean busy)
+		--> queue.setBusyAgentsVariable(false, events);												<<<<<<<<<<<<<<<<<< setting busy for Agent Summary
+		--> queue.setFreeAgentsVariable(false, events);												<<<<<<<<<<<<<<<<<< setting free for Agent Summary
+		--> [3]													// triggering AgentUpdatedEvent
+
+	[6] --> Agent.updateVariables()
+		--> [3]
+
+		
+	[7] --> AgentCallObserver.processAddressChangedEvent(JTAPIThread jtapi, AddrEv[] eventList)	
+			--> AgentCallObserver.addressStateChanged(Address addr, boolean inService)		
+				--> [3]
+	
+	[7] --> AgentCallObserver.processAddressChangedEvent(JTAPIThread jtapi, AddrEv[] eventList)
+			--> AgentCallObserver.forwardChanged(CallCtlAddrForwardEv forwardEv)
+				--> [3]
+	-------------------------- [5] : Agent.setBusy(...) -----------------------------------
+	- ACDCall.runAgentBusyFlagDetector()
+		--> [5]
+		
+	- Agent.isBusy()
+		--> [5]
+		
+	- AgentCallObserver.callChangedEvent(CallEv[] eventList)	<== ConnEv (we are in connection so Agent is busy)		<<<<<<<<<<<< USECASE: somebody hooks-ON/OFF phone
+		--> [5]
+		
+	-------------------------- [6] : Agent.updateVariables() -----------------------------------
+	- ACDCall.setCurrentAgent(Agent newAgent, int agentState, boolean skipPostCall)
+		--> [6]
+		
+	- Agent.setAvailable(int available)
+		--> [6]
+		
+	- RPCpartnerServiceImpl.RemoteSaveQueue(AndGWTDataRecordIF recordIF, String func)
+		--> [6]
+		
+	-------------------------- [7] : AgentCallObserver.processAddressChangedEvent(...) -----------------------------------
+	- AgentCallObserver.addressChangedEvent(AddrEv[] eventList)
+		--> [7]
+	
+	- AddressChangedEventProcessor.run()
+		--> [7]
+
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Saving ACD category calculation configuration into JSP
+======================================================
+APAS/Group/Category List/(Edit JSP Content)
+
+UI rendering
+------------
+category_gwtappMain->onModuleLoad()
+	--> RemoteInitAcdCategoryPage()
+		--> RPCServletService.RemoteInitAcdCategoryPage(...)
+			-- RPC --> RPCpartnerServiceImpl.RemoteInitAcdCategoryPage()
+				- gets CSV upload URL
+				--> IsACDReportJSPFileExist() : to get if JSP already uploaded
+				-- CALLBACK --> onSuccess
+				[1]	--> RemoteGetAcdCategoryList()
+						--> RPCServletService.RemoteGetAcdCategoryList(...)
+							-- RPC --> RPCpartnerServiceImpl.RemoteGetAcdCategoryList()
+								--> AcdCategory[] categories = AcdCategory.getAllAcdCategories()
+									returns AcdCategory.categories (it loaded during startup from 'acdCategory' table)
+							
+								-- CALLBACK --> onSuccess
+									- datarows = loaded categories
+									--> buildDynamicListGrid(datarows, ...);
+										- rendering category list 
+										- rendering buttons ('Add', 'Delete', ...., 'Edit JSP Content', ...)
+										
+										
+Event handling
+	--------------
+	- Button 'Edit JSP Content'
+		--> openJspContentWindow();
+			- new AcdJspContentWindow()
+			--> AcdJspContentWindow.RemoteGetJspFileContent()
+				--> RPCServletService.RemoteGetJspFileContent(...)
+					-- RPC --> RPCpartnerServiceImpl.RemoteGetJspFileContent()
+						--> getACDReportJSPFileAbsolutePath()
+						--> readACDReportJspFileContent(file)
+						-- CALLBACK --> onSuccess
+							--> AcdJspContentWindow.buildFormPanel(result)
+								- renders input textarea
+								- renders 'Save' button
+								
+	- Button 'Save' on 'Edit JSP Content' dialog
+		- onFormPanelSubmitEvent(...)
+			--> RemoteSaveJspFileContent(record, closeWindow)
+				--> RPCServletService.RemoteSaveJspFileContent(...)
+					-- RPC --> RPCpartnerServiceImpl.RemoteSaveJspFileContent()
+						--> writeACDReportJspFileContent(file, content)
+							writing file
+						--> AcdCategory.initVariableMapTableByJSP()
+							--> JSP?func=map
+								re-init variables
+						--> AcdCategory.initCustomReportDefinitionsByJSP()
+							--> JSP?func=customreport
+								re-init custom reports
+						--> AcdCategory.initStatisticsTableColumnDefinitionsByJSP()
+							--> JSP?func=statstables
+								re-init custom reports
+						-- CALLBACK --> onSuccess
+							--> [1]
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Loading ACD category calculation configuration during startup
+=============================================================
+com.andtek.andphone.partner.acd.Module.init(JTAPIThread jtapi)
+	--> AcdCategory.initVariableMapTableByJSP()
+		--> JSP?func=map
+			init variables
+	--> AcdCategory.initCustomReportDefinitionsByJSP()
+		--> JSP?func=customreport
+			init custom reports
+	--> AcdCategory.initStatisticsTableColumnDefinitionsByJSP()
+		--> JSP?func=statstables
+			init custom reports
+	-->AcdCategory.load()
+		load categories from 'acdCategory' table
+		------------------------------------- loop on categories -------------------------------------
+		- load assigned queues (from 'acdCategoryQueue' table)
+		- load assigned agents (from 'acdCategoryAgent' table)
+		- load  assigned supervisors (from 'acdCategorySuperVisor' table)
+		------------------------------------- loop on categories -------------------------------------
+			--> category.loadAllStatisticsVariablesFromDB()
+				- loads last 'hourly' statistics variables from 'acdCategoryHourlyStats' table
+				- loads last 'daily' statistics variables from 'acdCategoryDailyStats' table
+			--> category.loadServiceLevelVariables();
+		

@@ -1,0 +1,74 @@
+===================================
+Howto test recorder with tcpreplay?
+===================================
+
+Customer often send PCAP file whish can help us to reproduce problems
+if you replay it to your local recorder.
+
+You can replay PCAP with tcpreplay. It's part of a package, which you can download from here:	http://tcpreplay.synfin.net/
+You have to build it from source code.
+
+tcpreplay - replays pcap files at arbitrary speeds onto the network
+
+	tcpreplay -t -i <interface>
+
+
+Only question how to trigger recorder to capture RTP streams?
+It depends of the type of recording.
+	
+SPAN H.323
+----------
+In this mode recorder will get control information from PCAP.
+You just have to add recording rule which likely matches to recorded calls.
+E.g. you can specify a global regex rule (.*).
+
+Then somply play PCAP file and calls will be recorded again.
+
+You can find sample here:
+
+	andphone_record-trunk\recorder_tests\replay_ticket_1041 
+	
+	
+	
+SIP Trunk
+=========	
+Here call information comes from JTAPI and from SIP.
+To trigger calls here you have to identify call paramaters from logs (call ID, source/destination port of RTP stream)
+(from andphone.log, sip_protocol.log)
+and you have to send recordCall XML messages to recorder which can be retrieved from andphone_record.log
+
+You just have to add recording rule which matches to recorded calls.
+
+e.g:
+
+	<recordCall terminal="SEP00258418F4DD" callID="sip36366/1" callingParty="4922429236514333" 
+	calledParty="4922429236513377" callingPartyName="ICS-UA" calledPartyName="" originalCallingParty="4922429236514333" 
+	originalCalledParty="4922429236513377" lastRedirectingParty="" initiated="false"/> 
+
+	<recordCall terminal="SEP00258418F4DD" callID="sip36366/1" srcIP="10.10.0.83" srcPort="45305"/> 
+
+	<recordCall terminal="SEP00258418F4DD" callID="sip36366/1" dstIP="10.10.0.83" dstPort="42111"/> 
+
+	tcpreplay -t -i eth0
+	
+	<recordCall terminal="SEP00258418F4DD" callID="sip36366/1" stopOut="1" /> 
+
+
+You can find sample here:	
+
+	andphone_record-trunk\recorder_tests\replay_ticket_935 	
+	
+	
+	
+	
+[2018-05-16 16:29:26,233] [>RECEIVED] [SIPServer-2] [503 Service Unavailable]
+SIP/2.0 503 Service Unavailable
+Via: SIP/2.0/UDP 192.168.5.33:5060;branch=z9hG4bK44aa3ca907dcaff9fa4bd68a79d358df363733
+From: "APAS" <___sip:APAS@192.168.5.33:5060>;tag=b6bbc11a
+To: <___sip:PING@192.168.5.18:5060>;tag=1332024327
+Date: Wed, 16 May 2018 14:29:45 GMT
+Call-ID: 3cec012bd802d6416428225c1bba270c@192.168.5.33
+CSeq: 1 OPTIONS
+Warning: 399 BAL-CUCM-01 "Unable to find a device handler for the request received on port 5060 from 192.168.5.33"
+Content-Length: 0 
+

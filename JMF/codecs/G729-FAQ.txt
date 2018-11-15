@@ -1,0 +1,38 @@
+=========
+G.729 FAQ
+=========
+
+G.729 is an audio data compression algorithm for voice that compresses digital voice in packets of 10 milliseconds
+duration. It is officially described as Coding of speech at 8 kbit/s using conjugate-structure algebraic code-excited
+linear prediction.
+
+Packets:					1 packet / 10 ms		-> 100 packets/s
+Speech sampling rate:		8000 Hz
+
+VoiceAge codec
+--------------
+The encoder requires raw 16-bit mono PCM speech data sampled at 8000 Hz as input, i.e., without any header
+information. For every speech frame, consisting of 80*16 bit (160 bytes) samples, the encoder produces a 10*8
+bit (10 bytes) packed parameter list that can be transmitted to the decoder. At the decoder, these parameters are
+used to reconstruct the speech data frame in the same format as the encoder input.
+The parameter list produced by encoding a frame of audio data is packed into 80 bits (10 bytes). 
+
+With PCM where:
+- speech data sampled at 8000 Hz
+- Frame rate:	100 packet/s
+- 1 packet:		80 sample
+- 1 sample:		16 bit
+- 1 PCM speech frame 80*16 bit = 160 bytes
+- 160 bytes/10 ms	-> 16.000 bytes/s
+
+Decoding:
+	
+		80 * 16 bit (160 bytes) -> 10 * 8 bit (10 bytes)	=====> ratio:	1/16
+		
+Size of g.729 media:		
+
+	10 byte/frame
+	80 bit/frame
+	1000 byte/s
+	
+	

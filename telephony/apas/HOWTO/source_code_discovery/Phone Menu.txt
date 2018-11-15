@@ -1,0 +1,42 @@
+==========
+Phone Menu
+==========
+Phone Menu is a special XML service to render menu tree to call other services.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+Mone menu
+---------
+	- Create menu trees here
+		Phone Menu/Root Menus
+		
+		Here you can get menu ID.
+		
+	- Add XML service to phone:
+			- Register Phone Service in CUCM
+			- Subscribe to service from phone.
+
+
+Route Point
+-----------
+	- Phone Menu/Configuration/[PhoneMenu Configuration]
+
+		--> GWT
+			--> RPCphonemenuServiceImpl.RemoteSavePhoneMenuConfiguration(PhoneMenuConfigurationBean record)
+				- writing route point name into config table:
+
+						phonemenu/RoutePointName
+						
+						
+			It will register a routepoint using  
+			
+				com.andtek.andphone.phonemenu.RPCallObserver
+				
+--------------------- > TODO: what is the exact role of this RP?
+
+
+
+				

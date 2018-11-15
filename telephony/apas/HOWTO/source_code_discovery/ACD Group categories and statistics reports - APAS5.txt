@@ -1,0 +1,34 @@
+===================================================
+ACD Group categories and statistics reports - APAS5
+===================================================
+
+- Initialization
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	
+Initialization
+==============
+
+
+In APAS5 ACD category initialization based on plugins. A single ACD plugin can be activated in
+
+	Call Center/Settings/[Calculation plugin]/"Plugin ID"
+	
+	
+	
+Call Summary/Agent Summary calculation
+======================================
+1. Statistics are calculated at the end of ACD calls. 
+2. Data will be sent to DC as XML message
+3. Data will be displayed in 'Call Summary' row of Supervisor Widget table
+
+(1) Statistics are calculated at the end of ACD calls. 
+
+	[1] --> ACDCall.remove(callId)
+			--> setStatisticsValues()
+				--> AcdCategoryCalculationService.calculateStatistics(this)
+					==> --> AcdCategoryCalculationServiceImpl.calculateStatistics(this)
+						------------------------------ loop on category types ----------------------------
+							--> AcdCategoryCalculator c = AcdCalculationPluginLocator.getPlugin().getCalculator();
+							--> Collection<AcdCategory2> processedCats = c.calculate(categoryType, acdCall);
+				...
+				...

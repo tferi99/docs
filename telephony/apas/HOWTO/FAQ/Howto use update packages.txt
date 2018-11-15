@@ -1,0 +1,5 @@
+==========================
+Howto use update packages?
+==========================
+- Download package (ZIP)
+- APAS/Global/Software Update/[Upload update package]

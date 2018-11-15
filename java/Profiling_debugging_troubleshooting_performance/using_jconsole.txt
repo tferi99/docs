@@ -1,0 +1,26 @@
+The JConsole Tool
+-----------------
+JConsole is a JMX-compliant GUI tool that connects to a running JVM, which started with the management agent. 
+To start an application with the management agent for local monitoring, set the 
+
+	com.sun.management.jmxremote 
+	
+system property when you start the application. For example, to enable the J2SE sample application 
+Java2Demo for local monitoring, enter the following command:
+
+   JDK_HOME/bin/java -Dcom.sun.management.jmxremote -jar JDK_HOME/demo/jfc/Java2D/Java2Demo.jar
+
+where JDK_HOME is the directory containing the JDK 5.0. The Monitoring and Management Using JMX document provides 
+detailed information on out-of-the-box remote management. 
+
+To start JConsole, run
+
+   JDK_HOME/bin/jconsole
+   
+   
+Using plugins:
+- download plugin JAR
+- copy next to executable
+- run with plugin. e.g.:
+
+	jconsole -pluginpath topthreads-1.1.jar

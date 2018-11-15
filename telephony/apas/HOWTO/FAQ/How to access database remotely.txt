@@ -1,0 +1,24 @@
+================================
+How to access database remotely?
+================================
+
+1. enable remote access in APAS 
+
+	Global/Security/[remote SErver Access]/Database
+	
+	
+ OR
+
+	iptables -I INPUT -p tcp --dport 3306 -j ACCEPT
+	
+
+2. mysql -u root -p
+
+	password is: and33dbadmin
+	
+3. grant user from your host, e.g
+
+
+	grant all on andphone.* to andjndi@'192.168.5.113' identified by 'aPfn4j9zbX0';
+
+

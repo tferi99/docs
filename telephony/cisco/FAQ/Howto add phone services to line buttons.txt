@@ -1,0 +1,31 @@
+=========================================
+Howto add phone services to line buttons?
+=========================================
+- Register service
+	- CUCM/Device/Device Settings/Phone Services
+	- Specify service URL (get one from APAS)
+	- Service category: XML service
+	- Service type: Standard IP phone service
+	- Check: enable
+	- PRESS 'Update subscriptions' !!!
+	
+- Subscribe phone to service
+	- Choose a phone
+	- Related links: Subscribe/unsubscribe Services
+	- Choose and subscribe service
+	
+- Create a custom Phone Button Template with services
+	- CUCM/Device/Device Settings/Phone Button Templates
+	- Add new, choose an existing for related phone type to copy
+	- Change one or more combos to 'Service URL'
+	
+- Choose this button template for phone
+	- Choose a phone (whith subscribed service)
+	- set 'Phone Button Template'
+	- Save and Apply Config
+	- You can see 'Add a new SURL' in phone button list of device (left panel)
+	
+- Assign service
+	- 'Add a new SURL'
+	- Choose a service
+	

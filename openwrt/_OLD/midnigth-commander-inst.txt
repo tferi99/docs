@@ -1,0 +1,10 @@
+1. ipk package mc and ncurses used /opt dir for install, 
+	you must write command ipkg -d root ............., no ipkg -d opt !!!
+	
+ipkg -d root install http://ipkg.nslu2-linux.org/feeds/unslung/wl500g/ncurses_5.5-1_mipsel.ipk
+ipkg -d root install http://ipkg.nslu2-linux.org/feeds/unslung/wl500g/mc_4.1.35-3_mipsel.ipk
+
+and set environment in /etc/profile
+
+export TERMINFO="/opt/lib/terminfo"
+export TERM="linux"

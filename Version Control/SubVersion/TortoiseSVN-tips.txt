@@ -1,0 +1,69 @@
+=================
+Tortoise SVN tips
+=================
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Most important performance tip !!!!!!!!!
+========================================
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+TO ACHIEVE BETTER PERFORMANCE DISABLE ICON OVERLAY SO
+TSVNCache.exe WON'T BE STARTED AND WONT EAT YOUR DISK I/O
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Locking
+=======
+By default, nothing is locked and anyone who has commit access can commit changes to any file at any time. 
+Others will update their working copies periodically and changes in the repository will be merged with local changes. 
+
+If you Get a Lock on a file, then ONLY YOU CAN COMMIT THAT FILE.
+
+svn:needs-lock
+--------------
+There is a new Subversion property svn:needs-lock. 
+When this property is set (to any value) on a file, whenever the file is 
+checked out or updated, the LOCAL COPY IS MADE READ-ONLY unless that working copy holds a lock for the file. 
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Authentication information
+==========================
+TortoiseSVN store the credentials in Subversion's default directory: 
+
+	$APPDATA\Subversion\auth in three subdirectories: 
+
+- svn.simple contains credentials for basic authentication (username/password). 
+- svn.ssl.server contains SSL server certificates. 
+- svn.username contains credentials for username-only authentication (no password needed). 
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+How to Integrate TortoiseSVN in Total Commander
+===============================================
+To show overlay icons set:
+
+	TC/Configuration/Options/Display/Icons/(Show overlay icons, e.g. for links)
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+Optimize Tortoise SVN Cache (TSVNCache.exe) Disk I/O
+====================================================
+1. Right-click on your desktop and select "TortoiseSVN -> Settings..."
+
+2. In the tree view, find the "Look and Feel/Icon Overlays" branch.
+
+3. In the "Exclude Paths" box, put C:\* to exclude the entire C drive.  If you have more drives than that, exclude them all at the top level.  
+	Separate the values by newlines.
+
+4. In the "Include Paths" box, list all of the locations you have working copies, separated by newlines.  
+	Again, this is easier if you keep all of your working copies in a specific folder or set of folders.
+
+Using my example, this is what I put in the "Include Paths" box:
+	C:\dev\*
+	C:\Documents and Settings\tillig\My Documents\Visual Studio 2005\*
+	C:\Documents and Settings\tillig\My Documents\Visual Studio Projects\
+	
+5. Click OK to apply the changes. 
+
+6. Either reboot or open Task Manager and kill "TSVNCache.exe" so it restarts when needed.  You have to restart it for these options to take effect.	
+

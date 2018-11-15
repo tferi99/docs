@@ -1,0 +1,81 @@
+========================
+Java Troubleshooting FAQ
+========================
+
+Processes, threads
+------------------
+- How to find process id (pid) of all running Java processes?
+- How to find process id (pid) of all running Java threads?
+- How to find stacktrace of any running Java threads?
+- How can I see which CPU core a thread is running in Linux?
+
+-------------------------------------------------------------------------------------------------
+How to find process id (pid) of all running Java processes?
+===========================================================
+
+	jps -lm
+	
+
+-------------------------------------------------------------------------------------------------
+How to find process id (pid) of all running Java threads?
+=========================================================
+	
+top -H -p {PROC_ID}
+	
+-------------------------------------------------------------------------------------------------	
+How to find stacktrace of any running Java threads?
+===================================================
+
+	jstack <pid>
+	
+-------------------------------------------------------------------------------------------------	
+How to get CPU consumption of threads?	
+======================================
+- top
+
+		top -H -p <pid>
+		
+- VisualVM
+	- In Sampler tab start CPU sampler
+	- 'Thread CPU Time' tab contains CPU Time %
+	
+- JConsole
+	- start jconsole with TopThreads plugin
+	
+		jconsole -pluginpath topthreads-1.1.jar
+		
+	- 'Top threads' tab contains threads ordered by CPU usage %
+	- In addition, by selecting a thread entry you can get thread stack trace information, too
+	
+	
+		
+	
+	
+-------------------------------------------------------------------------------------------------	
+How can I see which CPU core a thread is running in Linux?	
+==========================================================
+- get threads of a process:
+
+		top -H -p {PROC_ID}
+		
+		
+- add 'P' column		
+
+	Press 'f' and 'j'
+	
+	top - 04:24:03 up 96 days, 13:41,  1 user,  load average: 0.11, 0.14, 0.15
+	Tasks: 173 total,   1 running, 172 sleeping,   0 stopped,   0 zombie
+	Cpu(s):  7.1%us,  0.2%sy,  0.0%ni, 88.4%id,  0.1%wa,  0.0%hi,  0.0%si,  4.2%st
+	Mem:   1011048k total,   950984k used,    60064k free,     9320k buffers
+	Swap:   524284k total,   113160k used,   411124k free,    96420k cached
+
+	  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  P COMMAND
+	12426 nginx     20   0  345m  47m  29m S 77.6  4.8  40:24.92 7 php-fpm
+	 6685 mysql     20   0 3633m  34m 2932 S  4.3  3.5  63:12.91 4 mysqld
+	19014 root      20   0 15084 1188  856 R  1.3  0.1   0:01.20 4 top
+		9 root      20   0     0    0    0 S  1.0  0.0 129:42.53 1 rcu_sched
+	 6349 memcache  20   0  355m  12m  224 S  0.3  1.2   9:34.82 6 memcached
+
+	 
+	'P' column contains 'Last Used Cpu'
+	

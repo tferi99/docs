@@ -1,0 +1,39 @@
+======================
+Recorder1 vs Recorder2
+======================
+
+- How to activate Recorder2 ?
+- Observers
+
+Recorder2 is a new implementation of JAVA side of recorder function.
+
+----------------------------------------------------------------------------------------------------------------------------
+How to activate Recorder2 ?
+===========================
+APAS 5 :
+ 
+	insert into config (module, param, val) values ('recorder', 'useRecorder2', true);
+	
+!!!!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!!!! :
+	With current implementation the value of variable is not relevant.
+	If you want to reset recorder 1, delete this record (and NOT update).
+	
+	
+----------------------------------------------------------------------------------------------------------------------------
+Observers
+=========
+Recorder 1:
+	Terminal where line contained by a recorder rule has a 
+	
+		com.andtek.andphone.recorder.PhoneCallObserver
+	
+Recorder2:	 
+	Terminal where line contained by a recorder rule has a 
+	
+		com.andtek.andphone.recorder2.impl.RecorderCallObserver
+		
+----------------------------------------------------------------------------------------------------------------------------
+Recording
+=========
+
+

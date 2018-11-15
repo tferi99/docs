@@ -1,0 +1,18 @@
+===========================
+Howto call AXL SQL queries?
+===========================
+Method1:
+	- Download AXL SQL toolkit from CM: https://CM_HOST:8443/plugins/axlsqltoolkit.zip
+	- Call AxlSqlToolkit (see README.txt)
+	
+Method2:
+	- Get WSDL from AXL SQL Toolkit (e.g. schema/7.1/WSDL-AXIS/AXLAPI.wsdl)
+	- Load WSDL into SoapUI
+	- Add CCMSERVERNAME to hosts file
+	- Call executeSQLQuery method
+	
+Method3:
+	- Login into CM with SSH as user 'admin'
+	- call:
+	
+		run sql <SQL>

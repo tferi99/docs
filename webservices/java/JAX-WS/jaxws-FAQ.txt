@@ -1,0 +1,92 @@
+==========
+JAX-WS FAQ
+==========
+
+- How to inject sevices into WEB-service endpoint in Spring?
+- Error: Class has two properties of the same name
+- Error: The constructor Service(URL, QName, WebServiceFeature[]) is undefined	
+- Dumping SOAP messages on JAX-WS client		
+
+---------------------------------------------------------------------------------------------------------------------
+How to inject sevices into WEB-service endpoint in Spring?
+==========================================================
+Inherit WS endpoint implementation from SpringBeanAutowiringSupport, than @Autowired will be resolved by Spring.
+
+
+	public class WiseWSImpl extends SpringBeanAutowiringSupport implements WiseWS
+	{
+		@Autowired
+		private CompanyService companyService;
+
+		...
+	}
+
+---------------------------------------------------------------------------------------------------------------------
+Error: Class has two properties of the same name
+================================================
+Fix:
+	1. classes musthave a default (non-argument) constructor
+	2. Every member variable of properties (so where there are getter and setter) must be private.
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+Error: The constructor Service(URL, QName, WebServiceFeature[]) is undefined	
+============================================================================
+You generate with wsimport and you get this error during compilation:
+	
+	The constructor Service(URL, QName, WebServiceFeature[]) is undefined
+	
+Then generated code is JAX-WS 2.2 compatible, but you try to build it with JDK containing JAX-WS 2.1.
+
+Fix:
+
+	Specify JAX-WS version during wsimport explicitly:
+	
+		wsimport ..... -target 2.1
+
+		
+---------------------------------------------------------------------------------------------------------------------
+Dumping SOAP messages on JAX-WS?
+================================
+Client:
+	Method 1:
+		You can tap messages useing sniffers (e.g. Wireshark), but with SSL/TLS it couldn't be an option.
+		In this case you can activate message dumping in client side.
+
+		To dumping SOAP messages on JAX-WS client set JVM attribute:
+
+			-Dcom.sun.xml.ws.transport.http.client.HttpTransportPipe.dump=true
+			
+		or just call 
+
+			com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump = true; 
+			
+		from your Java program to programatically enable/disable logging.
+
+		NOTE: 
+			HttpTransportPipe class might be a different package (e.g. com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe).
+
+		
+	Method 2:
+		The dump mechanism explained above allows you to get the actual bytes that are sent over the wire, as well as any transport specific information (such as HTTP headers), 
+		but the mechanism is different from transports to transports. JAX-WS also defines a transport-agnostic dump, which works regardless of what transport you use.
+
+	To enable such dump, set the system property 
+	
+			com.sun.xml.ws.util.pipe.StandaloneTubeAssembler.dump=true 
+	
+	or execute that as a Java program.
+		
+
+Server:
+	You can dump incoming HTTP requests and responses to System.out on the server side by using the system property
+	
+		com.sun.xml.ws.transport.http.HttpAdapter.dump=true. 
+		
+	This works exactly like above (except that this works on server, not client.) 	
+	You can also set this property programatically by executing 
+	
+		com.sun.xml.ws.transport.http.HttpAdapter.dump=true;
+		
+	as Java progrma.

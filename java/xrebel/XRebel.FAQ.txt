@@ -1,0 +1,63 @@
+==========
+XRebel FAQ
+==========
+
+- How to display toolbar for non-HTML pages?
+- How to log HTML response?
+- How to disable injection of toolbar?
+- How to ignore classes/packages for monitoring?
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to display toolbar for non-HTML pages?
+==========================================
+If you have an application which doesn't render any HTML pages (e.g. REST server).
+If the toolbar is not showing, try the alternative UI by appending 
+
+	/xrebel 
+
+to your application URL.
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to disable injection of toolbar?
+====================================
+
+	-Dxrebel.injection=false 
+
+If the toolbar is not showing, try the alternative UI by appending 
+
+	/xrebel 
+	
+--------------------------------------------------------------------------------------------------------------------
+How to log HTML response?
+=========================
+
+Add the following arguments to the command line
+-Dxrebel.injection.log_response=true
+-Dxrebel.browser.console_log=true
+-Dxrebel.log=trace
+
+Log is located either near xrebel.jar or under ~/.xrebel/.
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to ignore classes/packages for monitoring?
+==============================================
+
+XRebel allows excluding specified classes from tracing instrumentation (application profiling). 
+You can manually ignore classes by listing them as regular expressions in 
+
+	~/.xrebel/traces-blacklist.txt.
+
+XRebel excludes static and transient fields when calculating the size of an object. 
+You can also manually ignore classes and packages by listing them in the file 
+
+	~/.xrebel/session-blacklist.txt.
+	
+By default, all transient fields are ignored and objects reachable only through transient fields are not considered to be part of the session.
+
+	-Dxrebel.session.include_transient_fields=true
+	
+When true, fields with the transient modifier will be considered when constructing the session graph. 
+	

@@ -1,0 +1,56 @@
+=======================
+SIP trunk configuration
+=======================
+
+	APAS trunk endpoint <===========================> CUCM trunk endpoint
+	
+
+1. Add SIP Trunk Security Profile
+
+	CUCM/System/Security Profile/SIP Trunk Security Profile/(Add New)
+	
+	- Incoming port:	port for CUCM side endpoint
+	
+	Insecure:
+		- Device Security Mode:		Non Secure
+		- Incoming Transport Type:	TCP+UDP
+		- Outgoing Transport Type:	UDP
+	Secure:
+		- Device Security Mode:		Encrypted
+		- Incoming Transport Type:	TLS
+		- Outgoing Transport Type:	TLS
+		
+2. Add SIP trunk
+
+	CUCM/Device/Trunk/(Add New)
+	
+	- SIP Trunk Security Profile:	security profile created just before
+	- Destination address:			IP of APAS side trunk endpoint (APAS IP)
+	- Destination port:				port for APAS side trunk endpoint 
+	
+3. Add server to APAS
+
+	APAS/Global/Servers/(Add)
+	- choose 'SIP'
+	- Hostname/IP:	host/IP of CUCM side trunk endpoint
+	- Port:			port of CUCM side trunk endpoint
+	- Local port:	port of APAS side trunk endpoint
+	
+	Insecure:
+		- Use SSL:		-
+		- Transport:	udp
+		
+	Secure:
+		- Use SSL:		+
+		- Transport:	tls
+	
+	
+Troubleshooting
+---------------
+Activate SIP debug logging:
+
+	config(global/SIPDebug=true)
+	
+And set log level to 3 or 4 or higher.	
+
+	config(global/LogLevel=4)

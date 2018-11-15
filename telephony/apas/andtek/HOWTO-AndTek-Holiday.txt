@@ -1,0 +1,35 @@
+====================
+HOWTO-AndTek-Holiday
+====================
+
+To take holiday you have to add task to your Urlaub project.
+Steps are the followings:
+
+1. Login to services and go to Calendar.
+
+2. To add a task select starting day of holiday.
+
+3. Choose Roland as 'User Assigned'.
+
+4. Specify title, e.g: 		
+	FT: Holiday 2012-07-20 - 2012-07-27 
+	
+5. Specify net number of days (so WITHOUT weekends) as S0 special value.
+
+6. Specify gross number of days (so WITH weekends) in Days in 'Additional Info'.
+
+7. Set type to 'No weekend'.
+
+8. Set status to 'Wait'.
+
+9. Submit to save settings
+
+10. Assign task to a project by clicking '+' image next to 'Title' field.
+
+11. Search for your Urlaub project (e.g. 'FT urlaub').
+
+12. Check:
+	- Your entries will be displayed in Calendar list.
+	- You can see other holiday entries in 'Related Tasks' table (below) where ALL contains 
+		all booked holidays and NOW contains elapsed days.
+		

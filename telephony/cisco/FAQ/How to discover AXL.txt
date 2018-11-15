@@ -1,0 +1,39 @@
+====================
+How to discover AXL?
+====================
+AXL = Administrative XML API
+
+1. Doc
+	Cisco Unified Communications Manager - Database Dictionary documentation contains table descriptions.
+
+2. Direct SQL
+	- SSH into CUCM as admin
+	- run sql <sql>
+		
+		run sql select * from speeddial
+		
+3. XML SQL
+	- Download 'Cisco AXL Toolkit' from CUCM (Application/Plugins)
+	- See readme.txt
+	- Create XML script based on sample.xml
+	- Run:
+	
+		java -cp .\classes;.\lib\saaj-api.jar;.\lib\saaj-impl.jar;.\lib\mail.jar;.\lib\activation.jar;.\lib\jaxm-api.jar;.\lib\jaxm-runtime.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar AxlSqlToolkit 
+			-username=<user> -password=<password> -host=<cucm host> -input=<XML script>
+ 
+4. SOAP 
+	- Download 'Cisco AXL Toolkit' from CUCM (Application/Plugins)
+	- Get AXLAPI.wsdl from axlsqltoolkit/schema/<cucm version>
+	- Edit WSDL and set CUCM IP (replace CCMSERVERNAME).
+	- Create SOAP project and specify this WSDL
+	
+	- Call methods
+	
+	NOTE:
+		Here you also are be able to run SQL - with executeSQLQuery
+		
+
+SEE MORE:	
+	Cisco Unified Communications Manager XML - 9.1.1.pdf/Administrative XML Programming
+	Cisco Unified Communications Manager - Database Dictionary - 9.1.1.pdf
+

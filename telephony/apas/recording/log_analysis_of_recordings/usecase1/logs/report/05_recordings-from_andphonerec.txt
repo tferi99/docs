@@ -1,0 +1,23 @@
+From: /cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase1/logs//andphone_record.log*
+START: sip99720/1, SEP64A0E714F271 - 
+2017-05-03 08:56:57,094: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" callingParty="9030" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9030" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
+END: csip31117820, SEP64A0E714F271 - 
+END: sip99720/1, SEP64A0E714F271 - 
+END: csip31117820, SEP64A0E714F271 - 
+=======================================
+RECORDING[0][sip99720/1, SEP64A0E714F271] :  - , DB:308, DiskThread:true 
+   - callingPartyName=
+   - srcIP=192.168.5.245
+   - callID=sip99720/1
+   - calledPartyName=Cicamica
+   - stopOut=1
+   - terminal=SEP64A0E714F271
+   - originalCalledParty=9000
+   - srcPort=39923
+   - initiated=false
+   - dstIP=192.168.5.245
+   - lastRedirectingParty=
+   - callingParty=9030
+   - originalCallingParty=9030
+   - dstPort=39575
+   - calledParty=9000

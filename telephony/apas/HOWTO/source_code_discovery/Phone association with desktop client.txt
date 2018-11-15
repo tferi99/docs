@@ -1,0 +1,129 @@
+=====================================
+Phone association with desktop client
+=====================================
+
+- Association by calling an RP
+- Association with CDP
+- Dissassociating a phone
+
+There are two methods to associate desktop client to a phone:
+1. CDP - associating phone by detecting it via physical network interface
+2. Calling an RP during association from physical phone
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+Association by calling an RP
+============================
+Configuration:
+--------------
+- RP (Route Point) - this route point will be called during association.
+
+	APAS/Client/Configuration/[Desktop Configuration]/(Route Point)		-> config(communicator/RoutePointName)
+	
+	Initialization of RP:
+	
+		Startup --> JTAPIThread.run()
+			--> JTAPIThread.initJtapi()
+				--> JTAPIThread.doInitJtapi()
+					--> Modules.initJtapi(jtapi)
+						--> Modules.initJtapi(jtapi, moduleName)
+							--> com.andtek.andphone.communicator.Module.initJTAPI()
+								--> setupRouteCallBack(provider)
+									--> routePoint = (CiscoRouteTerminal) provider.getTerminal(JTAPIThread.getConfig().getString(module,"RoutePointName"));
+										--> callObserver = new com.andtek.andphone.communicator.RPCallObserver(routePoint.getName(), this)
+										--> routePoint.addObserver((TerminalObserver) callObserver)
+										--> routePoint.addCallObserver(callObserver)
+
+- DN range pattern for random DN generation:
+
+	CUCM/Device/CTI Route Point line contains pattern. E.g:  905X	
+
+
+1. User call 'Associate Phone' menu of DC
+
+2. DC -- XML --> APAS
+
+	<getCode/>
+	
+	--> ClientConnectionMina.handleEvents(...)	event:CMD_GETCODE
+		--> Module.createRandom()
+		--> Module.createCode()
+			--> Module.createCode(rpDn)
+			
+				where rpDn = routePoint.getAddresses()[0].getName()
+	
+3. APAS -- XML --> DC
+	
+	<getCodeResponse code="9051" random="AEC9D65A3577440426415492CB9CFBC9"/>
+	
+4. DC renders generated DN in a message dialog
+
+5. User calls RP via generated DN:
+	--> com.andtek.andphone.communicator.RPCallObserver.callChangedEvent(CallEv[] eventList)		<<<< ev: TermConnRingingEv
+		--> alerting()
+			--> com.andtek.andphone.communicator.Module.receivedCode(...)
+				--> XMLServerMina.associateTerminal(Terminal term, String code)
+					--> ClientConnectionMina.associateTerminal(Terminal term, String code)
+						--> DesktopClient.associateTerminal(Terminal term, String code)
+							--> DesktopClient.addTerminal(term, null, false)
+								- thrown SQLException()
+										java.sql.SQLException: No EM phones found, still associated user
+								--> DesktopClient.saveAttributes(...)
+									- to insert/update desktopclient table with username, currentLine, profileID
+									- replace phone in desktopclientphone table (delete+insert)
+								
+								
+XML traffic
+-----------
+    DC                        APAS
+    |--------- getCode -------->|
+    |<------ getCodeResponse ---|	
+	
+								
+								
+								
+------------------------------------------------------------------------------------------------------------------------------------------
+Association with CDP
+====================
+CDP is depretcated since not supported WinPCAP library. WinPCAP not supported sence several years and works unstable nowadays.
+
+CDP setup:
+	- connect your PC via phone which you want to associate to DC
+	- disable 'Span to PC Port' on phone device (otherwise CDP packages from every phone will be forwarded to your PC and DC will sniff them and generated bad 'cdp' messages to ASAS)
+
+								
+1. DC -- XML --> APAS
+								
+	<cdp phone="SEP88755651BA10"/>	
+	
+	--> com.andtek.andphone.communicator.ClientConnectionMina.handleEvents(APASEvent[] events, Object object) 				<<<<<<< event: CMD_CDP
+	
+		--> ---------------- if DesktopClient.updateTerminal() ----------------------
+			--> DesktopClient.associateTerminal(phone.getTerminal(), "")				<< code is empty, it means CDP
+				--> DesktopClient.addTerminal(term, null, true)					<< 3rd parameter is true, it means temporary association
+					--> terminals.add(term)
+					--> terminalUsers.add(user)
+					--> DesktopClient.saveAttributes(...)
+						- to insert/update desktopclient table with username, currentLine, profileID
+						- replace phone in desktopclientphone table (delete+insert)
+			
+			
+------------------------------------------------------------------------------------------------------------------------------------------
+Dissassociating a phone
+=======================
+1. DC -- XML --> APAS
+
+	<disassociatePhone password="*****" phone="SEPA45630BB1748" user=""/>
+
+	--> com.andtek.andphone.communicator.ClientConnectionMina.handleEvents(APASEvent[] events, Object object) 				<<<<<<< event: CMD_DISASSOCIATEPHONE
+		--> client.disassociateTerminal(phone.getTerminal())
+			--> removeTerminalUser(term)
+				- removing terminal from memory collections
+			--> DesktopClient.saveAttributes(...)
+				- to insert/update desktopclient table with username, currentLine, profileID
+				- replace phone in desktopclientphone table (delete+insert)
+				
+		
+	
+

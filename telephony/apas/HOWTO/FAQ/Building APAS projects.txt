@@ -1,0 +1,56 @@
+======================
+Building APAS projects
+======================
+
+- Notes for Jenkins
+- How to build a project with a specific revision on Jenkins?
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Notes for Jenkins
+=================
+- Master Jenkins only WEB interface and storage of artifacts
+
+- build itself running on slave instance(s)
+
+- arctifacts placed into:
+
+	/home/jenkins/workspace
+	
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+How to build a project with a specific revision on Jenkins?
+===========================================================
+- Go to Jenkins:
+
+	APAS 5:	http://192.168.150.10:8080		(slave 192.168.150.14)
+	APAS 6:	http://192.168.150.9:8080		(slave 192.168.150.12)
+	
+
+- Find project in 'All' tab and choose.
+
+- Go into 'Configure'
+
+- In [Source Code Management]/Repository URL add revision number to URL with @, e.g:
+
+	http://devel.andtek.com/svn/APAS_ENV/iptables-apas-config/trunk@702
+	
+- Save configuration
+
+- Press 'Build now' to start build
+
+You can create an update package from this custom revision if you build APAS.
+APAS update package is created from the last build of subprojects. 
+To create update package:
+
+- Go into 'APAS-Trunk'tab and choose apas-trunk-x86_64 project.
+
+- Press 'Build now' to start build 
+
+- After build you can check modules of update package in 'Last Successful Artifacts', and you can also download package here (e.g. APAS-x86_64-572-9470-Update.pkg)
+
+!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!
+AFTERE BUILDING SUBPROJECT RESET REPOSYTORY URL (remove revision number from the end of URL), OTHERWISE THIS REVISION WILL BE THE PART OF PACKAGES IN THE FUTURE
+!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!
+

@@ -1,0 +1,281 @@
+FYI, szerintem teged is erdekel a secure SIP-el kapcsolatos ugymenet.
+
+Udv: Zoli
+
+
+-------- Original Message -------- 
+Subject: 	RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+Date: 	Tue, 11 Sep 2012 12:26:20 +0000
+From: 	Erwin Hauer (ehauer) <ehauer@cisco.com>
+
+To: 	ANDTEK Support <support@andtek.com>, "Prem Bejjam -X (prebejja - KPI Consulting at Cisco)" <prebejja@cisco.com>, "zbalogh@andtek.com" <zbalogh@andtek.com>
+
+CC: 	Michael Buening (mbuning) <mbuning@cisco.com>, Michael Simon (michsimo) <michsimo@cisco.com>
+
+
+Hello together, 
+
+this service requests has a big impact on a UC project at RWE. I´m the responsible Cisco Account Manager. We need to give the customers a statement where we are and how long it will take to fix this problem. All I understand is, that it is not easy to fix. I would like to invite you to confcall to find out where we are and to give the customer a statement regards this. 
+
+Is this possible today or tomorrow?
+
+With kind regards
+
+Erwin Hauer
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com] 
+Sent: Freitag, 18. Mai 2012 09:29
+To: Prem Bejjam -X (prebejja - KPI Consulting at Cisco)
+Cc: attach@cisco.com; zbalogh@andtek.com; Michael Buening (mbuning); Erwin Hauer (ehauer); Michael Simon (michsimo)
+Subject: RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+
+Prem,
+
+we uploaded wireshark traces for this case over a month ago!
+As per my mail from 04.13.2012 I notified you about a new testrun in our labs and the logs which I have attached to the case.
+Why are you requesting another wireshark trace if nothing has changed?
+What did you do with the trace that is attached to the case for more than a month? What about the CUCM logs that are also in that package?
+I do not know what a "leaf certificate" would be, but I attached the certs of CUCM and our application server.
+
+I am very dissatisfied with the progress so far (there is no progress). To whom may I speak to make an inquiry about the level of quality of our support we receive?
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+Hello Jens,
+
+A wireshark capture will be helpful. Also, is it possible to access the CUCM server if it turns out the it's CUCM that is rejecting the TLS connection?
+Can you send us the Leaf certificate , CA certificate of the thirdparty server and CUCM CallManager certificate as well.
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Wednesday, May 16, 2012 3:41 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com; zbalogh@andtek.com; mbuning@cisco.com; ehauer@cisco.com; michsimo@cisco.com
+Subject: RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+
+Hi Prem,
+
+I checked with development and it turns out there is nothing to test anymore, since we are using the exacty the same version as the CUCM.
+I suppose the CUCM should support the same encryption, the CUCM uses itself?
+I attached some screenshots proofing that we are using, what CUCM is using.
+How do we proceed now?
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+-----Original Message-----
+From: Prem Bejjam [mailto:prebejja@cisco.com]
+Sent: Freitag, 4. Mai 2012 19:30
+To: 'ANDTEK Support'
+Cc: attach@cisco.com; zbalogh@andtek.com
+Subject: RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+
+Hello Jens,
+
+What we meant is to provide a CUCM binary that you can apply on the current CUCM in order to check the issue . There is no need to upgrade yet. Only thing required will be root access.
+It's a self signed certificate and the signature in the certificate is using sha. So there could be problem in verifying the self signed cert. But If you can try with another certificate using SHA1withRSAEncryption instead , that can narrow down the situation and help in debugging.
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Friday, May 04, 2012 10:02 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com; zbalogh@andtek.com
+Subject: RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+
+Hi Prem,
+
+not sure if this is the easiest way. Maybe we can change to code of the API once again, to explicitly use SHA1 and we can test it.
+I think this would be a little easier for us than to upgrade the CUCM. I will check that with devl-team.
+
+Still, in my opinion this has not much to do with the error message.
+"Unknown CA", for my understanding, shows that the CUCM was able to look into the certificate but simply the CA is not what CUCM expected, which throws this error.
+
+But I will give you an update on this, when I have spoken with our developers.
+michsimo@cisco.com
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+
+-----Original Message-----
+From: Prem Bejjam [mailto:prebejja@cisco.com]
+Sent: Freitag, 4. Mai 2012 16:41
+To: 'ANDTEK Support'
+Cc: attach@cisco.com; zbalogh@andtek.com
+Subject: RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+
+Hello Jens,
+
+We were checking the SIP packet capture. We see the certificate that the server presents uses Signature Algorithm as shawithRSAEncrpytion instead of sha1withRSAEncryption. Maybe Call Manager explicitly loads only SHA1. To confirm that , we can provide you a CallManager binary with the patch and If you can test it again if that solves the issue.
+Let me know if that will work.
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Friday, May 04, 2012 6:03 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com; zbalogh@andtek.com
+Subject: RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+
+Hi Prem,
+
+what access info they need exactly?
+Traces should be there.
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+Hello Jens,
+
+Worked with the SIP team and they concluded that the "Unknown CA" is not an error generated from the sip layer.
+The CUCM security team needs to take a look at why this is happening.
+The CUCM team requested sniffer traces and your server access info?
+Can you please provide the info .
+My apology for delay on this SR.
+Working with high importance on this issue.
+
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: ANDTEK Support [mailto:support@andtek.com]
+Sent: Thursday, May 03, 2012 2:47 AM
+To: 'Prem Bejjam'
+Cc: attach@cisco.com; zbalogh@andtek.com
+Subject: RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+
+Hi Prem,
+
+is there any update on this?
+We have not heard from you in a while and wonder if you make some progress.
+
+
+Kind Regards,
+
+Jens Blumenstein
+System Engineer
+
+Phone Support: +49 811 95949 610
+E-Mail: support@andtek.com
+
+ANDTEK GmbH
+andtek.com
+
+Hello Jens,
+
+Sorry about the confusion.
+I am working with an engineer on "Unknown CA" issue.
+Will update you.
+
+Thank you,
+Prem Bejjam
+prebejja@cisco.com
+Cisco Developer Services
+
+
+-----Original Message-----
+From: Jens Blumenstein [mailto:support@andtek.com]
+Sent: Wednesday, April 18, 2012 4:11 PM
+To: Prem Bejjam
+Cc: attach@cisco.com; zbalogh@andtek.com
+Subject: RE: SR 620824565 - Unable to successfully setup secure SIP Trunk
+
+Hi Prem,
+
+I do not quite get your point? You said that the problem was, SHA256 is not supported by CUCM, so we should try using ciper "shawithRSAencryption", which is exactly the same as used by CUCM certificate.
+However, the error remains the same, which tells me it has propably nothing to do with the wrong cipher. Now, how would using SHA256 again help in this issue?
+The main question would rather be: why "unknown CA" and what to do against this?
+
+Regards,
+
+Jens
+
+
+Quote from Prem Bejjam <prebejja@cisco.com>:
+
+>
+>
+> Hello Jens,
+>
+> In CUCM 8.5 , Openssl (open source) is linked statically with Call   
+> Manager binary. Earlier the DE checked the certificate signature   
+> having sha256withRSAEncrytion with command line Openssl (Red Hat) on  
+>  8.5 server and Red Hat openssl does not recognize sha256. But Open   
+> Source openssl does.
+> The same fix will be applicable to CUCM 8.5 as well.
+> Basically the issue is with digest algo sha256 not being initialized 
+> in CallManager.
+> By making that change in CallManager , it works for 8.5 onwards.
+>
+> Thank you,
+> Prem Bejjam
+> prebejja@cisco.com
+> Cisco Developer Services
+
+
+----------------------------------------------------------------
+This message was sent using IMP, the Internet Messaging Program.
+
+
+
+
+
+

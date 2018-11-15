@@ -1,0 +1,33 @@
+====================
+Howto configure ACD?
+====================
+- Create one or more queues with line numbers (DN) for agents.
+
+	Note: partition cannot be specified yet. CSS of pilot device will resolve a DN to real device.
+	
+- Create a pilot where you specify line number as pilot number (phone number of ACD ) and assign one or more queues.
+ 
+- Create a CTI Route Point with a line where it has a normal DN (without any brackets). The name of RP should be configured in APAS in APAS/Group/ACD Options/Route Point name (e.g. TOTH_RP_ACD).
+	- Add RP to your application user
+
+	
+Parameters:
+		Reroute Time:		time before changing to the next agent if current agent does not pick-up the call
+		Expire time:		timeout before calling expire target if no agent of current queue pick-up the call 
+		
+		
+	               === Queue1 ===                                                  === Queue2 ===
+    
+        reroute	     reroute         reroute           expire target     reroute	   reroute         reroute       
+    |A1 -------> A2  -------> A-last -------> A1 ---|===============>|A1 -------> A2  -------> A-last -------> A1 ---|
+                     expire                                                           expire                        
+    |===============================================|                |===============================================|
+	
+	Where order of agents come from call distribution algorythm.
+	
+	
+NOTE: 
+
+	If you want to add multiple pilots to APAS you have to add pilot numbers as lines to RP.
+
+

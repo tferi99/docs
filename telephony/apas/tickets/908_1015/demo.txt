@@ -1,0 +1,18 @@
+Layers
+------
+
+User <========>	-->  GUI 													testPerson.jsp
+				--> Controller 												TestPersonController
+				---> Service (declarative transaction management)			TestPersonService, TestPersonServiceImpl
+				---> DAO (JDBC/SQL)											TestPersonDao, TestPersonRowMapper, GenericsDaoBase, GenericsDao
+					 Model													TestPerson
+				---> Database												[testPerson] table
+	
+Convention
+----------
+
+	X   
+	XDao
+	XRowMapper
+	XService
+	XServiceImpl

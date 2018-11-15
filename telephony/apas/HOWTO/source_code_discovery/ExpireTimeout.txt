@@ -1,0 +1,43 @@
+=============
+ExpireTimeout
+=============
+
+- There is a single Timer thread for all call, it will call Expirable.checkExpireable() per seconds.
+
+- An ACD call is represented as ExpireTimeout here and stored into singleton hash in Expirable as ExpirableObject
+
+	private static Hashtable<ExpireableObject, Expireable> expireables = new Hashtable<ExpireableObject, Expireable>();
+	
+	where 
+		key 	: ExpireTimeout
+		value	: Expirable - contains ExpireTimeout as data and expire timeout.
+
+
+Creation
+--------
+Expire timer created when an ACD call getting routed.
+
+	ACDCall.routed(...)
+		--> doRouted(route, call);
+		
+		when call state changing into STATE_ROUTED_AGENT
+		and
+			- there is no valid instance and
+			- queue has expire time and
+			- either there is expired target or found valid override expire target
+		
+			--> expireTimeout = new ExpireTimeout(this, queue.getExpireTime());
+			
+			ExpireTimeout will be added to lobal hash of Expirable.
+			
+				--> Expireable.add(this, timeout);
+			
+Expire
+------
+- Expirable.checkExpireable() will be called per secods to find expired entries in Expirable.expirables map.
+
+An entry will be forced to be expired when
+	- a call goes into a queue
+	OR
+	- an ACD call dropped
+	

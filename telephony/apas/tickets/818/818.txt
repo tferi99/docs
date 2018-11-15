@@ -1,0 +1,29 @@
+======================
+#818
+======================
+Request:	Adding supervisors for teams
+
+Environment:
+
+Scenario:	
+
+Additional settings:
+
+-------------------------------------------------------------------------------------------
+Pick-up calculation working:
+	CUCM System:	AutoCallPickupEnabled 	True
+	JSP:			ReportDirectCalls		false
+	
+all other setting wrong.
+
+Case 1
+------
+	CUCM System:	AutoCallPickupEnabled 	True
+	JSP:			ReportDirectCalls		true
+
+	X --> A1 <=== pickup === B
+	X --> A1 -- reroute --> A2 <=== pickup === B
+	
+		ACD: 2 calls with sates:		Outgoing, Outgoing
+
+		

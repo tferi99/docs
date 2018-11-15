@@ -1,0 +1,881 @@
+==============
+TypeScript FAQ
+==============
+
+SEE ALSO:	https://en.wikipedia.org/wiki/TypeScript
+
+Language elements
+-----------------
+- TS types
+- Why 'let' (let vs var)?
+- How to map object attributes into variables automatically?
+- What is destructuring?
+- TS interfaces
+- Class developer patterns/rules
+- What is IIFE?
+- Class constructor overload
+- How to add a dynamic property to an object referenced by an interface?
+- How to specify optional and default parameters in TS functions?
+- How to find out type of an instance?
+- How to check if a variable is an enum?
+
+Config, build
+-------------
+- How to generate tsconfig.json?
+- How to configure TS (tsconfig.json)?
+- How to compile TS files to JS?
+- How to compile TS files automatically?
+
+Development tips
+----------------
+- How to test TS?
+- How to simply get JS from TS?
+
+Tools
+-----
+- What are Declaration Files?
+- What is Definitely Typed project?
+- How to generate Declaration Files?
+
+Troubleshooting
+---------------
+ERROR - TS: Argument of type 'number[]' is not assignable to parameter of type '[number, number]'
+
+------------------------------------------------------------------------------------------------------------------------
+TS types
+========
+- boolean
+
+- number
+
+	- As in JavaScript, all numbers in TypeScript are floating point values.
+	
+- string
+
+	- TypeScript also uses double quotes (") or single quotes (') to surround string data.
+	- You can also use template strings, which can span multiple lines and have embedded expressions. 
+		These strings are surrounded by the backtick/backquote (`) character, and embedded expressions are of the form ${ expr }.
+		
+		let sentence: string = `Hello, my name is ${ fullName }.
+								
+								I'll be ${ age + 1 } years old next month.`;
+																
+- array
+
+	Method 1:
+	
+		let list: number[] = [1, 2, 3];
+		
+	Method 2, generic declaration:
+	
+		let list: Array<number> = [1, 2, 3];
+		
+- tuple
+
+	- Array of fixed number of elements but with different type:
+	
+		// Declare a tuple type
+		let x: [string, number];
+
+		// Initialize it
+		x = ["hello", 10]; // OK
+		
+- enum
+
+	enum Color {Red, Green, Blue}
+	let c: Color = Color.Green;
+
+- any
+
+	We may need to describe the type of variables that we do not know when we are writing an application
+	
+	let notSure: any = 4;
+	notSure = "maybe a string instead";
+	notSure = false; 					// okay, definitely a boolean
+
+- void 
+
+	- You may commonly see this as the return type of functions that do not return a value.
+	- Declaring variables of type void is not useful because you can only assign undefined or null to them.
+	
+- null and undefined
+
+- never
+
+	The never type represents the type of values that never occur. 
+	
+	// Function returning never must have unreachable end point
+	function infiniteLoop(): never {
+		while (true) {
+		}
+	}
+
+- object
+
+	
+------------------------------------------------------------------------------------------------------------------------
+Why 'let' (let vs var)?
+=======================
+Declaring a variable in JavaScript has always traditionally been done with the var keyword.
+
+VAR
+---
+	var a = 10;
+	
+	BUT, there are some odd scoping rules.
+	We can access a variable in the whole function, even outside of the block it has been declared:
+	
+	function f(shouldInitialize: boolean) {
+		if (shouldInitialize) {
+			var x = 10;
+		}
+		return x;
+	}
+
+	f(true);  // returns '10'
+	f(false); // returns 'undefined'
+
+	That’s because var declarations are accessible anywhere within their containing environment (function, module, namespace, or global scope)
+	regardless of the containing block. 
+	
+	What is the output of this?
+	
+	
+		for (var i = 0; i < 10; i++) {
+			setTimeout(function() { console.log(i); }, 100 * i);
+		}
+	
+	
+		10
+		10
+		10
+		...
+	
+	
+	because setTimeout() calls function after a while, when loop already ended, so value of 'i' is 10.
+	You would fix this problem is you you would pass 'i' immediately to a function which calls setTimeout() later.
+	
+	
+		for (var i = 0; i < 10; i++) {
+			// capture the current state of 'i'
+			// by invoking a function with its current value
+			(function(i) {
+				setTimeout(function() { console.log(i); }, 100 * i);
+			})(i);
+		}
+	
+		0
+		1
+		2
+		...
+
+	- var variables can be declared multiple times
+	
+		function f(x) {
+			var x;
+			var x;
+
+			if (true) {
+				var x;
+			}
+		}	
+		
+LET
+---
+	Now you know 'var' odd problems you know why 'let' were introduced.
+	
+	Unlike variables declared with var whose scopes leak out to their containing function, block-scoped variables 
+	are not visible outside of their nearest containing block or for-loop.		
+	
+	- Another property of block-scoped variables is that they can’t be READ or WRITTEN to before they're actually declared.
+	BUT
+	- Something to note is that you can still capture a block-scoped variable before it's declared. 
+		The only catch is that it's illegal to CALL that function before the declaration.
+		
+		function foo() {
+			// okay to capture 'a'
+			return a;
+		}
+
+		// illegal call 'foo' before 'a' is declared
+		// runtimes should throw an error here
+		foo();		// ERROR
+
+		let a;		
+		foo();		// OK
+
+	- let variables cannot re-declare:
+	
+		function f(x) {
+			let x = 100; // error: interferes with parameter declaration
+		}
+
+		function g() {
+			let x = 100;
+			var x = 100; // error: can't have both declarations of 'x'
+		}		
+		
+Constants
+---------
+	const a = 5;
+	
+	'const' is just a 'let'. It has the same scope but value can be assigned to it only ONCE.
+	
+	
+NOTE: 
+
+	Both 'let' and 'const' are - like other TS elements - just compile-time constraints. 
+	They are not compiled into JS structure.
+	
+	TS:
+		let a = 5;
+		const b = 6;
+
+	JS:
+		var a = 5;
+		var b = 6;
+
+	
+	Constants in classes needs a different structure. Use 'readonly' or 'static readonly' instead.
+	SEE: Class developer patterns/rules
+	
+Shadowing
+---------
+When you re-declare the same variable with 'let' in a nested block.
+
+	TS:
+	
+		for (let i = 0; i < 10; i++) {
+			for (let i = 0; i < 10; i++) {
+			}
+		}
+		
+	In this case a DIFFERENT variable will be generated:
+	
+		for (var i = 0; i < 10; i++) {
+			for (var i_1 = 0; i_1 < 10; i_1++) {
+			}
+		}
+
+	
+------------------------------------------------------------------------------------------------------------------------
+Class developer patterns/rules
+==============================
+
+- CONST member variables
+
+	- You cannot use 'const' for members. Use 'readony' instead.
+		You can use it with 'static' to create a Java-style constant.
+		
+			export class SomeElement {
+				private static readonly INITIALCOUNTER = 10;
+				public static readonly MAX_SIZE = 100;
+				
+				...
+				x = SomeElement.MAX_SIZE
+
+	- Constants must be declaread at the BEGINNING of the class, before other non-constant memebers.
+	
+	
+	'readonly' vs 'const'
+
+		The easiest way to remember whether to use readonly or const is to ask whether you're using it on a variable or a property. 
+		VARIABLES use CONST whereas PROPERTIES use READONLY.
+
+Excess Property Checks
+	
+- Properties:
+
+	class Person {
+		name: string;
+		private _age : number;
+
+		get age():number {
+			return this._age;
+		}
+		
+		constructor(name, age ) {
+			this.name = name;
+			this._age = age;
+		}
+	}
+
+	Person p = new Person('Joe', 18);
+	document.write('Name:' + p.name + ', Age:' + p.age);
+	p.age = 19;			// >>>> ERROR
+	
+	- by default properties are public
+	- if you want to change a property change visibility to private and and a getter
+	
+- Constructor
+
+	class Person {
+		get age():number {
+			return this._age;
+		}
+
+		constructor(public name: string, private _age:number) {
+		}
+	}
+
+	- You can specify class memeber properties automatically in constructor with public/private/... keywords.
+	
+- Readonly modifier
+
+	Readonly properties must be initialized:
+		- at their declaration 
+		OR
+		- in the constructor
+	
+------------------------------------------------------------------------------------------------------------------------
+What is IIFE?
+=============
+IIFE =  Immediately Invoked Function Expression 
+
+In JS if you pass a variable to IIFE it preserves current value of variable.
+E.g:
+
+	for (var i = 0; i < 10; i++) {
+		// capture the current state of 'i'
+		// by invoking a function with its current value
+		(function(i) {
+			setTimeout(function() { console.log(i); }, 100 * i);
+		})(i);
+	}
+
+Output: 1 2 3 4 ...
+
+Without IIFE output would be: 10 10 10 10 ....
+
+
+function sumMatrix(matrix: number[][]) {
+    let sum = 0;
+    for (let i = 0; i < matrix.length; i++) {
+        var currentRow = matrix[i];
+        for (let i = 0; i < currentRow.length; i++) {
+            sum += currentRow[i];
+        }
+    }
+
+    return sum;
+}
+
+let x: number[][] = [[1, 2, 3, 4], [5, 6, 7, 8]];
+
+sumMatrix(x);
+
+
+function sumMatrix(matrix: number[][]) {
+    let sum = 0;
+    for (let i = 0; i < matrix.length; i++) {
+        var currentRow = matrix[i];
+        for (let j = 0; j < currentRow.length; j++) {
+            sum += currentRow[j];
+        }
+    }
+
+    return sum;
+}
+
+------------------------------------------------------------------------------------------------------------------------
+How to test TS?
+===============
+Method 1:	StackBlitz
+
+	Create a TypeScript project in https://stackblitz.com
+
+	TIPS:
+
+	It uses a <div> with id 'app' so you can write messages to output page:
+	
+			
+		//---------------------------- dev printer ---------------------------- 
+		// Usage:
+		// - to print a line call:  print()
+		// - at the end call:       flush()
+
+		const appDiv: HTMLElement = document.getElementById('app');
+		let out = '';
+
+		function devPrint(msg: string) {
+		  out += msg + '<br>';
+		}
+
+		function devFlush()
+		{
+		  appDiv.innerHTML = out;
+		}
+		//---------------------------------------------------------------------
+
+		devPrint(str1);
+		devPrint(str2);
+		..
+		devPrintFlush();
+		
+		
+	To dump an object:
+	
+		devPrint(JSON.stringify(obj));
+
+	
+Method 2:	TS playground
+	There is a playground here:		https://www.typescriptlang.org/play/index.html
+
+	 - You can write TS script here on the LEFT side.
+	 - You can watch generated JS on the RIGHT side.
+	 - You can run script, too. Write output to the target HTML page with:		document.write(...)
+	 
+	TIPS:
+
+	- To dump JS objects use:
+
+		document.write(JSON.stringify(obj));
+ 
+ 
+Method 3:	TSUN (TS Upgraded Node)
+
+	npm install tsun -g
+	tsun
+	>
+	
+	
+------------------------------------------------------------------------------------------------------------------------
+How to map object attributes into variables automatically?
+==========================================================
+
+let o = {
+    name: 'aaa',
+    age: 12,
+    color: 'red',
+    location: 'home'
+};
+
+	let { name, age } = o;
+	document.write(name + '<br>');
+	document.write(age + '<br>');
+
+OR 
+
+	let { name, age, ...rest } = o;
+	document.write(name + '<br>');
+	document.write(age + '<br>');
+	document.write(rest.color + '<br>');
+	document.write(rest.location + '<br>');
+
+
+------------------------------------------------------------------------------------------------------------------------
+What is destructuring?
+======================
+The destructuring assignment syntax is a JavaScript expression that makes it possible 
+to unpack values from arrays, or properties from objects, into distinct variables.
+
+Type of desturcturing:
+- array desturcturing
+	- into variables
+
+		let input = [1, 2];
+		let [first, second] = input;
+		console.log(first); // outputs 1
+		console.log(second); // outputs 2
+
+	  'remaining items':
+	
+		let [first, ...rest] = [1, 2, 3, 4];
+		console.log(first); // outputs 1
+		console.log(rest); // outputs [ 2, 3, 4 ]
+		
+	- into function attributes
+		
+		let input:[number, number] = [1, 2];
+		
+		function f([first, second]: [number, number]) {
+			console.log(first);
+			console.log(second);
+		}
+		
+		f(input);
+				
+- object desturcturing
+	- into variables
+
+		let o = {
+			a: "foo",
+			b: 12,
+			c: "bar"
+		};
+		let { a, c } = o;
+		
+		document.write('> ' + a + '<br>');
+		document.write('>> ' + c + '<br>');
+
+	- into function attributes
+
+	
+Renaming target variables (with arrays/objects):
+
+		let { a: newName1, b: newName2 } = o;
+	
+
+	
+------------------------------------------------------------------------------------------------------------------------
+TS interfaces
+=============
+- Interfaces have zero runtime JS impact. It just generates error during compile time if any contraint fails.
+	Even if you have TS error JS can run without any propblem if JS itself does not have any error.
+
+- TypeScript interfaces declare the structure of variables.
+
+- Interfaces in TypeScript are open ended, you can extend them simply:
+
+	interface Point {
+		x: number; y: number;
+	}
+
+	interface Point {
+		z: number;
+	}
+
+  Of course it can be extended with inheritance:
+	
+	interface Point {
+		x: number; y: number;
+	}
+
+	interface Point3D extends Point {
+		z: number;
+	}
+
+	let a: Point3D = { x: 5, y: 100, z: 3 };
+
+	
+Typescript interface provides this features:
+- optional properties
+- readonly properties
+- functions can be described with interfaces
+- you can describe indexable types with interfaces
+- class types: implementing an interface
+
+	
+- readonly properties:	you can specify values only during creation
+
+	interface Point {
+		readonly x: number;
+		readonly y: number;
+	}
+
+	let p1: Point = { x: 10, y: 20 };
+	p1.x = 5; // error!
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to generate tsconfig.json?
+==============================
+tsc --init
+
+------------------------------------------------------------------------------------------------------------------------
+How to compile TS files automatically?
+======================================
+tsc -w
+
+It watches the changes of TS files and tries to compile on changes automatically.
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to configure TS (tsconfig.json)?
+====================================
+- Search of tsconfig.json:
+	- calling tsc without parameter:	
+		->the compiler searches for the tsconfig.json file starting in the current directory and continuing up the parent directory chain.
+		
+	- tsc with -project (-p):
+		-> It specifies the path of a directory containing a tsconfig.json file, or a path to a valid .json file containing the configurations.
+		
+	- When input files are specified:
+		-> tsconfig.json files are ignored.
+
+- Main part of tsconfig.json:
+	
+	Specifying files to be compiled:
+		- files:	list of relative or absolute file paths
+		- include:	path with/without wildchards	
+		- exclude:	to filter include
+			There are default filtered directories.
+
+		General rule:
+		
+			If no 'files' or 'include' property is present in a tsconfig.json, the compiler DEFAULTS to including ALL FILES in the containing directory and subdirectories 
+			except those specified by 'exclude'. When a 'files' property is specified, only those files and those specified by 'include' are included.",
+			
+	compilerOptions:	can be omitted entire/partly	-> default values
+	
+	
+- tsconfig.json can be extended/overriden:
+
+	src/tsconfig-spec.json:
+	
+		{
+			"extends": "../tsconfig.json",
+			...
+		}
+		
+- tips:
+
+	- "compileOnSave": true
+	
+		Signals to the IDE to generate all files for a given tsconfig.json upon saving.
+
+	- compilerOptions:
+
+		noEmitOnError:		if true JS won’t be generated from TS on error
+	
+		
+- REFERENCE:
+		
+	http://json.schemastore.org/tsconfig
+	
+		Important parameters:
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to compile TS files to JS?
+==============================
+How to simply get JS from TS?
+
+Method 1:	compile with tsc
+
+	tsc <file>.ts
+	
+	NOTE: to install tsc 
+	
+		npm install typescript -g
+	
+	
+Method 2:
+
+	Drop TS script into Typescript playground (https://www.typescriptlang.org/play/).
+
+
+Method 3:
+
+	- Create a TS file in WebStorm and enable to compile it to JS.
+	- Compiled JS can be found under TS file in project browser.
+
+
+------------------------------------------------------------------------------------------------------------------------
+Class constructor overload
+==========================
+TS does not support overloading constructor, since it compiled into a single function with the name of the class.
+
+One option is using optional parameters in this single constructor.
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to add a dynamic property to an object referenced by an interface?
+======================================================================
+	interface Square {
+	  color: string;
+	  area: number;
+	  pattern: Pattern;
+	}
+
+	function f(Square s) {
+		s.customNote = 'Blabla.....';		// error: property does not exist
+
+	}
+
+Soution:
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to specify optional and default parameters in TS functions?
+===============================================================
+Use ? after name of optional parameter:
+
+	function show(name: string, age?: number) {
+		...
+	}
+
+It's also an optional parameter but with default value.
+You specify default value this way (no type, just a value - as in member properties):
+
+	function show(name: string, note = 'This is default note') {
+		...
+	}
+
+You can mix them:
+	
+	function show(name: string, age?: number, note = 'This is default note') {
+		...
+	}
+
+They are equivalent, you can use them in arbitrary order - at the end of parameters, following mandatory parameters.
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to find out type of an instance?
+====================================
+
+interface Fish extends Animal {
+   swim();
+   layEggs();
+}
+
+class EggLayer
+{
+ public layEggs() {
+   console.log("Laying some eggs: " + JSON.stringify(this));
+ }
+}
+
+class Trout extends EggLayer implements Fish {
+ name = 'Trout-1';
+
+ public swim() {
+   console.log("Swimming: " + JSON.stringify(this));   
+ } 
+}
+
+let pet = new Trout();
+
+
+Is it an instance of a class?
+
+You can get exact class name with:	INSTANCE.constructor.name
+
+	console.info("CREATED INSTANCE: " + pet.constructor.name);
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+What are Declaration Files?
+===========================
+When a TypeScript script gets compiled there is an option to generate a declaration file (with the extension .d.ts) that functions as an interface to the components in the compiled JavaScript. In the process the compiler strips away all function and method bodies and preserves only the signatures of the types that are exported. The resulting declaration file can then be used to describe the exported virtual TypeScript types of a JavaScript library or module when a third-party developer consumes it from TypeScript.
+
+The concept of declaration files is analogous to the concept of header file found in C/C++.
+
+
+------------------------------------------------------------------------------------------------------------------------
+What is Definitely Typed project?
+=================================
+
+@types
+
+Definitely Typed is definitely one of TypeScript's greatest strengths. The community has effectively gone ahead and documented the nature of nearly 90% of the top JavaScript projects out there.
+
+This means that you can use these projects in a very interactive and exploratory manner, no need to have the docs open in a separate window and making sure you don't make a typo.
+
+If you need a docunebtation, declaration of PACKAGE, call:
+
+npm install @types/<PACKAGE> --save-dev
+
+SEE ALSO:	
+	https://definitelytyped.org/
+	https://github.com/DefinitelyTyped/DefinitelyTyped
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to generate Declaration Files?
+==================================
+From TS:
+
+tsc --declaration <X>.ts
+it generates:	<X>.d.ts
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to build up a TS project step-by-step?
+==========================================
+mkdir proba
+cd proba
+
+git init
+echo "# My Awesome Greeter" >> README.md
+git add . && git commit -m "Initial commit"
+git remote add origin git@github.com:caki0915/my-awesome-greeter.git
+git push -u origin master
+
+npm init -y
+echo "node_modules" >> .gitignore
+npm install --save-dev typescript
+
+Add tsconfig.json:
+
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./lib",
+    "strict": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "**/__tests__/*"]
+}
+
+OR try to generate it:
+
+	tsc --init
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to check if a variable is an enum?
+======================================
+
+export enum LogType {
+ LOG, INFO, WARN, ERROR
+}
+
+function f(color: string | LogType) {
+	if (typeof color == ‘number’) {
+		// it’s enum
+		...
+	}
+	...
+}
+
+By default type of enums is number. So it’s easy if other type is string -> just get typeof.
+
+
+
+
+	
+************************************************************************************************************************
+************************************************************************************************************************
+                                        T R O U B L E S H O O T I N G
+************************************************************************************************************************
+************************************************************************************************************************
+
+------------------------------------------------------------------------------------------------------------------------
+ERROR - TS: Argument of type 'number[]' is not assignable to parameter of type '[number, number]'
+=================================================================================================
+Problem: 
+	You want to destucture a number array into function which gets the same number of number parameters.
+	
+		let input = [1, 2];
+		
+		function f([fst, sec]: [number, number]) {
+			...
+		}
+		
+		f(input);		<< ERROR
+
+Fix:
+	 It's best to properly define the exact tuple type in this case.
+	 
+		let input: [number, number] = [1, 2];
+		...
+		
+		
+

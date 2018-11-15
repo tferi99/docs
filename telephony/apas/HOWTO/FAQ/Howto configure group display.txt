@@ -1,0 +1,16 @@
+==============================
+Howto configure group display?
+==============================
+
+- Add phones to application user 
+
+- Add role to application user:
+
+
+
+Troubleshooting
+---------------
+- com.andtek.andphone.ANDCallObserver should be listen on line
+
+- IP address should be correct in CUCM settings
+

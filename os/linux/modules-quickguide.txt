@@ -1,0 +1,215 @@
+
+1. What is LKM?
+2. Type of LKMs
+3. LKM Utilities
+4. What Happens When An LKM Loads?
+5. Intelligent Loading Of LKMs - Modprobe
+6. Automatic loading of LKMs
+6.1 Kernel Module Loader
+6.2 kerneld 
+7. Where are modules?
+8. How To Boot Without A Disk Device Driver?
+
+A. /proc/modules
+
+
+1. What is LKM?
+---------------
+LKM = Loadable Kernel Module
+
+Some people think of LKMs as outside of the kernel. They speak of LKMs
+communicating with the kernel. This is a mistake; LKMs (when loaded) are very
+much part of the kernel. The correct term for the part of the kernel that is
+bound into the image that you boot, i.e. all of the kernel except the LKMs,
+is "base kernel." LKMs communicate with the base kernel.
+
+2. Type of LKMs
+---------------
+There are six main things LKMs are used for:
+
+  * Device drivers. A device driver is designed for a specific piece of
+    hardware. The kernel uses it to communicate with that piece of hardware
+    without having to know any details of how the hardware works. For
+    example, there is a device driver for ATA disk drives. There is one for
+    NE2000 compatible Ethernet cards. To use any device, the kernel must
+    contain a device driver for it.
+
+  * Filesystem drivers. A filesystem driver interprets the contents of a
+    filesystem (which is typically the contents of a disk drive) as files and
+    directories and such. There are lots of different ways of storing files
+    and directories and such on disk drives, on network servers, and in other
+    ways. For each way, you need a filesystem driver. For example, there's a
+    filesystem driver for the ext2 filesystem type used almost universally on
+    Linux disk drives. There is one for the MS-DOS filesystem too, and one
+    for NFS.
+
+  * System calls. User space programs use system calls to get services from
+    the kernel. For example, there are system calls to read a file, to create
+    a new process, and to shut down the system. Most system calls are
+    integral to the system and very standard, so are always built into the
+    base kernel (no LKM option). But you can invent a system call of your own
+    and install it as an LKM. Or you can decide you don't like the way Linux
+    does something and override an existing system call with an LKM of your
+    own.
+
+  * Network drivers. A network driver interprets a network protocol. It feeds
+    and consumes data streams at various layers of the kernel's networking
+    function. For example, if you want an IPX link in your network, you would
+    use the IPX driver.
+
+  * TTY line disciplines. These are essentially augmentations of device
+    drivers for terminal devices.
+
+  * Executable interpreters. An executable interpreter loads and runs an
+    executable. Linux is designed to be able to run executables in various
+    formats, and each must have its own executable interpreter.
+
+	
+3. LKM Utilities
+----------------
+The programs you need to load and unload and otherwise work with LKMs are in
+the package modutils. You can find this package in [http://www.kernel.org/pub
+/linux/utils/kernel/modutils] this directory.
+
+This package contains the following programs to help you use LKMs:
+
+insmod
+    Insert an LKM into the kernel.
+
+rmmod
+    Remove an LKM from the kernel.
+
+depmod
+    Determine interdependencies between LKMs.
+
+kerneld
+    Kerneld daemon program
+
+ksyms
+    Display symbols that are exported by the kernel for use by new LKMs.
+
+lsmod
+    List currently loaded LKMs.
+	lsmod is a trivial program which nicely formats the contents of the /proc/modules, 
+	showing what kernel modules are currently loaded.
+
+	
+modinfo
+    Display contents of .modinfo section in an LKM object file.
+
+modprobe
+    Insert or remove an LKM or set of LKMs intelligently. For example, if you
+    must load A before loading B, Modprobe will automatically load A when you
+    tell it to load B.
+
+
+4. What Happens When An LKM Loads?
+----------------------------------
+- Module loaded, you can check in 
+	
+		/proc/modules
+		
+- Seaching system for device to drive.
+	- Not found:	load to fail
+	- Found:  LKM registers itself as the driver for a particular major number and
+				you can start using the device it found via a device special file.
+		
+		- You can see registered drivers in 
+				
+			/proc/driver
+					
+		- You can see that the device driver is handling the device's interrupts in 
+		
+			/proc/interrupts
+			
+- A network device (interface) driver works similarly, except that the LKM
+registers a device name of its choosing (e.g. eth0) rather than a major
+number. You can see the currently registered network device names in 
+
+	/proc/net/dev
+			
+- A filesystem driver, upon loading, registers itself as the driver for a
+filesystem type of a certain name. For example, the msdos driver registers
+itself as the driver for the filesystem type named msdos.
+
+
+5. Intelligent Loading Of LKMs - Modprobe
+-----------------------------------------
+Usage:
+	
+		modprobe <module name>
+
+Features:
+	- it loads dependencies automatically
+	- it finds module by (symbolic) name (configured in /etc/modprobe.conf by default)
+				
+6. Automatic loading of LKMs
+----------------------------
+You can cause an LKM to be loaded automatically when the kernel first needs
+it. You do this with either the KERNEL MODULE LOADER, which is part of the
+Linux kernel, or the older version of it, a KERNELD DAEMON.
+
+6.1 Kernel Module Loader
+------------------------
+When a kernel that has the kernel module loader needs an LKM, it creates a
+user process (owned by the superuser, though) that executes modprobe to load
+the LKM, then exits. By default, it finds modprobe as /sbin/modprobe, but you
+can set up any program you like as modprobe by writing its file name to 
+	
+	/proc/sys/kernel/modprobe
+
+6.2 kerneld 
+-----------	
+kerneld is a user process, which runs the kerneld program from the modutils
+package. kerneld sets up an IPC message channel with the kernel. When the
+kernel needs an LKM, it sends a message on that channel to kerneld and
+kerneld runs modprobe to load the LKM, then sends a message back to the
+kernel to say that it is done.
+	
+
+
+7. Where are modules?
+---------------------
+The LKM world is flexible enough that the files you need to load could live
+just about anywhere on your system, but there is a convention that most
+systems follow: The LKM .o files are in the directory 
+
+	/lib/modules
+	
+, divided into subdirectories. There is one subdirectory for each version of the
+kernel, since LKMs are specific to a kernel (see Section 6). Each
+subdirectory contains a complete set of LKMs.
+
+8. How To Boot Without A Disk Device Driver?
+--------------------------------------------
+RAMDISK DOESN'T REQUIRE ANY DEVICE DRIVER.
+
+"Initrd" is the name of the "initial ramdisk" feature of Linux. With this,
+you have your loader (probably LILO or Grub) load a filesystem into memory
+(as a ramdisk) before starting the kernel. When it starts the kernel, it
+tells it to mount the ramdisk as the root filesystem. You put the disk device
+driver for your real root filesystem and all the software you need to load it
+in that ramdisk filesystem. Your startup programs (which live in the ramdisk)
+eventually mount the real (disk) filesystem as the root filesystem. 
+
+
+###############################################################################################
+A. Files, locations
+
+/proc/modules			: loaded modules
+/proc/driver			: registered drivers
+/proc/interrupts		: handled interrupts
+/proc/net/dev			: registered network device names
+/etc/modprobe.conf		: modprobe configuration
+/proc/sys/kernel/modprobe	: code executing during loading modules (/sbin/modprobe by default)
+/lib/modules			: location of modules (by convention)
+/proc/ksyms (kallsyms)		: 
+
+B. /proc/modules
+----------------
+To see the presently loaded LKMs.
+
+Format:
+
+<module name> <size in memory> <dependencies>
+

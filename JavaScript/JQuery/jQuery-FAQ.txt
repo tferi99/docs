@@ -1,0 +1,93 @@
+==========
+jQuery FAQ
+==========
+
+- What is $()?
+- How to extend jQuery?
+- Howto select elements in a DOM context?
+- How to call JS on document ready?
+
+-----------------------------------------------------------------------------------------------------
+What is $()?
+============
+To collect a group of elements, we pass the selector to the jQuery function using
+the simple syntax
+
+	$(selector)
+or
+	jQuery(selector)
+
+The $() function (an alias for the jQuery() function) returns a special JavaScript
+object containing an array of the DOM elements, in the order in which they are defined
+within the document, that match the selector. 
+
+This object possesses a large number of useful predefined methods that can act on the collected group 
+of elements. In programming parlance, this type of construct is termed a wrapper because it
+wraps the collected elements with extended functionality. We’ll use the term jQuery
+wrapper or wrapped set to refer to this set of matched elements that can be operated on
+with the methods defined by jQuery.
+
+Let’s say that we want to hide all <div> elements that possess the class notLongFor-
+ThisWorld. The jQuery statement is as follows:
+
+	$("div.notLongForThisWorld").hide();
+	
+
+-----------------------------------------------------------------------------------------------------
+How to extend jQuery?
+=====================
+
+	$.fn.<funct> = function() {
+		return this.each(function() {
+			<loop step on selected elements to perform asnything>
+		});
+	}
+
+Inside that function, the this keyword is the collection of wrapped DOM elements that are to be operated upon. 
+Then, the each() method of this wrapper is called to iterate over each element in the wrapped collection.	
+	
+For example disable() to disable elements:
+
+	$.fn.disable = function() {
+		return this.each(function() {
+			if (this.disabled == null) this.disabled = true;
+		});
+	}
+	
+	Calling:
+	
+		#{"button"}.disable();
+		
+		
+-----------------------------------------------------------------------------------------------------
+Howto select elements in a DOM context?
+=======================================
+By default, selectors perform their searches within the DOM starting at the document root. 
+However, an alternative context can be given for the search by using the optional second parameter to the $() function. For example, if within a callba
+Use 2nd parameter:
+
+	jQuery(filter, context)
+
+e.g:
+
+	$('div', '')
+	
+	$('div.foo').click(function() {
+		$('span', this).addClass('bar');
+	});	
+	
+-----------------------------------------------------------------------------------------------------
+How to call JS on document ready?	
+=================================
+Method 1:
+
+	$(document).ready(handler)
+	
+Method 2 (shorthand):
+
+	$(function() {
+		// Code here
+	});
+
+	
+	

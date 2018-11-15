@@ -1,0 +1,8 @@
+============================================
+Inconsistent group display in Desktop Client
+============================================
+Sometimes group display doesn't contain the real data.
+
+Delete cache file:
+
+	$USER_DIR\AppData\Roaming\Andtek\ANDDesktop\groups.xml

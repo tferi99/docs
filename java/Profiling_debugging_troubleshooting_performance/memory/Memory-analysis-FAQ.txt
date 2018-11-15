@@ -1,0 +1,147 @@
+===================
+Memory analysis FAQ
+===================
+
+- Memory analysis concept
+- How to print memory info of JVM?
+- How to create heap dump?
+- How to analyse heap dump?
+- How to compare heap dumps?
+
+-------------------------------------------------------------------------------------------------	
+Memory analysis concept
+=======================
+- Heap Dump
+	A heap dump is a snapshot of the memory of a Java process at a certain point of time. 
+	
+- Shallow vs. Retained Heap
+
+	- Shallow heap is the memory consumed by one object - WITHOUT references.
+	- Retained set of X:	the set of objects which would be removed by GC when X is garbage collected. 
+	- Retained heap of X:	the sum of shallow sizes of all objects in the retained set of X, i.e. memory kept alive by X. 
+
+- Dominator Tree
+
+	- An object x DOMINATES an object y if every path in the object graph from the start (or the root) node to y must go through x. 
+	- The immediate dominator x of some object y is the dominator closest to the object y. 
+	- A dominator tree is built out of the object graph. In the dominator tree each object is the immediate dominator of its children, 
+		so dependencies between the objects are easily identified
+	
+- Garbage Collection Roots
+		
+	Garbage Collection Roots
+
+SEE ALSO:	ECLIPSE/Help Contents/Memory Analyzer/Concepts	
+		
+-------------------------------------------------------------------------------------------------	
+How to print memory info of JVM?
+================================
+jmap -heap <pid>
+
+
+-------------------------------------------------------------------------------------------------	
+How to create heap dump?
+========================
+
+- jmap
+
+	jmap -dump:format=b,file=<filename> <pid>
+	
+	If it cannot connect to process use -F option. The reality is, the -F switch tells the JVM to use the Serviceability Agent interface for extracting the heap data. 
+	THIS ALTERNATE INTERFACE IS EXTREMELY SLOW.
+	
+	NOTE:
+	Dump that takes five minutes without the -F switch might take an hour with the -F switch. So, never use the -F switch, right? 
+	There might be a circumstance where the JVM is hung in a way that such that the default interface does not work. If getting the heap dump is critical, 
+	then it might be worth trying the -F switch. You would have to balance down-time against the value of understanding the root cause of the problem.
+	
+	
+	
+- JConsole
+
+	- Connect to your JMX enabled instance
+	- go to MBeans tab
+	- com.sun.management/HotspotDiagnostic/Operations/[dumpHeap]
+	- Fill in p0 parameter to name the Heap Dump method
+	- press the dumpHeap button
+	- 
+	
+- VisualVM
+
+	- Connect to your JMX enabled instance
+	- go to Monitor tab
+	- press the HeapDump button
+	- messagebox notifies end of action
+	
+	
+- HPROF - profiling classes
+
+	java -Xrunhprof[:options] ToBeProfiledClass
+	OR
+	java -agentlib:hprof=heap=sites ToBeProfiledClass
+
+- on OutOfMemoryError
+
+	Start VM with -XX:+HeapDumpOnOutOfMemoryError
+	
+	If OutOfMemoryError is thrown, VM generates a heap dump.	
+
+	But it requires APPLICATION RESTART.
+		
+- Eclipse MAT:
+	
+	ECLIPSE/File/Acquire Heap Dump...
+	
+  OR
+	
+	ECLIPSE/File/New/Other.../Other/Heap Dump
+
+	
+-------------------------------------------------------------------------------------------------	
+How to analyse heap dump?
+=========================
+
+Static analysis for heap dumps
+------------------------------
+
+- MAT (Memory Analysis Tool - Eclipse extension) - !!!!!!!!!!!!!!!!! RECOMMENDED !!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	The Eclipse Memory Analyzer is a fast and feature-rich Java heap analyzer that helps you find memory leaks and reduce memory consumption.
+	
+	- You can install it from Marketplace
+	- Go to Memory Analysis perspective
+	- File/Open 'Heap Dump...
+	
+	
+- VisualVM
+	
+	- load HPROF file into VisualVM
+	- you can browse classes and object instances
+	- you can use OQL language to make queries
+	- you can load another HPROF and make a comparison
+	
+- jhat	
+
+		jhat <heap-dump-file>
+		
+	It opens a HTTP port to access information with browser.
+	
+Dinamic analysis
+----------------
+- VisualVM
+	- Sampling		: not exact
+	- Profiling 	: big performance impact
+	
+-------------------------------------------------------------------------------------------------	
+How to compare heap dumps?
+==========================
+- Create mutiple heap dumps 
+
+- MAT
+
+	On Histogram tab you can make a comparison (last button).
+
+- VisualVM
+
+	On classes page you can load another dumps.
+

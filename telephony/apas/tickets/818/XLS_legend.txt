@@ -1,0 +1,22 @@
+XLS legend
+----------
+
+
+Legend
+------
+Durchklingeln	: reroute (agent changed in same queue)
+Klingeln		: just ringing
+Besetzt:		: forwarded to busy pilot.
+Verloren		: caller terminated call.
+Pilot Extension	: is't a pilot number of a queue
+
+Possible values
+---------------
+				1,2,3			A
+SITE			-				-	
+DEPARTMENT		GROUP			DEPARTMENT(Abteilung)
+GROUP			GROUP			-
+TEAM			TEAM			-
+
+1,2,3		: index of category where couter will be incremented by 1.
+A			: current Abteilung (Department)

@@ -1,0 +1,103 @@
+================================
+How to configure JTAPI presence?
+================================
+
+1. Static presence using observe pools
+--------------------------------------
+
+- Create extension pool for participants:
+
+	- APAS/General/Pools
+	
+	- Add (Extensions)
+		- Assign devices to pool
+	
+
+- Assign this pool to a desktop client profile as observe pool.
+
+	APAS/Client/Profiles/[Observe Pools]/(Observe Pool)
+
+- Restart APAS to start presence observers.	
+	
+Test, troubleshooting
+---------------------
+NOTE: 
+
+	For testing presence-ONLY remove participant DNs from other groups because group feature also 
+	provides presence information.
+
+- Open JTAPI debug page
+	
+	Assigned terminals and lines should have registered com.andtek.andphone.ccm.jtapi.LineObserver .
+	
+- Start DC
+
+- Add Group widget.
+	
+	Normal group will be displayed if you have installed.
+	
+- Right click on header of Group widget
+	- Add new tab
+	- Right click on new tab
+		- Edit tab
+		- Choose 'BLF' from list
+		- Drag and Drop items from list on the right side into new tab.
+	
+NOTE: 
+	This list contains DNs which either are part of observe pool assigned to current client profile or 
+	are member any group. So again - if you want to make a pure test on observe pool remove pool members
+	from ggroups.
+	
+	
+2. Dynamic JTAPI presence via directory search
+----------------------------------------------
+
+- Create a directory for search where it contains an attribute which type is 'Presence DN'.
+
+	Presence DN will identify device which will be observed for presence.
+ 
+- Create a directory group and assign directory created before.
+
+- Go to 
+
+	APAS/Client/Profiles/EDIT/[Directory Search]
+	
+	and choose a 'Directoy Group' and set 'Enable Dynamic JTAPI Presence'
+	
+- Call DC and add a Directory widget.
+
+- When you call a search observers will be created on terminals contained by search result on demand:
+
+	com.andtek.andphone.ccm.jtapi.presence.DynamicJtapiPresenceObserver 
+	
+	These observers are live temporarly. You can configure life-time of observers here:
+	
+		APAS/Client/Configuration/[Presence Subscription Time]
+		
+	in seconds. 
+	
+	Note here: observer cleanup logic polling time is about 1 minute.
+	
+Test, troubleshooting
+---------------------
+- Configured Dynamic JTAPI presence
+- Call a search from DC
+	- Call JTAPI Debug page and seach 'DynamicJtapiPresenceObserver'
+	
+	Terminals from search result where result item contains attribute with 'Presence DN' type should have 
+	
+		com.andtek.andphone.ccm.jtapi.presence.DynamicJtapiPresenceObserver 
+		
+		
+	NOTE: 
+		If line is member of an observe pool DynamicJtapiPresenceObserver won't be created.
+		
+		
+- After starting search these observers should be destroyed after 'Presence Subscription Time' seconds.
+
+- To show dynamic subscriptions use 'Dynamic JTAPI Presence Subscriptions' page:
+
+	http://localhost:8080/andphone/jsp/dynamic_jtapi_subscriptions.jsp
+	
+	
+

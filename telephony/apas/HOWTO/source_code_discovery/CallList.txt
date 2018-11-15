@@ -1,0 +1,66 @@
+========
+CallList
+========
+
+- Configuration
+- Call history management		
+- Email notification
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+- To configure busy call list create a RP and specify in
+	
+	CallList/Configuration/[Busy Call List]/<RoutePoint Name>
+	
+- Add a line to this RP and specify this DN to lines as Forward Busy target where you want to detect busy call:
+
+	CUCM/Device/Phone
+		--> LIST
+			--> Extension
+				--> [Call Forward and Call Pickup Settings]
+					- Forward Busy Internal
+					- Forward Busy External
+		
+		
+- RP name will be stored into Config[callrouting, RoutePointPrefix].
+	It will be used to setup a RP in
+		
+		com.andtek.andphone.callrouting.Module.initJTAPI(...)
+			--> setupRouteCallBack(routePoint, jtapi.getProvider());
+				- it registers com.andtek.andphone.callrouting.RPCallObserver
+
+				
+				
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Email notification
+==================
+- Mail templates are stored into 'callListConfig' table
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Call history management		
+=======================
+Calls are cached in CallListEntry.calls, it's a map of calls by callId.
+
+Adding new call:
+
+
+CallListEntry(int id, String gcID, int type, ...)
+--> CallListEntry.setGcId()
+	--> [1]
+
+PhoneCallObserver.callChangedEvent() - CiscoConferenceStartEv
+	--> [1]
+
+[1] --> CallListEntry.addCall(callId)
+
+
+!!!!!!!!!!!!!!!!!!NOT COMPLETED!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Getting a call list
+===================
+

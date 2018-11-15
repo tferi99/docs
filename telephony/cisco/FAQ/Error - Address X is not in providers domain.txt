@@ -1,0 +1,8 @@
+============================================
+Error - Address X is not in providers domain
+============================================
+If you try to use an address in your application but you get the following error message:
+
+	Address X is not in provider's domain
+	
+then add terminal of address to application user.

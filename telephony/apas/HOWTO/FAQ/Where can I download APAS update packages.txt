@@ -1,0 +1,17 @@
+==========================================
+Where can I download APAS update packages?
+==========================================
+
+Method 1 - latest:
+
+	SEE:	How to upgrade an ISO APAS to the latest version?
+	
+	- get update package from /Jenkins/<APAS-Trunk OR version>/apas-<trunk|version>-x86_64
+		e.g. APAS-x86_64-583-11040-Update.pkg
+		
+		
+Method 2 - old versions:
+
+	\\ANDTEK\support\Versionen\APAS\APAS-x86_64-<version>-<revision>-Update.pkg
+	
+	

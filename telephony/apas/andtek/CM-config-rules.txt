@@ -1,0 +1,28 @@
+CM
+--
+Host:	192.168.5.17
+
+Owner prefixes
+--------------
+	AVOR
+	IBEK
+	TBEK
+	TOTH
+	ZBAL
+
+	
+Name conventions for own objects
+--------------------------------
+CSS:			$OWNER_Intern
+Partition:		$OWNER_Phones
+
+
+DN ranges
+---------
+	9000	-	9099	: TOTH
+	9100	-	9199	: TBEK
+	9200	-	9299	: IBEK
+	9300	-	9399	: AVOR
+	9400	-	9499	: ZBAL
+	9900	-	9999	: 
+	

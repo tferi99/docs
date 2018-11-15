@@ -1,0 +1,10 @@
+============================
+How to remove SSL from APAS?
+============================
+
+If APAS configured to force SSL but you cannot connect because of an SSL problem, 
+you can switch off this behavior in configuration:
+
+	global/redirectHTTPS = false
+	
+update config set val = 'false' where param = 'redirectHTTPS';

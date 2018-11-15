@@ -1,0 +1,145 @@
+- java -cp a/b C és java -cp a b.C nem ugyanaz. 
+- TreeSet.ceiling() csak egy elemet ad vissza. 
+- String.insert() nincs. 
+- Csak Date adható át a DateFormatnak. (Calendar nem.) 
+- Csak factory-tól kérheto: Calendar, DateFormat, NumberFormat. 
+- super-rel nem hívható static ososztálybeli metódus. 
+- A Thread.yield() nem garantálja, hogy a szál kilép a runnable állapotából. 
+- A notify()-t is szinkronizált kódból kell hívni. 
+- static-ban nincs super. 
+- super.m()-mel hívható oszosztálybeli metódus, akkor is, ha az nincs felülírva. 
+- wait() dob checked exceptiont (InterruptedException). 
+- switch (enum) case ágának elég csak az enum értékét megadni, az enum neve nem kell. 
+- Thread *__PRIORITY konstansok értékei: MIN 1, MAX 10, NORM 5. 
+- Integer.parseInt() dob exceptiont, NFE, ami RTE. 
+- Map-nak nincs add metódusa (csak put). 
+- assert metódusa void nem lehet. 
+- A „has-a” rekurzívan nem számít. 
+- BufferedReadernél van read() metódus is. 
+- Thread.terminate() nincs (csak stop()). 
+- Arrays.asList(1, 2, 3); //OK 
+- \w word char, [a-zA-Z_0-9]. 
+- \s: A whitespace character: [ \t\n\x0B\f\r]. 
+- static int Integer.parseInt("42") 
+- int Integer.intValue() 
+- static Integer Integer.valueOf("24") 
+- super.super nincs. (Fordítási hiba.) 
+- Locale-vel létrehozható: -Date, +Calendar, +DateFormat, +NumberFormat. 
+- Stringbol létrehozható: +File, +FileWriter, -BufferedWriter, +PrintWriter, -BufferedReader. 
+- (int) 0.9 == 0. 
+- File: public boolean delete(). Üres könyvtárat is tud törölni. 
+- do while ciklushoz nem kötelezo a {}. 
+- array nem reserved word. 
+- label nem reserved word. 
+- Date Calendar.getTime(). 
+- Arrays.asList fix méretu listát ad vissza, és hozzá van kötve a tömbhöz. (add(): UnsupportedOperationException). 
+- protected metódust nem lehet felülírni (override) private metódussal. 
+- A has-a vonatkozhat static mezore is. 
+- FileInputStream.close() throws IOException. (Finally-ban figyelni kell rá.) 
+- Thread.join() throws InterruptedException. 
+- Szerializációnál a writeObject csak akkor hívódik meg, ha private. Protected, public, default access modifier nem jó. 
+- Console-hoz: import java.lang.System. java.io.Console. 
+- A MasterExam-ban a ( és a { nagyon hasonló. 
+- Object[] x = new String[] {"a", "b"} fordul és fut is. 
+- binarySearch() 5 elemu String[] esetén, 0-4 és -1 - -6 tartományban ad vissza értéket. 
+- switch(5) { case 4: m1(); case 5: m2(); } // nincs unreachable code fordítási hiba. 
+- Short is-a Number. 
+- short s = 7; doX(s, s); és doX(Number x, Number x) illetve doX(long x, long x) metódusok esetén az utóbbi hívódik. 
+- Collections.reverseOrder(): megfordítja a Comparator sorrendjét. 
+- void Collections.reverse(List<T> list): sorrendet megfordít. 
+- Enum reference variable lehet null. 
+- StringBuffer.delete() második paramétere endIndex. 
+- .poll()-ja van: -TreeSet, -HashSet, +Queue, -ArrayList, +LinkedList, -List. 
+- TreeSet.pollFirst() és pollLast() van. 
+- TreeSet-es subSethez ha olyan elemet adunk, ami kívül esik rajta: java.lang.IllegalArgumentException: key out of range. 
+- String.format("%b", ...): true-t ad minden non-null vagy non-boolean értékre. 
+- final Integer x4 = 8; nem lehet case konstans. (Compile time constant kell.) 
+- import java.util.Date; 
+- |, & balról jobbra megy. Pl: (true | false & true) == true. 
+- Short s = 15; boolean b = (s instaceof String); // compile errort dob (sosem lesz true). 
+- class A { String[] x; Object[] z = x; } // OK. 
+- class A { void m1() { String[] x; Object[] z = x; } } // comp. fail 
+- String.format("%f", 123): java.util.IllegalFormatConversionException: f != java.lang.Integer 
+- Integer[][] c = new Integer[10][]; // OK. 
+- Short is objektum, ha GC-zheto az osztály, akkor a Short memberek is. 
+- void x(short a) metódus nem hívható x(7) módon, mert a 7 implicit int. 
+- array toString() eredménye: [Ljava.lang.String;@a90653, nem az elemek toString-je. 
+- enum.values() tömböt ad vissza. 
+- "for (int x" fordítási hibát ad, ha már van x local változó, vagy metódusparaméter. 
+- m(Object o) elorébb van, mint m(Integer... i) m(1) hívás esetén. 
+- Objektumreferencián keresztül nem érheto el static tag, ha nincs érték adva a referenciának (kivéve, ha osztályszintu a tag). 
+- enum.values() a deklarálás sorrendjében adja vissza az elemeket. 
+- protected metódus nem írható felül default access metódussal. (Szukítés lenne.) 
+- (null == null): true. 
+- class A, class B, a == b: incomparable types error. 
+- new Long(5) == new Integer(5) incomparable types error. 
+- if (new Short((short)7) == new Integer(7)) { // incomparabale types, comp. failed. 
+- A NumberFormatException az IllegalArgumentException leszármazottja. 
+- for (x: y) { } // compile error, mindig kell a típus. 
+- java.io.IOException. 
+- A szerializáció nem száll el java.io.NotSerializableException-nel, ha az nem szerializálható típusú referenciát talál. A konkrét példány szerializálhatósága a fontos. 
+- Deszerilizálás nem megy, (java.io.InvalidClassException), ha a szerializált osztály nem szerializálható osének nincs default konstruktora. 
+- File: createNewFile() throws IOException 
+- File: public boolean mkdir() (Nincs exception.) 
+- DateFormat: static getDateInstance(DateFormat.LONG, Locale.FRANCE); 
+- File: public boolean isFile(). 
+- Transient mezo deszerializálás után 0 vagy null lesz, akkor is, ha van neki kezdoérték megadva. (Pl.: transient int x = 7;) 
+- int j = 9; if (j == null) { } // compile failed 
+- LinkedHashSet nem érheto el indexszel. 
+- abstract void doIt(Integer i) nem írható felül void doIt(Object i)-vel. 
+- PriorityQueue: offer() és add() ugyanaz. 
+- TreeMap subset emlékszik a határaira a határelem törlése után is. 
+- Arrays.binarySearch() általában -1-et ad vissza, ha nem sorrendezett a tömb. 
+- String sort: space, uppercase, lowercase. 
+- Tree*.head*: exclusive. 
+- Tree*.tail*: inclusive. 
+- Tree*.tail, head extra boolean: inclusive. 
+- Tree*.*ceil*, floor: >=, <=. 
+- Tree*.higher, lower <, >. 
+- this.OuterClass.this.method() nincs, fordítási hibát okoz. 
+- os.name system property felülírható java -D -vel. 
+- The default class path is the current directory. 
+- javac -D: invalid flag error. 
+- javac mindig keres az aktuális könyvtárban is, nem kell CP-ba ".". 
+- javac teljes elérési utat vár a fordítandó fájlra, nem elég, ha az csak a CP-n van. 
+- switch(int) case short muködik. 
+- List<? extends A> list; esetén az add() nem használható. (Fordítási hiba.) 
+- int[][] a = new int[10][10]; // OK. 
+- Integer[][] b = new Integer[10][10]; // OK. 
+- static void m1(long l) { } ... m1(new Integer(8)); // OK. 
+- int a = 1; int b = a++ + a; // b értéke 3 lesz 
+- && és || short circuit operátor. 
+- int x = (y = 5); // x értéke 5 lesz. 
+- assert Java 1.4-ben már volt. 
+- do { int i = 0; } while (i > 5); // compile failed 
+- StringBuffer.equals() nincs felülírva, Object-tol örökli. 
+- format args: "-" left justify; "+" sign; "0" pad with zeros; "," locale specific grouping separator; "(" negatív számokat zárójelbe rakja. 
+- String.format("0$s", "string") // eredmény: "string" 
+- String.format("1$s", "string") // eredmény: "string" 
+- void m2(int[] a) {}; m2(1, 2, 4); // compile failed. 
+- List<?> és List<? extends Object> ugyanaz. 
+- Ha két implementált interfészben is szerepel ugyanaz a metódus más visszatérési értékkel, akkor fordítási hibát kapunk. 
+- if (new String == new A()) {} // compile error. 
+- if (b = false) {} else {} // b értéke (false) lesz a kifejezés értéke. 
+- int[] a; a instanceof int[]; // true 
+- float f = 13.1; f++; // f értéke 14.1. 
+- Integer i = null; (i instanceof Integer) == false. 
+- appropriate == correct == should be used != legal. 
+- (o instanceof X) & ((X)o). // nem túl jó, & helyett short circuit && kellene. 
+- Tree-nél Comparator függo, hogy nullable-e. 
+- nullable: HashMap, HashSet, LinkedHashSet, ArrayList, LinkedList, LinkedHashMap 
+- List.toArray() eredménye nincs összekötve a kezdeti listával. 
+- import java.*.*; // compile failed 
+- TreeSet.*Set() empty set-et is visszaadhat. 
+- TreeSet.lower(E) null-t is visszaadhat. 
+- TreeMap.pollFirstEntry() eredménye null, ha üres a map. 
+- super class paraméterben nem lehet (?) Pl.: class Pie<T super Apple> { }. 
+- public static void main(String...args) { } // OK. 
+- int[]a; // OK. 
+- public static void main(String...[] args) { } // compile failed. 
+- public static void main(String[]... args) { } // OK. 
+- String x = null; System.out.println(x.toString()); // OK, NPE-t dob 
+- Long alfa = 1000L; Long beta = 2000L; if ((alfa * 2) == beta) {} // true 
+- Long alfa = 1000L; Long beta = 2000L; if (new Long((alfa * 2)) == beta) {} //false 
+- Long beta = 2000L; Long delta = 2000L; if (beta == delta) {} //false 
+- if (...) { ... } else { ... } else { ... } // compile failed.

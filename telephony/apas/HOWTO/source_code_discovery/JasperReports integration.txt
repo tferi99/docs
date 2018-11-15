@@ -1,0 +1,98 @@
+=========================
+JasperReports integration
+=========================
+
+- General notes
+- Standard reports
+- Custom reports
+- Report scheduling
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+General notes
+=============
+Features of JR reports are the same as old CrystalReport reports:
+- reports are basically called by scheduler
+- reports can be called directly by administrator from page where report schedules are configured:
+
+	APAS/Reporting/Schedule Reports
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Standard reports
+================
+
+Howto install a standard report?
+--------------------------------
+You can upload JR reports as standard report into APAS - similarly to CrystalReport reports.
+Since a JR report template generally contains multiple files (styles, imagages, text resources, subreports) we deploy such reports in packed format.
+
+Creating report package:
+	- your main report file is <reportName>.jasper
+	- compress all participated files into a ZIP and rename to:
+	
+		<reportName>.jrzip
+		
+Call flow
+---------		
+ReportViewerServlet servlet will be called via URL:
+
+	/ReportViewerServlet
+
+
+- ReportsPDFViewer 
+		if (rpt_template.toLowerCase().endsWith("." + ReportTemplateBean.REP_EXT_JASPER_PACKAGE)) {
+			...
+		}
+		
+Report parameters
+-----------------
+REPORT_PERIOD_START				: start date of query (only date part)
+REPORT_PERIOD_END				: end date of query(only date part)
+REPORT_PERIOD_START_WITH_TIME	: start date of query (with time part)
+REPORT_PERIOD_END_WITH_TIME		: start date of query (with time part)
+IMAGE_DIR						: points to images directory of APAS WEB application
+MEDIA_DIR						: points to media directory of APAS WEB application (images can be uploaded in Global/Media menu)
+SUBREPORT_DIR					: points to the local directory - contains end '/' separator, too
+		
+		
+Servlet called from:
+
+reports.Admin
+	- Report scheduling preview button ()
+	- getReportViewURL() : 
+		
+RPCreportsServiceImpl
+- getReportViewURL()
+		
+		
+reports.Module
+	- SaveToDiskReports()		- from internal scheduler, from Admin.background()
+		
+ReportScheduleDecorator
+	- getView()
+		
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Custom reports
+==============
+SEE MORE: 
+	Custom reports.txt
+		
+		
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Report scheduling
+=================	
+
+--> com.andtek.andphone.Admin.background()
+	--> Modules.background(jtapi)
+		--------------------------------- loop n modules -------------------------------------
+		--> background(jtapi, moduleName)
+			--> com.andtek.andphone.reports.Module.background()
+				--> ReportSchedule.getReportSchedules()
+					----------------------- loop on reports in scheduler ------------------------
+					- if time matching with a schedule
+						--> boolean isTemplateBased = report.isCrystalReportTemplate() || report.isJasperReportTemplate();
+						--> if isTemplateBased then enabledExportFormat=true
+						--> SWITCH...CASE by export formats
+							--> saveToDiskReports(reportFileName, reportURL)									<--------------- generating report into disk
+								==> calling /ReportViewer servlet
+							--> sending email

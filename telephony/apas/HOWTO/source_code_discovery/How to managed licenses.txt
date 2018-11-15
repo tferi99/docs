@@ -1,0 +1,14 @@
+========================
+How to managed licenses?
+========================
+
+--------------------------------------------------------------------------------------------------------------------------
+Adding/saving license
+=====================
+
+- APAS/Global/licenses/[Add New License]  --> form --> OK
+
+	--> RPCglobalServiceImpl.RemoteSaveLicensesData(...)
+		--> ATimer.extractString(String lic)
+		
+		

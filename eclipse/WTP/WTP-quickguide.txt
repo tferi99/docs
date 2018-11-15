@@ -1,0 +1,148 @@
+===============
+WTP quick quide
+===============
+
+Usage
+-----
+1. Create static/dynamic WEB application in Eclipse.
+	
+2. Go to server view.
+
+3. <RightMouse in Server view>/Add and Remove Projects
+	During adding an application a context tag will be added to server.xml
+
+4. Build, publish if necessary
+
+5. Start server
+
+
+Status of server:
+	- Synchronized		: published and development content is identical
+	- Republished		: you have to publish content to synchronize
+	- Restart			: you have to restart application server
+
+
+Publishing
+----------
+Publisching creates a full featured WEB application directory.
+
+To publish:
+	- <RightMouse in Server view>/Publish
+	OR
+	- Publish putton on Server view
+	
+	This will copy changed files to deploy path.
+	
+Other options:
+- You can cleate a CLEAN publish by 'Clean...' menu. Application will be deleted from deploy path before publishing.
+
+Default deploy destination:
+
+	<workspace>/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps
+
+To setup publishing call server settings (Double click on server view on a server entry).
+Here you can to setup deploy path and options. 
+
+You can deploy into (in Server Location section):
+	- worskspace area (Use workspace metadata)
+	- under Tomcat directly (Use Tomcat installation)
+
+Other options:
+	- You can run application without publishing (Serve modules without publishing)
+	- WEB application will use a separated context XML instead of server.xml (Publish module contexts to separate XML files)
+
+
+WTP configuration file:
+-----------------------
+	.settings/org.eclipse.wst.common.component
+
+For example:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<project-modules id="moduleCoreId" project-version="1.5.0">
+	<wb-module deploy-name="wtptest">
+		<wb-resource deploy-path="/" source-path="/WebContent"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+		<property name="context-root" value="wtptest"/>
+		<property name="java-output-path" value="build/classes"/>
+	</wb-module>
+	</project-modules>
+
+
+This file describes how files will be publisched to server deploy path.
+Here, you map the complete contents of the WebContent folder to the module root. 
+		
+It specifies how resources in the DEVELOPMENT VIEW MAP TO RESOURCES IN THE RUNTIME VIEW
+(wb-resource tags). 
+
+	- the source-path is relative to the project root 
+	- the deploy-path is relative to the module root at the destination. 
+
+You can have as many resource mappings as you like for each module. The module also 
+has type-specific properties such as 
+
+	- context root			: which defines the context root of the Web application module
+	- java-outputpath		: which tells the publisher where to find the compiled classes 
+		
+	SEE NOTE BELOW FOR GETTING JAVA BINARIES!!!
+
+Different behavior of JAVA files
+--------------------------------
+JAVA file won't be published from source-path of <wb-resource>, they will only be
+watched over changes. If a JAVA file has been changed appropriate CLASS will be 
+published.
+
+Other rules		
+-----------
+				
+- BE AWARE of 
+
+	- java-outputpath		: it has to point of JAVA build output directory
+	- deploy-path="/"		:  source-path has to point to WebContent directory (root of your WEB application), e.g.:
+	
+		<wb-resource deploy-path="/" source-path="/_webapp"/>
+	
+	- don't build JAVA into WebContent directory (so into WEB-APP/classes) but build into separated 
+		directory (e.g. target/classes) and java-outputpath has to point here
+	
+
+- If you add a new source folder to Eclipse Java project, a new entry will be added automatically
+	to WTP config file, for example:
+	
+		added folder:		/<app>/custom/java
+		
+		added entry:		<wb-resource deploy-path="/WEB-INF/classes" source-path="/custom/java"/>
+		
+		
+	, so it will be automatically add JAVA source to /WEB-INF/classes during publishing.
+	
+- WTP gets JAVA classes from 'java-outputpath' and from output directory of source folders as well.
+
+
+- THERE IS A STRANGE BEHAVIOR in how JAVA classes are published. 
+	Classes are published not only from directory specified by 'java-outputpath' but they are also 
+	searched in OUTPUT PATHS OF JAVA SOURCE FOLDERS. 
+	
+	
+	
+	
+See also:
+
+		D:/doc/software/tools/eclipse/WTP/Addison.Wesley.Eclipse.Web.Tools.Platform.Developing.Java.Web.Applications.May.2007.pdf 
+		
+		
+--------------------------------------------------------------------------------------------------------------------------		
+How do I enable the JULI logging in a Tomcat 5.5 Server instance?
+
+Tomcat 5.5 comes with an enhanced implementation of java.util.logging, called JULI, which is configured by default in a standard Tomcat 5.5 installation. 
+This JULI logging configuration is not picked up automatically when creating a new Tomcat 5.5 server in WTP. 
+
+Some manual steps are necessary to add this configuration to your WTP Tomcat 5.5 server. 
+Open the server editor for the Tomcat server and note the folder specified by the Configuration path field. 
+Import the logging.properties file from the conf directory of your Tomcat 5.5 installation into this folder in your workspace. 
+In the server editor, click on the Open launch configuration link and in the launch configuration Properties dialog, switch to the Arguments tab. 
+In the VM Arguments field, add the following two system properties substituting the catalina.base path where noted: 
+
+     -Djava.util.logging.config.file="<put catalina.base path here>/conf/logging.properties"
+     -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+		

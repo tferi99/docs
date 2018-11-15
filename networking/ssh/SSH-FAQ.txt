@@ -1,0 +1,40 @@
+=======
+SSH FAQ
+=======
+
+- SSH without password using Putty
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+SSH without password using Putty
+================================
+- Generate key-pair with PUTTYGEN.EXE
+	- Click 'Generate'
+	- Don’t enter any key phrase. 
+	- Click on 'Save private Key' button and save key into a safe location.
+	
+	
+- Copy public key from puttygen and copy into 
+
+		~/.ssh/authorized_keys
+		
+	ssh-rsa AAAAB3......
+	
+	
+	Note: you can find the same data in key file in public lines. Just start a new line with 'ssh-rsa' and a space and 
+	paste public lines after it (concatenating data into a single line).
+	
+- Configure PuTTY
+	- Load profile
+
+	- Specify this key for PuTTY profile:
+		Browse for key file:
+	
+			Connection/SSH/Auth/[Authentication parameters]/Private key file for authentication
+	
+	- Specify default user name:
+	
+		Connection/Data/[Login details]/Auto=login username
+	
+	- Save profile
+	

@@ -1,0 +1,20 @@
+Konstruktorok hívása örökléskor
+-------------------------------
+
+Az öröklött osztály konstruktorának hívása elõtt felhívódnak az õsosztály konstruktorai.
+2 eset van:
+	1. Ha az öröklött konstruktora NEM tartalmaz super() hívást, akkor az õs default
+	   (paraméter nélküli) konstruktora hívódik automatikusan.
+
+  	2. Ha az öröklött konstruktora tartalmaz super() hívást, akkor az õs a super 
+	   paramétereinek megfelelõ konstruktor hívódik.
+
+
+super() csak elsõ utasítása lehet egy konstruktornak.
+Ebbõl következik, hogy:
+
+Az õsosztályok (valamelyik) konstruktora mindenképpen felhívódik, mégpedig az 
+öröklött osztály konstruktora elõtt.
+
+
+Memberinici

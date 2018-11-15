@@ -1,0 +1,128 @@
+============
+Group pickup
+============
+
+If a group configured for Popup Pickup Service all group member phone is notified by a dialog about call
+and any member can pick up the call.
+
+ APAS             CUCM               Phone
+  |------- 1 ----->|- - - - - - - - - >|														1 - CiscoIPPhoneExecute (http://192.168.5.113:8080/andphone/PhoneDisplay?rt=retrany&amp;list=true&amp;popup=5&amp;dev=#DEVICENAME#)
+  |                |                   |
+  |<----------------------- 2 ---------|														2 - http://192.168.5.113:8080/andphone/PhoneDisplay?rt=retrany&amp;list=true&amp;popup=5&amp;dev=#DEVICENAME#
+  |                |                   |
+  |<----------------------- 3 ---------|														3 - http://192.168.5.113:8080/andphone/PhoneDisplay?rt=retr&amp;dn=9001&amp;dev=SEP64A0E714F271
+  |                |                   |
+  |<----------------------- 4 ---------|  (after popupclosetime+acousticDelay secs)				4 - http://192.168.5.113:8080/andphone/ANDServices?page=exit&dev=SEP64A0E714F271
+  |                |                   |
+  |------------------------------------|
+
+  
+  
+1. APAS->CUCM(->Phone) - Call event processed RING triggers an execute PUSH message to member phones:
+2. Phone->APAS - Member phones calls back APAS to render text message with 'Pickup from'
+
+
+On call of a member:
+
+1. APAS->CUCM(->Phone) - Call event processed RING triggers an execute PUSH message to member phones:
+
+	--> ANDCallObserver.callChangedEvent(...)
+		--> processCallChangedEvent			<== CallCtlConnAlertingEv
+			--> alerting(CallCtlConnAlertingEv ev)
+				--> member = jtapi.getPGroupMemberbyAddress(called)
+					--> PGroupMember.setState(...)
+						if (state == ALERTING)
+							--> pushAllGroupMembers(...)
+
+								Pushed a callback URL to member phones:
+								
+				<CiscoIPPhoneExecute>
+					<ExecuteItem URL="http://192.168.5.113:8080/andphone/PhoneDisplay?rt=retrany&amp;list=true&amp;popup=5&amp;dev=#DEVICENAME#"/>
+				</CiscoIPPhoneExecute>								
+						
+	CUCM propagate URL to device which calls URL. Text message with 'Pickup from' will be rendered in response of this request.
+	
+						
+2. Phone->APAS - Member phones calls back APAS to render text message with 'Pickup from'
+	
+	Pushed CiscoIPPhoneExecute calls URL on APAS which will render text message in reponse. 
+	HTTP contains 'Refresh' item which is reponsible for setting up a delayed request to call APAS to clear message 
+	
+	URL:		
+		http://<APAS_HOST>:8080/andphone/PhoneDisplay?rt=retrany&amp;list=true&amp;popup=5&amp;dev=<DEVICE>
+	
+	For exmple:
+	
+		http://192.168.5.113:8080/andphone/PhoneDisplay?rt=retrany&amp;list=true&amp;popup=5&amp;dev=SEP64A0E714F271
+	
+	PhoneDisplay servlet sends XML to device specified in request parameter:
+	
+		HTTP header:
+		
+			Refresh: 11; url=http://192.168.5.113:8080/andphone/ANDServices?page=exit&dev=SEP64A0E714F271\r\n
+	
+		HTTP body:
+		
+			<?xml version="1.0" encoding="UTF-8"?>
+			<CiscoIPPhoneMenu>
+				<MenuItem>
+					<Name>9001 #9003</Name>
+					<URL>http://192.168.5.113:8080/andphone/PhoneDisplay?rt=retr&amp;dn=9001&amp;dev=SEP64A0E714F271</URL>
+				</MenuItem>
+				<Title>Pickup from</Title>
+				<SoftKeyItem>
+					<Name>Select</Name>
+					<URL>SoftKey:Select</URL>
+					<Position>1</Position>
+					</SoftKeyItem><SoftKeyItem>
+					<Name>Exit</Name>
+					<URL>Init:Services</URL>
+					<Position>3</Position>
+				</SoftKeyItem>
+			</CiscoIPPhoneMenu>
+		
+	
+	URL: /PhoneDisplay
+	
+	--> ANDServlet.service()
+		--> internalService(request, response)
+			--> handleRequest(connection, request, response, SECURITY_TYPE_SECURE)
+				--> PhoneDisplay.request(connection, request, response)
+					--> doRequest(connection, request, response)
+					if reqtype == 'retrany'		==> render pickup window
+						- log: "...checking line..."
+						- response.addHeader("Refresh",(JTAPIThread.getConfig().getInt("global","popupclosetime") + acousticDelay) + "; url=" + getBaseUrl(request) +"/ANDServices?page=exit&dev=" + deviceName);			// 'Refresh' header
+						- log: "[6] pickup from"
+						
+
+3. Phone->APAS - Picking up call 
+						
+	URL:		
+		http://192.168.5.113:8080/andphone/PhoneDisplay?rt=retr&amp;dn=9001&amp;dev=SEP64A0E714F271
+		
+						
+						
+4. 	Phone->APAS - Request to render message close (reset) command
+
+	Previous text message response contains this header:
+	
+		Refresh: 11; url=http://192.168.5.113:8080/andphone/ANDServices?page=exit&dev=SEP64A0E714F271\r\n
+		
+		
+	which will calls ANDServices servlet to render text message clear command.
+	
+	
+	--> ANDService.doRequest(...)
+		if page == PAGE_EXIT
+			if init == "dir"
+				--> IPPhoneXML.CloseDirectories(connection)
+				
+							<CiscoIPPhoneExecute>
+								<ExecuteItem URL="Init:Directories"/>
+							</CiscoIPPhoneExecute>"
+
+				--> IPPhoneXML.CloseServices(connection)
+	
+							<CiscoIPPhoneExecute>
+								<ExecuteItem URL="Init:Init:Services"/>					// it closes text message
+							</CiscoIPPhoneExecute>"

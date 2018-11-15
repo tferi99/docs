@@ -1,0 +1,32 @@
+==========================
+How to enable JMX on APAS?
+==========================
+
+- Enable JMX on APAS firewall :
+
+	Go to AdminCLI and call menu: Troubleshooting  (7/7):
+		- 7) Troubleshooting
+			-  7) Enable/disable JMX port: Currently ...
+
+	
+- To monitor APAS start jconsole:
+		- host:9004
+		- acc:  monitor/andphone
+
+		
+- Configuration files are:		
+	/etc/tomcat/tomcat.conf
+	/etc/tomcat/jmxremote.access
+	/etc/tomcat/jmxremote.password
+	
+	
+- To list threads you need read-write access on JMX	edit /etc/tomcat/jmxremote.access
+	and specify:
+	
+		yourAccount readwrite
+		
+		
+
+	
+	
+

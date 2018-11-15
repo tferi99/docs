@@ -1,0 +1,149 @@
+=====================
+Queue media streaming
+=====================
+
+- Streaming pre-queue media
+- Wireshark
+
+-----------------------------------------------------------------------------------------------------------------------------
+Streaming pre-queue media
+=========================
+- com.andtek.andphone.partner.acd.ProxyRpCallObserver (inherits com.andtek.andphone.recorder.MediaRoutePointBase) registered as RP for ACD.
+- it implements CallObserver and and handles call events by callChangedEvent(...)
+
+Call analysis by logs:
+----------------------
+Log filters:
+	- 'MRP:'
+	- 'processorOK'
+
+Calling party:			9007	(192.168.5.158)
+Called party (pilot):	9041	(RP: 192.168.5.113)
+Final called party:		9000	
+
+Call:	99137/1
+
+Events:
+
+----------------------------------------------------------- start of call - JMF init ---------------------------------------------------------------------------
+
+- CallActiveEv callID=101
+- ConnCreatedEv 9007
+- ConnConnectedEv 9007
+- CallCtlConnEstablishedEv 9007
+- TermConnCreatedEv SEPEC44761F83FC
+- TermConnActiveEv SEPEC44761F83FC
+- CallCtlTermConnTalkingEv SEPEC44761F83FC
+- TermConnCreatedEv SEP64A0E714F271
+- TermConnPassiveEv SEP64A0E714F271
+- CallCtlTermConnInUseEv SEP64A0E714F271
+- ConnCreatedEv 9041
+- ConnInProgressEv 9041
+- CallCtlConnOfferedEv 9041
+- ConnAlertingEv 9041
+- CallCtlConnAlertingEv 9041
+- TermConnCreatedEv TOTH_RP_ACD
+- TermConnRingingEv TOTH_RP_ACD
+- CallCtlTermConnRingingEvImpl TOTH_RP_ACD
+- CiscoMediaOpenLogicalChannelEv TOTH_RP_ACD
+	
+	[2017-04-11 10:15:21,105] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:302] - MRP: terminalEvent[0]:Received (P1-TOTH_APAS) [TOTH_RP_ACD] CiscoMediaOpenLogicalChannelEv [#177] Cause:100 CallCtlCause:0 CiscoCause:0 FeatReason:12 for TOTH_RP_ACD Cause: CAUSE_NORMAL
+	[2017-04-11 10:15:21,105] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:312] - MRP: CiscoMediaOpenLogicalChannelEv
+	[2017-04-11 10:15:21,189] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:538] - MRP: LocalAddr: FTOTH-PC/192.168.5.113:36150
+	[2017-04-11 10:15:21,194] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:548] - MRP: RTP Parameters set
+	
+	- LocalAddr: FTOTH-PC/192.168.5.113:36150
+	--> MediaRoutePointBase.setRTPParameters(...)
+
+- CiscoRTPOutputStartedEv TOTH_RP_ACD
+
+	[2017-04-11 10:15:21,195] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:302] - MRP: terminalEvent[0]:Received (P1-TOTH_APAS) [TOTH_RP_ACD] CiscoRTPOutputStartedEv [#178] Cause:100 CallCtlCause:0 CiscoCause:0 FeatReason:12 for TOTH_RP_ACD Cause: CAUSE_NORMAL
+	[2017-04-11 10:15:21,195] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:365] - MRP: CiscoRTPOutputStartedEv
+	[2017-04-11 10:15:21,195] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:366] - MRP: RemoteAddr: 192.168.5.158:27620
+	[2017-04-11 10:15:21,195] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:367] - MRP: Start Hash: 99137/1
+	[2017-04-11 10:15:21,195] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:397] - MRP: No input stream available yet, waiting to associate it
+
+	- RemoteAddr: 192.168.5.158:27620
+	--> rtpStream = rtpStreams.getRTPStreamByCallID(callID)		// getting RTP stream from cache
+	- setting remote address and port of RTP stream
+	- setting codec type
+	
+- ConnConnectedEv 9041
+- CallCtlConnEstablishedEv 9041
+- TermConnActiveEv TOTH_RP_ACD
+- CallCtlTermConnTalkingEv TOTH_RP_ACD
+	--> established( (CallCtlTermConnTalkingEv) eventList[i])
+	
+	[2017-04-11 10:15:21,199] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:647] - MRP: G:Talking-99137/1-SEPEC44761F83FC->TOTH_RP_ACD-2014051935-9041->
+	
+- CiscoRTPInputStartedEv TOTH_RP_ACD
+	[2017-04-11 10:15:21,199] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:302] - MRP: terminalEvent[0]:Received (P1-TOTH_APAS) [TOTH_RP_ACD] CiscoRTPInputStartedEv [#183] Cause:100 CallCtlCause:0 CiscoCause:0 FeatReason:12 for TOTH_RP_ACD Cause: CAUSE_NORMAL
+	[2017-04-11 10:15:21,199] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:447] - MRP: LocalAddr: /192.168.5.113 : 36150
+	[2017-04-11 10:15:21,199] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:448] - MRP: Start Hash: 99137/1
+	[2017-04-11 10:15:21,200] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [RTPStreamStore.java:51] - MRP:getRTPStreamByLocalAddress(192.168.5.113,36150): == 192.168.5.113,36150
+	[2017-04-11 10:15:21,200] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:579] - MRP: startInputStream() should be overwritten by subclass
+	[2017-04-11 10:15:21,200] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:471] - MRP: found unassociated stream, merging it to this stream
+
+	--> rtpStream.setRemote(...)
+	--> rtpStream.setRtpCodecType(...)
+	--> startOutputStream(rtpStream, call) ==> com.andtek.andphone.partner.acd.RPCallObserver.startOutputStream(RTPStream rtpStream, CiscoCall call)
+		- if state == OFFERED && state != PREQUEUE && state != TRANSFERRED || there is no pre-queue media
+			- play queue media
+			--> [1]
+		- else
+			- play pre-queue media
+			--> rtpStream.setSrcUrl(acdCall.getQueue().getPreQueueMediaURL())
+			--> set state = PREQUEUE
+			--> [1]
+			
+	[1]
+		--> rtpStream.instantiate()	==> com.andtek.andphone.recorder.RTPStream.instantiate()
+			--> createProcessor()
+				--> makeRTPOutput(processor[DIR_OUT], DIR_OUT)
+		--> rtpStream.startSend()	==> com.andtek.andphone.recorder.RTPStream.startSend()
+			--> getRTPManager()
+			--> sh[DIR_OUT].play()
+			
+==================================================================================
+============================= PLAYING MEDIA ======================================
+==================================================================================
+
+----------------------------------------------------------- end of call - JMF cleanup ---------------------------------------------------------------------------
+- TermConnDroppedEv TOTH_RP_ACD
+- CallCtlTermConnDroppedEv TOTH_RP_ACD
+- ConnDisconnectedEv 9041
+- CallCtlConnDisconnectedEv 9041
+- CallObservationEndedEv
+
+	[2017-04-11 10:15:31,206] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:170] - MRP: [0]:Received (P1-TOTH_APAS) 99137/1 CallObservationEndedEv [#192] Cause:100 CallCtlCause:0 CiscoCause:0 FeatReason:12 for 
+	[2017-04-11 10:15:31,206] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:179] - MRP: [0]:callID=103
+	[2017-04-11 10:15:31,206] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:182] - MRP:  [0]:Cause: CAUSE_NORMAL
+	[2017-04-11 10:15:31,206] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:186] - MRP: [0]:Endevent
+
+	--> callEnded(...)
+		[2017-04-11 10:15:31,206] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:273] - MRP: Stop Hash: 99137/1
+		--> stopRTPStream(rtpStream)
+			[2017-04-11 10:15:31,229] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:573] - MRP: Removed rtpStream 99137/1
+
+- CiscoRTPInputStoppedEv TOTH_RP_ACD
+	[2017-04-11 10:15:31,230] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:302] - MRP: terminalEvent[0]:Received (P1-TOTH_APAS) [TOTH_RP_ACD] CiscoRTPInputStoppedEv [#193] Cause:100 CallCtlCause:0 CiscoCause:0 FeatReason:12 for TOTH_RP_ACD Cause: CAUSE_NORMAL
+	[2017-04-11 10:15:31,230] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:506] - MRP: Stop Hash: null
+	--> stopRTPStream(rtpStream)		// NOT CALLED HERE
+	
+- CiscoRTPOutputStoppedEv TOTH_RP_ACD
+	[2017-04-11 10:15:31,230] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:302] - MRP: terminalEvent[0]:Received (P1-TOTH_APAS) [TOTH_RP_ACD] CiscoRTPOutputStoppedEv [#194] Cause:100 CallCtlCause:0 CiscoCause:0 FeatReason:12 for TOTH_RP_ACD Cause: CAUSE_NORMAL
+	[2017-04-11 10:15:31,230] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:428] - MRP: Stop Hash: null
+	--> stopRTPStream(rtpStream)		// NOT CALLED HERE
+
+	
+
+-----------------------------------------------------------------------------------------------------------------------------
+Wireshark	
+=========
+Filtering RTP related packets:
+
+	rtcp || rtp || udp && udp[8:1] == 0x80
+	
+If RTP cannot be recognized by Wireshark (because of lack of SIP dialog or RTCP) you can force RTP stream recognition by selecting an UDP package (length is 214) and (rightmouse + Decode as...).
+Here add RTP an entry for current packet with RTP protocol. If it is really an RTP packet you will be able to analyse and play stream under Telephony/RTP.
+

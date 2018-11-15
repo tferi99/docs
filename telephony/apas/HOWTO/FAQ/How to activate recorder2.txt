@@ -1,0 +1,14 @@
+==========================
+How to activate recorder2?
+==========================
+
+APAS 5 :
+ 
+	insert into config (module, param, val) values ('recorder', 'useRecorder2', true);
+	
+NOTE:
+	With current implementation the value of variable is not relevant.
+	If you want to reset recorder 1, delete this record (and NOT update).
+	
+	
+	

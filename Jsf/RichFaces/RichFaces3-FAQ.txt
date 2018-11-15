@@ -1,0 +1,581 @@
+=============
+RichFaces FAQ
+=============
+
+Actions, events, processing
+---------------------------
+- Return value for actions called by Ajax requests.
+- How to control input data processing?
+- How to use status component?
+- How to pass parameters to actions an actionListeners?
+
+Rendering
+---------
+- How to control re-rendering of Ajax responses?
+- How to find a control for reRender?
+- Howto update iteration components partially?
+
+JavaScript
+----------
+- How to inject custom JavaScript into Ajax action? 
+- How to control calling oncompleted JavaScript handler from Java event handler?
+- How to control calling Java action from JavaScript event handler?
+- How to set focus to a particular element after processing a request?
+
+Validation
+----------
+- How to ignore validation of other components?
+- How to show error messages in ajax actions?
+- Label problem in error messages.
+- How to validate model level information?
+
+Debug
+-----
+- How to debug Ajax actions?
+
+Errors
+------
+- Error: "duplicate Id for a component _viewRoot:status"
+- NullPointerException/ClassNotFoundException if using "#{rich:component()..." in JS event handler.
+
+Misc
+----
+- How to handle session timeout?
+
+---------------------------------------------------------------------------------------
+How to debug Ajax actions?
+==========================
+Add 
+
+	<a4j:log/>
+	
+to page. And press Ctrl-Shift-L to popup debug window.
+
+!!! WARNING !!!
+Remove this tag if you don't need it, it can couse serious performance problems (e.g. in Firebug plugin of Firefox).
+	
+---------------------------------------------------------------------------------------
+How to show error messages in ajax actions?
+===========================================
+Error message components are not rendered if there is no error. So if during the first rendering no message
+component rendering, Ajax won't be able to update it.
+
+Solution:
+
+	Place <h:message> into a placeholder - e.g. <h:panelGrid> or <h:panelGrid>, and put this placeholder 
+	into reRender.
+	
+	Or put <h:message> into <a4j:outputPanel>.
+	
+	Or use <rich:message>.
+	
+	Displaying an error message is a common task, so the RichFaces team built a component that
+	basically combines <a4j:outputPanel ajaxRendered="true"> and <h:message> (or <h:messages>).
+	The component is called <rich:message> (or <rich:messages>)	
+	
+---------------------------------------------------------------------------------------
+Return value for actions called by Ajax requests.	
+=================================================
+When using an action attribute to point to an action’s server-side method, the
+method has to return null in order for a partial-page update to happen. 
+
+Keep in mind that the response returned will be used to update the browser DOM. 
+Navigating to a different page(view) will most likely result in completely different 
+content being returned.	
+
+	<a4j:commandButton value="Submit" action="#{userBean.save}"/>
+
+	public String save ()
+	{
+		// do something
+		return null;
+	}
+	
+	
+---------------------------------------------------------------------------------------
+How to control re-rendering of Ajax responses?
+==============================================
+1. Listing target components
+	'reRender' attribute of action components (<a4j:commandLink>, <a4j:commandButton>, <a4j:support>).
+	It's a list of target components.
+
+	<a4j:commandLink value="Enter Age" reRender="age,count"/>
+
+	- 'reRender' can also take an EL expression.
+
+		<a4j:commandButton value="Update" reRender="#{profile.renderList}"/>		
+
+	- 'reRender' can be bound to the following objects:
+		• java.util.Set
+		• java.util.List
+		• An array of strings
+		• A string (comma-separated IDs)
+		
+2. Target area
+	Put components into <a4j:outputPanel> and add ID of panel into reRender instead of components one-by-one.
+
+	You can render without using reRender by 'ajaxRendered' attribute of <a4j:outputPanel>. 
+
+		it defines, whether the content of this component must be (or not) included in AJAX response,
+		even if it is not forced by reRender list of ajax action.
+	
+		Ignored if component marked to output by some Ajax action component. Default value is "false".
+
+3. Forcing list and ignoring areas
+	'limitToList' attribute of action components. 
+
+	Setting this attribute to true will limit updates to only the components specified in the reRender attribute. 
+	It doesn’t matter how many zones with <a4j:outputPanel ajaxRendered="true"> a page has; only components pointed 
+	to by the current reRender will be rerendered.
+	
+	In short it forces to use reRender list of this component and to ignore another zones.
+
+4. Limiting re-rendering
+	'renderRegionOnly' of <a4j:region> : when set to true, it will limit client
+	(browser) updates to the current region only (the region from which the request was initiated).
+	
+	<a4j:region renderRegionOnly="true">
+		<h:inputText />
+		<a4j:commandButton reRender="out1, out2"/>	
+		.....
+	
+
+---------------------------------------------------------------------------------------
+How to find a control for reRender?
+===================================
+To find a component JSF uses 
+	
+	UIComponent.findComponent(java.lang.String expr)
+	
+- Identify the UIComponent that will be the base for searching, by stopping as soon as one of the following conditions is met: 
+	- If the search expression begins with the the separator character (called an "absolute" search expression), 
+		the base will be the root UIComponent of the component tree. The leading separator character will be stripped off, 
+		and the remainder of the search expression will be treated as a "relative" search expression as described below.
+	- Otherwise, if this UIComponent is a NamingContainer it will serve as the basis.
+	- Otherwise, search up the parents of this component. If a NamingContainer is encountered, it will be the base. 
+	- Otherwise (if no NamingContainer is encountered) the root UIComponent will be the base.
+	
+- The search expression (possibly modified in the previous step) is now a "relative" search expression that will be used 
+	to locate the component (if any) that has an id that matches, within the scope of the base component. 
+	The match is performed as follows: 
+	- If the search expression is a simple identifier, this value is compared to the id property, and 
+		then recursively through the facets and children of the base UIComponent (except that if a descendant 
+		NamingContainer is found, its own facets and children are not searched).
+	- If the search expression includes more than one identifier separated by the separator character, 
+		the first identifier is used to locate a NamingContainer by the rules in the previous bullet point. 
+		Then, the findComponent() method of this NamingContainer will be called, passing the remainder of the search expression.	
+	
+	
+---------------------------------------------------------------------------------------
+How to control input data processing?
+=====================================
+In non-Ajax application the form is submitted, and all the fields inside that form are processed.
+
+1. Source area: <a4j:region>
+
+	It lets you specify which components will be processed (decoding, conversion, validation, and model 
+	updating) on the server.
+	
+	- Keep in mind that the full form is still submitted!!!
+	- But, only components inside this region will be processed.
+	- If you don’t specify a region, the whole page becomes a region, which means the full form
+		will be processed.
+		
+	<h:form>
+		<h:panelGrid>
+		</h:panelGrid>
+		<a4j:region>
+			<h:panelGrid>
+			. . .
+			</h:panelGrid>
+			<a4j:commandLink>
+		</a4j:region>
+		. . .
+	</h:form>
+
+2. This source component: ajaxSingle
+
+	When ajaxSingle is set to true, it’s no different from wrapping the single control
+	within an <a4j:region>.	So the value from the current component will be processed.
+	
+	
+3. Explicite source components: process
+
+	- If you want to process components outside the current region.
+	- If ajaxSingle="true" and you want to process other components, too.
+	
+	- 'process' can be bound to the following objects:
+		• java.util.Set
+		• java.util.List
+		• An array of strings
+		• A string (comma-separated IDs)
+	
+		<h:inputText id="state" value="#{userBean.state}" required="true">
+			<a4j:support event="onkeyup" reRender="outtext" ajaxSingle="true" process="code"/>
+		</h:inputText>
+		
+		<h:inputText id="code" ajaxSingle="true" value="#{userBean.promotionalCode}"/>
+	
+---------------------------------------------------------------------------------------
+How to inject custom JavaScript into Ajax action? 
+=================================================
+• onsubmit: 			Just before Ajax request is sent
+• onbeforedomupdate: 	Before any DOM updates are processed
+• oncomplete: 			After DOM updates have been processed
+
+
+---------------------------------------------------------------------------------------
+How to use status component?
+============================
+The <a4j:status> component allows you to display a status when an Ajax request is sent and
+when the Ajax request has finished.
+
+1. Add a 'status' argument to an action control, and point to a status
+
+	<h:inputText value="#{stateView.input}">
+		<a4j:support event="onkeyup" reRender="box"	action="#{stateView.suggest}" status="stateStatus" />
+	</h:inputText>	
+	<rich:spacer width="10px" />
+	<a4j:status id="stateStatus" startText="Working..."
+
+2. Implicite region association: put into a region, it will show status of all events sent from this region.
+
+3. Explicite region association: associate status with 'for' attribute to a specific region.
+
+
+IMPORTANT: One region can contain only one status control.
+
+---------------------------------------------------------------------------------------
+Error: "duplicate Id for a component _viewRoot:status"
+======================================================
+If you put more <a4j:status> on a page, you can get this error.
+
+It's not a bug, use <a4j:region> to separate statuses.
+
+---------------------------------------------------------------------------------------
+NullPointerException/ClassNotFoundException on pages where you can try to open modal dialogs.
+=============================================================================================
+Origin of error not known (maybe a bug), or JAR incompatibilty
+
+but you can get NullPointerException 
+
+	java.lang.ClassNotFoundException: org.richfaces.function.RichFunction
+
+in the following case:
+
+	XHTML:
+	------
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml"
+			  xmlns:h="http://java.sun.com/jsf/html"
+			  xmlns:f="http://java.sun.com/jsf/core"
+			  xmlns:ui="http://java.sun.com/jsf/facelets"
+			  xmlns:rich="http://richfaces.org/rich"
+			  xmlns:a4j="http://richfaces.org/a4j">
+			
+		<head>
+		</head>
+
+		<body>
+			<h:form>
+				<a4j:commandButton value="OK1" action="#{modalBean.onSave}" oncomplete="alert('1 ok')"/>
+				<a4j:commandButton value="OK2" action="#{modalBean.onSave2}" oncomplete="alert('2 ok')"/>
+				<a4j:commandLink value="OK" action="#{modalBean.onSave}" oncomplete="#{rich:component('modal')}.show()" />
+			</h:form>
+		</body>
+		</html>
+
+	BEAN:
+	-----
+		public String onSave()
+		{
+			System.out.println(">>>>>>>> Calling service to save.");
+			return null;
+		}
+		
+		public String onSave2()
+		{
+			System.out.println(">>>>>>>> Calling service to save.");
+			return "echo";
+		}
+
+Error comes if you call OK1 button.
+		
+1. you have a button handling JS event, and action returns 'null', or
+	you have a command component with <rich:componentControl for="wizard" attachTo="link" operation="show" event="onclick" />
+
+AND	
+	
+2. you have another button/link where JS event handler contains #{rich:component(...)...() , or
+
+
+Solution:
+
+	replace #{rich:component(...)...() with equivalent method. E.g:
+	
+	Use: 			onclick="Richfaces.hideModalPanel('modal2')"
+	insead of:		onclick="#{rich:component('modal2')}.hide()"
+
+	
+---------------------------------------------------------------------------------------
+How to control calling oncompleted JavaScript handler from Java event handler?
+==============================================================================
+You can evaluate expressions in oncomplete JavaScript handler:
+
+		<a4j:commandButton value="OK"
+			actionListener="#{javaJsController.onJavaBeforeJs}"
+			oncomplete="if (#{javaJsController.checked}) {
+				if (#{javaJsController.filled}) {
+					alert('Checked and filled');
+				}
+				else {
+					alert('Only checked');
+				}
+			}"/>
+
+In this example code 'filled' property is calculated by javaJsController.onJavaBeforeJs(). You can control calling oncomplete handler 
+from Java actionListener handler since actionListener is called first.
+			
+
+You can use facesContext.maximumSeverity to get validation status in an expression.
+For example closing a modal dialog if validation is successfull:
+
+		public void onMkdir(ActionEvent event)
+		{
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			
+			...
+			if (dir.exists()) {
+				String msg = ResourceUtils.getMessageResourceString("siteEdit2.dialog.siteDirectory.warning.alreadyExists");
+				ctx.addMessage("frmDir:choosedSiteDirectory", new FacesMessage(msg, null));
+				return;
+			}
+			...			
+		}
+		
+
+		<a4j:commandButton value="#{msg['siteEdit2.dialog.siteDirectory.button.mkdir']}"
+			actionListener="#{configurationSiteDirectoryDialogController.onMkdir}"
+			oncomplete="if(#{facesContext.maximumSeverity == null}) {closeModalDialog('configurationSiteDirectoryDialog', true)}" />						
+
+
+---------------------------------------------------------------------------------------
+How to control calling Java action from JavaScript event handler?
+=================================================================
+If a JS event handler has been registered to an action component (e.g. onclick for <a4j:commandButton/>), its JS code will be inserted 
+before calling Ajax submit code (od cource - this is also a JS code, since it's Ajax). 
+So, if you want to cancel action from JS handler, you have to return explicitly from JS code, for example:
+
+	<h:form>
+		<a4j:commandButton value="Never jumps" action="home" onclick="return"/>
+		<a4j:commandButton value="Always jumps" action="home" onclick=""/>
+		<a4j:commandButton value="Conditional jump" action="home"
+			onclick="if(!confirm('You want to go home?')){ return; };"/>
+	</h:form>
+
+---------------------------------------------------------------------------------------
+How to set focus to a particular element after processing a request?
+====================================================================
+You can set the 'focus' attribute to point to an id of a component to which focus should be set after the request. 
+All components that send an Ajax request to the server have this attribute. Using it is very simple, here is an example:
+
+	<h:form>
+	   <rich:panel>
+		  <h:panelGrid>
+			 <a4j:commandLink value="Set Focus" focus="text" />
+			 <h:inputText value="Hello" id="text" />
+		  </h:panelGrid>
+	   </rich:panel>
+	</h:form>
+
+
+---------------------------------------------------------------------------------------
+Howto update iteration components partially?
+============================================
+Iteration components (<a4j:repeat>, <rich:dataList>, <rich:dataList>, etc.) can render a data collection 
+iterating over items.
+
+For performance reasons this componenents can be updated partially.
+
+A data table renders items of a collection as rows and colums. Rows are items, colums are properties of items.
+
+1. To re-render the whole component use ID of the component itself.
+
+2. To re-render a whole column use ID of the column (you have assigned in the body of the iteration loop).
+
+3. To re-render a specific row add ID-s of rows to a HashSet and bind this hashset to ajaxKey attribute of the compoment.
+	HashSet can be updated in action before updating.
+	
+4. To re-render a specific cell use #2 and #3.
+
+NOTE: If you re-render the whole component, ajaxKey attribute will be ignored. 
+	So all of rows will be re-rendered even ajaxKey is empty.
+	
+	
+An example how to re-render a specific cell. Here will be only choiceVotes column re-rendered, in rows where 
+voting value has been changed:
+
+		<rich:dataTable id="tblVote" value="#{choicesBean.choices}" var="choice"
+			rowKeyVar="row" ajaxKeys="#{choicesBean.keysSet}">
+			<f:facet name="header">
+				<h:outputText value="Voting for favourite fruit" />
+			</f:facet>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="" />
+				</f:facet>
+				<h:outputText value="#{row}" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Choice name" />
+				</f:facet>
+				<h:outputText value="#{choice.label}" id="choiceLabel" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Current Votes" />
+				</f:facet>
+				<h:outputText value="#{choice.votesCount}" id="choiceVotes" />
+			</rich:column>
+		</rich:dataTable>
+
+		
+		<a4j:commandButton value="Vote now!" action="#{choicesBean.voteNow}" 
+			ajaxSingle="true" 
+			reRender="choiceVotes"/>
+		<br/>
+		
+		
+Fragments from the bean:		
+	private Set<Integer> keysSet;
+	...
+	keysSet = new HashSet<Integer>();
+	...
+	Set<Integer> keysForUpdate = new HashSet<Integer>();
+	for (Choice choice : lastVotes) {
+		if (choice.getVotesCount() > 0) {
+			int index = lastVotes.indexOf(choice);
+			keysForUpdate.add(index);
+			...
+			...
+		}
+	}
+	keysSet = keysForUpdate;
+	
+
+---------------------------------------------------------------------------------------
+How to pass parameters to actions an actionListeners?
+=====================================================
+
+Actions:
+--------
+Inject values into controller properties:
+
+	<a4j:actionparam name="folderRef" value="#{item.parentReference.fullReference}"
+		assignTo="#{siteEditController.itemReferenceOnEvent}" />
+
+Use in action handlers:
+		
+	FolderVO folder = getFolderByReference(itemReferenceOnEvent);
+	
+
+NOTE: there values are rendered into generated HTML code when component is rendered, so don't use variable values.	
+	
+ActionListener:
+---------------
+Use 'data' attribute, this will pass a new request parameter.	
+
+	data="#{item.reference.fullReference}"
+	
+Get data of component:
+
+	HtmlAjaxCommandButton btn = (HtmlAjaxCommandButton)event.getComponent();
+	Object fullPaths = btn.getData();
+
+	
+	
+NOTE: You cannot use actionparam for actionListener because calling order is:
+
+
+	1. actionListener
+	2.
+
+
+---------------------------------------------------------------------------------------
+How to validate model level information?
+========================================
+Method1:
+
+	Add a message directly to messages in action or actionListener handler:
+
+		if (!validationFromModel()) {
+			FacesMessage msg = new FacesMessage(currentApplication + " : application not found");
+			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+			return;
+		}
+		
+	validationFromModel() will get information from model and will make a decision.
+	
+	Disadvantage here that you have to call validationFromModel() in every handler.
+	Best way is Method2.
+	
+Method2:
+	- add a hidden placeholder input component to the form
+	- write a custom validator, where you will check information from model 
+	- add this validator to placeholder
+	
+	You can add model validation in custom validator and of course you
+	won't use incoming value in this case.
+
+	
+Method3:
+An extension of Method2 where you want to check a state of model property and 
+you bind placeholder hidden input element to this model property.
+
+In this case if a model property changed hidden component has to be refreshed.
+That means value of hidden element will by synchronized with model property,
+so validator can use field value during validation.
+
+A special case can be where you want to check existence of a model property
+(is not null). You have to bind property and it's enough to 
+set 'required="true"' for element.
+
+
+
+	
+	
+---------------------------------------------------------------------------------------
+How to ignore validation of other components?
+=============================================
+	
+If you want to fire an action from a component but you don't want to be called ...
+	
+	
+---------------------------------------------------------------------------------------
+How to handle session timeout?
+==============================
+RichFaces provides an additional way to catch Timeouts (ViewExpiredException) on client side.
+
+First, add the following code in your web.xml:
+
+    <context-param>
+		<param-name>org.ajax4jsf.handleViewExpiredOnClient</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+Finally, add some javascript on the page (best location is a global layout template):	
+	
+	<script type="text/javascript">
+		//<![CDATA[
+		A4J.AJAX.onExpired = function(loc, expiredMsg)
+		{
+			window.alert("#{msg['layout.explorer.sessionTimeout']}");
+			loc = "#{facesContext.externalContext.requestContextPath}/logout.jsp";
+			return loc;
+		}
+		//]]>
+	</script>
+
+	

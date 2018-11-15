@@ -1,0 +1,13 @@
+============================
+Sceduled queue configuration
+============================
+
+1. Add a queue (Call Center/Queues)
+
+2. Add a schedule (Global/Schedules)	- e.g. All days, Start Time: 12:00, End Time: 18:00
+
+3. Add a pilot (Call Center/Pilots)
+
+	- Add a schedule entry to pilot where you associate a schedule entry with a queue.
+	
+	

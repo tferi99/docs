@@ -1,0 +1,34 @@
+
+---------------------------------------------------------------------------------------------------------------------------------
+Rules for Address
+=================
+- Address objects may be classified into two categories: local and remote. 
+
+	- Local Address objects are those addresses which are part of the Provider's local domain. These Address objects are created by the implementation of the Provider object when it is first instantiated. 
+		All of the Provider's local addresses are reported via the Provider.getAddresses() method. 
+	- Remote Address objects are those outside of the Provider's domain which the Provider learns about during its lifetime through various 
+	happenings (e.g. an incoming call from a currently unknown address). Remote Addresses are not reported via the Provider.getAddresses() method. 
+	
+	Note that applications never explicitly create new Address objects.
+	
+- Address and Terminal objects exist in a many-to-many relationship. An Address object may have zero or more Terminals associated with it.
+
+---------------------------------------------------------------------------------------------------------------------------------
+Rules for CallObserver
+======================
+- If you add a CallObserver to an Address:
+
+	It adds an observer to a Call object when this Address object first becomes part of that Call. This method permits applications to select an Address object in which they 
+	are interested and automatically have the implementation attach an observer to all PRESENT and FUTURE Calls which come to this Address.
+
+- It is possible for an application to add CallObservers at more than one Address and Terminal (using Address.addCallObserver() and Terminal.addCallObserver(), respectively). 
+	The rules outlined above still apply, with the following additions:
+		- A CallObserver is not added to a Call more than once, even if it has been added to more than one Address/Terminal which are present on the Call.
+		- The CallObserver leaves the call only if all of the Addresses and Terminals on which the Call Observer was added leave the Call. 
+			If one of those Addresses/Terminals becomes part of the Call again, the call observer is re-applied to the Call.
+
+
+---------------------------------------------------------------------------------------------------------------------------------			
+Rules Connection			
+================
+- A Connection object is always in a state that reflects the relationship between a Call and an Address.

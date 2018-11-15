@@ -1,0 +1,55 @@
+========
+CUCM FAQ
+========
+
+Phone
+-----
+- Key shorcuts for Cisco phones
+
+Configuration
+-------------
+- How to add a phone to CM?
+- How to delete phones and lines from CM?
+- Howto call AXL SQL queries?
+- Howto capture packets from a Cisco IP phone?
+- How to add an XML service to a phone?
+- How to reset admin password?
+- Rules for CSSs and partitions
+- How to get info about dependent CUCM objects?
+- Howto add phone services to line buttons?
+- Howto configure Extension Mobility (EM)?
+- Howto setup pickup group?
+- How to change TFTP server or Device name in Cisco Communicator?
+- How to configure private number?
+
+Maintenance
+-----------
+- How to restart CUCM?
+- SSO-related CLI commands
+- How to configure SAML2 SSO federation with OpenAM?
+
+Query
+-----
+- How to list active logged users of phones?
+
+Security
+--------
+- Howto get a certificate from CUCM?
+- How to check if a phone can be authenticated with a user?
+
+Development
+-----------
+- How to discover AXL?
+
+Troubleshooting
+---------------
+- Error - Address X is not in providers domain
+- Busy signal when you call a device
+- CTI Route Point unregistered
+- How to run general troubleshooting on CUCM?
+- CUCM Administration webpage access very slow
+
+
+
+
+

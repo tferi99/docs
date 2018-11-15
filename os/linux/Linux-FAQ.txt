@@ -1,0 +1,113 @@
+=========
+Linux FAQ
+=========
+
+Development
+-----------
+- Howto fix missing shared library problem?
+
+
+Network
+-------
+- How to list network interfaces?
+- How to replace ethernet adapter?
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto fix missing shared library problem?
+=========================================
+- To check which all shared libraries failed to load, I issued following command:
+
+	ldd <executable>
+	
+	bash-3.2# ldd /usr/bin/andphone_record
+        linux-vdso.so.1 =>  (0x00007fff4f121000)
+        libmysqlclient.so.15 => /usr/lib64/mysql/libmysqlclient.so.15 (0x00002abfe353e000)
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00002abfe38b5000)
+        libpcap.so.0.9 => not found																							<<<<<<<<<<<<<<<<<<<<<<<<<<
+        libpt_linux_x86_64_r.so.1.10.1 => /usr/lib64/libpt_linux_x86_64_r.so.1.10.1 (0x00002abfe3ad1000)
+        libopal_linux_x86_64_r.so.2.2 => /usr/lib64/libopal_linux_x86_64_r.so.2.2 (0x00002abfe3ede000)
+        libboost_filesystem.so.2 => /usr/lib64/libboost_filesystem.so.2 (0x00002abfe4bfa000)
+        ...
+		
+		
+	As you can see libpcap.so.0.9 is missing.
+	
+- To confirm this I entered following command which lists all the libraries that ld can load.
+
+	ldconfig -p | grep <lib>
+	
+	 bash-3.2# ldconfig -p | grep libpcap	
+		 libpcap.so.0.9.4 (libc6,x86-64) => /usr/lib64/libpcap.so.0.9.4
+	
+	As you can see libpcap exists but not the required function.
+	
+	
+- Here you have to install proper version or/and solve version conflicts.
+
+Possible way:
+
+	- checking installed files
+
+		bash-3.2# rpm -ql libpcap
+			/usr/lib64/libpcap.so.0
+			/usr/lib64/libpcap.so.0.9
+			/usr/lib64/libpcap.so.0.9.4
+			/usr/share/doc/libpcap-0.9.4
+			/usr/share/doc/libpcap-0.9.4/CHANGES
+			/usr/share/doc/libpcap-0.9.4/LICENSE
+			/usr/share/doc/libpcap-0.9.4/README
+			/usr/share/man/man3/pcap.3.gz
+
+		Seemingly libpcap.so.0.9 installed.
+			
+		bash-3.2# ls /usr/lib64/libpcap.so.0.9
+			ls: /usr/lib64/libpcap.so.0.9: No such file or directory
+
+		But really it's not installed, only v0.9.4 .
+		
+	- Try to solve with a hack (softlink):
+		
+		bash-3.2# ln -s /usr/lib64/libpcap.so.0.9.4 /usr/lib64/libpcap.so.0.9
+
+		-bash-3.2# ldd /usr/bin/andphone_record
+        linux-vdso.so.1 =>  (0x00007fff5d1fd000)
+        libmysqlclient.so.15 => /usr/lib64/mysql/libmysqlclient.so.15 (0x00002b08dc2ed000)
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00002b08dc664000)
+        libpcap.so.0.9 => /usr/lib64/libpcap.so.0.9 (0x00002b08dc87f000)									<<<<<<<<<<<<<<<<<<<<<<<
+		...
+		
+		VOILA!!!!! 
+		It works.
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to list network interfaces?
+===============================
+ifconfig		: to list active interfaces
+
+ifconfig -a		: display all interfaces which are currently available, even if down
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to replace ethernet adapter?		
+================================
+If you change ethernet adapter MAC address will be changed.
+
+- Device names are persisted into udev rule file
+
+	/etc/udev/rules.d/70-persistent-net.rules
+
+	This file contains evice name and MAC address, too.
+	Delete it.
+	
+
+- Network interface script also contains MAC address.
+
+	/etc/sysconfig/network-scripts/ifcfg-eth0
+	
+	Change HWADDR to the new MAC.
+	
+	
+- Reboot.
+
+	

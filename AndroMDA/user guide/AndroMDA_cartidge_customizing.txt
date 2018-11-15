@@ -1,0 +1,238 @@
+==============================
+Customizing AndroMDA cartidges
+==============================
+
+1. Prerequisities
+2. How to modify a cartridge?
+3. Discovering generation process of AndroMDA
+4. Using template variables
+4.1 Template variable basics
+5. How to add custom tagged values?
+6. Discovering project generation
+A. Template variable reference
+
+
+
+1. Prerequisities
+-----------------
+- AndroMDA source
+- maven 2.0.x
+- MagicDraw 9.5 (metafacade modells are in UML 1.4!)
+
+
+2. How to modify a cartridge?
+-----------------------------
+1. Install source
+
+2. Go to cartridge source : $CARTRIDGE_HOME
+	(e.g C:/apps/andromda-3.2/cartridges/andromda-spring)
+
+3. Change cartridge template (e.g HibernateSearch.vsl)
+
+4. Build call
+
+	mvn clean
+	mvn
+	
+	in cartridge directory  -------------> you will get error first!
+	
+	You get an error during a test because expected generated code and 
+	current are different. 
+	
+5. Copy new code generated in
+
+		$CARTRIDGE_HOME/target/cartridge-test/actual
+	
+	into
+	
+		$CARTRIDGE_HOME/src/test/expected/cartridge-output.zip 		
+		
+		
+6. Try to build again		
+	
+	Cartidge will be deployed into local repository.
+
+7. Cartridge will be created into: 		$CARTRIDGE_HOME/target
+
+
+	Rename cartrige version to distinguise from original one, install into local repository
+		and change dependency version in pom.xml-s.
+		
+	For example:
+		
+		andromda-spring-cartridge-3.2.jar  -->  andromda-spring-cartridge-3.2.qs.jar
+		
+
+		
+3. Discovering generation process of AndroMDA
+---------------------------------------------
+- Base module of code generation is cartridge.
+
+- Cartidges are JAR modules loaded during generation (e.g. andromda-spring-cartridge-3.3.jar)		
+
+- Cartridges participated in generation are registered as namespaces in 
+
+		mda/src/main/config/andromda.xml .
+		
+	A cartridge has its own namespace configuration in cartridge source:
+	
+		META-INF/namespace.xml	
+	
+- Cartridges get metadata information from model and provides model information with metafacades - metadata 
+	facade objects - which give an abstract layer over UML metamodell. Metafacade mappings are registered 
+	in cartidge source, here:
+
+		META-INF/metafacades.xml
+	
+
+	For example SpringServiceLogicImpl metafacade class will be used here if stereotype of a modell element 
+	is <<SERVICE>>:
+	
+		  <metafacade class="org.andromda.cartridges.spring.metafacades.SpringServiceLogicImpl"
+				contextRoot="true">
+				<mapping>
+					<stereotype>SERVICE</stereotype>
+				</mapping>
+				<property reference="ejbTransactionsEnabled"/>
+				<property reference="webServiceOutgoingAttachmentHandlerCallPattern"/>
+				<property reference="webServiceIncomingAttachmentHandlerCallPattern"/>
+			</metafacade> 
+
+
+- Templates are registered in 	
+		
+		META-INF/cartridge.xml
+		
+	For example:
+	
+	  <template
+	        path="templates/spring/SpringService.vsl"
+	        outputPattern="{0}/{1}.java"
+	        outlet="service-interfaces"
+	        overwrite="true">
+	        <modelElements variable="service">
+	            <modelElement>
+	                <type name="org.andromda.cartridges.spring.metafacades.SpringService">
+	                    <property name="configonly">false</property>
+	                    <property name="private">false</property>
+	                </type>
+	            </modelElement>
+	        </modelElements>
+	    </template>
+ 		
+
+	Template mapping discovered during generation by type. If a metafacade is called during generation, cartridge.xml
+	will be searched for templates. When a metafacade corresponds (instance of, implements) to a type registered as modellElement 
+	in a <template> tag, template will be called. 
+	
+	Template variable specified by "variable" property of modelElement (or modelElements) will be defined automatically and will 
+	be accessible from template.
+	
+- So configuration chain of generation is the following:
+	
+		andromda.xml 
+			==> namespace.xml 
+				==> metafacades.xml
+					==> cartridge.xml
+						==> *.vsl (templates)
+
+		
+4. Using template variables
+---------------------------
+
+4.1 Template variable basics
+----------------------------
+- Templates are registered in META-INF/cartridge.xml. For example:
+	
+    <template
+        path="templates/spring/SpringService.vsl"
+        outputPattern="{0}/{1}.java"
+        outlet="service-interfaces"
+        overwrite="true">
+        <modelElements variable="service">
+            <modelElement>
+                <type name="org.andromda.cartridges.spring.metafacades.SpringService">
+                    <property name="configonly">false</property>
+                    <property name="private">false</property>
+                </type>
+            </modelElement>
+        </modelElements>
+    </template> 		
+
+ <template
+        path="templates/spring/applicationContext.xml.vsl"
+        outputPattern="$applicationContext"
+        outlet="spring-configuration"
+        overwrite="true"
+        outputToSingleFile="true"
+        outputOnEmptyElements="false">
+        <modelElements>
+            <modelElement variable="entities">
+                <type name="org.andromda.cartridges.spring.metafacades.SpringEntity"/>
+            </modelElement>
+            <modelElement variable="services">
+                <type name="org.andromda.cartridges.spring.metafacades.SpringService">
+                    <property name="abstract">false</property>
+                </type>
+            </modelElement>
+            <modelElement variable="manageables">
+                <type name="org.andromda.cartridges.spring.metafacades.SpringManageableEntity"/>
+            </modelElement>
+        </modelElements>
+    </template> 
+
+	Template variable specified by "variable" property of modelElement (or modelElements) will be defined automatically and will 
+	be accessible from template.
+
+		
+5. How to add custom tagged values?
+-----------------------------------
+......
+
+
+6. Discovering project generation
+---------------------------------
+1. Start of generation of AndroMDA project:
+
+	mvn org.andromda.maven.plugins:andromdapp-maven-plugin:generate
+
+2. andromda-andromdapp-core-VER.jar
+
+- org.andromda.andromdapp.AndroMDApp.run()
+	- org.andromda.andromdapp.AndroMDApp.initialize() 
+		Loading user prompt question from possible project type JARS:
+		
+			andromda-andromdapp-project-<PROJECT_TYPE>-maven2-<VERSION>.jar/META-INF/andromdapp/andromdapp.xml
+		
+	- org.andromda.andromdapp.AndroMDApp.initialize()
+		User prompt to get type of project then application specific prompts to get configuration information.
+
+3. 	andromda-andromdapp-project-<PROJECT_TYPE>-maven2-<VERSION>.jar
+	This JAR contains template of project. META-INF/andromdapp/andromdapp.xml is a wizard for project generation.
+		
+===================================================================================================================================================
+Appendix
+
+A. Template variable reference
+------------------------------
+Default package if not specified:
+
+	
+
+
+- SpringService.vsl
+	
+	Default package : org.andromda.cartridges.spring.metafacades
+	
+	$service												: SpringServiceLogicImpl (SpringService)
+	
+	#foreach($entityRef in $service.entityReferences)  
+		$entityRef												: SpringDependencyLogicImpl
+		$entityRef.targetElement								: SpringEntityLogicImpl
+		$entityRef.targetElement.targetDependencies				: Collection of SpringDependencyLogicImpl
+			.next()												: SpringEntityLogicImpl
+		$entityRef.targetElement.sourceDependencies				: Collection of SpringDependencyLogicImpl
+			.next()												: SpringEntityLogicImpl
+		$entityRef.targetElement.valueObjectReferences			: Collection of SpringDependencyLogicImpl
+			.next()												: org.andromda.metafacades.emf.uml2.ValueObjectLogicImpl
+	

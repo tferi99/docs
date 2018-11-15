@@ -1,0 +1,84 @@
+===================
+Call states changes
+===================
+
+- Call states are defined in AcdCallState.java:
+
+	// call lost
+	STATE_DISCONNECTED = -1;
+	STATE_OFFERED = 0;			// ringing at the pilot
+	STATE_MAXROUTES = 1;		// error caused by a routing loop
+	STATE_PREQUEUE = 5;			// queue announcement (pre queue media) is played
+	STATE_QUEUED = 6;			// call is in the queue
+	STATE_ROUTED_AGENT = 7;		// ringing at the agent
+	STATE_FALLBACK = 8;			// call is falling back to queue because transfer target did not pickup
+	STATE_REROUTING = 9;		// call is rerouted to another agent in the same queue because target did not pickup with reroute time
+
+	// call routed to a special target
+	STATE_ROUTED = 10;			// range 10-19 is for calls routed to acd external targets
+	STATE_ROUTED_NOAGENTS = 10;	// forwarded because no agents are logged in
+	STATE_ROUTED_QUEUEFULL = 11;// forwarded because queue is full
+	STATE_ROUTED_EXPIRED = 12;	// forwarded because call time expired
+	
+	STATE_FORWARDED_EXTERN = 13;// call is forwarded/redirected/picked to an ACD external target
+	STATE_TRANSFERRED = 14;     // call is transferred to an ACD-external target
+	STATE_CALL_FORWARDED = 15;     // call was forwarded
+	STATE_ROUTED_BREAK_TARGET = 16;     // forwarded because other agents are unavailable or disabled and at least 1 agent is in break
+
+	// call connected to an agent
+	STATE_CONNECTED = 20;		// call is answered by an agent
+	STATE_HELD = 21;		// call is put on hold by an agent
+	STATE_OUTGOING = 25;		// outgoing call from an agent
+
+	STATE_AGENT_AVAILABLE = 30;		// agent switched state to available
+	STATE_AGENT_UNAVAILABLE = 31;	// agent switched state to unavailable
+
+	STATE_ENDED = 100;	// call ended normally
+	STATE_BUSY = 101;	// call ended in busy state
+	
+
+- Call from of state change handling:
+
+	- AgentCallObserver (initialized for every ACD agents in queues) 
+		- CallCtlTermConnTalkingEv --> [1] with STATE_CONNECTED
+		- CiscoTransferEndEv --> [2] with STATE_CALL_FORWARDED
+		- CiscoCallChangedEv --> [2] with STATE_CONNECTED
+		- CallCtlTermConnHeldEv --> [2] with STATE_HELD
+		- CallCtlTermConnTalkingEv --> [2] with STATE_CONNECTED
+									--> [2] with STATE_FORWARDED_EXTERN
+									
+	- ClientConnectionMina.handleEvents(...)
+		--> [2] 
+	
+	- AcdCall.doGetNewACDCall(...)
+		--> [2] with initialState
+	
+	- AcdCall.doRouted(...)
+		--> [2] with STATE_ROUTED_AGENT and other reason
+	
+	- AcdCallObserver (registered )
+		- CiscoTransferEndEv --> [2] with STATE_TRANSFERRED
+							--> [2] with STATE_CONNECTED for consultative transfer
+							
+	- AlertingTimeout.expiredEvent()
+		--> [2] with STATE_REROUTING
+	
+	- RPCallObserver
+		- alerting()
+			--> [2] with STATE_QUEUED
+		- established(...)
+			--> [2]
+		- offered(...)
+			--> [2] with STATE_OFFERED
+		- queueCall(...)
+			--> [2] with STATE_QUEUED
+		- startOutputStream(...)
+			--> [2] with STATE_PREQUEUE
+			
+	[2] - AcdCall.setState(ACDCallState state, CiscoCall call)
+		--> [1]
+	
+	[1]	--> AcdCall.setState(ACDCallState state, CiscoCall call, boolean skipPostCall)
+			--> AcdCall.doSetState(ACDCallState state, CiscoCall call, boolean skipPostCall)
+			
+			

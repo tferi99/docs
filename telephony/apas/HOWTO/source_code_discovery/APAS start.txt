@@ -1,0 +1,28 @@
+==========
+APAS start
+==========
+
+Started as WEB application and calling bootstrap servlet:
+		JTAPIServlet: load-on-startup = 1
+
+
+	JTAPIServlet.init()
+		- starting JTAPIThread								: bootstrap thread to load 	
+		- putting objects into servlet context attributes:
+			- JTAPIThread -> jtapi
+			- JTAPIThread.config -> config
+		- starting TimerDaemon	
+		
+	--> JTAPIThread.run()
+		-> loadConfig() 									: to set default configuration variables
+		-> props = new ANDProperties(config);				: override config from file (APP/classes/andphone.properties)
+		-> reading PERL config from /etc/apas/apas.conf		: overriding config from PERL script
+		-> loading 'config' DB table to override config variables
+		-> JMF initialization
+		-> ... ... ...
+		 
+		 
+For developers:
+
+	--> com.andtek.andphone.developer.util.DeveloperHelper.reloadConfig()
+		--> JTAPIThread.loadConfig()

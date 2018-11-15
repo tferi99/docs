@@ -1,0 +1,79 @@
+============
+VisualVM FAQ
+============
+
+- If I start a java process in a cygwin console, and then launch visualVm, the later cannot see the former.
+- Remote monitoring with VisualVM
+
+Troubleshooting
+---------------
+- ERROR: Cannot find Java 1.8 or higher
+- Plugins cannot be downloaded
+
+--------------------------------------------------------------------------------------------------------------------------------------
+If I start a java process in a cygwin console, and then launch visualVm, the later cannot see the former
+========================================================================================================
+I fixed the problem by running VisualVM from within Cygwin. If you prefer not to profile using a remote JMX connection, you can run both VisualVM and your 
+Java program using Cygwin:
+
+	Open the Cygwin Console window, navigate to visual_vm.exe and run that file from within the Cygwin environment.
+	
+Explanation:
+
+	VisualVM can automatically detect local applications running under the same user. 
+	So one explanation can be that cygwin process is running under the different user. 
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+Remote monitoring with VisualVM	
+================================
+
+- create policy file into target machine here $JAVA_HOME/bin/jstatd.all.policy :
+
+	grant codebase "file:${java.home}/../lib/tools.jar" {
+	permission java.security.AllPermission;};
+	
+- run jstatd:	
+
+	jstatd -J-Djava.security.policy=jstatd.all.policy
+
+- check if jstatd is runing:
+
+	netstat -nlp | grep jstatd
+	
+		tcp        0      0 :::1099                     :::*                        LISTEN      126341/jstatd
+		tcp        0      0 :::44762                    :::*                        LISTEN      126341/jstatd
+		unix  2      [ ]         STREAM     CONNECTED     495756 126341/jstatd
+		
+- call VisualVM and connect to remote host in Remote item using jstatd port (default is 1099).
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Cannot find Java 1.8 or higher
+=====================================
+Uncomment visualvm_jdkhome in visualvm.conf and specify home of JDK:
+
+	visualvm_jdkhome="d:\opt\java\jdk1.8"
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+Plugins cannot be downloaded
+============================
+You have error 503 if you want to download/update plugins.
+
+If you have old version of VisualVM (e.g. from JDK 1.8)	plugin URL points to deprecated location.
+To fix it:
+	- install the latest version from https://visualvm.github.io/download.html
+	
+	OR
+	
+	- change URL to:	
+	
+		https://visualvm.github.io/uc/8u131/updates.xml.gz
+	
+	in 
+	
+		VISUAL_VM/Tools/Plugins/[Settings]
+
+
+	

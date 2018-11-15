@@ -1,0 +1,53 @@
+===================
+CSSs and partitions
+===================
+
+-----------------------------------------------------------------------------------------------------------------------------
+Definitions
+===========
+CSS (Calling Search Space)
+--------------------------
+	Used when a caller calls a DN.
+	
+	- CSS contains Partitions which contains devices or DNs
+	
+		CSS -1---------------------*- Partition -1---------------------*- DN
+
+	- In CSS Partitions has an order.
+		
+	- If you are assigned to a CSS and you call a number, this number will be seached in partitions of this CSS.
+	
+	
+		Caller ---- calls a DN ----> Caller's CSS
+								->	Partition1 [DN11, DN12, DN13....]
+								->	Partition2 [DN21, DN22, DN23....]
+								....
+								->	PartitionN [DNn1, DNn2, DNn3....]
+
+Partition
+---------
+	If your DN is assigned to a partition you will be called if you are in CSS assigned to caller
+	and you are the 1st match in 
+
+	A set of DN's 
+	- Devices and DNs can be assigned to partitions.
+	- Partitions are assigned to CSS
+	
+		CSS -1---------------------*- Partition -1---------------------*- DN
+			
+	
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+Rules
+=====
+- If you configure a calling search space both on an IP phone line and on the device itself, CUCM CONCATENATES the two calling search spaces and 
+	places the LINE CALLING SEARCH SPACE IN FRONT of the device calling search space.
+	
+- Before you configure any partitions or calling search spaces, all directory numbers (DN) reside in a special partition named <None>, 
+	and all devices are assigned a calling search space also named <None>. When you create custom partitions and calling search spaces, 
+	any calling search space that you create also contains the <None> partition, while the <None> calling search space contains only 
+	the <None> partition.	
+	
+- Any device that is making a call can explicitly reach any dial plan entry that is left in the <None> partition.	

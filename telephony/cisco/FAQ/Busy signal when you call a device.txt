@@ -1,0 +1,17 @@
+==================================
+Busy signal when you call a device	
+==================================
+Possible reasons:
+	- Device is not in your domain.
+		Fix: Add device to your application user.
+		
+	- Device is a Route Point but conversation codec is not supported by Route Point.
+		Fix: Add codec to capabilities during registration. E.g.:
+		
+					// registering terminal
+					CiscoRouteTerminal term = (CiscoRouteTerminal) t;
+					CiscoMediaCapability[] cap = { 
+						new CiscoG711MediaCapability(), 
+						new CiscoG729MediaCapability()
+					};		
+					term.register(cap, CiscoRouteTerminal.DYNAMIC_MEDIA_REGISTRATION);

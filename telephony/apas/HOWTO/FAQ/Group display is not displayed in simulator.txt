@@ -1,0 +1,11 @@
+===========================================
+Group display is not displayed in simulator
+===========================================
+Simulator puts group display images for simulator into:
+
+	APAS/modules/testing/tmp 
+	
+Sometimes deploy doesn't create 'tmp' directory.
+
+- Create it.
+- Restart simulator.

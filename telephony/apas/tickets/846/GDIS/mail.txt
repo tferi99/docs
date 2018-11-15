@@ -1,0 +1,31 @@
+Hi Ferenc,
+
+as discussed I attached some logs for you.
+We did some more test calls and we had longer connected calls >10 sec and shorter ones.. but there is no difference noticeable.
+The majority of answered calls is not counted in the teams.
+
+The archive contains two logs:
+
+the first log is about the missing team counting.
+See the first three calls in file: acdreport_export (4).csv
+The second call made (state connected) was not counted in the team.
+The third call (state routed agent, caller disconnected while ringing) was counted.
+
+The second log contains information about the overflow problem (testing was done aroung 14:48).
+Basically there is a pilot 5910 with some agents (Team SSC1) on it and if the agents do not pickup after some seconds the call goes to pilot 5642.
+In the assigned queue for pilot 5642 are the same agents as in the queue for Pilot 5910.
+However, the pilot/queue 5642 itself is assigned to team SSC0.
+If there is a call now, that has overflowed from 5910 (team SSC1) to 5642 (team SSC0 but ONLY for the pilot) and an agent from team SSC1 picks up, the call will be counted for SSC0 instead of SSC1.
+My guess is that you simply did not implement that logic and strictly use the team, where the pilot is in.
+
+However the customer says that team SSC0 should only be counted in the case that all agents in the queue for pilot 5642 are busy and the call is queued straight away.
+If an agent associated to SSC1 gets a call, this should always be counted for the appropriate team the agent belongs to, not the team the pilot/queue belongs to.
+
+Let me know if you have any questions.
+As you may know this is a sensitive customer who expects quick progress…
+
+
+Gruß,
+
+Jens
+

@@ -1,0 +1,16 @@
+====================
+Primefaces resources
+====================
+
+Binaries (Mavern repository):
+-----------------------------
+	
+	http://repository.primefaces.org
+	(http://repository.prime.com.tr)
+	
+Sources (SVN repository):
+-------------------------
+
+	http://primefaces.googlecode.com/svn/
+	
+	

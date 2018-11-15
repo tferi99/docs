@@ -1,0 +1,67 @@
+===============
+Eclipse CDT FAQ
+===============
+
+- How to add library search path and library to a project?
+- How to add include search path a project?
+- If error "unresolved inclusion" appears next to #include statement
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+How to add library search path and library to a project?
+========================================================
+If you want to add library to a project in OS/path independent manner:
+
+	1. Call dialog "Project/Properties/C/C++ General/Paths and symbols/Library paths"
+	2. Button 'Add'.
+	3. Specify the following value:
+	
+			../common/Debug
+			
+		OR
+			
+			../common/Release
+			
+		depending of type of build.	
+
+	NOTE: Don't add a 'Workspace' or 'File sysytem' value, because in this case a full path value will be added to makefile 
+		and you wont be able to move project (to different location or OS).
+		
+	4. To add common library:
+	
+		- call dialog "Project/Properties/C/C++ Build/Settings/Tool Settings/Gcc (or Cygwin) C linker/Libraries"
+		- To add the library 'libcommon.a', add 'common' to the Libraries list. You might also want to add the directory 
+			this file is located to the Libraries Search Path (but you has been added this previously).
+
+			
+-------------------------------------------------------------------------------------------------------------------------------------------
+How to add include search path a project?
+=========================================
+If you want to add include path to a project in OS/path independent manner:
+
+	1. Call dialog "Project/Properties/C/C++ General/Paths and symbols/Includes/GNU C"
+	2. Button 'Add'.
+	3. Specify the following value:
+	
+		../common/src
+
+	NOTE: Don't add a 'Workspace' or 'File sysytem' value, because in this case a full path value will be added to makefile 
+		and you wont be able to move project (to different location or OS).
+
+		
+	4. You have to perform this for 'Release' and 'Debug' buid type, too.
+	
+	Because you has been added include directory to project you will able to load includes with '#include <>'.
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------------
+If error "unresolved inclusion" appears next to #include statement	
+==================================================================
+NOTE: If error "unresolved inclusion" (e.g stdio.h not found) appears next to #include statement, the "include paths for headers" are not set properly. 
+
+- Right click the Project Property/C,C++ General/Paths and Symbols
+- In "Includes" tab/Languages "GNU C" / Add...  
+	
+	"$CYGWIN_HOME\usr\include" 
+	
+  where $CYGWIN_HOME is a workspace variable pointing to Cygwin root directory in Windows filesystem.
+	

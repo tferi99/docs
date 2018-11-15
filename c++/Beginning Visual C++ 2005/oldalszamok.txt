@@ -1,0 +1,14 @@
+
+
+719	13. fejezet	menu/toolbar
+749	14. fejezet	drawing a windows
+801	15. fejezet	document/view
+859	16. fejezet	dialogs/control
+909	17. fejezet	storing/printing
+943	18. fejezet	dll
+963	19. fejezet	data
+1021	20. fejezet	data
+1073	21. fejezet	windows_forms
+1131	22. fejezet	data/windows_forms
+1173-ig tart
+

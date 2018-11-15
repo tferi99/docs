@@ -1,0 +1,130 @@
+=======================
+jQuery pocket reference
+=======================
+- 5 ways to call the jQuery function
+- Properties of jQuery object instances
+- jQuery selectors
+- Getting elements from result set
+- Extending jQuery
+
+----------------------------------------------------------------------------------------------------------
+5 ways to call the jQuery function
+==================================
+1. $('CSS selector' [, context])
+
+	To query for objects (in context - optionally) and wrap them into jQuery object.
+
+2. $(object)
+
+	To wrap a single object into jQuery object.
+
+	
+3. $('<HTML fragment>')
+
+	To create HTML elements and wrap them into jQuery object.
+	NOTES: 
+		- Created elements are NOT inserted into document automatically.
+		- String must be in angle brackets (<....>), otherwise jQuery will think you
+			are passing a CSS selector.
+	
+4. $(function)
+
+	To call a function AFTER document fully loaded and DOM is ready to manipulate.
+
+
+5. $(jQuery object)
+
+	To clone a jQuery object.
+	
+----------------------------------------------------------------------------------------------------------
+Properties of jQuery object instances
+=====================================
+.length		: The number of elements in the jQuery object.
+.selector	: source selector string 
+.context	: The DOM node context originally passed to jQuery(); by default the document
+.jquery		: A string containing the jQuery version number.
+
+
+----------------------------------------------------------------------------------------------------------
+jQuery selectors
+================
+- CSS Selectors:	$('...')
+
+	$('div.testDiv')
+	
+- XPath Selectors	???
+
+- Attribute Selectors:	$('elem[attr=value]')
+
+	$('div[class=abc]')		== $('div.abc')
+
+- Custom Selectors:		$('object:cust_sel')
+	
+	$(':hidden')
+	$('input:hidden')
+	
+See more: Packt.Publishing.jQuery.Reference.Guide.Aug.2007.pdf
+
+----------------------------------------------------------------------------------------------------------
+Getting  elements from result set
+=================================
+$(...) results a set of wrapper objects.
+
+If you want get specific WRAPPER object use ':eq' custom selector to get Nth element:
+
+	$('div:eq(3)')
+
+If you want get specific WRAPPED object get array from wrapper:
+
+	$('div')[3]
+
+  OR use get()
+	
+	$('div').get(3)
+	
+  NOTES: 
+	- get() without parameter provides the whole array
+	- get() allows negative index, so get(-1) gives the last element 
+  
+If you want to do somthing with all of wrapped object use each():
+
+	$(...).each(callback_function(index, element))
+
+	$('div').each(function(idx, element) {
+		alert(this);		// this is wrapped
+		alert($(this));		// this is wrapper again(!)
+	})
+	
+	
+	so 
+	
+	$('div').each(function(idx) {
+		$(this).hide();
+	})
+	
+	is the same as
+	
+	$('div').hide();
+	
+----------------------------------------------------------------------------------------------------------
+Extending jQuery
+================
+	
+$.fn.yourFunc = function() {
+	this.each(function() {
+		...
+	})
+}
+
+Inside that function, the this keyword is the collection of wrapped
+DOM elements that are to be operated upon.
+e.g:
+
+	$.fn.hideSlow = function() {
+			this.hide('slow');
+		})
+	}
+
+	--> $('div').hideSlow();
+
+

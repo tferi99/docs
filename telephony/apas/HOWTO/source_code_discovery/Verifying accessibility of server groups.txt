@@ -1,0 +1,41 @@
+========================================
+Verifying accessibility of server groups
+========================================
+
+- Call 
+- AXL server hints
+
+
+------------------------------------------------------------------------------------------------------------
+Call
+====
+
+--> com.andtek.andphone.global.servers.ServerGroup.run()
+
+	LOG:	ServerGroupVerifier for.*started					// during startup once
+
+	--------------------------- loop ----------------------------------
+		--> group.checkServerAvailability()
+		--> wait(group.availCheckInterval * 1000)    (default 10 secs)
+		
+		--> AXLServer.verifyConnection(boolean allowVersionSwitch)				// for AXL server
+		
+			LOG:	
+				VERIFY CONNECTION START
+				...
+				VERIFY CONNECTION END
+				
+
+
+------------------------------------------------------------------------------------------------------------
+AXL server hints
+================
+				
+AXLServer toString:
+
+	AXLServer[id,name,ip,user,***,available,version,connect_timeout,realVersion]
+
+	e.g:
+	AXLServer[1,Publisher,192.168.5.20,TOTH_APAS,***,false,9.0,timeout=10000,null]
+	
+	

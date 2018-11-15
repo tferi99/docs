@@ -1,0 +1,10 @@
+=======================
+Howto activate JMF log?	
+=======================
+Add config entry to database:
+
+	insert into config(module, param, val) values('global', 'AndtekInternalUseFeatures', 'true')
+		
+Location of log:
+
+	/tmp/jmf/jmf.log

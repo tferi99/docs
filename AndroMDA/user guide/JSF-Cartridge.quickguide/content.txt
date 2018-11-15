@@ -1,0 +1,14 @@
+================================================
+Andromda modelling for JSF cartridge quick start
+================================================
+1. Diagrams
+1.1 UseCases
+
+1.2 Activity diagrams
+2. Generated code in JSF cartridge
+2.1 UseCase servlet
+2.2 UseCase Form
+2.3 Controller
+3. Data exchange
+
+X. Rules for modeling for JSF plugin

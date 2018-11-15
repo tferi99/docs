@@ -1,0 +1,29 @@
+==========
+JMeter FAQ
+==========
+
+- Howto build a Web Test Plan?
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Howto build a Web Test Plan?
+============================
+1. Add a 'Thread Group'
+	The Thread Group tells JMeter the number of users you want to simulate, how often the users should send requests, 
+	and the how many requests they should send.
+	'Ramp period' tells JMeter how long to delay between starting each user. 
+	'Loop Count' tells JMeter how many times to repeat your test. 
+	
+2. Add HTTP request defaults.
+
+	Add --> Config Element --> HTTP Request Defaults.
+	
+	The HTTP Request Defaults element does not tell JMeter to send an HTTP request. 
+	It simply defines the default values that the HTTP Request elements use.
+	
+3. Add HTTP Requests	
+
+	Add --> Sampler --> HTTP Request
+	
+4.  Adding a Listener to View Store the Test Results
+
+		Add --> Listener --> Graph Results)

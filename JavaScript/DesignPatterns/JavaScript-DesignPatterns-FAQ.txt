@@ -1,0 +1,124 @@
+=============================
+JavaScript DesignPatterns FAQ
+=============================
+
+- Namespacing
+- Chaining
+- JSON
+- Self-Executing Functions
+- Singleton
+- Singleton 2
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+Namespacing
+============
+Global variables should be avoided in order to lower the possibility of variable naming collisions. 
+One way to minimize the number of globals is by namespacing your variables and functions. 
+The idea is simple: 
+
+	You create only one GLOBAL OBJECT and all your other variables and functions become PROPERTIES OF THAT OBJECT.
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------
+Chaining
+========
+You can chain object methods into a single line if you change void methods and return 'this'.
+
+	function Cat() {}
+
+	Cat.prototype = {
+		setName: function(name) {
+			this.name = name;
+			return this;
+		},
+		setColor: function(color) {
+			this.color = color;
+			return this;
+		}
+	}
+
+	cat.setName('Cirmi').setColor('gray');
+
+---------------------------------------------------------------------------------------------------------------------------------
+JSON
+====
+Bacause JSON is JavaScript Object Notation format, you can simply create an object from incoming data this way:
+
+	var obj = eval( '(' + xhr.responseText + ')' );
+		
+The problem with eval() is that it is insecure, so it's best if you use a little JavaScript library available from http://json.org/ 
+to parse the JSON data. Creating an object from a JSON string is still trivial:
+
+	var obj = JSON.parse(xhr.responseText);		
+	
+---------------------------------------------------------------------------------------------------------------------------------
+Singleton
+=========
+In JavaScript, because there are no classes, a singleton is the default and most natural pattern. Every object is a single object. 
+If you don't copy it and don't use it as a prototype of another object, it will remain the only object of its kind.
+
+The most basic implementation of the singleton in JavaScript is the object literal:
+
+	var single = {};	
+	
+---------------------------------------------------------------------------------------------------------------------------------
+Singleton 2
+===========
+If you want to use class-like syntax and still implement the singleton:
+
+	function Logger() {
+		if (typeof global_log === "undefined") {
+			global_log = this;
+		}
+		return global_log;
+	}
+	
+Test:
+		
+	var a = new Logger();
+	var b = new Logger();
+	alert(a === b); // true
+	
+This will be generated a global variable, which is huhrted by mistaken.
+Use instead a property of constructor method:
+
+	function Logger() {
+		if (typeof Logger.single_instance === "undefined") {
+			Logger.single_instance = this;
+		}
+		return Logger.single_instance;
+	}	
+
+---------------------------------------------------------------------------------------------------------------------------------
+Self-Executing Functions	
+========================
+This pattern is especially suitable for one-off initialization tasks performed when the script loads.
+
+	(function(){
+		// code goes here...
+	})()
+
+This pattern helps you keep the global namespace clean is to wrap your code in an anonymous function and execute that function immediately. 
+This way any variables inside the function are local (as long as you use the var statement) and are destroyed when the function returns.
+
+The self-executable pattern can be extended to create and return objects:
+
+	var MYAPP = {};
+	MYAPP.dom = function(){
+		// initialization code...
+		function _private(){
+			// some privatve stuff here
+		}
+		
+		// returned object
+		return {
+			getStyle: function(el, prop) {
+				console.log('getStyle');
+				_private();
+			},
+			setStyle: function(el, prop, value) {
+				console.log('setStyle');
+			}
+		};
+	}();

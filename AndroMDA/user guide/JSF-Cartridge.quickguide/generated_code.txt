@@ -1,0 +1,122 @@
+
+
+2. Generated code in JSF cartridge
+----------------------------------
+2.1 General rules of generating
+
+- Every GUI page called by redirecting (!not forward), so JSF navigation-rules contain <redirect/>
+	by default. For example:
+
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>korte-masodik-cli-state</from-outcome>
+            <to-view-id>/org/tferi/jsftest/usecases/Proba/masodik-cli-state.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
+
+
+Model element			=============>		Generated source
+-------------								----------------
+packege of usecase							- JAVA package contains all of generated stuff of this usecase (=USECASE_PACKAGE)
+
+
+usecase										- web/target/src/<USECASE_PACKAGE>/<NAME>.java
+												HttpServlet for usecase, this calls GUI pages by redirecting
+
+											- servlet configuration in web.xml where url-pattern is:	/<path>/<usecase>.jsf
+
+											- web/target/src/<USECASE_PACKAGE>/<NAME>FormImp.java
+												UseCase form: it stores parameters sent to a usecase from other usecases.
+													
+											- a forward entry in org.andromda.presentation.jsf.UseCaseForwards
+												forwards.put("<NAME>-usecase", "/<USECASE_PACKAGE>/<NAME>.jsf}"); 
+														
+											- <NAME>.title=<NAME> entry into message-resources.properties
+													
+											- menu item for calling usecase into menu.xhtml
+												<t:navigationMenuItem itemLabel="#{messages['<NAME>.title']}" action="#{<CONTROLLER>.<NAME>}" icon="/images/next-yellow.gif" />
+ 													
+													
+controller class							- web/target/src/<USECASE_PACKAGE>/<NAME>.java
+												Abstract base implementation controller class for usecase.
+
+											- web/src/main/java/<USECASE_PACKAGE>/<NAME>Impl.java
+												User implementation of controller operations.
+												
+											- Managed bean entry pointing to <NAME>Impl class into faces-config.xml
+											    <managed-bean>
+											        <managed-bean-name><NAME></managed-bean-name>
+											        <managed-bean-class>org.tferi.jsftest.usecases.Egyik.<NAME>Impl</managed-bean-class>
+											        <managed-bean-scope>request</managed-bean-scope>
+											    </managed-bean>
+												
+											- t:navigationMenuItem into menu.xhtml, where action is 
+												#{<CONTROLLER>.<USECASE>}, which calls usecase (see above).
+														
+														
+server side state							- method into controller, called to change to this state
+												private String _<NAME>(final <PREVIOUS-CLIENT-STATE NAME>FormImpl form) 
+												
+											- call this navigation method into controller, called by previos state
+												forward = _<NAME>(form);
+									
+deferrable events in server side state		- it can be reference a controller method, where name parameters can be mapped into
+												incoming or outgoing parameters
+											- generated a call of this controller method before calling this side:
+													<NAME>(form);
+													forward = _<THIS STATE>(form); 
+
+
+													
+													
+													
+deferrable events in client state			- NOT ALLOWED
+
+														
+														
+
+
+
+Manual editable files which overwrites another ones:
+
+	- web/src/main/css/*			---> web/target/src/css
+	- web/src/main/images/*			---> web/target/src/images
+	- web/src/main/skins/*			---> web/target/src/skins
+
+	NOTE: destination directory web/target/src/ by default, it changed to web/webresources/src/
+		in our projects.
+		
+Ignored model elements - this elements won't trigger generating anything:
+	- entry action in a state
+	- event between 
+	
+	
+	
+
+
+
+
+
+2.5 GUI elements
+----------------
+GUI elements are generated for every states with <<FrontEndView>> stereotype. Generation depends on GIU renderer implementation specified
+in AndroMDA project configuration (choosen by generatig project).
+
+Possible GUI implementations are available currently:
+- Struts
+- JSF
+	- JSP
+	- Facelets
+	
+Generted element using Facelets:
+(<name> = name of state)
+	- <name>.xhtml 			: XHTML for client state, it will include other XHTML belong to this state
+	- <name>-vars.xhtml		: XHTML to display variables from incoming signals. Label and a read only value are generated.
+	- <name>-<outgoing signal name>.xhtml
+							: XHTML for input form. Input form is generated for every outgoing signal where input fields 
+								name and type come from signal parameters. Some basic JavaScript validations are called 
+								by ADF.
+
+	

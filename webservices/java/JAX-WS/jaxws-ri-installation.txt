@@ -1,0 +1,12 @@
+==========================================
+Installation JAX-WS RI and using with JDK6
+==========================================
+1. Uncompress 
+2. Set JAXWS_HOME to bin diredtory under installation directory.
+3. Add JAXWS_HOME/bin to PATH - but before JAVA_HOME/bin to override tools.
+4. Add jaxb-api.jar and jaxws-api.jar to endorsed directory of JDK6:
+
+	$JAVA_HOME/jre/lib/endorsed
+	
+	
+	

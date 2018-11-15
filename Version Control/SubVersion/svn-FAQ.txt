@@ -1,0 +1,56 @@
+=======
+SVN FAQ
+=======
+
+- SVN command line tips
+- What is the relationship among revision, repository and projets?
+- How to get current revision checked out?
+
+--------------------------------------------------------------------------------------------------------
+SVN command line tips
+=====================
+To get info about SVN project from the current directory:
+
+	svn info
+	
+To get HEAD revision number:
+
+	svn log . -r 'HEAD' -q
+	
+To get changes:
+
+	svn diff
+	
+To get revision info:
+
+	svnversion
+	
+	
+--------------------------------------------------------------------------------------------------------
+What is the relationship among revision, repository and projets?
+================================================================
+The scope of revision number is the repository. If you have multiple projects
+in a repository they share the same revision number counter.
+
+The SVN docs recommend one project per repository, so that is definitely the way the creators intended it to go. 
+As you can have one server (apache or svnserve) maintain multiple repositories, 
+	
+The revision-numbers have no semantic use. The only thing is, that they are in sequential order. If you dump your 
+project and import it in another repository, your versions can get new revision-numbers. 
+So NEVER use the revision-numbers to mark your releases or similar stuff. 
+Make tags for releases (copies of the relevant revision).	
+
+Maybe it's best not to necessarily make one repo per "project", but rather one repo per "solution".
+
+
+--------------------------------------------------------------------------------------------------------
+How to get current revision checked out?
+========================================
+Command line in working directory:
+
+	svn info 
+
+TortoiseSVN:
+	- Rightclick mouse on working directorty
+	- There is TortoiseSVN tab with info
+	

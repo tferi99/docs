@@ -1,0 +1,31 @@
+===================
+APAS authentication
+===================
+
+- Authentication via profiles
+- Assigned roles
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Authentication via profiles
+===========================
+Authentication tries to login with authentication profiles, the order is the priority (see auth_profiles table).
+
+GWT login page
+--> com.andtek.andphone.global.gwtapp.server.RemoteDoAuthentication(AndGWTDataRecordIF logindataIF)
+	--> ANDRealm.authenticate(String username, String password)
+		
+		SELECT * FROM auth_profiles WHERE enabled=true ORDER BY priority
+
+		--> AbstractAuthenticationProfile.getAuthenticationProfileByID(profileID)
+			--> ret = profile.authenticate(username, password, this);
+			
+			Supported profiles are now:
+				- ADdomainAuthenticationProfile
+				- CucmAXLAuthenticationProfile
+				- LocalDBAuthenticationProfile
+				- TomcatDBAuthenticationProfile
+				
+				
+				
+			
+					

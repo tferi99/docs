@@ -1,0 +1,329 @@
+===========
+SSL/TLS FAQ
+===========
+- TLS basics
+- TLS record
+- TLS handshake
+- Testing SSL/TLS
+- TLS alerts
+- Certificates for SSL
+- How to get SSL certificate from a server?
+- How to eliminate certificate alerts in a browser?
+
+---------------------------------------------------------------------------------------------------------------------------------
+TLS basics
+==========
+(From RFC-5246)
+
+- The protocol is composed of two layers: 
+	1. the TLS Record Protocol 
+	2. and the TLS Handshake Protocol. 	
+	At the lowest level, layered on top of some reliable transport protocol (e.g., TCP [TCP]), is the TLS Record Protocol.
+	
+- Symmetric cryptography is used for data encryption.
+	The keys for this symmetric encryption are generated uniquely for each connection and are based on a secret 
+	negotiated by another protocol (such as the TLS Handshake Protocol).
+	
+- The Record Protocol can also be used without encryption.	
+
+- The TLS Record Protocol is used for encapsulation of various higherlevel protocols. 
+	One such encapsulated protocol, the TLS Handshake Protocol, allows the server and client to authenticate each other and
+	to negotiate an encryption algorithm and cryptographic keys before the application protocol transmits or receives its first byte of data.
+	
+- The TLS Handshake Protocol provides connection security that has three basic properties:
+	1. The peer’s identity can be authenticated using asymmetric, or public key, cryptography (e.g., RSA [RSA], DSA [DSS], etc.). 
+		This authentication can be made optional, but is generally required for at least one of the peers.
+	2. The negotiation of a shared secret is secure: the negotiated secret is unavailable to eavesdroppers, and for any authenticated
+		connection the secret cannot be obtained, even by an attacker who can place himself in the middle of the connection.
+	3. The negotiation is reliable: no attacker can modify the negotiation communication without being detected by the parties to
+		the communication.	
+		
+---------------------------------------------------------------------------------------------------------------------------------
+TLS record
+==========
+
+byte 0	: content type
+	- ChangeCipherSpec (0x14 20)
+	- Alert (0x15	21)
+	- Handshake (0x16	22)
+	- Application (0x17 23)
+	
+byte 1-2	Version
+byte 3-4	Length of message
+
+byte 5 		message type
+	- 0		HelloRequest
+	- 1		ClientHello
+	- 2		ServerHello
+	- 11	Certificate
+	- 12	ServerKeyExchange
+	- 13	CertificateRequest
+	- 14	ServerHelloDone
+	- 15	CertificateVerify
+	- 16	ClientKeyExchange
+	- 20	Finished
+	
+byte 6-8	message data length
+
+byte 9-		message data
+
+SEE ALSO: 
+	doc\software\network\ssl_tls.zip\Transport Layer Security (TLS).mht
+	
+---------------------------------------------------------------------------------------------------------------------------------
+TLS handshake
+=============
+ClientHello
+	A client sends a ClientHello message specifying the highest TLS protocol version it supports, a random number, a list of suggested CipherSuites and suggested compression methods
+	
+ClientHello
+	It contains the chosen protocol version, a random number, CipherSuite and compression method from the choices offered by the client. To confirm or allow resumed handshakes the server may send a session ID.
+	
+ServerHelloDone 
+	Message to indicate server is done with handshake negotiation.	
+	
+ClientKeyExchange	
+	The client responds with a ClientKeyExchange message, which may contain a PreMasterSecret, public key, or nothing. 	
+
+ChangeCipherSpec 
+	Essentially telling the other side , "Everything I tell you from now on will be authenticated (and encrypted if encryption parameters were present in the server certificate)." 
+	
+	
+	
+Simple TLS handshake:
+	CLIENT										SERVER
+			--- Handshake: ClientHello	--->					
+			<--- Handshake: ServerHello ---
+			<--- Handshake: Certificate ---
+			<--- Handshake: ServerHelloDone ---
+			--- Handshake: ClientKeyExchange --->
+			--- ChangeCipherSpec --->							<<<<<<< CLIENT: Everything I tell you from now on will be authenticated (and encrypted, if encryption was negotiated).
+			--- Handshake: Finished (ENCRYPTED) --->
+			<--- ChangeCipherSpec ---							<<<<<<< SERVER: Everything I tell you from now on will be authenticated (and encrypted, if encryption was negotiated).
+			<--- Finished (ENCRYPTED) ---
+			
+			=== Application (ENCRYPTED) ===>
+			<=== Application (ENCRYPTED) ===
+			...
+			...
+	
+Client-authenticated TLS handshake
+	CLIENT										SERVER
+			--- Handshake: ClientHello	--->
+			<--- Handshake: ServerHello ---
+			<--- Handshake: Certificate ---
+			<--- Handshake: CertificateRequest ---			
+			<--- Handshake: ServerHelloDone ---
+			--- Handshake: Certificate --->
+			--- Handshake: ClientKeyExchange --->
+			--- Handshake: CertificateVerify --->
+			--- ChangeCipherSpec --->							<<<<<<< CLIENT: Everything I tell you from now on will be authenticated (and encrypted, if encryption was negotiated).
+			--- Handshake: Finished (ENCRYPTED) --->
+			<--- ChangeCipherSpec ---							<<<<<<< SERVER: Everything I tell you from now on will be authenticated (and encrypted, if encryption was negotiated).
+			<--- Finished (ENCRYPTED) ---
+			
+			=== Application (ENCRYPTED) ===>
+			<=== Application (ENCRYPTED) ===
+			...
+			...
+	
+Resumed TLS handshake	
+	CLIENT										SERVER
+			--- Handshake: ClientHello	--->
+			<--- Handshake: ServerHello ---
+			<--- ChangeCipherSpec ---							<<<<<<< SERVER: Everything I tell you from now on will be authenticated (and encrypted, if encryption was negotiated).	
+			<--- Finished (ENCRYPTED) ---
+			--- ChangeCipherSpec --->							<<<<<<< CLIENT: Everything I tell you from now on will be authenticated (and encrypted, if encryption was negotiated).
+			--- Handshake: Finished (ENCRYPTED) --->
+			
+			=== Application (ENCRYPTED) ===>
+			<=== Application (ENCRYPTED) ===
+			...
+			...
+
+			
+			
+---------------------------------------------------------------------------------------------------------------------------------
+Testing SSL/TLS			
+================
+
+Tools
+-----
+- SSLScan
+	
+	SSLScan is a fast SSL port scanner. SSLScan connects to SSL ports and determines 
+	
+		- what ciphers are supported
+		- which are	the servers  preferred  ciphers
+		- which  SSL  protocols  are supported  
+		- and returns  the   SSL   certificate.   
+		
+		Client certificates / private key can be configured and output is to text / XML.
+
+		sslscan [Options] [host:port | host]
+		
+		Supported platforms: Linux, Windows
+		
+		
+- Portecle
+
+	Portecle is a user friendly GUI application for creating, managing and examining keystores, keys, 
+	certificates, certificate requests, certificate revocation lists and more.
+	
+	How to examine an SSL/TLS connection:
+	
+		- From the Examine menu, choose Examine SSL/TLS Connection.
+		- The Examine SSL/TLS Connection dialog will appear.
+		- Enter the host name or IP address for the connection to be examined, for example sourceforge.net.
+		- Enter the port number for the connection to be examined, for example 443 for HTTPS.
+		- Click on the Examine button.
+		- The Certificate Details for SSL/TLS Connection dialog will appear.
+		- After viewing the details acknowledge the dialog by pressing the OK button.
+
+- OpenSSL
+
+	Exporting SSL certificate from a server:
+
+	openssl s_client -host <host> -port <port> -prexit -showcerts  </dev/null
+
+
+SEE ALSO:
+	doc\software\network\ssl_tls\OpenSSL-FAQ.txt
+	
+---------------------------------------------------------------------------------------------------------------------------------
+TLS alerts
+==========
+(From RFC-5246)
+
+	enum { warning(1), fatal(2), (255) } AlertLevel;
+	enum {
+		close_notify(0),
+		unexpected_message(10),
+		bad_record_mac(20),
+		decryption_failed_RESERVED(21),
+		record_overflow(22),
+		decompression_failure(30),
+		handshake_failure(40),
+		no_certificate_RESERVED(41),
+		bad_certificate(42),
+		unsupported_certificate(43),
+		certificate_revoked(44),
+		certificate_expired(45),
+		certificate_unknown(46),
+		illegal_parameter(47),
+		unknown_ca(48),
+		access_denied(49),
+		decode_error(50),
+		decrypt_error(51),
+		export_restriction_RESERVED(60),
+		protocol_version(70),
+		insufficient_security(71),
+		internal_error(80),
+		user_canceled(90),
+		no_renegotiation(100),
+		unsupported_extension(110),
+		255)
+	} AlertDescription;
+
+	struct {
+		AlertLevel level;
+		AlertDescription description;
+	} Alert;
+		
+For detailed description of alerts see RFC-5246.
+
+
+		
+---------------------------------------------------------------------------------------------------------------------------------
+Certificates for SSL
+====================
+Client should contain/access a certificate which can verify signed resources.
+Certificates are identified by CN field.
+
+The Common Name (CN), also known as the Fully Qualified Domain Name (FQDN), is the characteristic value within a Distinguished Name. 
+
+The Common Name (also CN) identifies the host name associated with the certificate, for example www.example.com or example.com.
+It consists of a single host name in case of a single-name certificate (e.g. example.com, www.example.com), or a wildcard name 
+in case of a wildcard certificate (e.g. *.example.com). In all cases, it is not an URL and therefore it doesn’t include any protocol 
+(e.g. http:// or https://), port number, or pathname.
+
+The common name represents the name protected by the SSL certificate. The certificate is valid only if the request hostname matches the certificate common name. 
+Most web browsers displays a warning message when connecting to an address that does not match the common name in the certificate.
+
+	E.g:	
+		if URL: 
+		
+			 https://idp2.example.com:8443/openam/saml2/jsp/exportmetadata.jsp?entityid=https://idp2.example.com:8443/openam&realm=/MSAD
+			 
+		then you need something like this:
+	
+			Alias name: tomcat
+			Creation date: Jul 19, 2018
+			Entry type: PrivateKeyEntry
+			Certificate chain length: 1
+			Certificate[1]:
+			Owner: CN=idp2.example.com, OU=Tomcat, O=Tomcat, L=Tomcat, C=HU					<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			Issuer: CN=idp2.example.com, OU=Tomcat, O=Tomcat, L=Tomcat, C=HU
+			Serial number: 216629f6
+			Valid from: Thu Jul 19 16:08:07 CEST 2018 until: Sun Dec 03 15:08:07 CET 2045
+			Certificate fingerprints:
+					 MD5:  81:A0:17:05:18:5B:F9:38:A4:47:FE:A5:B5:4A:E9:2B
+					 SHA1: 04:FF:BC:1B:61:B9:AA:66:D7:05:A1:58:89:A2:C5:3B:4B:83:6F:23
+					 SHA256: 20:29:92:64:21:8C:11:4A:52:1F:8A:1D:BF:C0:0B:91:E6:0F:26:52:39:84:92:B1:92:E2:50:40:12:16:2E:88
+					 Signature algorithm name: SHA256withRSA
+					 Version: 3
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+How to get SSL certificate from a server?
+=========================================
+Method 1: sslscan
+
+		sslscan [Options] [host:port | host]
+		
+
+Method 2:
+
+		openssl s_client -host <host> -port <port> -prexit -showcerts  </dev/null
+		
+---------------------------------------------------------------------------------------------------------------------------------
+How to eliminate certificate alerts in a browser?
+=================================================
+Sometimes when you are connecting to a server with HTTPS browser issues a warning about this site is not secure (e.g. Chrome: Your connection is not private).
+Here you can ignore this warning and you can go to site or you can leave this page.
+
+Possible causes:
+	- Server has self-signed certificate so it's not signed by a well-known CA (installed with browser) - so certificate is not trusted.
+	
+		FIX: 
+			Server side solution: Sign server certificate by a CA. Or create you CA cerificate and sign server certificate with this CA certificate.
+			In this case you have to install CA certificate into your servers and client browsers.
+		
+	
+	- Server certificate is CA signed.
+	
+		FIX: 
+			Check if CA certificate is installed into browser (Trusted Root Certificate Authorities).
+			If not, install it.
+
+	- Name-mismatch:
+	
+		Sometimes URL typed into the browser and the information contained in the certificate don't match.
+		The CN field of the subject should contain FQDN of the site. Access site always with matching FQDN.
+		
+		In additionally, certificates have extended SAN (Subject Alternative Name) fields which should contain exact information:
+		
+		For example:
+		
+			X509v3 Extensions:
+				X509v3 Subject Alternative Name:
+					DNS:ceerd-openam.andtek.cee.cs.eilab.biz, IP Address:10.51.51.120
+		
+		
+	!!! IMPORTANT !!!		
+		
+	After importing certificates into a browser always restart it, e.g. in Chrome:
+	
+		chrome://restart
+		
+		

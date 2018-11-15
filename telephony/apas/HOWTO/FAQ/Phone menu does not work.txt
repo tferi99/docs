@@ -1,0 +1,8 @@
+========================
+Phone menu does not work
+========================
+
+Possible reasons:
+	- Apas server IP was not configured and menu URLs contains the default 127.0.0.1.
+	
+		Fix: go to Global/Configuration and set 'AndPhone Server/Name IP' field.

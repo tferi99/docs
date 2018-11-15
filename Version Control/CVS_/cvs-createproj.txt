@@ -1,0 +1,29 @@
+How to create project (in our network)
+======================================
+
+Example application: projecttime
+
+
+1. Login
+Host:	ns.qualysoft.hu
+User:	cvs
+Pwd:	tomsrt...
+
+
+2. Call createproject.sh
+	
+	createproject.sh projecttime
+
+
+3. Adminisztration of project:
+
+	http://ns.qualysoft.hu/cvstrac/projecttime/login
+	Default user/pwd:	setup/setup
+
+	
+4. Checkout project
+   IMPORTANT NOTE:
+   You have to check-out module with correct cvsroot setting (in WinCVS)!
+
+	:pserver:tferi@ns.qualysoft.hu:/home/cvs/projecttime
+

@@ -1,0 +1,169 @@
+============
+Facelets FAQ
+============
+
+- How to use JSP tags in facelets page?
+- Debugging Facelets page.
+
+Tag libraries
+-------------
+- How to declare tag libraries in page using Facelets?
+- Loading tag libraries
+
+Parameters
+----------
+- Passing action methods as arguments to facelets components
+
+-----------------------------------------------------------------------------------------------------------------
+How to use JSP tags in facelets page?
+=====================================
+You cannot, Facelets pages are NOT JSP pages. Thay use another view handler.
+JSF, JSTL and other tags are re-implemented (maybe wrapped) in Facelets.
+
+If you want to create your own Facelets tag inherint from:
+
+	com.sun.facelets.tag.TextHandler
+	
+	
+-----------------------------------------------------------------------------------------------------------------
+Debugging Facelets page
+=======================
+The UI Debug tag allows you to display helpful information about the JSF component tree and scoped variables in your 
+browser when you test your JSF pages. The hotkey attribute specifies a key combination (CTRL + SHIFT + D is the default value) 
+to display the popup window containing the information. The UI Debug tag can be enabled or disabled by setting the rendered attribute.
+
+NOTE: Put UI Debug tag into <ui:define> tag.
+
+Example:
+
+	<h:commandButton value="Continue Shopping" action="#{shoppingCartBean.saveCart}">
+		<ui:debug />
+	</h:commandButton>
+
+Tag Attributes
+
+	hotkey	
+ 
+		The key to press with 'CTRL' + 'SHIFT' to display the debug popup window. The default value 
+		is CTRL + SHIFT + D. This attribute does not accept EL expressions.
+		
+	rendered	
+ 
+		A value-binding expression that evaluates to a Boolean condition indicating if this component 
+		should be rendered.
+	
+!!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!!!!!!!!!!!!
+
+<ui:debug /> will be rendered as normal JavaScript fragment, like this:
+
+	function faceletsDebug(URL) { day = new Date(); id = day.getTime(); eval("page" + id + " = window.open(URL, '" + id + "', 'toolbar=0,
+	scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=600,left = 240,top = 212');"); };
+	var faceletsOrigKeyup = document.onkeyup; document.onkeyup = function(e) { if (window.event) e = window.event; if (
+	String.fromCharCode(e.keyCode) == 'D' & e.shiftKey & e.ctrlKey) 
+	faceletsDebug('/todo/pages/login.jsf?facelets.ui.DebugOutput=1233842649038'); else if (faceletsOrigKeyup) faceletsOrigKeyup(e); 
+	};
+
+So if your page contains an <ui:composition>, put define tag into a <ui:define> .
+!!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!!!!!!!!!!!!	
+	
+-----------------------------------------------------------------------------------------------------------------	
+How to declare tag libraries in page using Facelets?
+====================================================
+Facelets needs valid XML with namespace support for compilation. To use a tag library in our page, we
+must declare it by using its namespace.
+
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:h="http://java.sun.com/jsf/html">
+		
+		....
+	</html>
+	
+
+Tag library namespaces:
+	Namespace                           Prefix          Library
+	---------                           ------          -------
+	http://www.w3.org/1999/xhtml        --              XHTML
+	http://java.sun.com/jsf/facelets    ui              Facelets Templating
+	http://java.sun.com/jsf/core        f               JSF Core
+	http://java.sun.com/jsf/html        h               JSF HTML
+	http://myfaces.apache.org/tomahawk  t               MyFaces Tomahawk
+	http://myfaces.apache.org/sandbox   s               MyFaces Tomahawk Sandbox
+	http://myfaces.apache.org/trinidad  tr              MyFaces Trinidad
+	http://java.sun.com/jstl/core       c               JSTL Core
+	http://java.sun.com/jsp/jstl/fmt    fn              JSTL Functions
+	
+-----------------------------------------------------------------------------------------------------------------	
+Loading tag libraries
+=====================
+Searching strategies:
+1. *.taglib.xml undef META-INF of JARSs
+
+2. facelets.LIBRARIES parameter of web.xml
+
+
+-----------------------------------------------------------------------------------------------------------------	
+Passing action methods as arguments to facelets components
+==========================================================
+Method1:
+--------
+	You have to pass 2 arguments for every action:
+		- target bean
+		- target method 
+		
+	then you will be able to use them in template, but in this way:
+
+			<h:commandButton action="#{targetBean[targetMethod]}"
+
+	For example:
+
+		Caller:
+		
+			<ui:param name="currentBean" value="#{wagPersonBean}"/>
+			<ui:param name="forwardFunc" value="forward"/>
+			
+		Template:
+
+			<h:commandButton action="#{currentBean[forwardFunc]}"/>
+
+
+		This will call wagPersonBean.forward() .
+
+Method2:
+--------
+	Passed a single argument:
+		- bound action listener
+
+		Caller:
+			<ui:param name="okActionListener" value="#{subjectBrowserController.categoryChangeListener}"/>
+
+		Template:
+			<h:commandButton value="#{msg['global.button.ok']}" actionListener="#{categoryBrowserDialogController.onDialogOk}">
+				<f:actionListener binding="#{subjectBrowserController.categoryChangeListener}"/>
+			</h:commandButton>
+
+		Controller:
+
+			public ActionListener getCategoryChangeListener()
+			{
+				return categoryChangeListener;
+			}
+		
+			ActionListener categoryChangeListener = new ActionListener()
+			{
+				@Override
+				public void processAction(ActionEvent actionEvent) throws AbortProcessingException
+				{
+					tvSubjs.setActiveIndex(0);
+				}
+			};
+
+
+
+
+
+
+
+
+

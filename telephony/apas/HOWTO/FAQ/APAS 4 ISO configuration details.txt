@@ -1,0 +1,8 @@
+================================
+APAS 4 ISO configuration details
+================================
+
+Tomcat home:		/usr/share/tomcat5		---> /var/lib/tomcat5
+Keystore:			~/.keystore -> /var/lib/tomcat5/.keystore
+Log:				/var/log/tomcat5/andphone.log
+					/var/log/tomcat5/catalina.out

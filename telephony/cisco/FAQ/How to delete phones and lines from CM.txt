@@ -1,0 +1,12 @@
+=======================================
+How to delete phones and lines from CM?
+=======================================
+
+1. Delete phones from Device/Phone
+
+2. Search for unassigned lines in
+	
+		Call Routing/Route Plan Report
+		
+	where 'Find' filter is 'Unassigned DN'
+	

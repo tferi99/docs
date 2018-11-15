@@ -1,0 +1,8 @@
+===============================================================
+How to change TFTP server or Device name in Cisco Communicator?
+===============================================================
+If you start Cisco Communicator you cannot change these values by default.
+
+Start application 'Run as administrator' and you will be able to change them.
+
+

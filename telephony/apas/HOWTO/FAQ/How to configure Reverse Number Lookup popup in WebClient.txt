@@ -1,0 +1,23 @@
+==========================================================
+How to configure Reverse Number Lookup popup in WebClient?
+==========================================================
+Caller name will be resolved into name and additional info by Reverse Number Lookup (RNL) service.
+It can be 
+
+- Create a directory
+
+- Add directory to a directory group
+
+- Create a client profile for WebClient
+
+- Assign directory group as Lookup Group to this profile.
+
+	APAS/Client/Profiles/->edit/[Lookup]/(Lookup Group)
+	
+-------------------------------------------------	
+Test
+====
+- Open WebClient
+- Add DN of a phone to directory configured for RNL (see above)
+- Call WebClient DN from this DN
+

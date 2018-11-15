@@ -1,0 +1,126 @@
+======================
+Spring annotations FAQ
+======================
+
+- What's the difference between @Component, @Repository & @Service annotations
+- Dependency injection with annotations
+- Full @Configuration vs 'lite' @Beans mode?
+- @Configuration vs @Beans
+
+------------------------------------------------------------------------------------------------------------------------------
+What's the difference between @Component, @Repository & @Service annotations
+============================================================================
+		
+|------------------------------------------------------------------|
+| Annotation | Meaning                                             |
++------------+-----------------------------------------------------+
+| @Component | generic stereotype for any Spring-managed component |
+| @Repository| stereotype for persistence layer                    |
+| @Service   | stereotype for service layer                        |
+| @Controller| stereotype for presentation layer (spring-mvc)      |	
+|------------------------------------------------------------------|
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Dependency injection with annotations
+=====================================
+Configuration:
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+OR
+	<context:annotation-config />
+	
+	
+@Required
+
+	To ensure that a property is injected with a value and avoid NPE, use the @Required annotation:
+	
+		@Required
+		public void setTreasureMap(TreasureMap treasureMap)
+		{
+			this.treasureMap = treasureMap;
+		}
+
+@Autowired
+	It injects beans by type.
+	
+	- It looks for candidate class by type.
+	- By default, all the properties with @Autowired are required. To set it optional:
+	
+		@Autowired(required = false)
+		...
+		
+	- It can be used for (even non-public) fields, setter methods, configurator methods (with an arbitrary name and an arbitrary
+		number of arguments), constructors.
+
+		@Autowired
+		private TreasureMap treasureMap;
+
+		@Autowired
+		public void directionsToTreasure(TreasureMap treasureMap)
+		{
+			this.treasureMap = treasureMap;
+		}
+
+	- The @Autowired annotation can also be applied to a property of array type to have Spring auto-wire all
+		the matching beans.
+		
+		@Autowired
+		private PrefixGenerator[] prefixGenerators;
+	OR
+		@Autowired
+		private List<PrefixGenerator> prefixGenerators;		
+		
+	- If Spring notices that the @Autowired annotation is applied to a type-safe java.util.Map with strings
+		as the keys, it will add all the beans of the compatible type, with the bean names as the keys, to this map.
+		
+		@Autowired
+		private Map<String, PrefixGenerator> prefixGenerators;		
+		
+		
+@Qualifier		
+	By default, auto-wiring by type will not work when there is more than one bean with the compatible type
+	in the IoC container. However, Spring allows you to specify a candidate bean by providing its name in
+	the @Qualifier annotation.
+	
+	<bean id="datePrefixGenerator" ..../>
+
+	@Autowired
+	@Qualifier("datePrefixGenerator")
+	private PrefixGenerator prefixGenerator;
+
+	
+	
+------------------------------------------------------------------------------------------------------------------------------
+Full @Configuration vs 'lite' @Beans mode?
+==========================================
+FROM:	spring-framework-reference-4.3.9.pdf
+
+When @Bean methods are declared within classes that are not annotated with @Configuration
+they are referred to as being processed in a 'lite' mode. For example, bean methods declared in
+a @Component or even in a plain old class will be considered 'lite'.
+Unlike full @Configuration, lite @Bean methods cannot easily declare inter-bean dependencies.
+Usually one @Bean method should not invoke another @Bean method when operating in 'lite' mode.
+Only using @Bean methods within @Configuration classes is a recommended approach of
+ensuring that 'full' mode is always used. This will prevent the same @Bean method from accidentally
+being invoked multiple times and helps to reduce subtle bugs that can be hard to track down when
+operating in 'lite' mode.
+
+
+------------------------------------------------------------------------------------------------------------------------------
+@Configuration vs @Beans
+========================
+@Component and @Bean do two quite different things, and shouldn't be confused.
+
+@Component (and @Service and @Repository) are used to auto-detect and auto-configure beans using classpath scanning. 
+There's an implicit one-to-one mapping between the annotated class and the bean (i.e. one bean per class). 
+Control of wiring is quite limited with this approach, since it's purely declarative.
+
+@Bean is used to explicitly declare a single bean, rather than letting Spring do it automatically as above. 
+It decouples the declaration of the bean from the class definition, 
+and lets you create and configure beans exactly how you choose.
+
+
+
+

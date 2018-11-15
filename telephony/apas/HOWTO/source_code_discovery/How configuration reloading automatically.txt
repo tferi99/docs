@@ -1,0 +1,26 @@
+==========================================
+How configuration reloading automatically?
+==========================================
+
+Some configuration variables loading from andphone.properties which overrides variables loaded from database.
+andphone.properties is loading into application by ANDProperties which implements FileChangeListener which driven by FileMonitor.
+
+FileMonitor checks lastModified of target file and fires an event to registered FileChangeListeners.
+
+
+Configuration
+-------------
+ANDProperties constructor
+--> reloadProperties()
+	--> setCheckPeriod(Long.parseLong(props.getProperty("propCheckPeriod")));
+		'propCheckPeriod' loaded just from the SAME file reloaded here
+		--> FileMonitor.addFileChangeListener(this, propfile, checkPeriod);
+			
+		
+Reloading content
+------------------
+FileMonitorTask.run()
+	if != lastModified
+		--> FileMonitor.fireFileChangeEvent(...)
+			--> ANDProperties.fileChanged(...)
+				--> reloadProperties()

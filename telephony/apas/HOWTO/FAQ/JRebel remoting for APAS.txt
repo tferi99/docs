@@ -1,0 +1,134 @@
+========================
+JRebel remoting for APAS
+========================
+1. Create rebel.xml into src directory:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+		<classpath>
+			<dir name="D:/usr/andphone4/war/WEB-INF/classes">
+			</dir>
+		</classpath>
+	</application>
+
+	
+	<dir> should point into /andphone4/war/WEB-INF/classes in your project directory.
+
+2. Create rebel-remote.xml next to rebel.xml:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<rebel-remote>
+		<id>apas</id>
+		<url>http://192.168.5.114:8080/andphone/</url>
+	</rebel-remote>
+	
+
+	<url> should contain host address of remote APAS.
+	
+3. Copy rebel.xml and rebel-remote.xml to into remote application here:
+
+		/var/lib/tomcat5/webapps/andphone/WEB-INF/classes
+	
+4. Copy jrebel.jar and your license file to remote server under
+
+		/opt/jrebel
+
+5. JRebel writes log file next to JAR, so set write permission for tomcat user to this directory, or simply
+
+		chmod 777 /opt/jrebel
+
+6. Set javaagent JVM parameter in Tomcat startup script:
+
+Insert this line to the start of /usr/bin/dtomcat5
+
+		JAVA_OPTS="$JAVA_OPTS -javaagent:/opt/jrebel/jrebel.jar -Drebel.remoting_plugin=true -Drebel.log=true"
+
+	OPTIONAL
+		By default Jrebel-Remoting extracts the deployed application to a temp folder when a server starts, reverting back to the original state (as if nothing has been uploaded via remoting). 
+		When building a project in Eclipse, the application is updated to the current state reflecting the source in your workspace.
+
+	To skip reverting back to the original state, add 
+	
+		-Drebel.remoting.persistent=true in the JVM args.
+		
+	JAVA_OPTS="$JAVA_OPTS -javaagent:/opt/jrebel/jrebel.jar -Drebel.remoting_plugin=true -Drebel.log=true -Drebel.remoting.persistent=true"
+
+7. JRebel creates .jrebel directory under
+
+		/usr/share/tomcat5
+	
+	so add write permission to tomcat user, or simply:
+	
+		chmod 777 /usr/share/tomcat5
+	
+	It contains JRebel state files and deployment cache directory.
+	
+8. OPTIONAL - setup remote debugging:
+
+	Add jpda option to Tomcat start in:			/etc/init.d/tomcat
+
+	$SU - $TOMCAT_USER -c "$TOMCAT_SCRIPT jpda start" >> $TOMCAT_LOG 2>&1
+
+	Remote debug agent will listen on port:		8000
+
+	SEE ALSO:	
+		Howto remote debug APAS ISO.txt
+
+		
+Test
+----
+If you have a good configuration, binaries will be synchronized automatically during Tomcat startup or during building changes.
+For this check menu
+
+	PROJECT/JRebel/JRebel Remoting: Automatic Sync
+
+or synchronize manually with:
+
+	PROJECT/JRebel/JRebel Remoting: Sync Now!
+	
+Tomcat log contains:
+
+	JRebel-remote: Creating RebelRemotingContext from RebelServletContext
+
+	
+	
+Tips
+----
+- Tracing JRebel log:
+
+	tail -f /opt/jrebel/jrebel.log
+
+- It is recommended to also open a console view in Eclipse as it displays useful information about remoting progress (and gives feedback when something is wrong).
+
+
+Troubleshouting
+---------------
+Remote server error response on sync:
+
+1.
+	Starting manual synchronization for project: apas
+	Directory war/WEB-INF/classes/ will be used for uploading
+	Connecting to http://192.168.5.114:8080/andphone/
+	Server responded with an error: null
+	Unable to initialize communication with remote machine at url: http://192.168.5.114:8080/andphone/
+
+	- Check URL of remote APAS
+	- Check start of Tomcat log for problems:
+
+		- YOUR JREBEL LIMITED LICENSE IS NOT VALID YET (valid from Sun Sep 02 15:45:06 CEST 2012)!
+	
+		- Check system date of remote APAS, maybe it contains date out of license date range.
+	
+2.	
+	ERR_UNKNOWN_REBEL_ID
+	
+	Rebel ID found in local rebel-remote.xml not found in server side rebel-remote.xml. 
+	
+	Fix:	
+	- either re-deploy the whole application to remote host manually
+	- or copy just rebel.xml and rebel-remote.xml to remote host.
+	
+	
+SEE ALSO:
+	http://zeroturnaround.com/software/jrebel/remoting/?source=eclipse-config
+		

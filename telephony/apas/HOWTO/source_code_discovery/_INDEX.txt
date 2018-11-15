@@ -1,0 +1,108 @@
+==============================
+APAS 4/5 source code discovery
+==============================
+
+General
+-------
+- Important locations
+- Version number
+
+
+Configuration
+-------------
+- How configuration reloading automatically?
+- How to get CUCM password?
+- How APAS redirects on error 404
+
+Startup
+-------
+- APAS start
+
+GWT
+---
+- GWT page development pattern
+- GWT page menu rendering
+- GWT event handling
+- Calling APAS sidemenu and loading a page
+
+Calls/ACD
+---------
+- ACD calls
+- ACD history management
+- ACD Group categories and statistics reports - APAS4
+- Call classification
+- Call states changes
+- CallList
+
+Group
+-----
+- Generating group display images
+- Group pickup
+
+Desktop client
+--------------
+- Desktop client - APAS communication
+- Phone association with desktop client
+
+
+Media
+-----
+- Queue media upload
+- Queue media streaming
+- Silent monitoring
+
+Recording
+---------
+- How recorder announcement works?
+- Recording
+- Playback recording
+- Recording XML services
+
+Network, security
+------------------
+- APAS server connections
+- Certificate management of APAS
+- APAS authentication
+- FTP client
+- Secure JTAPI and CAPF
+- How to get IP address of a phone in APAS?
+
+Build
+-----
+- APAS update
+- APAS build on Jenkins		
+
+Background infrastructure
+-------------------------
+- Background jobs
+- ExpireTimeout
+- Verifying accessibility of server groups
+
+Reporting
+---------
+- JasperReports integration
+- Custom reports
+
+Maintenance
+-----------
+- Backup-restore
+
+WebClient
+---------
+- RNL popup
+- WebClient pushed events
+- WebClient authentication
+
+REST API
+--------
+- REST-API authentication
+
+Other
+-----
+- Phone Menu
+- Broadcast
+- CDR
+- How to managed licenses?
+- Event logging
+- Getting screenshot from phones
+

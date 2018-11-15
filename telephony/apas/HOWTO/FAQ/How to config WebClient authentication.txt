@@ -1,0 +1,134 @@
+=======================================
+How to config WebClient authentication?
+=======================================
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Authentication process:
+=======================================
+
+1. Authentication started by calling LoginSvc.logMeIn(), it's the FIRST operation of all page controllers.
+2. If authenticated it tries to get client profile and loads profile settings, 
+	profiles are bound to a user via authenticated security profile which is bound to a user pool, which referred from a client profile:
+	
+                                1          1              *             1 
+	    Authentication profile -------------- User pool ------------------ Client (web) profile
+	
+3. Finally it loads user settings
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+1. Create a pool
+	APAS/Pools
+		- Type: Users
+		
+		
+2. Create authentication profile
+	- Type: CUCM AXL 
+	- choose 'Default AXL ServerGroup'
+	- assign pool
+	
+3. Set priority of profile to highest (OPTIONAL)
+	- APAS/Authentication Profile
+	- set profile to the first position
+	- press 'Save Priority'
+	
+4. Create enduser in CUCM and assign a device to it
+
+5. Create a Client profile
+	- APAS/Client/Profiles
+	- Type: Web
+	- Choose user pool created before
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+- If you have a proper configuration but you cannot login into WebClient:
+
+	- check log for phones:
+	
+	WebClient makes an AXL query for devices:
+	
+		Request:
+			[2018-04-16 14:15:28,566] [DEBUG] [http-nio-8080-exec-4] [AXLServer.java:723] - AXLServer[1,Publisher,192.168.150.17,TOTH_APAS,***,true,10.5,timeout=10000,10.5.2.10000(5)]: send xml: https://192.168.150.17:8443/axl/
+			<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+					<SOAP-ENV:Body>
+							<axl:getUser xmlns:axl="http://www.cisco.com/AXL/API/10.0" sequence="1">
+									<userid>ftoth</userid>
+							</axl:getUser>
+					</SOAP-ENV:Body>
+			</SOAP-ENV:Envelope>
+
+		OR
+		
+			<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+					<SOAP-ENV:Body>
+							<axl:executeSQLQuery xmlns:axl="http://www.cisco.com/AXL/API/10.0" sequence="1">
+									<sql>SELECT * FROM enduser WHERE (1=1) AND LOWER(userID)='ftoth'</sql>
+							</axl:executeSQLQuery>
+					</SOAP-ENV:Body>
+			</SOAP-ENV:Envelope>
+	
+		Response:
+		
+			
+			[2018-04-16 14:15:28,667] [DEBUG] [http-nio-8080-exec-4] [AXLServer.java:529] - AXLServer[1,Publisher,192.168.150.17,TOTH_APAS,***,true,10.5,timeout=10000,10.5.2.10000(5)]: read xml: <?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"><soapenv:Body><ns:getUserResponse xmlns:ns="http://www.cisco.com/AXL/API/10.0"><return><user uuid="{DA8F4BC1-55A1-9333-BB88-8D945782B101}"><firstName>Ferenc</firstName>
+			<middleName/><lastName>Toth</lastName>
+			<userid>ftoth</userid>
+			<password/><pin/><mailid/><department/><manager/><userLocale /><associatedDevices><device>SEP34BDC8C7FD96</device>					<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< device
+			</associatedDevices>
+			<primaryExtension/><associatedPc/><associatedGroups/><enableCti>true</enableCti>
+			<digestCredentials/><phoneProfiles/><defaultProfile/><presenceGroupName uuid="{AD243D17-98B4-4118-8FEB-5FF2E1B781AC}">Standard Presence group</presenceGroupName>
+			<subscribeCallingSearchSpaceName/><enableMobility>false</enableMobility>
+			<enableMobileVoiceAccess>false</enableMobileVoiceAccess>
+			<maxDeskPickupWaitTime>10000</maxDeskPickupWaitTime>
+			<remoteDestinationLimit>4</remoteDestinationLimit>
+			<associatedRemoteDestinationProfiles/><passwordCredentials><pwdCredPolicyName>Default Credential Policy</pwdCredPolicyName>
+			<pwdCredUserCantChange>false</pwdCredUserCantChange>
+			<pwdCredUserMustChange>false</pwdCredUserMustChange>
+			<pwdCredDoesNotExpire>true</pwdCredDoesNotExpire>
+			<pwdCredTimeChanged>April 16, 2018 11:52:48 CEST</pwdCredTimeChanged>
+			<pwdCredTimeAdminLockout/><pwdCredLockedByAdministrator>false</pwdCredLockedByAdministrator>
+			</passwordCredentials>
+			<pinCredentials><pinCredPolicyName>Default Credential Policy</pinCredPolicyName>
+			<pinCredUserCantChange>false</pinCredUserCantChange>
+			<pinCredUserMustChange>false</pinCredUserMustChange>
+			<pinCredDoesNotExpire>false</pinCredDoesNotExpire>
+			<pinCredTimeChanged>April 16, 2018 11:52:49 CEST</pinCredTimeChanged>
+			<pinCredTimeAdminLockout/><pinCredLockedByAdministrator>false</pinCredLockedByAdministrator>
+			</pinCredentials>
+			<associatedTodAccess/><status>1</status>
+			<enableEmcc>false</enableEmcc>
+			<associatedCapfProfiles/><ctiControlledDeviceProfiles/><patternPrecedence /><numericUserId /><mlppPassword /><customUserFields/><homeCluster>true</homeCluster>
+			<imAndPresenceEnable>false</imAndPresenceEnable>
+			<serviceProfile/><lineAppearanceAssociationForPresences><lineAppearanceAssociationForPresence uuid="{89A67E5D-4BD6-91F0-BA3F-FF512B738D7E}"><laapAssociate>f</laapAssociate>
+			<laapProductType>Cisco 8961</laapProductType>
+			<laapDeviceName>SEP34BDC8C7FD96</laapDeviceName>
+			<laapDirectory>9701</laapDirectory>
+			<laapPartition>PT_Phones</laapPartition>
+			<laapDescription>SEP34BDC8C7FD96</laapDescription>
+			</lineAppearanceAssociationForPresence>
+			<lineAppearanceAssociationForPresence uuid="{F969F7E3-CDFB-D44A-F09C-CA19C3AE5558}"><laapAssociate>f</laapAssociate>
+			<laapProductType>Third-party SIP Device (Basic)</laapProductType>
+			<laapDeviceName>SEP100000009030</laapDeviceName>
+			<laapDirectory>9730</laapDirectory>
+			<laapPartition>PT_Phones</laapPartition>
+			<laapDescription>SEP100000009030</laapDescription>
+			</lineAppearanceAssociationForPresence>
+			</lineAppearanceAssociationForPresences>
+			<directoryUri/><telephoneNumber/><title/><mobileNumber/><homeNumber/><pagerNumber/><extensionsInfo/><selfService /><userProfile/><calendarPresence>false</calendarPresence>
+			<ldapDirectoryName/><userIdentity/><nameDialing/><ipccExtension/><convertUserAccount/></user>
+			</return>
+			</ns:getUserResponse>
+			</soapenv:Body>
+			</soapenv:Envelope>
+
+								
+		If you canot find device here, check:
+
+			- if device controlled by application user
+			- if device has the proper device profile (non-secure/secure)
+			- is device controlled by enduser? 
+				

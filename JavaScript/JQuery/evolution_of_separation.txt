@@ -1,0 +1,91 @@
+=======================
+Evolution of deparation
+=======================
+
+- Collected elements
+
+--------------------------------------------------------------------------------------------------------------------	
+Collected elements
+==================
+You can use collected objects as plain array.
+the following two fragments would produce identical results:
+
+Pure jQuery:
+
+	$("div.fillMeIn").html("I have added some text to a group of nodes");
+
+With some JS:	
+	
+	var elements = $("div.fillMeIn");
+	for(var i=0;i<elements.length;i++) {
+		elements[i].innerHTML = "I have added some text to a group of nodes";
+	}
+	
+
+--------------------------------------------------------------------------------------------------------------------	
+Document ready handler
+======================
+Traditional JS solution:
+
+	window.onload = function() {
+		// do stuff here
+	};
+
+	This causes the defined code to execute after the document has fully loaded. Unfortunately,
+	the browser not only delays executing the onload code until after the DOM tree
+	is created, but also waits until after all external resources are fully loaded and the page
+	is displayed in the browser window (images, QuickTime and Flash videos, etc.).
+	
+jQuery solution:
+
+	jQuery(document).ready(function() {
+		$("div.notLongForThisWorld").hide();
+	});
+	
+	By passing a function to jQuery() or $(), we instruct the browser to wait until the
+	DOM has fully loaded (but only the DOM) before executing the code. Even better,
+	we can use this technique multiple times within the same HTML document, and the
+	browser will execute all of the functions we specify in the order that they are
+	declared within the page. In contrast, the window’s onload technique allows for
+	only a single function.	
+	
+A shorthand form, used much more frequently, is as follows:
+
+	jQuery(function() {
+		$("div.notLongForThisWorld").hide();
+	});
+
+OR of course
+
+	$(function() {
+		$("div.notLongForThisWorld").hide();
+	});
+	
+--------------------------------------------------------------------------------------------------------------------	
+Separation of behavior
+======================
+1. Not separated
+
+	<button type="button" onclick="document.getElementById('xyz').style.color='red';">Click Me</button>
+	
+2. Separated without jQuery
+
+	<script type="text/javascript">
+		window.onload = function() {
+			document.getElementById('testButton').onclick = function() {
+			document.getElementById('xyz').style.color = 'red';
+		};
+	};
+	</script>	
+	
+	<button type="button" id="testButton">Click Me</button>
+	
+2. Separated with jQuery
+
+	$(function() {
+		$("#testButton").click(function() {
+			$(#xyz).css("color", "red");
+		});
+	});
+	
+	<button type="button" id="testButton">Click Me</button>

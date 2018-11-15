@@ -1,0 +1,13 @@
+================
+APAS Definitions
+================
+Busy pilot:
+	Busy pilot is a normal pilot where queue doesn't have any agents and DN of pilot has been added to busy pilot list.
+	
+Overrun:
+	An ACD queue target-condition has been fulfilled and current queue will be forwarded to target queue (e.g. no-agent, expired targets).
+	Call is routing to the first agent to target queue. First agent depends on ACD algoryhm of target queue.
+
+Re-routing:
+	Call is routed to next agent of the same ACD queue.
+	

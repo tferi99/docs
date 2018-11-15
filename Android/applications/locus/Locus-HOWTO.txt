@@ -1,0 +1,29 @@
+===========
+Locus HOWTO
+===========
+
+---------------------------------------------------------------------------------------------------------------------------
+Installation
+============
+- Install 'Locus Map Free - Outdoor GPS' from Google Play.
+
+- Start application for 1st initialization.
+
+- In Android browse this page:
+
+		http://openmaps.eu/mapsforgetheme
+
+- Under 'Installation / download rendertheme' click 'Installation' in 'Locus Map' lien.
+
+- Download maps from:
+
+		http://openmaps.eu/mapsforgedownload
+		
+	and 
+	
+		Installing maps for Locus Map:
+			1. Download the map of appropriate country.
+			2. Copy the content of the downloaded file to SDCard/Locus/mapsVector folder. (For example, map of Hungary sits this way: SDCard/Locus/mapsVector/Hungary_openmaps_eu_europe.map)
+			3. Apply the map in Locus: upper-right corner "map" icon -> Vector tab -> MAPS -> select choosen map from list
+		
+	OR go into section 'Direct installation from Android browser...' and install it directly.

@@ -1,0 +1,68 @@
+=======
+Git FAQ
+=======
+
+- Where is git configuration?
+- Where is the local Git repository located?
+- How to create a local repository?
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Where is git configuration?
+===========================
+- System wide (Tortoise):
+
+	c:/Program Data/Git/config
+	
+- Global:
+
+	HOME/.gitconfig
+
+- Project specific:
+
+	PROJECT/.git/config
+	
+	
+The more specific config file overrides less specifics. 
+You can view inheritance of configuration in  of .
+
+	TORTOISE_GIT_APP/Settings/Git/[Config source]/(Effective)	
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Where is the local Git repository located?
+==========================================
+- The Working Directory is wherever your files are on your local machine. 
+- The Local Repository is the .git/ subdirectory inside the Working Directory. 
+- The Index is a conceptual place that also physically resides in the .git/ subdirectory.
+
+ Working directory
+       |
+       |--- .git (local repository)
+          |
+          |- index files in sub-directories
+		
+		
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+How to create a local repository?
+=================================
+1. You can take a local directory that is currently not under version control, and turn it into a Git repository.
+
+	echo "# Sample project" >> README.md
+	git init
+	git add README.md
+	git commit -m "first commit"
+	git remote add origin https://github.com/tferi99/proba.git
+	git push -u origin master		
+
+
+
+2. You can clone an existing Git repository from elsewhere.
+
+	git remote add origin https://github.com/tferi99/proba.git
+	git push -u origin master	
+
+
+
+	
+	
+	

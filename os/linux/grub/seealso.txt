@@ -1,0 +1,3 @@
+See also:
+
+	info grub (usable!)

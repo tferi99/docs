@@ -1,0 +1,247 @@
+=======================
+WebClient pushed events
+=======================
+
+--------------------------------------------------------------------------------------------------------------------------
+WebClient Events
+=====================
+- AboutWebEvt
+- CallCtlConnOfferedWebEvt (moving into CallListChangedWebEvt)
+- CallListChangedWebEvt
+- PhoneAddRemoveWebEvt
+- PhoneHoldWebEvt
+- PopupWebEvt
+- QeueueChangedWebEvt
+- RecordingCreatedWebEvt
+- TermConnDroppedWebEvt
+Call- TermConnRingingWebEvt
+- TerminalInServiceWebEvt
+- UpdateGroupStateWebEvt
+- UpdateRecordingOnDemandWebEvt
+
+--------------------------------------------------------------------------------------------------------------------------
+Event sources in APAS
+=====================
+	- com.andtek.andphone.restapi.web.AboutCtrl (REST)
+	- com.andtek.andphone.calllist.CallListService (XML service?)
+	- com.andtek.andphone.callrouting.CallbackService (XML service?)
+	- com.andtek.andphoneCiscoJtapiProviderObserver.CiscoJtapiProviderObserver (CUCM)
+	- com.andtek.andphone.webuser.observers.WebClientCallObserver (CUCM)
+	- com.andtek.andphone.callrouting.PhoneCallObserver (CUCM)
+
+----------------------------------------------------------------
+AboutWebEvt
+===========
+Echo about client is connected.
+
+APAS:
+	--> REST: GET /about/getdata
+		--> AboutCtrl.getAvailablePartners(...)
+	
+WebClient:
+	==> directive_about.js
+		$scope.connection = 1;
+	
+----------------------------------------------------------------	
+CallListChangedWebEvt	
+=====================
+APAS:		
+	--> com.andtek.andphone.calllist.CallListService.request()
+		--> com.andtek.andphone.calllist.CallListService.notifyWebClient()
+			--> [1]
+		
+	--> com.andtek.andphone.callrouting.CallbackService.notifyWebClient()
+		--> [1]
+
+	--> com.andtek.andphone.communicator.ClientConnectionMina.notifyWebClient()
+		--> [1]
+	
+		
+	[1] --> com.andtek.andphone.callrouting.service.impl.CallListServiceImpl.callListChanged()
+		--> WebClientConnectionService.notifyWebClients(...)
+
+	EVENT: CallCtlTermConnDroppedEv
+	--> com.andtek.andphone.callrouting.PhoneCallObserver.callChangedEvent(CallEv[] eventList)
+		--> com.andtek.andphone.callrouting.PhoneCallObserver.handleCallCtlTermConnDroppedEv(CiscoCall call, CallListEntry callListEntry, CallEv callEvent)
+			--> EventBroadcaster.broadcastToTerminal(term, CallListChangedWebEvt)
+
+	EVENT: CallObservationEndedEv
+	--> com.andtek.andphone.callrouting.PhoneCallObserver.callChangedEvent(CallEv[] eventList)
+		--> sendBroadcastToCalledParty(CiscoCall call, CallListEntry callListEntry)
+			--> EventBroadcaster.broadcastToTerminal(term, CallListChangedWebEvt)
+
+	EVENT: CallCtlConnOfferedEv
+	--> com.andtek.andphone.callrouting.RPCallObserver.callChangedEvent(CallEv[] eventList)
+		--> offered(CallCtlConnOfferedEv ev)
+			--> EventBroadcaster.broadcastToTerminal(calledTerm, CallListChangedWebEvt);
+			--> EventBroadcaster.broadcastToTerminal(callingTerm, CallListChangedWebEvt);
+	
+			
+WebClient:
+		==> directive_badge.js
+			- $scope.missedrefresh() / $scope.busyrefresh() / $scope.busyandmissedrefresh()
+
+			
+		==> controller_calllist.js
+			- $scope.refresh();
+
+			
+----------------------------------------------------------------	
+TermConnDroppedWebEvt
+=====================
+APAS:
+	EVENT: CallCtlTermConnDroppedEv
+	--> com.andtek.andphone.webuser.observers.WebClientCallObserver.callChangedEvent(CallEv[] eventList)
+		--> drop(CallCtlTermConnDroppedEv ev, Terminal term)
+				
+WebClient:		
+	
+	==> controller_ondemandrecording.js
+		OnDemandRecordingCrtl:	$scope.refresh();
+		
+				
+	==> directives.js
+		directive "showPopup":		closeWindow(msg.callId)
+				
+------------------------- deleted -----------------------------				
+	==> controller_calllist.js
+		CallListCtrl: 	$scope.refresh()		>>>>>>>>>>>>>> DELETE
+	==> directive_badge.js
+		- $scope.missedrefresh() / $scope.busyrefresh() / $scope.busyandmissedrefresh()
+----------------------------------------------------------------	
+PhoneAddRemoveWebEvt
+====================
+Fired when a phone registered/unregistered on CUCM.
+
+APAS:
+	--> com.andtek.andphoneCiscoJtapiProviderObserver.CiscoJtapiProviderObserver.processProviderEvent(ProvEv [] eventList)
+		--> com.andtek.andphone.utils.Modules.providerEvent(jtapi, eventList[i])
+			--> Modules.providerEvent(JTAPIThread jtapi, ProvEv provEv)
+				--> webuser.Module.providerEvent(ProvEv provEv)
+					--> com.andtek.andphone.callrouting.service.impl.CallListServiceImpl.notifyWebClient(Terminal terminal, User user, boolean addphone)
+
+WebClient:
+	==> directive_addremovephone.js					
+		- phoneaddremovemodal.tpl : target modal will be opened by event
+		
+		
+----------------------------------------------------------------	
+PhoneHoldWebEvt		
+===============
+APAS:
+	--> com.andtek.andphone.webuser.observers.WebClientCallObserver.callChangedEvent(CallEv[] eventList)
+		- CallCtlTermConnTalkingEv: event = "UNHOLD"
+		- CallCtlTermConnHeldEv: event = "HOLD"
+		--> WebClientCallObserver.holdalerting(String event, PGroupDN pgroupDN, String terminalName, String callingParty)
+		
+WebClient:
+	==> controller_group.js
+			GroupCtrl : setting hold array
+			
+	==> controller_groupma.js
+			GroupMACtrl : setting hold array
+			
+	
+----------------------------------------------------------------	
+PopupWebEvt
+===============
+If calling number can be resolved from a directory ReverseNumberLookup poopup will be opened by WebClient with detailed caller information.
+
+APAS:
+--> WebClientCallObserver.callChangedEvent(CallEv[] eventList)
+	--> WebClientCallObserver.alerting(CallCtlConnAlertingEv ev)
+		--> WebClientLookupThread.createLookupThreadForTerminal(...)
+			.... SEE MORE in RNL popup.txt	
+WebClient:
+	==> directives.js:		'showPopup' directive
+			- Opens RNL popup
+			
+			
+----------------------------------------------------------------	
+QeueueChangedWebEvt			
+===================
+APAS:
+	--> EventQueue.processEntry(EventQueueEntry entry)
+		--> EventQueue.addWorkerEntry(EventQueueWorkerEntry workerEntry)
+			...
+			...
+			--> EventQueueWorker.handleEvent(EventQueueWorkerEntry entry)
+				--> Queue.handleEvents(APASEvent[] event, Object observer)
+					--> WebClientConnection.queueChanged(QueueChangedEvent[] e)
+
+WebClient:
+	==> controller_callcenter.js
+		- CallCenterCtrl.updateData(data)
+		
+
+----------------------------------------------------------------	
+RecordingCreatedWebEvt
+======================
+APAS:
+	--> RecorderEventListenerManagerImpl.handleEvents(APASEvent[] events, Object observer)
+		-->
+		--> WebClientConnectionServiceImpl.receivedRecorderEvent(RecorderEvent event)	
+
+WebClient:		
+	==> controller_recorder.js
+		- RecorderCtrl: $scope.refresh();
+	==> directive_badge.js
+		- Directive 'badge': $scope.refresh();
+	
+	
+----------------------------------------------------------------	
+TermConnRingingWebEvt
+=====================
+APAS:		-
+
+WebClient:	-
+
+	
+		
+----------------------------------------------------------------	
+TerminalInServiceWebEvt
+=======================
+
+APAS:
+	--> terminalChangedEvent(TermEv[] eventList)
+		--> WebClientCallObserver.handleTerminalInOutOfServiceEvent(Terminal terminal, boolean inService)
+			--> BROADCAST
+	
+WebClient:
+	==> directive_addremovephone.js
+		directive 'addremoveModal':		
+		
+			opening PhoneAddRemove modal
+			
+----------------------------------------------------------------	
+UpdateGroupStateWebEvt
+======================
+APAS:
+	--> EventQueueWorker.handleEvent(EventQueueWorkerEntry entry)
+		--> PGroupMember.doHandleEvents(APASEvent[] events, Object ob) {
+			--> WebClientConnection.PGroupMemberChangedEv(PGroupMemberEvent ev)
+	
+WebClient:
+	==> controller_group.js
+		GroupCtrl:		updateGroupMember(memberUpdate)
+		
+	==> controller_groupma.js
+		GroupMACtrl:	
+			...
+			
+----------------------------------------------------------------	
+UpdateRecordingOnDemandWebEvt
+=============================
+APAS:
+	--> com.andtek.andphone.callrouting.PhoneCallObserver.doRequest(...)
+		--> doNotifyRequest(...)
+			--> RecorderPhoneServicesServlet.broadcastToWeb(String deviceName)
+
+	--> com.andtek.andphone.callrouting.PhoneCallObserver.callChangedEvent(CallEv[] eventList)
+			CallCtlTermConnTalkingEv
+		--> com.andtek.andphone.callrouting.PhoneCallObserver.handleCallCtlConnEstablishedEv(CiscoCall call, CallListEntry callListEntry, CallEv callEvent)
+			--> RecorderPhoneServicesServlet.broadcastToWeb(String deviceName)
+WebClient:
+
+	==> controller_ondemandrecording.js
+		OnDemandRecordingCrtl:  $scope.refresh()

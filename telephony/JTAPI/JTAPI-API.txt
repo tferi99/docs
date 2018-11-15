@@ -1,0 +1,44 @@
+-----------------------------------------------------------------------------------------------------------
+Observers
+=========
+	Address
+		addCallObserver(CallObserver)
+		addObserver(AddressObserver)
+		
+	Call
+		addObserver(CallObserver)
+		
+	Provider
+		addObserver(ProviderObserver)
+		
+	Terminal
+		addCallObserver(CallObserver)
+		addObserver(TerminalObserver)
+
+
+-----------------------------------------------------------------------------------------------------------
+Queries
+=======
+	Provider
+		Provider.getTerminals()
+		Provider.getAddresses()
+
+		Provider.getCalls()				!!! requires CallObserver on Address !!!
+	
+
+	Address
+		Address.getConnections()		!!! requires CallObserver on Address !!!	
+		Address.getTerminals()
+	
+	
+-----------------------------------------------------------------------------------------------------------
+States
+======
+Call		: ACTIVE, IDLE, INVALID, 
+
+Connection	: ALERTING, CONNECTED, DISCONNECTED, FAILED, IDLE, INPROGRESS, UNKNOWN
+
+Provider	: IN_SERVICE, OUT_OF_SERVICE, SHUTDOWN
+
+TerminalConnection : ACTIVE, DROPPED, IDLE, PASSIVE, RINGING, UNKNOWN
+            

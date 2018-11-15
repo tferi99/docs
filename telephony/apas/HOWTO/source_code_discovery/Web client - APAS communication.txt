@@ -1,0 +1,7 @@
+===============================
+Web client - APAS communication
+===============================
+
+1. REST services called by client asynchronoously
+2. Pushed events
+

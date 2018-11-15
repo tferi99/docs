@@ -1,0 +1,358 @@
+==========
+Orbeon FAQ
+==========
+General
+-------
+- About href attribute
+
+Pipeline
+--------
+- What is a pipeline?
+- How to configure a pipeline?
+
+Processors
+----------
+- Processors
+- How to configure a processor?
+- How to debug a pipeline?
+- Howto pass an XML to a form during a request?
+- How to extract data from request parameters?
+
+Query
+-----
+- How to list stored data of a form?
+- How to get stored data from eXist?
+
+Form runner
+-----------
+- How to launch a form by Form Runner to collect data?
+
+----------------------------------------------------------------------------------------------------------------------
+What is a pipeline?
+===================
+XML pipelining is an approach to processing XML where the inputs and outputs of multiple processing steps (e.g., XSLT transformations) 
+are connected together using a pipeline metaphor. 
+
+Orbeon has implemented an XML pipeline engine in Java that executes a declarative XML pipelining language called XPL. 
+
+XML pipelines are built up from smaller components called XML processors. 
+
+----------------------------------------------------------------------------------------------------------------------
+Processors
+==========
+An XML processor is a software component which consumes and produces XML documents.
+
+Generators
+	Generators are a special category of processors that have no XML data inputs, only outputs. 
+	They are generally used at the top of an XML pipeline to generate XML data from a Java object or other non-XML source. 
+	
+						[something --->] GENERATOR ---> XML
+		
+	
+Serializer
+	Serializers are processors with no XML output. 
+	A serializer, just like any processor, can access files, connect to databases, and take actions depending on its inputs. 
+	
+						something ---> SERIALIZER [---> something]
+	
+Converters
+	Converters are processors converting XML documents from one format to another. 
+
+	
+						XML ---> CONVERTER ---> XML
+						
+Pipeline processors
+	The Pipeline processor provides support for sub-pipelines in XPL. 
+	It allows XPL programs to be used and manipulated like XML processors. It allows building the equivalent of functions 
+	and procedures in other programming languages. 
+	
+	
+Other processors
+	- The File processor allows you to delete files on disk. In the future, it may be enhanced to provide more actions such as 
+		renaming files, moving files, etc. 
+	- The Resource Server serves resources such as images, CSS stylesheet or other static files. 
+	- The Identity processor is one of the simplest processors of Orbeon Forms: it simply copies the content 
+		of its data input to its data output. 
+	- The oxf:debug processor logs XML documents to the Orbeon Forms log output. 
+	- The Redirect Processor allows redirecting or forwarding the execution to a new URL: 
+
+----------------------------------------------------------------------------------------------------------------------
+How to configure a pipeline?
+============================
+The <p:param> element defines what the inputs and outputs of the pipeline are. 
+- Each input and output has a name. 
+- There cannot be two inputs with the same name or two outputs with the same name, but it is possible to have an output and an 
+	input with the same name. 
+- Every input name defines an id that can be later referenced with the 'href' attribute such as when connecting processors. 
+- The output names can be referenced with the 'ref' attribute on  <p:output> . 
+	
+	
+	<p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
+			  xmlns:oxf="http://www.orbeon.com/oxf/processors">
+
+		<p:param name="instance" type="input"/>
+		<p:param name="data" type="output"/>
+
+		....
+		....
+		....
+	</p:config>
+	
+	
+----------------------------------------------------------------------------------------------------------------------
+How to configure a processor?
+=============================
+- <p:input> specifies an input of a specific processor.
+- <p:ouput> specifies an output of a specific processor.
+
+	XPL processors declare a certain number of inputs and outputs. Those inputs and outputs constitute the interface of the processor, 
+	in the same way that methods in object-oriented programming languages like Java expose parameters. 
+	For example, the XSLT processor expects:
+
+		* a config input receiving an XSLT stylesheet definition
+		* a data input receiving the XML document to transform
+		* a data output producing the transformed XML document
+
+	You know what inputs and outputs to connect for a given processor by consulting the documentation for that processor
+	(or source code ;)))) ).
+	
+- Specific processors can have more input entries, e.g. you have to specify a source data and some configuration:
+
+	<p:config xmlns:p="http://www.orbeon.com/oxf/pipeline"
+			  xmlns:oxf="http://www.orbeon.com/oxf/processors">
+
+		<p:param name="instance" type="input"/>
+		<p:param name="data" type="output"/>
+
+		<p:processor name="oxf:xml-converter">
+			<p:input name="data" href="oxf:/my-xml-document.xml"/>
+			<p:input name="config">
+				<config>
+					<content-type>application/xml</content-type>
+					<encoding>iso-8859-1</encoding>
+					<version>1.0</version>
+				</config>
+			</p:input>				
+			
+			<p:output name="data" id="xml-document"/>
+		</p:processor>
+	</p:config>	
+	
+
+- Generally a input data can be referenced or inline (previous example contains referenced data), e.g. here is inline data:
+
+		<p:input name="data">
+			<person>
+				<name>Joe</name>
+			</person>
+		</p:input>
+
+- Referenced input can be an external data:
+		
+		<p:input name="data" href="oxf:/my-xml-document.xml"/>
+		
+	OR internal:
+	
+		<p:input name="data" href="#instance"/>
+		
+		where href contains #ID of a pipeline input or an output of another processsor.
+		
+- The same id may be referenced multiple times in the same XPL document. For example, the id doc is referenced by two processors (fork).
+		
+		
+- A processor output can bound to a pipeline output:
+	
+		<p:output name="data" ref="data"/>
+		
+	OR can be referenced by other processors (identified by 'id' property):
+		
+		<p:output name="data" id="processor_output5"/>
+		
+		
+- To sum up, a processor input can be connected to:
+
+		* a resource XML document
+		* an inline XML document
+		* the output of another processor
+		* a pipeline input
+		* a combination of the above through the full syntax of the href attribute
+
+	A processor output can be connected to:
+
+		* the input of another processor with the id attribute
+		* a pipeline output with the ref attribute
+		
+		
+----------------------------------------------------------------------------------------------------------------------
+How to debug a pipeline?
+========================
+Optionally, <p:input> and <p:output>  can have a 'debug' attribute. 
+When this attribute is present, the document that passes through that input or output is logged to the Orbeon 
+Forms log output. This is useful during development to watch XML documents going through the pipeline. 
+
+----------------------------------------------------------------------------------------------------------------------
+Howto pass an XML to a form during a request?
+=============================================
+The Orbeon Forms PFC uses the concept of XML submission to provide page configurability. 
+To the model and view of a given page, an XML submission is simply an XML document whose content is available as an 
+XPL pipeline or an XSLT input called 'instance'. 
+
+To specify an instance from POST-ed XML:
+
+        <xforms:model>
+            <xforms:instance xmlns="" src="input:instance"/>
+			...
+			...
+        </xforms:model>
+
+- Internal XForms submission. 
+	The built-in Orbeon Forms XForms engine uses an HTTP POST XForms submission to submit an XForms instance.
+	To submit an XML to summary from other form call this (method="post" is important!):
+	
+		<xforms:submission id="main" method="post" action="/report/summary"/>
+	
+- External submission. 
+	An external application or a client-side XForms engine uses HTTP POST to submit an XML document directly to a page.
+	Here you have to send a request directly to page with an XML using POST method.	For example to call an XML service:
+	
+	PFC:
+		<page path-info="/xmlrpc" model="xmlrpc.xpl"/>
+	
+	Call URL with POST-ed XML:
+		http://www.orbeon.org/myapp/xmlrpc
+		
+	
+- PFC page navigation. 
+	The PFC, based on a user configuration, produces an XML document to submit internally to a given page.
+
+- Default submission. 
+	Each page can refer to a default submission document containing an XML document automatically submitted 
+	to the page if no other submission is done.
+		
+		<page path-info="/report/detail" default-submission="report-detail-default-submission.xml"/>
+		
+
+----------------------------------------------------------------------------------------------------------------------
+How to extract data from request parameters?
+============================================
+A PFC page can easily extract data from the URL using the <setvalue>  element nested within the <page> element.
+
+Request URL:
+
+	http://host/path?first=12&count=10
+	
+Initial XML:
+	<data>
+		<first/>
+		<count/>
+	</data>
+	
+PFC:
+
+	<page path-info="/report/detail" default-submission="report-detail-default-submission.xml">
+		<setvalue ref="/data/first"  parameter="first"/>
+		<setvalue ref="/data/count" parameter="count"/></page>	
+	</page>
+	
+XML after submission:
+	<data>
+		<first>12</first>
+		<count>10</count>
+	</data>
+	
+----------------------------------------------------------------------------------------------------------------------
+How to list stored data of a form?
+==================================
+HTML:
+
+	http://localhost:8080/orbeon/fr/<APP>/<FORM>/summary
+	
+	That means you can list of forms in form builder:
+
+		http://localhost:8080/orbeon/fr/orbeon/builder/summary
+	
+	since Form Builder application is 'orbeon' and form is here 'builder'.
+	
+	
+REST:
+
+	http://localhost:8080/orbeon/fr/service/<SERVICE>/list/<APP>
+	
+In fact only supported service is eXist now:
+	
+	http://localhost:8080/orbeon/fr/service/exist/list/<APP>
+	
+	
+----------------------------------------------------------------------------------------------------------------------
+How to list stored data of a form?
+==================================
+You can get records by REST requests in XML format:
+	
+	http://localhost:8080/orbeon/exist/rest/db/
+
+You can go deeper into collections if you specify name of collection in URL path, e.g:
+
+	http://localhost:8080/orbeon/exist/rest/db/orbeon/builder
+	
+	
+----------------------------------------------------------------------------------------------------------------------
+About href attribute	
+====================
+The href attribute is used to:
+
+    * Reference external documents
+    * Refer outputs of other processors
+    * Aggregate documents using the aggregate() function
+    * Select part of a document using XPointer
+
+The complete syntax of the href attribute is described below in a Backus Nauer Form (BNF)-like syntax:
+
+    href              ::= ( local_reference | uri | aggregation ) [ xpointer ]
+    local_reference   ::= "#" id
+    aggregation       ::= "aggregate(" root_element_name "," agg_parameter ")"
+    root_element_name ::= "'"  name "'"
+    agg_parameter     ::= href [ "," agg_parameter ]
+    xpointer          ::= "#xpointer(" xpath_expression ")"
+	
+----------------------------------------------------------------------------------------------------------------------
+How to launch a form by Form Runner to collect data?
+====================================================
+1. Request:		/fr/<APP><FORM>/new	
+	
+	This will call a form to get new data.
+	
+2. fr/page-flow.xml
+
+    <!-- New, edit or view document -->
+    <page path-info="/fr/([^/]+)/([^/]+)/(new|edit|view)(/([^/]+))?/?" matcher="oxf:perl5-matcher"
+          model="detail/detail-model.xpl" view="html-view.xpl">
+    </page>
+	
+3. detail-model.xpl as model
+	
+		<p:param type="input" name="instance"/>
+		<!-- XHTML+FR+XForms for the from obtained from persistence layer -->
+		<p:param type="output" name="data"/>
+		<!-- Request parameters (app, form, document, and mode) from URL -->
+		<p:param type="output" name="instance"/>
+		
+	input:instance		- request parameters in XML:
+	
+			<request xmlns:sql="http://orbeon.org/oxf/xml/sql" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:odt="http://orbeon.org/oxf/xml/datatypes" xmlns:oxf="http://www.orbeon.com/oxf/processors" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:p="http://www.orbeon.com/oxf/pipeline" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ev="http://www.w3.org/2001/xml-events">
+				<app>app1</app>
+				<form>form1</form>
+				<document/>
+				<mode>new</mode>
+			</request>
+	
+	input:data			- the page XHTML source
+	
+4. html-view.xpl as view
+
+	This renders XForms page and applies properties file in this order:
+	
+	        <p:input name="properties-xforms" href="oxf:/config/properties-xforms.xml"/>
+			<p:input name="properties-form-runner" href="oxf:/config/properties-form-runner.xml"/>
+			<p:input name="properties-local" href="oxf:/config/properties-local.xml"/>
+			
+			

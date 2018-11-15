@@ -1,0 +1,20 @@
+============================================
+CUCM Administration webpage access very slow
+============================================
+
+Run general dignostics:
+
+	utils diagnose test
+	
+Check tomcat and network functions.
+Maybe restarting Tomcat can help.
+
+To restart the Cisco Tomcat service, use the CLI command
+
+	utils service restart Cisco Tomcat.
+
+Then to check
+
+	utils service list	
+	
+	

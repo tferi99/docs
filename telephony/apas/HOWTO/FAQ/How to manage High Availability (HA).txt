@@ -1,0 +1,171 @@
+=====================================
+How to manage High Availability (HA)?
+=====================================
+
+- Setup HA
+- Maintenance
+- Troubleshooting
+- Updating APAS
+
+-----------------------------------------------------------------------------------------------------------------------
+Setup HA
+========
+
+1. Install 2 APASs ISO (same version)
+
+	NOTE: 
+		Cluster configuration requires host names. For this set hostname of APAS hosts.
+		E.g 	ha1:		andphone (default)
+				ha2:		andphone2
+		
+		Host file can be configured here:
+		
+			/etc/sysconfig/network
+
+		To validate:
+		
+			uname -n
+			
+2. Start both of them.
+
+3. Add HA license to PRIMARY (only!)
+
+4. Optional in development env:
+	HA license invalidates demo license. Update time value in config for now. E.g:
+	
+		update config set val = '1438938456000' where param = 'InstallationTimestamp'
+		
+5. CLI Primary configuration
+	- Go into APAS CLI
+		- ssh 
+		- su - admin
+	
+	- /High Availability/Host Failover (Cluster) configuration/Configure Cluster
+
+		- 1) Failover hostname/IP/netmask:		hostbame other host / IP of other host / netmask (real hosname required here - not DNS name)
+		
+		- 2) Cluster hostname/IP:		hostname / common IP		(hostname from hosts file)
+		
+		- 3) Cluster ping node:		any persistent pingable IP
+	
+6. Starting cluster
+	Secondary:
+		1) Accept connection from primary node
+		
+	Primary:
+		4) Start Cluster
+
+
+		
+-----------------------------------------------------------------------------------------------------------------------
+Maintenance
+===========
+
+Switchover
+----------
+	- APAS CLI:			/High Availability/Host Failover (Cluster) configuration/Switchover
+	
+	- APAS GUI:			APAS/Global/Software Update/[Cluster Bode Status]
+
+		
+-----------------------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+
+- Common IP should be ping-able
+
+- Call APAS from common IP. It will work and it will show REAL IP as server IP (info bar) which is behind common IP.
+
+- Call menu in CLI:
+
+	Here you can watch cluser status:
+		- node statuses
+		- active node has more started service
+		- active node DRDB is Master
+		- inactive node DRDB is Slave
+	
+	/High Availability/Host Failover (Cluster) configuration/Cluster Status
+
+		E.g:
+			
+			Primary Node   : 192.168.5.57
+			Secondary Node : 192.168.5.59
+			Cluster IP     : 192.168.5.250
+
+			Cluster status:
+			============
+			Last updated: Wed Aug 12 11:07:28 2015
+			Last change: Wed Aug 12 11:06:08 2015 via crm_resource on andphone
+			Stack: openais
+			Current DC: andphone - partition with quorum
+			Version: 1.1.7-6.el6-148fccfd5985c5590cc601123c6c16e966b85d14
+			2 Nodes configured, 2 expected votes
+			16 Resources configured.
+			============
+
+			Node andphone: online
+					resRecorder     (lsb:andphone) Started
+					resFsAPASDB     (ocf::heartbeat:Filesystem) Started
+					resFsAPAS       (ocf::heartbeat:Filesystem) Started
+					resClusterIP    (ocf::heartbeat:IPaddr2) Started
+					resTOMCAT       (ocf::heartbeat:tomcat6) Started
+					resDRBDDB:0     (ocf::linbit:drbd) Master
+					resDRBDAPAS:0   (ocf::linbit:drbd) Master
+					resPostgresql   (ocf::heartbeat:pgsql) Started
+					resSysinfo:0    (ocf::pacemaker:SysInfo) Started
+					resClusterMon:0 (ocf::pacemaker:ClusterMon) Started
+					resPing:0       (ocf::pacemaker:ping) Started
+			Node andphone2: online
+					resDRBDAPAS:1   (ocf::linbit:drbd) Slave
+					resDRBDDB:1     (ocf::linbit:drbd) Slave
+					resClusterMon:1 (ocf::pacemaker:ClusterMon) Started
+					resSysinfo:1    (ocf::pacemaker:SysInfo) Started
+					resPing:1       (ocf::pacemaker:ping) Started
+
+
+			  (Hit ENTER to continue) >
+
+			Replication status:
+			version: 8.4.5 (api:1/proto:86-101)
+			GIT-hash: 1d360bde0e095d495786eaeb2a1ac76888e4db96 build by phil@Build64R6, 2014-10-28 10:32:53
+
+			 1: cs:Connected ro:Primary/Secondary ds:UpToDate/UpToDate C r-----
+				ns:5224 nr:1352 dw:622444 dr:626496 al:129 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:f oos:0
+			 2: cs:Connected ro:Primary/Secondary ds:UpToDate/UpToDate C r-----
+				ns:107764 nr:31232 dw:533800 dr:524696 al:100 bm:0 lo:0 pe:0 ua:0 ap:0 ep:1 wo:f oos:0
+
+- Filesystems
+
+	DRBD is on
+		/apas		- APAS file data
+		/apasdb		- APAS database
+		
+		
+	Only active node mounts this filesystems. Inactive node has empty directories here.
+	
+	# mount
+	...
+	/dev/drbd2 on /apasdb type ext4 (rw)
+	/dev/drbd1 on /apas type ext4 (rw)		
+	....
+	
+	
+-----------------------------------------------------------------------------------------------------------------------
+Updating APAS
+=============
+You can update ONLY faliover (inactive) node wia GUI.
+
+	APAS/Global/Software Update/[Remote Software Update]/(Start Update on failover Node)
+	
+To update all (both) nodes:
+	- Update
+	- Switchover
+	- 
+
+
+
+
+
+
+
+	

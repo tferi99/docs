@@ -1,0 +1,17 @@
+====================
+How to restart CUCM?
+====================
+Web admin:
+	
+	CUCM/Navigation menu: CU OS Administration/Settings/Version/(Restart)
+	
+CLI admin:
+
+	utils system restart
+	
+To restart CUCM Tomcatg service:
+	
+	utils service restart Cisco Tomcat
+	
+	
+
