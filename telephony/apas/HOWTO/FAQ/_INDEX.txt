@@ -42,6 +42,7 @@ Configuration
 - How to configure Tomcat8 for APAS?
 - How to configure SSO for APAS?
 - How to configure Exchange Calendar?
+- How to configure broadcast?
 
 ACD
 ---

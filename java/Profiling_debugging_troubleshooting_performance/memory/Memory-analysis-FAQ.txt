@@ -3,10 +3,13 @@ Memory analysis FAQ
 ===================
 
 - Memory analysis concept
+- Memory analysis tasks
 - How to print memory info of JVM?
 - How to create heap dump?
 - How to analyse heap dump?
 - How to compare heap dumps?
+- Tips for MAT
+
 
 -------------------------------------------------------------------------------------------------	
 Memory analysis concept
@@ -32,7 +35,8 @@ Memory analysis concept
 	Garbage Collection Roots
 
 SEE ALSO:	ECLIPSE/Help Contents/Memory Analyzer/Concepts	
-		
+
+
 -------------------------------------------------------------------------------------------------	
 How to print memory info of JVM?
 ================================
@@ -144,4 +148,8 @@ How to compare heap dumps?
 - VisualVM
 
 	On classes page you can load another dumps.
+
+-------------------------------------------------------------------------------------------------	
+Tips for MAT
+============
 

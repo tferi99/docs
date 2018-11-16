@@ -1,0 +1,15 @@
+
+
+Config:
+
+	config(global/servers.exchange.EventPullingPeriod) =   20     
+
+Classes:
+
+	com.andtek.andphone.presence.msews.ExchangeCachedCalendarServer
+	DynamicPresenceSubscriptionManager
+	
+	
+Import:
+	com.andtek.andphone.presence.msews.**
+	import microsoft.exchange.webservices.**

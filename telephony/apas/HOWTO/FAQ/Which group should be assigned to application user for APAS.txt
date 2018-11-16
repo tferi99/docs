@@ -1,0 +1,27 @@
+============================================================
+Which group should be assigned to application user for APAS?
+============================================================
+- Standard CTI Enabled
+- Standard CTI Allow Call Monitoring
+- Standard CTI Allow Call Park Monitoring
+- Standard CTI Allow Calling Number Modification
+- Standard TabSync User (for AXL)
+
+Depending on Services you use on AND Phone Server:
+	- Standard CTI Secure Enabled (for secure JTAPI connection) 
+	- Standard CTI Allow Call Recording (for recording)
+	- Standard CTI Allow Reception of SRTP Key Material (for secure recording)
+	- Standard CTI Allow Control of All Devices (if you want to control ALL devices on CUCM)
+	- Standard EM Authentication Proxy Rights
+	- Standard RealtimeAndTraceCollection (for RIS service)
+
+Extra groups for 8961 / 9951 and 9971 phones:
+	- Standard CTI Allow Control of Phones supporting Rollover Mode
+	- Standard CTI Allow Control of Phones supporting Connected Xfer and conf
+	
+	
+SEE ALSO:
+- 01_ADMIN-BASE-Installation_5.6_enA4.pdf
+	
+	
+	
