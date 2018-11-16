@@ -1,4 +1,27 @@
 
+-------------------------------------------------------------------------------------------------------------------
+Use cases
+=========
+Exchange server manual connection test:
+
+	APAS/General/Servers/CHOOSE/[Servers]/[Server 1]/(Test Connection)
+		--> com.andtek.andphone.global.gwtapp.server.RPCglobalServiceImpl.RemoteTestServerConnection()
+			--> ExchangeCachedCalendarServer.testConnection()
+
+
+Exchange server automatical (background) connection test:
+	ServerGroup.ServerGroup()
+		- verifyThread = new ServerGroupVerifier(this)
+		--> ServerGroupVerifier.ServerGroupVerifier()
+			--> APASThread.run()
+				--> com.andtek.andphone.global.servers.ServerGroup.ServerGroupVerifier.run()
+					--> ServerGroup.checkServerAvailability()
+						--> ExchangeCachedCalendarServer.verifyConnection()
+							--> ExchangeService exchangeService.resolveName(username);
+			
+			
+			
+
 
 Config:
 
