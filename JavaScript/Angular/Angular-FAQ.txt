@@ -20,7 +20,7 @@ Patterns
 - Data binding
 	- Bindigs
 - How to use interpolation (template expression)?
-- Conditional CSS
+- Conditional or dynamic CSS Style/Class
 
 Directives, Components
 ----------------------
@@ -389,7 +389,7 @@ For example:
 		
 			selector:	app-user-list
 		
-How to configure alowed prefixes:
+How to configure allowed prefixes:
 	angular-cli.json/projects/prefix					: default prefix, it will be used when AngularCLI generates a new component
 	tslint.json/component-selector/3rd array element	: contains 1 prefix or array of prefixes which contains permitted prefix(es)
 
@@ -438,43 +438,59 @@ Caller template:
 	<app-my-form [title]="'literal'" [size]="3.2"></app-my-form>
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Conditional CSS
-===============
-<tag [class-<CSS CLASS>]='<boolean component property>'>
+Conditional or dynamic CSS Style/Class
+======================================
+Setting styles:
+	Method 1:	The simplest way to use this directive is by doing [style.<cssproperty>]="value"
+	
+		<div [style.background-color]="'yellow'">
+			Uses fixed yellow background
+		</div>
 
-For example:
-HTML:
-	
-	<p [class.clicked]='clicked'>
-	
-TS:
-	
-	@Component({
-	  selector: 'app-css-demo',
-	  templateUrl: './css-demo.component.html',
-	  styleUrls: ['./css-demo.component.css']
-	})
-	export class CssDemoComponent implements OnInit {
-	  clicked: boolean = false;
+	Method 2: Another way to set fixed values is by using the NgStyle attribute and using key value pairs for each
+			property you want to set, like this:
+		
+		<div [ngStyle]="{color: 'white', 'background-color': 'blue'}">
+			Uses fixed white text on blue background
+		</div>
+		
+		
+Conditional class:
+	<tag [class-<CSS CLASS>]='<boolean component property>'>
 
-	  constructor() {
-		this.showTitle();
-	  }
+	For example:
+	HTML:
+		
+		<p [class.clicked]='clicked'>
+		
+	TS:
+		
+		@Component({
+		  selector: 'app-css-demo',
+		  templateUrl: './css-demo.component.html',
+		  styleUrls: ['./css-demo.component.css']
+		})
+		export class CssDemoComponent implements OnInit {
+		  clicked: boolean = false;
 
-	  ngOnInit() {
-	  }
+		  constructor() {
+			this.showTitle();
+		  }
 
-	  onClick() {
-		this.clicked = !this.clicked;
-	  }
-	}
-	
-	
-CSS:
-	.clicked {
-		background-color: lightgreen;
-	}
-	
+		  ngOnInit() {
+		  }
+
+		  onClick() {
+			this.clicked = !this.clicked;
+		  }
+		}
+		
+		
+	CSS:
+		.clicked {
+			background-color: lightgreen;
+		}
+		
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to add global styles with Angular CLI?	

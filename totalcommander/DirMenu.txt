@@ -1,0 +1,36 @@
+======================================
+TotalCommander directory menu settings
+======================================
+
+Add/replace this section in:
+
+	HOME\AppData\Roaming\GHISLER\WINCMD.INI 
+
+
+[DirMenu]
+menu1=1 - DEV - general
+cmd1=cd D:\_MYWORK\usr\general
+menu2=2 - DEV - apas_trunk
+cmd2=cd D:\usr\apas_trunk
+menu3=3 - cases
+cmd3=cd D:\_WORK\cases
+menu4=4 - deploy
+cmd4=cd D:\eclipse\andapps\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps
+menu5=5 - install
+cmd5=cd D:\_MYWORK\inst\development
+menu6=6 - backup
+cmd6=cd D:\opt\backup\FreeFileSync\batch
+menu7=7 - DOCS - APAS
+cmd7=cd D:\_MYWORK\doc\software\tools_and_languages\telephony\apas
+menu8=8 - DOCS - tools_and_languages
+cmd8=cd D:\_MYWORK\doc\software\tools_and_languages
+menu9=9 - DOCS - GitHub TXT
+cmd9=cd D:\_GIT\doc\software\tools_and_languages
+menu10=0 - DEV - current
+cmd10=cd D:\_GIT\usr\general\java\java-memoryleak-demo
+menu11=HOME
+cmd11=cd c:\Users\ftoth
+menu12=Downloads
+cmd12=cd c:\Users\ftoth\Downloads
+menu13=MyDocuments
+cmd13=cd C:\Users\ftoth\Documents

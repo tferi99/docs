@@ -1,16 +1,39 @@
 =====================================
 Phone association with desktop client
 =====================================
-
+- Usecase for testing
+- XML communication
 - Association by calling an RP
 - Association with CDP
 - Dissassociating a phone
+- Troubleshooting
+
 
 There are two methods to associate desktop client to a phone:
 1. CDP - associating phone by detecting it via physical network interface
 2. Calling an RP during association from physical phone
 
+------------------------------------------------------------------------------------------------------------------------------------------
+Usecase for testing
+===================
 
+- Install DC
+- Configure DC to connect to an APAS
+- DC/Menu/Associate phone
+	- DC renders a dialog with (RP) phone mumber to call from a physical phone
+	
+- Call this phone number from 
+	- physical phone
+	- JTAPI test tool/[Kwik Call]
+	- WebClient
+
+------------------------------------------------------------------------------------------------------------------------------------------
+XML communication
+=================
+DC only connects to APAS via:	
+
+	tcp/31421
+ 
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 Association by calling an RP
@@ -80,13 +103,50 @@ XML traffic
     |--------- getCode -------->|
     |<------ getCodeResponse ---|	
 	
-								
-								
-								
+
+
+andphone.log:
+
+	[2018-11-19 15:05:35,222] [DEBUG] [ObserverThread(com.andtek.andphone.communicator.RPCallObserver@3d4516f6)] [XMLServerMina.java:395] - associating terminal SEP64A0E714F271 with code +36110009054
+	...
+	[2018-11-19 15:05:35,223] [DEBUG] [ObserverThread(com.andtek.andphone.communicator.RPCallObserver@3d4516f6)] [DesktopObserverService.java:44] - observeTerminal[63bdca59]: connection already associated with the terminal SEP64A0E714F271 | connection=ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8] | connections=[ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8]] | for terminal SEP64A0E714F271 (47b2b77a)
+	[2018-11-19 15:05:35,223] [DEBUG] [ObserverThread(com.andtek.andphone.communicator.RPCallObserver@3d4516f6)] [DesktopClient.java:2219] - Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622]: associateTerminal(): Terminal=SEP64A0E714F271, policy=0, EMLoggedIn=true, LoggedIn=true, code=+36110009054
+	[2018-11-19 15:05:35,223] [DEBUG] [ObserverThread(com.andtek.andphone.communicator.RPCallObserver@3d4516f6)] [DesktopClient.java:2226] - Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622]: User ftoth logged in to the phone to associate => EM is used
+
+getCode:	
+	[DEBUG] [NioProcessor-1] [ClientProtocolHandler.java:335] - handleXMLMessage(): ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8] | Received CMINA_XML: <getCode/>
+	[DEBUG] [APAS-DesktopMsgQueueWorker-13] [ClientConnectionMina.java:3844] - CMINA_XML:ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8]: event handing ([getCode: null])
+	[DEBUG] [APAS-DesktopMsgQueueWorker-13] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8]: sendXml(<getCodeResponse code="+36110009054" random="6043B9623D2D8DCF78A1B3C650A0C37C"/>)
+	
+here is the call to RP for association:	
+[DEBUG] [APAS-DesktopPhoneEventQueueWorker-13] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8]: sendXml(<call id="13149/1" phone="SEP64A0E714F271" state="initiated" line="+36110009000" external="true" calltype="" callingPartyName="" calledPartyName="" callingParty="+36110009000" callingPartyPartition="FTOTH_Phones" calledParty="+36110009054" calledPartyPartition="FTOTH_Phones" origCalledParty="+36110009054" origCalledPartyPartition="FTOTH_Phones" origCalledPartyName="" lastRedirectedParty="" lastRedirectedPartyName=""/>)
+[DEBUG] [APAS-DesktopPhoneEventQueueWorker-14] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8]: sendXml(<call id="13149/1" phone="SEP64A0E714F271" state="ringout" line="+36110009000" external="true" calltype="" callingPartyName="" calledPartyName="" callingParty="+36110009000" callingPartyPartition="FTOTH_Phones" calledParty="+36110009054" calledPartyPartition="FTOTH_Phones" origCalledParty="+36110009054" origCalledPartyPartition="FTOTH_Phones" origCalledPartyName="" lastRedirectedParty="" lastRedirectedPartyName=""/>)
+
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------
+Troubleshooting association by calling an RP
+============================================
+
+- checking nework:
+
+	tcp/31421
+
+- getting APAS-DC communication:
+
+	Filter andphone.log with:
+	
+		CMINA_XML:
+		Received CMINA_XML:
+		associate
+							
+	and compare log with fragment above.
+	
+	
 ------------------------------------------------------------------------------------------------------------------------------------------
 Association with CDP
 ====================
-CDP is depretcated since not supported WinPCAP library. WinPCAP not supported sence several years and works unstable nowadays.
+CDP is depretcated since not supported WinPCAP library. WinPCAP not supported since several years and works unstable nowadays.
 
 CDP setup:
 	- connect your PC via phone which you want to associate to DC
@@ -123,7 +183,17 @@ Dissassociating a phone
 			--> DesktopClient.saveAttributes(...)
 				- to insert/update desktopclient table with username, currentLine, profileID
 				- replace phone in desktopclientphone table (delete+insert)
+
+andphone.log:
 				
-		
-	
+[2018-11-19 14:29:38,215] [DEBUG] [NioProcessor-1] [ClientProtocolHandler.java:335] - handleXMLMessage(): ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8] | Received CMINA_XML: <disassociatePhone password="*****" phone="SEP64A0E714F271" user=""/>
+[2018-11-19 14:29:38,218] [DEBUG] [APAS-DesktopMsgQueueWorker-14] [ClientConnectionMina.java:3844] - CMINA_XML:ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8]: event handing ([disassociatePhone: null])
+...
+[2018-11-19 14:29:38,218] [DEBUG] [APAS-DesktopMsgQueueWorker-14] [DesktopClient.java:2598] - Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622]: removing user and terminal SEP64A0E714F271
+[2018-11-19 14:29:38,218] [DEBUG] [APAS-DesktopMsgQueueWorker-14] [DesktopClient.java:2610] - Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622]: removing phone SEP64A0E714F271
+[2018-11-19 14:29:38,222] [INFO] [APAS-DesktopMsgQueueWorker-14] [DesktopClient.java:2126] - Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622]: Updated client 1 in DB 1
+[2018-11-19 14:29:38,223] [INFO] [APAS-DesktopMsgQueueWorker-14] [DesktopClient.java:2158] - Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622]: saving user in DB ftoth
+[2018-11-19 14:29:38,227] [DEBUG] [APAS-DesktopMsgQueueWorker-14] [DesktopClient.java:1985] - There are no terminals. Returning with empty phoneList.
+[2018-11-19 14:29:38,227] [DEBUG] [APAS-DesktopMsgQueueWorker-14] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=10202622], hashCode=187221b8]: sendXml(<phoneList></phoneList>)
+
 

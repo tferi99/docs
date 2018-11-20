@@ -1,0 +1,89 @@
+===================================
+How to configure Exchange Calendar?
+===================================
+
+SEE ALSO: 01_AND-Phone-Exchange-Calander-Presence-5.2.2_enA4.pdf
+
+-----------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+
+
+- Configure Exchange Server (2010, 2013, 2016)
+
+- Configure admin user with Impersonation
+
+	SEE ALSO: Exchange - How to set impersonation rights manually.pdf
+	
+- APAS/Global/Servers
+	
+	SEE ALSO:	apas-exchange-config.jpg
+
+	- Type: 				Exchange Calendar
+	- IP:					https://EXCHANGE-IP/EWS/Exchange.asmx
+	- Username:				user (without domain - specify domain in a different field below)
+	- Use impersonation:	true
+	
+	- Import Echange certificate into APAS:
+		- export certificate from browser 
+		- Export the Exchange Certificate by browser Export e.g. “WIN-EX7.crt” from URL: https://EXCHANGE-IP/EWS/Exchange.asmx
+		- Import Certificate APAS: Global > Security> Import Trusted Certificate
+		- APAS soft restart
+		
+	- APAS/Presence/Source/(Add)
+	
+		Type:				Exchange
+		
+		Allowed Domain: 	The allowed domains for this presence source, separated by semicolons. 
+							Only email addresses having one of the given domains (APAS servers) as domain are allowed to register to the presence source.
+							
+							E.g:	andtek.cee.cs.eilab.biz
+							
+	- Create a directory and directory group with presence user information.
+	
+		- For testing purposes the most simple way:		
+			- create an LDAP directory which uses the same LDAP as used by Exchange Presence
+			
+			- add attributes 
+				SEE ALSO:
+				exchange_presence_ldap_dir_1.jpg
+				exchange_presence_ldap_dir_2.jpg
+				
+			- enable Web Access
+							
+			- Add this directory to a directory group
+							
+	- Specify this directory group here: 	APAS/Client/Profiles/(DC profile)/[Directory Search]
+		
+		AND
+	
+			APAS/Client/Profiles/(DC profile)/[Directory Search]/(Enable Dynamic presence user subscription)		: true
+	
+-----------------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+- check server connection:		
+
+	APAS/Global/Servers/<EXCHANGE SERVER>/(Test)
+
+- Call degug page:
+
+		APAS/Global/Support/(Troubleshooting Pages)/<Exchange Presence>
+
+	OR
+		https://APAS-IP/andphone/JTAPIServlet?debug=presence_exchange
+		
+		
+- andphone.log	
+
+	presence update XML APAS->DC:
+	
+		[2018-11-19 23:52:38,663] [DEBUG] [APAS-defaultWorker-19] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[1, ftoth@ftoth-nb, , 6.0.3, Windows 7, 1, hashCode=134ea41a], hashCode=634efc8a]: 
+			sendXml(<Presence><PresenceUpdate><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Busy"></ExchangeCalendarIdentification></PresenceUpdate></Presence>)
+
+	FILTERS: 
+		CMINA_XML:
+		[APAS-ExchangePresenceUpdater
+		<presence>
+		Presence[a-zA-Z]Event
+		

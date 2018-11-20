@@ -41,7 +41,7 @@ Configuration
 - How to configure directory mapping and notes?
 - How to configure Tomcat8 for APAS?
 - How to configure SSO for APAS?
-- How to configure Exchange Calendar?
+- How to configure Exchange Calendar Presence?
 - How to configure broadcast?
 
 ACD
