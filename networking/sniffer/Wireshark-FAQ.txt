@@ -1,7 +1,7 @@
 =============
 Wireshark FAQ
 =============
-
+- Whow to decrypt SSL/TLS traffic with Wireshark?
 - SSL cannot decrypted with Wireshark
 - BER Error: This field lies beyond the end of the known sequence definition.
 - HTTP SSL protocol not recognized
@@ -16,6 +16,18 @@ Filters
 Protocols
 ---------
 - How Wireshark identifies RTP?
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Whow to decrypt SSL/TLS traffic with Wireshark?
+===============================================
+- First get cypher suite of server - since the Diffie Hellman (DHE) ciphers cannot be decrypted. 
+
+	The server certificate cipher suite can be seen in the server hello/certificate frame during the SSL handshake.
+	
+- 	
+
+	
 
 
 -------------------------------------------------------------------------------------------------------------------------------------
