@@ -1,15 +1,38 @@
+=================
+Exchange Presence
+=================
+- Configuration
+- Use Cases
+
 
 -------------------------------------------------------------------------------------------------------------------
-Use cases
+Configuration
+=============
+- ???
+	set here: 	APAS/General/Servers/CHOOSE/(Event pulling period)
+	stored:		config(global/servers.exchange.EventPullingPeriod)
+	default:	60
+	used:		com.andtek.andphone.presence.msews.ExchangeEventNotificationsManager
+	initialized:	com.andtek.andphone.presence.Module.init(JTAPIThread jtapi)
+ExchangeEventNotificationsManager:
+ - Class for managing event notifications subscriptions to Exchange server.
+ - Push and Pull subscriptions are supported
+ - Singleton class - getting:	
+ 
+	public static ExchangeEventNotificationsManager.getInstance()
+	
+	
+-------------------------------------------------------------------------------------------------------------------
+Use Cases
 =========
-Exchange server manual connection test:
+- Exchange server manual connection test:
 
 	APAS/General/Servers/CHOOSE/[Servers]/[Server 1]/(Test Connection)
 		--> com.andtek.andphone.global.gwtapp.server.RPCglobalServiceImpl.RemoteTestServerConnection()
 			--> ExchangeCachedCalendarServer.testConnection()
 
 
-Exchange server automatical (background) connection test:
+- Exchange server automatical (background) connection test:
 	ServerGroup.ServerGroup()
 		- verifyThread = new ServerGroupVerifier(this)
 		--> ServerGroupVerifier.ServerGroupVerifier()
@@ -22,10 +45,7 @@ Exchange server automatical (background) connection test:
 			
 			
 
-
-Config:
-
-	config(global/servers.exchange.EventPullingPeriod) =   20     
+-------------------------------------------------------------------------------------------------------
 
 Classes:
 
