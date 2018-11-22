@@ -3,7 +3,7 @@ Exchange Presence
 =================
 - Configuration
 - Use Cases
-
+- Troubleshooting, tracing
 
 -------------------------------------------------------------------------------------------------------------------
 Configuration
@@ -14,10 +14,11 @@ Configuration
 	default:	60
 	used:		com.andtek.andphone.presence.msews.ExchangeEventNotificationsManager
 	initialized:	com.andtek.andphone.presence.Module.init(JTAPIThread jtapi)
-ExchangeEventNotificationsManager:
- - Class for managing event notifications subscriptions to Exchange server.
- - Push and Pull subscriptions are supported
- - Singleton class - getting:	
+	
+	ExchangeEventNotificationsManager:
+	- Class for managing event notifications subscriptions to Exchange server.
+	- Push and Pull subscriptions are supported
+	- Singleton class - getting:	
  
 	public static ExchangeEventNotificationsManager.getInstance()
 	
@@ -31,7 +32,7 @@ Use Cases
 		--> com.andtek.andphone.global.gwtapp.server.RPCglobalServiceImpl.RemoteTestServerConnection()
 			--> ExchangeCachedCalendarServer.testConnection()
 
-
+			
 - Exchange server automatical (background) connection test:
 	ServerGroup.ServerGroup()
 		- verifyThread = new ServerGroupVerifier(this)
@@ -43,10 +44,102 @@ Use Cases
 							--> ExchangeService exchangeService.resolveName(username);
 			
 			
+- Calendar entry changed:	Exchange server sends POST request subsribers (APAS):
+
+		10.51.51.175	10.51.51.121	HTTP/XML	619	POST /andphone/exchange/pushlistener HTTP/1.1 
 			
+	and calls APAS servlet:	
+	
+	- Exchange server sends a groadcast message, e.g:
 
--------------------------------------------------------------------------------------------------------
+		10.51.51.175	10.51.51.255	BROWSER	243	Host Announcement CEECS-WINAW-EX, Workstation, Server, NT Workstation, NT Server
 
+		<?xml version="1.0" encoding="utf-8"?>
+		<soap11:Envelope
+			xmlns:soap11="http://schemas.xmlsoap.org/soap/envelope/">
+			<soap11:Header>
+				<t:RequestServerVersion
+					xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" Version="Exchange2010_SP2"
+					xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types" />
+				</soap11:Header>
+				<soap11:Body>
+					<m:SendNotification
+						xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"
+						xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages">
+						<m:ResponseMessages>
+							<m:SendNotificationResponseMessage ResponseClass="Success">
+								<m:ResponseCode>NoError</m:ResponseCode>
+								<m:Notification>
+									<t:SubscriptionId>JgBjZWVjcy13aW5hdy1leC5hbmR0ZWsuY2VlLmNzLmVpbGFiLmJpehAAAAB74/ElmFjbTK+VltnVi/H1O9UWEmVQ1ggQAAAA6qidCiSHFkeaIyID+fKrGg==</t:SubscriptionId>
+									<t:PreviousWatermark>AQAAAOpWVDDWfqxLm3RGwWywdiv/iQIAAAAAAAA=</t:PreviousWatermark>
+									<t:MoreEvents>false</t:MoreEvents>
+									<t:CreatedEvent>
+										<t:Watermark>AQAAAOpWVDDWfqxLm3RGwWywdiv/iQIAAAAAAAE=</t:Watermark>
+										<t:TimeStamp>2018-11-22T10:30:10Z</t:TimeStamp>
+										<t:ItemId Id="AQMkADBhOWRhOGVhLTg3MjQtNDcxNi05YTIzLTIyADAzZjlmMmFiMWEARgAAA9YQQZzoNWBKlZQ6xBJtjQkHAN2NyHIGtalDnSoEKBVV00UAAAIBDQAAAN2NyHIGtalDnSoEKBVV00UAAAINMgAAAA==" ChangeKey="DwAAAA==" />
+										<t:ParentFolderId Id="AQMkADBhOWRhOGVhLTg3MjQtNDcxNi05YTIzLTIyADAzZjlmMmFiMWEALgAAA9YQQZzoNWBKlZQ6xBJtjQkBAN2NyHIGtalDnSoEKBVV00UAAAIBDQAAAA==" ChangeKey="AQAAAA==" />
+									</t:CreatedEvent>
+									<t:ModifiedEvent>
+										<t:Watermark>AQAAAOpWVDDWfqxLm3RGwWywdisCigIAAAAAAAE=</t:Watermark>
+										<t:TimeStamp>2018-11-22T10:30:10Z</t:TimeStamp>
+										<t:FolderId Id="AQMkADBhOWRhOGVhLTg3MjQtNDcxNi05YTIzLTIyADAzZjlmMmFiMWEALgAAA9YQQZzoNWBKlZQ6xBJtjQkBAN2NyHIGtalDnSoEKBVV00UAAAIBDQAAAA==" ChangeKey="AgAAAA==" />
+										<t:ParentFolderId Id="AQMkADBhOWRhOGVhLTg3MjQtNDcxNi05YTIzLTIyADAzZjlmMmFiMWEALgAAA9YQQZzoNWBKlZQ6xBJtjQkBAN2NyHIGtalDnSoEKBVV00UAAAIBCAAAAA==" ChangeKey="AQAAAA==" />
+									</t:ModifiedEvent>
+								</m:Notification>
+							</m:SendNotificationResponseMessage>
+						</m:ResponseMessages>
+					</m:SendNotification>
+				</soap11:Body>
+			</soap11:Envelope>
+
+	- APAS processes notification:
+	
+		POST ==> com.andtek.andphone.presence.msews.ExchangePushListener.doPost(...)
+			--> traceContent(...)
+			---------------------- notification ID not found ----------------------------
+			--> LOG:	"Received event notification push from EWS server but no push entry matches subscriptionID"
+			
+			
+		
+	
+-------------------------------------------------------------------------------------------------------------------
+Troubleshooting, tracing
+========================
+Exchange Presence writes tracing information with "ews_trace" logger into:
+
+	/var/log/apas/ews_trace.log
+	
+This file is written by:
+- EWS API 
+
+	ExchangeTraceListener which implements ITraceListener registered in 
+		
+		com.andtek.andphone.presence.msews.ExchangeCachedCalendarServer
+		
+	to trace EWS API.
+	
+- com.andtek.andphone.presence.msews.ExchangePushListener
+
+	It's a servlet which called by Exchange server on push events.
+	POST ==> doPost(...)
+			--> traceRequestFlags(request)
+			
+				<Trace Tag=ExchangePushListenerRequestHttpHeaders ...
+			
+			--> traceContent(...);
+				
+				<Trace Tag=ExchangePushListenerRequest ...
+				OR
+				<Trace Tag=ExchangePushListenerResponse ...
+				
+
+
+
+
+			
+**************************************************************************************
+**************************************************************************************
+**************************************************************************************
 Classes:
 
 	com.andtek.andphone.presence.msews.ExchangeCachedCalendarServer

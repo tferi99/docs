@@ -4,6 +4,10 @@ How to configure Exchange Calendar?
 
 SEE ALSO: 01_AND-Phone-Exchange-Calander-Presence-5.2.2_enA4.pdf
 
+- Configuration
+- Troubleshooting
+
+
 -----------------------------------------------------------------------------------------------------------------
 Configuration
 =============
@@ -66,7 +70,13 @@ Troubleshooting
 
 	APAS/Global/Servers/<EXCHANGE SERVER>/(Test)
 
-- Call degug page:
+- How to create presence event?
+
+	Go to Outlook OWA Calendar and 
+		- create a calendar entry which contains the current time 
+		- or change status of this entry (Free, Busy, ...)
+	
+- Call debug page:
 
 		APAS/Global/Support/(Troubleshooting Pages)/<Exchange Presence>
 
@@ -86,4 +96,15 @@ Troubleshooting
 		[APAS-ExchangePresenceUpdater
 		<presence>
 		Presence[a-zA-Z]Event
+		
+- Tracing presence notification:
+
+	/var/log/apas/ews_trace.log
+	
+	
+SEE MORE about tracing:	
+
+	tools_and_languages\telephony\apas\HOWTO\source_code_discovery\Exchange Presence.txt
+	
+	
 		
