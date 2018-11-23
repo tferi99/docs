@@ -2,10 +2,17 @@
 Git FAQ
 =======
 
+Config
+------
 - Where is git configuration?
 - Where is the local Git repository located?
 - How to create a local repository?
+- Most important configuration options
 
+Commands
+--------
+- How to add remote origin?
+- How to commit changes automatically?
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 Where is git configuration?
@@ -28,6 +35,15 @@ You can view inheritance of configuration in  of .
 
 	TORTOISE_GIT_APP/Settings/Git/[Config source]/(Effective)	
 
+- to get/set repository or global options use:
+
+	git config [--local/--global/--system] [name] [value [value_regex]]
+	
+  e.g:	
+  
+	git config --global user.email "toth_ferenc@hotmail.com"
+	
+	
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 Where is the local Git repository located?
 ==========================================
@@ -62,7 +78,35 @@ How to create a local repository?
 	git push -u origin master	
 
 
+	
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+Most important configuration options
+====================================
+remote.origin.url	: remote origin (in file: [remote "origin"] / url)
 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+How to add remote origin?
+=========================
+In project directory:
+
+	git remote add origin [url]
+	
+e.g:
+
+	git remote add origin https://github.com/user/repo.git
+		
+to verify remote origin:
+
+	git remote -v
 	
 	
-	
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+How to commit changes automatically?
+====================================
+git commit -am "message"
+
+-a --all	: Tell the command to automatically stage files that have been modified and deleted, 
+				but new files you have not told Git about are not affected.
+				
+				
