@@ -133,7 +133,11 @@ This file is written by:
 				<Trace Tag=ExchangePushListenerResponse ...
 				
 
+!!! IMPORTANT !!! 
+ews_trace logger is in INFO level by default.
+Set it with this JSP:
 
+	APAS:8080/andphone/jsp/dev/setLogLevel.jsp
 
 
 			
