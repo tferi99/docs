@@ -14,6 +14,10 @@ Commands
 - How to add remote origin?
 - How to commit changes automatically?
 
+Troubleshooting
+---------------
+ERROR: HttpRequestException and asking credentials
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 Where is git configuration?
 ===========================
@@ -110,3 +114,40 @@ git commit -am "message"
 				but new files you have not told Git about are not affected.
 				
 				
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: HttpRequestException and asking credentials
+==================================================
+I had an issue with GitHub when trying to push or pull. It was asking me to log in every time, but still failing with an error.
+
+Command Line
+	fatal: HttpRequestException encountered.
+	   An error occurred while sending the request.
+	Username for 'https://github.com':
+
+TortoiseGit
+	fatal: HttpRequestException encountered.
+	An error occurred while sending the request.
+	remote: Invalid username or password.
+	fatal: Authentication failed for 'https://github.com/username/reponame.git/'
+
+CAUSE:
+It is my understanding that GitHub has switched to using TLS 1.2, which is causing this error when your program is 
+still trying to connect to GitHub using TLS 1.0.
+	
+FIX:
+- First you need to download and install the latest version of the Git Windows Credential Manager:
+
+		https://github.com/Microsoft/Git-Credential-Manager-for-Windows/releases/latest
+
+- Restart your machine.
+
+- Enter a git command in the command line and you will be prompted to login again.
+
+- If you still get the same fatal error, you will need to update Git by downloading the latest version from here: 
+
+	https://git-scm.com/downloads
+
+- Enter a git command in the command line and you will be prompted to login again. 
+	The problem should be solved now and you should be able to carry on working as normally.
+	
+	
