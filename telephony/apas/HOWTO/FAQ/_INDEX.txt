@@ -106,6 +106,7 @@ Desktop Client
 - How connects Desktop Client to the system?	
 - How CDP dynamic association works on Desktop Client?
 - How to activate developer widget?
+- Desktop CLient Tweaks
 	
 WebClient
 ---------

@@ -3,6 +3,7 @@ Exchange Presence
 =================
 - Configuration
 - Use Cases
+- Caching present result
 - Troubleshooting, tracing
 
 -------------------------------------------------------------------------------------------------------------------
@@ -43,7 +44,68 @@ Use Cases
 						--> ExchangeCachedCalendarServer.verifyConnection()
 							--> ExchangeService exchangeService.resolveName(username);
 			
+- Directory search and dynamic subscription:
+	log:
+	
+
+	
+		[DEBUG] [NioProcessor-1] [ClientProtocolHandler.java:335] - handleXMLMessage(): ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27] | Received CMINA_XML: <searchDirectory id="4" phone="SEP64A0E714F271" seq="1">
+		[DEBUG] [APAS-Communicator-DirectorySearchThread-1] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27]: sendXml(<searchDirectoryResult seq="1" error="0" errorMessage="" exceptionMessage="">
+		[DEBUG] [NioProcessor-1] [ClientProtocolHandler.java:335] - handleXMLMessage(): ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27] | Received CMINA_XML: <Presence><PresenceRegister><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/><CUPSIdentification userID="ssotest1@andtek.cee.cs.eilab.biz"/></PresenceRegister></Presence>
+		[DEBUG] [APAS-defaultWorker-13] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27]: sendXml(<Presence><PresenceRegistered><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification></PresenceRegistered></Presence>)
+		[DEBUG] [APAS-defaultWorker-16] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27]: sendXml(<Presence><PresenceUpdate><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></PresenceUpdate></Presence>)
 			
+		DC -> APAS:			<searchDirectory id="4" phone="SEP64A0E714F271" seq="1">
+								 <attribute id="5"/>
+								 <attribute id="3"/>
+								 <attribute id="2"/>
+								 <attribute id="4"/>
+								 <attribute id="1">ssotest</attribute>
+							</searchDirectory>
+							
+		APAS -> DC:			<searchDirectoryResult seq="1" error="0" errorMessage="" exceptionMessage="">
+		
+		DC -> APAS:			<Presence>
+								<PresenceRegister>
+									<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/>
+									<CUPSIdentification userID="ssotest1@andtek.cee.cs.eilab.biz"/>
+								</PresenceRegister>
+							</Presence>
+		
+		APAS -> DC:			<Presence>
+								<PresenceRegistered>
+									<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification>
+								</PresenceRegistered>
+							</Presence>)
+	
+		APAS -> DC:			<Presence>
+								<PresenceUpdate>
+									<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification>
+								</PresenceUpdate>
+							</Presence>
+			
+		
+-	Search in DC
+
+		XML message from DC (searchDirectory) ==> ClientConnectionMina.handleEvents(...)
+			- getting parameters from XML message
+			--> new DirectorySearchThread(this, dirs, inputItems, false, seq, true);
+				------------------------------ if isAllowedDynamicPresenceSubscription -------------------------------
+					--> searcher = new DynamicBlfPresenceDesktopDirectorySearcher(connection, client, dirs, inputItems, doOr, seq, throwDirException);
+				---------------------------- else ---------------------------
+					--> searcher = new LegacyDesktopDirectorySearcher(connection, client, dirs, inputItems, doOr, seq, throwDirException);	
+				--> searcher.search()
+				
+				
+		NOTE: 
+			Search always calls LegacyDesktopDirectorySearcher, DynamicBlfPresenceDesktopDirectorySearcher not completed and NOT USED currently.
+			DC asks 
+				
+				
+- AFTER search in DC requests presence information from APAS with PresenceRegister
+
+				
+				
 - Calendar entry changed:	Exchange server sends POST request subsribers (APAS):
 
 		10.51.51.175	10.51.51.121	HTTP/XML	619	POST /andphone/exchange/pushlistener HTTP/1.1 
@@ -99,6 +161,18 @@ Use Cases
 			---------------------- notification ID not found ----------------------------
 			--> LOG:	"Received event notification push from EWS server but no push entry matches subscriptionID"
 			
+			
+			
+-------------------------------------------------------------------------------------------------------------------
+Caching present result
+======================
+To get info call this debug page:
+
+	APAS:8080/andphone/JTAPIServlet?debug=presence_exchange
+
+	--> doPresenceExchangeDebug(request, response, out, output, noRequiredLogin, refreshSecs)
+		----------------------- loop on presence sources where instanceof ExchangeCalendarPresenceSourceImpl ----------------------------------
+		--> snapshots = exchangeSource.getPresenceSnaphsot()
 			
 		
 	

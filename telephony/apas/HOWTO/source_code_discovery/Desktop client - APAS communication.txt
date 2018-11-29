@@ -2,8 +2,24 @@
 Desktop client - APAS communication
 ===================================
 
-APAS -> Desktop client
-----------------------
+APAS -> DC
+----------
 	ClientConnectionMina.sendXml(String xml)
 	
-ClientConnectionMina	
+LOG filter:	"CMINA_XML\:.*sendXml\("
+
+	
+DC -> APAS
+----------
+Event captured by:
+
+EVENT ===> com.andtek.andphone.communicator.ClientProtocolHandler.messageReceived(...)
+			--> com.andtek.andphone.communicator.handleXMLMessage(IoSession session, String xml)
+
+	LOG filter: "handleXMLMessage\(\).*Received CMINA_XML\:"
+	
+Command constans are here:
+
+	- com.andtek.andphone.communicator.ClientConnectionIF
+	- com.andtek.andphone.communicator.protocol.PresenceProtocolHelper
+	

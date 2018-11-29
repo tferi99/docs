@@ -44,7 +44,6 @@ Desktop client
 - Desktop client - APAS communication
 - Phone association with desktop client
 
-
 Media
 -----
 - Queue media upload
