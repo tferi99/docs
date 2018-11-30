@@ -2,6 +2,18 @@
 Howto install OpenWRT to ASUS WL-500gp v2
 =========================================
 
+
+ASUS WL-500gp v2 specification
+------------------------------
+Network Standard
+IEEE 802.11b, IEEE 802.11g, IEEE 802.11d, IEEE 802.11i, IPv4
+Data Rate
+802.11b : 1, 2, 5.5, 11Mbps
+802.11g : 6,9,12,18,24,36,48,54Mbps
+Operating Frequency
+2.4GHz
+
+
 Read before install
 -------------------
 Current images are:
