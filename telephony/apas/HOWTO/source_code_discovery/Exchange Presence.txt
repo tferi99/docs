@@ -14,14 +14,34 @@ Configuration
 	stored:		config(global/servers.exchange.EventPullingPeriod)
 	default:	60
 	used:		com.andtek.andphone.presence.msews.ExchangeEventNotificationsManager
-	initialized:	com.andtek.andphone.presence.Module.init(JTAPIThread jtapi)
+	
+	initialized:	-- >com.andtek.andphone.presence.Module.init(JTAPIThread jtapi)	during startup
+						--> ExchangeEventNotificationsManager.loadConfig()
+							--> setPullingPeriod(int period)
+								--> ExchangeEventNotificationsPuller.setPullingPeriod(...)
+								--> ExchangeEventNotificationsPuller.stopPullingTimer()
+								--> startStopPullingIfNecessary()
+								
+								
+	saved:		from GWT config page
+					--> RPCglobalServiceImpl.RemoteSaveServer(...)
+						--> ExchangeEventNotificationsManager.setPullingPeriod(int period)
+							--> saveConfig()
+					
+	
+	
+	
+	
+	
+	
 	
 	ExchangeEventNotificationsManager:
+	----------------------------------
 	- Class for managing event notifications subscriptions to Exchange server.
 	- Push and Pull subscriptions are supported
 	- Singleton class - getting:	
  
-	public static ExchangeEventNotificationsManager.getInstance()
+		public static ExchangeEventNotificationsManager.getInstance()
 	
 	
 -------------------------------------------------------------------------------------------------------------------
@@ -102,7 +122,17 @@ Use Cases
 			DC asks 
 				
 				
-- AFTER search in DC requests presence information from APAS with PresenceRegister
+- AFTER search in DC requests presence information from APAS with PresenceRegister:
+
+	<Presence><PresenceRegister>... ==> PresenceProtocolHelper.ClientConnectionMina.handleEvents()
+		--> handleClientPresenceMessage(msg)
+			--> subscribeEmailToExchangePresence(identification.getIdentifier())
+				--> DynamicPresenceSubscriptionManager.subscribe(String id, Object userData)		<< ExchangeCalendarIdentification
+					--> globalSubscriptions.put(id, new Date())
+			
+			?????
+			--> PresenceProtocolHelper.parseClientMessage(msgXMLstring)
+
 
 				
 				
@@ -175,6 +205,24 @@ To get info call this debug page:
 		--> snapshots = exchangeSource.getPresenceSnaphsot()
 			
 		
+- Unregister snapshots:
+
+		PresenceSource[] sources = com.andtek.andphone.presence.Module.getPresenceProvider().getPresenceSourcesAsArray();
+		for (PresenceSource source : sources) {
+			if (source instanceof ExchangeCalendarPresenceSourceImpl) {
+				return (ExchangeCalendarPresenceSourceImpl)source;
+			}
+		}
+
+
+	after unregister APAS sends messages about unregistered addresses:
+	
+		[DEBUG] [APAS-defaultWorker-20] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=4bef3299], hashCode=499f8535]: sendXml(<Presence><PresenceUnregistered><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></PresenceUnregistered></Presence>)
+		[DEBUG] [APAS-defaultWorker-23] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=4bef3299], hashCode=499f8535]: sendXml(<Presence><PresenceUnregistered><ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></PresenceUnregistered></Presence>)
+
+
+	
+	
 	
 -------------------------------------------------------------------------------------------------------------------
 Troubleshooting, tracing

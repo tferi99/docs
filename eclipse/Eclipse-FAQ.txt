@@ -34,4 +34,17 @@ You probably pressed "Skip All Breakpoints" in the Breakpoint view (Ctrl-Alt-B).
 Press it again!
 
 
+--------------------------------------------------------------------------------------------------
+ERROR: Could not publish ... Multiple contexts have a path
+==========================================================
+Go to server.xml in server folder under in Servers.
+
+- Find: <Context ..../>
+- Remove duplications
+
+
+
+
+
+
 
