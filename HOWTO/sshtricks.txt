@@ -1,17 +1,21 @@
 SSH tricks
 ==========
 
-X11
----
+- X11 tunneling
+- Speeding up SSH transfer
+
+-------------------------------------------------------------------------------------------------------------------	
+X11 tunneling
+=============
 ssh -X <host>
 
 	X11 forwarding. You have to start ssh in a local XTerm, and remote programs will be 
 	displayed in local X. In addition, protocoll is encrypted!
 	
 
-
-Speeding up transfer
---------------------
+-------------------------------------------------------------------------------------------------------------------	
+Speeding up SSH transfer
+========================
 
 ssh -C <host>
 
@@ -23,4 +27,15 @@ ssh -c blowfish
 	Blowfish is a faster cipher.
 
 
+-------------------------------------------------------------------------------------------------------------------	
+Enable SSH root login on Debian
+===============================
+- Open /etc/ssh/sshd_config and change the following line:
+
+	FROM:
+		#PermitRootLogin without-password
+	TO:
+		PermitRootLogin yes
 	
+- /etc/init.d/ssh restart	
+

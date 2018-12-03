@@ -57,6 +57,10 @@ Looking for APT packages:
 
 	apt-cache search <package/keyword>
 	
+To refresh packages:
+
+	apt-get upgrade -y
+	
 ------------------------------------------------------------------------------------------------------------------------------	
 dselect
 =======
