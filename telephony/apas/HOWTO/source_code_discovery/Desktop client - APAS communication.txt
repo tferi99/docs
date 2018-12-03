@@ -1,19 +1,45 @@
 ===================================
 Desktop client - APAS communication
 ===================================
+- APAS -> DC
+- DC -> APAS
+- Developer tool 1: Communicator debug page
 
+--------------------------------------------------------------------------------------------------------------
+XML server initialization
+=========================
+--> com.andtek.andphone.communicator.Module.init(JTAPIThread jtapi)
+	LOG("Launching ANDPhone Communicator Server");
+	--> server = new XMLServerMina(jtapi)
+		--> XMLServerMina.XMLServerMina(jtapi)
+			--> setupSocketAcceptor(acceptor, DEFAULT_PORT)
+				DEFAULT_PORT     = 31521
+				--> acceptor.setHandler(new ClientProtocolHandler());
+				
+
+--------------------------------------------------------------------------------------------------------------
 APAS -> DC
-----------
+==========
 	ClientConnectionMina.sendXml(String xml)
 	
 LOG filter:	"CMINA_XML\:.*sendXml\("
 
-	
+--------------------------------------------------------------------------------------------------------------
 DC -> APAS
-----------
+==========
 Event captured by:
 
-EVENT ===> com.andtek.andphone.communicator.ClientProtocolHandler.messageReceived(...)
+XML received =====> ClientProtocolHandler.messageReceived(...)
+	--> handleXMLMessage(session, (String) message)
+		--> handleMessage(IoSession session, Element msg)
+			--> 
+
+EVENT ===> ClientConnectionMina.handleMessage(Element msg, EventQueue messageQueue)
+		--> messageQueue.add(new APASEvent[] { new MessageQueueEntry(this, MessageQueueEntry.PRIORITY_NORMAL, this, msg) })
+		
+		.... message received from message queue ....
+		
+		--> com.andtek.andphone.communicator.ClientProtocolHandler.messageReceived(...)
 			--> com.andtek.andphone.communicator.handleXMLMessage(IoSession session, String xml)
 
 	LOG filter: "handleXMLMessage\(\).*Received CMINA_XML\:"
@@ -22,4 +48,51 @@ Command constans are here:
 
 	- com.andtek.andphone.communicator.ClientConnectionIF
 	- com.andtek.andphone.communicator.protocol.PresenceProtocolHelper
+	
+	
+	
+	
+--------------------------------------------------------------------------------------------------------------
+Developer tool 1: Communicator debug page
+=========================================
+Debug page:
+
+		http://APAS:8080/andphone/communicator/debug
+
+It generates a page for communicator displaying the list of desktop clients connected. 
+You can filter the list and send XML messages to the filtered subset of desktop clients
+
+Implementation: 	Spring MVC
+- configuration
+	web.xml:
+	
+		<servlet>
+			<servlet-name>springCommunicator</servlet-name>
+			<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+			<load-on-startup>1</load-on-startup>
+		</servlet>
+
+		<servlet-mapping>
+			<servlet-name>springCommunicator</servlet-name>
+			<url-pattern>/communicator/*</url-pattern>
+		</servlet-mapping>   
+
+	springCommunicator-servlet.xml:
+		component scan:
+			com.andtek.andphone.recorder.web
+			com.andtek.andphone.communicator.web
+		views - FreeMarker:
+			/jsp/communicator/*.ftl
+
+	
+		
+	- controller:		com.andtek.andphone.communicator.web.DebugCtrl
+	- vier:				\WebContent\jsp\communicator\debug.ftl 
+	
+	
+It uses a helper class to get connections and send XML to DCs:
+
+	com.andtek.andphone.communicator.protocol.DebugProtocolHelper
+	
+	
 	
