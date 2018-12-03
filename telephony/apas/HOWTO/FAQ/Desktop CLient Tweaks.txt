@@ -1,0 +1,18 @@
+=====================
+Desktop CLient Tweaks
+=====================
+
+- How to activate developeer widget?
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+How to activate developeer widget?
+==================================
+Add 'Internal' into config under 'Advanced' and restart:
+
+	HOME\AppData\Roaming\Andtek\ANDDesktop\options.xml
+	
+	<Advanced>
+		<Internal>and33phone</Internal>
+ 	
+	

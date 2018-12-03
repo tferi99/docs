@@ -1,0 +1,65 @@
+===============
+Bootstrap 3 FAQ
+===============
+
+- What is sr-only?
+
+Components
+----------
+- How to set initial active tab of a tabset?
+- How to disable a form?
+- Howto change max width of a container?
+
+-----------------------------------------------------------------------------------------------------------------------------
+What is sr-only?
+================
+You can hide an element to all devices except screen readers with .sr-only. 
+Necessary for following accessibility best practices.
+
+It hides an element with CSS (width, heigth, clip, ...). It will be displayed but it will be invisible.
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+How to set initial active tab of a tabset?
+==========================================
+A scope variable pointed by attribute 'active' can store/control state of tab.
+
+	<tabset>
+    	<tab heading="{{'page.advanced.tabBackup' | translate}}" ng-if="globalBackupReadable" active="tabActive.tab1">
+    		<div ng-include="'views/admin/backup.html'"></div>
+    	</tab>
+		
+    	<tab heading="{{'page.advanced.tabRestore' | translate}}" ng-if="globalBackupWritable" active="tabActive.tab2">
+    		<div ng-include="'views/admin/restore.html'"></div>
+    	</tab>
+	</tabset>
+	
+	Controller:
+	
+		$scope.tabActive = {tab1: true};	
+		
+-------------------------------------------------------------------------------------------------------------------------------------------------
+How to disable a form?		
+======================
+Put a fieldset into a form and add 'disabled' attribute.
+
+<form>
+	<fieldset disabled>
+	...
+	</fieldset>
+</form>
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Howto change max width of a container?
+======================================
+Put this into your CSS:
+
+	@media (min-width: 1200px) {
+	  .container {
+		width: 1000px;												
+	  }
+	}
+
+Here the max width: 1000px

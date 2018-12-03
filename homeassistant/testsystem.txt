@@ -1,0 +1,60 @@
+=========================
+HomeAssistant test system
+=========================
+
+-------------------------------------------------------------------------------------------
+Environment
+===========
+
+- laptop
+- Debian 9.6
+
+-------------------------------------------------------------------------------------------
+Package management
+==================
+apt-get
+idpk -l
+
+-------------------------------------------------------------------------------------------
+Additional packages
+===================
+- mc
+- net-tools (missing ifconfig)
+
+-------------------------------------------------------------------------------------------
+Additional config
+=================
+- Enabling SSH root login on Debian
+	- Open /etc/ssh/sshd_config and change the following line:
+
+		FROM:
+			#PermitRootLogin without-password
+		TO:
+			PermitRootLogin yes
+		
+	- /etc/init.d/ssh restart	
+
+
+- Installing Python3 and HA (as root)
+
+	apt-get update
+	apt-get install python3-dev python3-pip
+	pip3 install homeassistant
+	hass --open-ui
+	
+- Install Mosquitto
+
+	 apt-get install mosquitto
+	 
+- Install Mosquitto CLI client (optional - for testing)
+
+	apt-cache search mosquitto-clients
+
+	
+	
+-------------------------------------------------------------------------------------------
+Testing, troubleshooting
+========================
+mosquitto_sub
+mosquitto_pub
+
