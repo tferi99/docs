@@ -43,6 +43,7 @@ Configuration
  
 		public static ExchangeEventNotificationsManager.getInstance()
 	
+	- It creates ExchangeEventNotificationsPuller
 	
 -------------------------------------------------------------------------------------------------------------------
 Use Cases
