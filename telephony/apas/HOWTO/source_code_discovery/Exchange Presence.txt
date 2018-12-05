@@ -3,6 +3,9 @@ Exchange Presence
 =================
 - Configuration
 - Use Cases
+	- Exchange server manual connection test
+	- Exchange server automatical (background) connection test
+	- Directory search and getting presence information
 - Caching present result
 - Troubleshooting, tracing
 
@@ -65,48 +68,154 @@ Use Cases
 						--> ExchangeCachedCalendarServer.verifyConnection()
 							--> ExchangeService exchangeService.resolveName(username);
 			
-- Directory search and dynamic subscription:
-	log:
+- Directory search and getting presence information:
+  		
+	How does it work?
+	-----------------
+	- DC makes a directory query and sends <searchDirectory> to APAS
+	- APAS sends a <searchDirectoryResult> with directory entries back which contains user records
+	- if a user does not have presence information in DC it generates a <PresenceRegister> message with all users which don't not have presence info
+	- APAS responds and sends N messages (for every users) and sends <PresenceRegistered>
+		- <PresenceRegistered> contains presence information if it already received from Exchange server
+		OR 
+		- <PresenceRegistered> contains UNKNOWN as presence status. 
+			In this case APAS create a subscription to Exchange server in the background and Exchange Server sends back status information asynchronously later.
+			In the handler of this status notification APAS sends presence information to DC in <PresenceUpdate>
+	- DC only refreshes presence information either during the first occurence of a user in local (DC) cache or in every 10 minutes it generates a new <PresenceRegister>.
+		If a user contained by DC cache it won't generate <PresenceRegister> for this user during the next 
 	
+		
+		
+	[NioProcessor-1] [ClientProtocolHandler.java:336] - handleXMLMessage(): ClientConnection[Client[2, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=7d21afb9], hashCode=672a540e] | Received CMINA_XML: <searchDirectory id="1" phone="SEP001EF7C345BB" seq="1">....
+	[APAS-Communicator-DirectorySearchThread-1] [ClientConnectionMina.java:2869] - CMINA_XML:ClientConnection[Client[2, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=7d21afb9], hashCode=672a540e]: sendXml(<searchDirectoryResult seq="1" error="0" errorMessage="" exceptionMessage="">....
+	[NioProcessor-1] [ClientProtocolHandler.java:336] - handleXMLMessage(): ClientConnection[Client[2, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=7d21afb9], hashCode=672a540e] | Received CMINA_XML: <Presence><PresenceRegister><ExchangeCalendarIdentification email="adminsso@andtek.cee.cs.eilab.biz"/><CUPSIdentification userID="adminsso@andtek.cee.cs.eilab.biz"/><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/><CUPSIdentification userID="ssotest1@andtek.cee.cs.eilab.biz"/><ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz"/><CUPSIdentification userID="ssotest2@andtek.cee.cs.eilab.biz"/></PresenceRegister></Presence>
+	[APAS-DesktopMsgQueueWorker-11] [PresenceProtocolHelper.java:86] - Client Message received: <Presence><PresenceRegister><ExchangeCalendarIdentification email="adminsso@andtek.cee.cs.eilab.biz"/><CUPSIdentification userID="adminsso@andtek.cee.cs.eilab.biz"/><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/><CUPSIdentification userID="ssotest1@andtek.cee.cs.eilab.biz"/><ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz"/><CUPSIdentification userID="ssotest2@andtek.cee.cs.eilab.biz"/></PresenceRegister></Presence>
+	[APAS-defaultWorker-14] [ClientConnectionMina.java:2869] - CMINA_XML:ClientConnection[Client[2, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=7d21afb9], hashCode=672a540e]: sendXml(<Presence><PresenceRegistered><ExchangeCalendarIdentification email="adminsso@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification></PresenceRegistered></Presence>)
+	[APAS-defaultWorker-12] [ClientConnectionMina.java:2869] - CMINA_XML:ClientConnection[Client[2, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=7d21afb9], hashCode=672a540e]: sendXml(<Presence><PresenceRegistered><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification></PresenceRegistered></Presence>)
+	[APAS-defaultWorker-13] [ClientConnectionMina.java:2869] - CMINA_XML:ClientConnection[Client[2, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=7d21afb9], hashCode=672a540e]: sendXml(<Presence><PresenceRegistered><ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification></PresenceRegistered></Presence>)
+	[APAS-defaultWorker-16] [ClientConnectionMina.java:2869] - CMINA_XML:ClientConnection[Client[2, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=7d21afb9], hashCode=672a540e]: sendXml(<Presence><PresenceUpdate><ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification><ExchangeCalendarIdentification email="adminsso@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></PresenceUpdate></Presence>)
 
-	
-		[DEBUG] [NioProcessor-1] [ClientProtocolHandler.java:335] - handleXMLMessage(): ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27] | Received CMINA_XML: <searchDirectory id="4" phone="SEP64A0E714F271" seq="1">
-		[DEBUG] [APAS-Communicator-DirectorySearchThread-1] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27]: sendXml(<searchDirectoryResult seq="1" error="0" errorMessage="" exceptionMessage="">
-		[DEBUG] [NioProcessor-1] [ClientProtocolHandler.java:335] - handleXMLMessage(): ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27] | Received CMINA_XML: <Presence><PresenceRegister><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/><CUPSIdentification userID="ssotest1@andtek.cee.cs.eilab.biz"/></PresenceRegister></Presence>
-		[DEBUG] [APAS-defaultWorker-13] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27]: sendXml(<Presence><PresenceRegistered><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification></PresenceRegistered></Presence>)
-		[DEBUG] [APAS-defaultWorker-16] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=b62d9c6], hashCode=71628f27]: sendXml(<Presence><PresenceUpdate><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></PresenceUpdate></Presence>)
-			
-		DC -> APAS:			<searchDirectory id="4" phone="SEP64A0E714F271" seq="1">
-								 <attribute id="5"/>
-								 <attribute id="3"/>
-								 <attribute id="2"/>
-								 <attribute id="4"/>
-								 <attribute id="1">ssotest</attribute>
-							</searchDirectory>
+
+	events:
+	-------
+	1st query:
+		
+							DC									APAS
+								=== <searchDirectory> ===>									// with directory search attributes
+								<=== <searchDirectoryResult> ===							// directory data WITHOUT presence info
+								=== <PresenceRegister> ===>									// subscribe data with ALL email addresses
+								<=== <PresenceRegistered> * USERS ===						// N events for every user but status is UNKNOWN if not cached before 
+								<=== <PresenceUpdate> ===									// with N presence status results, ONLY if user not cached before in APAS
+								
+	next queries:
+							DC									APAS
+								=== <searchDirectory> ===>									// with directory search attributes
+								<=== <searchDirectoryResult> ===							// directory data WITHOUT presence info								
+								PresenceRegister> ===>										// ONLY for users where presence is not cached in DC
+								...
+								
+	automatical presence refresh in every 10 minutes:
+		
+							DC									APAS
+								=== <PresenceRegister> ===>									// subscribe data with ALL email addresses
+								<=== <PresenceRegistered> * USERS ===						// N events for every user
+								=== <PresenceRegister> ===>									// subscribe data with ALL email addresses
+								<=== <PresenceRegistered> * USERS ===						// N events for every user but status is UNKNOWN if not cached before 
+								<=== <PresenceUpdate> ===									// with N presence status results, ONLY if user not cached before in APAS
+								
+	events detailed:
+	----------------
+		
+		DC -> APAS:			
+			<searchDirectory id="4" phone="SEP64A0E714F271" seq="1">
+				<attribute id="2"/>
+				<attribute id="5"/>
+				<attribute id="6"/>
+				<attribute id="3"/>
+				<attribute id="4"/>
+				<attribute id="1">sso</attribute>
+			</searchDirectory>
+
 							
-		APAS -> DC:			<searchDirectoryResult seq="1" error="0" errorMessage="" exceptionMessage="">
+		APAS -> DC:			
 		
-		DC -> APAS:			<Presence>
-								<PresenceRegister>
-									<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/>
-									<CUPSIdentification userID="ssotest1@andtek.cee.cs.eilab.biz"/>
-								</PresenceRegister>
-							</Presence>
+			<searchDirectoryResult seq="1" error="0" errorMessage="" exceptionMessage="">
+				<attributes>
+					<attribute id="1" name="ldap.Display_UserID" displayName="UserID" type="0" />
+					<attribute id="2" name="ldap.Display_EMail" displayName="Email" type="6" />
+					<attribute id="3" name="ldap.Display_Name" displayName="Name" type="0" />
+					<attribute id="4" name="ldap.Display_Tel" displayName="Tel" type="1" />
+					<attribute id="5" name="ldap.Display_FirstName" displayName="First Name" type="3" />
+					<attribute id="6" name="ldap.Display_LastName" displayName="Last Name" type="2" />
+				</attributes>
+				<result dirid="1" editable="false">
+					<pkid>CN=admin sso</pkid>
+					<attribute id="1">adminsso</attribute>
+					<attribute id="2">adminsso@andtek.cee.cs.eilab.biz</attribute>
+					<attribute id="3">admin sso</attribute>
+					<attribute id="5">sso</attribute>
+					<attribute id="6">admin</attribute>
+				</result>
+				<result dirid="1" editable="false">
+					<pkid>CN=John Smith,CN=HUN,CN=Development</pkid>
+					<attribute id="1">ssotest1</attribute>
+					<attribute id="2">ssotest1@andtek.cee.cs.eilab.biz</attribute>
+					<attribute id="3">John Smith</attribute>
+					<attribute id="4">+3630-ssotest1</attribute>
+					<attribute id="5">Smith</attribute>
+					<attribute id="6">John</attribute>
+				</result>
+				<result dirid="1" editable="false">
+					<pkid>CN=Jane Doe,CN=HUN,CN=Development</pkid>
+					<attribute id="1">ssotest2</attribute>
+					<attribute id="2">ssotest2@andtek.cee.cs.eilab.biz</attribute>
+					<attribute id="3">Jane Doe</attribute>
+					<attribute id="5">Doe</attribute>
+					<attribute id="6">Jane</attribute>
+				</result>
+			</searchDirectoryResult>
 		
-		APAS -> DC:			<Presence>
-								<PresenceRegistered>
-									<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification>
-								</PresenceRegistered>
-							</Presence>)
-	
-		APAS -> DC:			<Presence>
-								<PresenceUpdate>
-									<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification>
-								</PresenceUpdate>
-							</Presence>
+		DC -> APAS:			
+			<Presence>
+				<PresenceRegister>
+					<ExchangeCalendarIdentification email="adminsso@andtek.cee.cs.eilab.biz"/>
+					<CUPSIdentification userID="adminsso@andtek.cee.cs.eilab.biz"/>
+					<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/>
+					<CUPSIdentification userID="ssotest1@andtek.cee.cs.eilab.biz"/>
+					<ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz"/>
+					<CUPSIdentification userID="ssotest2@andtek.cee.cs.eilab.biz"/>
+				</PresenceRegister>
+			</Presence>
+		
+
+		APAS -> DC:			
+			<Presence>
+				<PresenceRegistered>
+					<ExchangeCalendarIdentification email="adminsso@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification>
+				</PresenceRegistered>
+			</Presence>
+			<Presence>
+				<PresenceRegistered>
+					<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="UNKNOWN"></ExchangeCalendarIdentification>
+				</PresenceRegistered>
+			</Presence>			
+			.... FOR ALL USERS
 			
+	
+		APAS -> DC:
 		
--	Search in DC
+			<Presence>
+				<PresenceUpdate>
+					<ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification>
+					<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification>
+					<ExchangeCalendarIdentification email="adminsso@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification>
+				</PresenceUpdate>
+			</Presence>		
+		
+		
+		
+	- Search in DC
+
 
 		XML message from DC (searchDirectory) ==> ClientConnectionMina.handleEvents(...)
 			- getting parameters from XML message
@@ -120,21 +229,27 @@ Use Cases
 				
 		NOTE: 
 			Search always calls LegacyDesktopDirectorySearcher, DynamicBlfPresenceDesktopDirectorySearcher not completed and NOT USED currently.
-			DC asks 
+
+				[DEBUG] [APAS-Communicator-DirectorySearchThread-1] [DirectorySearchThread.java:124] - Use the legacy/old desktop directory searcher.		<<<<<<<<<<<<<<<<<
+				[DEBUG] [APAS-Communicator-DirectorySearchThread-1] [AbstractDesktopDirectorySearcher.java:76] - Dynamic presence user subscription is ENABLED
+				[DEBUG] [APAS-Communicator-DirectorySearchThread-1] [AbstractDesktopDirectorySearcher.java:79] - Dynamic JTAPI presence subscription is DISABLED
+							
+				
+	- AFTER search DC requests presence information from APAS with PresenceRegister:
+
+		<Presence><PresenceRegister>... ==> PresenceProtocolHelper.ClientConnectionMina.handleEvents()
+			--> handleClientPresenceMessage(msg)
+				--> subscribeEmailToExchangePresence(identification.getIdentifier())
+					--> DynamicPresenceSubscriptionManager.subscribe(String id, Object userData)		<< ExchangeCalendarIdentification
+						--> globalSubscriptions.put(id, new Date())
+				
+				?????
+				--> PresenceProtocolHelper.parseClientMessage(msgXMLstring)
+
+
 				
 				
-- AFTER search in DC requests presence information from APAS with PresenceRegister:
-
-	<Presence><PresenceRegister>... ==> PresenceProtocolHelper.ClientConnectionMina.handleEvents()
-		--> handleClientPresenceMessage(msg)
-			--> subscribeEmailToExchangePresence(identification.getIdentifier())
-				--> DynamicPresenceSubscriptionManager.subscribe(String id, Object userData)		<< ExchangeCalendarIdentification
-					--> globalSubscriptions.put(id, new Date())
-			
-			?????
-			--> PresenceProtocolHelper.parseClientMessage(msgXMLstring)
-
-
+				
 				
 				
 - Calendar entry changed:	Exchange server sends POST request subsribers (APAS):
