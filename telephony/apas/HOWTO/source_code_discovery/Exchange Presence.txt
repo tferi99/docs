@@ -6,13 +6,15 @@ Exchange Presence
 	- Exchange server manual connection test
 	- Exchange server automatical (background) connection test
 	- Directory search and getting presence information
+- Register
+- Unregister
 - Caching present result
 - Troubleshooting, tracing
 
 -------------------------------------------------------------------------------------------------------------------
 Configuration
 =============
-- ???
+- Event pulling period
 	set here: 	APAS/General/Servers/CHOOSE/(Event pulling period)
 	stored:		config(global/servers.exchange.EventPullingPeriod)
 	default:	60
@@ -30,14 +32,10 @@ Configuration
 					--> RPCglobalServiceImpl.RemoteSaveServer(...)
 						--> ExchangeEventNotificationsManager.setPullingPeriod(int period)
 							--> saveConfig()
-					
+	....
 	
 	
-	
-	
-	
-	
-	
+
 	ExchangeEventNotificationsManager:
 	----------------------------------
 	- Class for managing event notifications subscriptions to Exchange server.
@@ -47,6 +45,12 @@ Configuration
 		public static ExchangeEventNotificationsManager.getInstance()
 	
 	- It creates ExchangeEventNotificationsPuller
+
+	
+- Presence update period
+	set here: APAS/Presence/Sources/ITEM/(Status update period) (default: 10)
+	
+	....
 	
 -------------------------------------------------------------------------------------------------------------------
 Use Cases
@@ -248,26 +252,35 @@ Use Cases
 
 
 
-	- ???????????????????????????????????????????
+- You click directory entry in Directory widgeet of DC:
 
-		[DEBUG] [APAS-DesktopMsgQueueWorker-11] [PresenceProtocolHelper.java:86] - Client Message received: <Presence><ExchangeCalendarPresenceRequest end="2018-12-07T05:55" start="2018-12-06T05:55"><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/></ExchangeCalendarPresenceRequest></Presence>
-		[DEBUG] [APAS-DesktopMsgQueueWorker-11] [ClientConnectionMina.java:2869] - CMINA_XML:ClientConnection[Client[1, support@, , 6.0.3, Windows 10, 1, hashCode=487047b8], hashCode=78f36c8c]: sendXml(<Presence><ExchangeCalendarPresenceResponse start="2018-12-06T05:55" end="2018-12-07T05:55"><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></ExchangeCalendarPresenceResponse></Presence>)
+	[DEBUG] [APAS-DesktopMsgQueueWorker-11] [PresenceProtocolHelper.java:86] - Client Message received: <Presence><ExchangeCalendarPresenceRequest end="2018-12-07T05:55" start="2018-12-06T05:55"><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/></ExchangeCalendarPresenceRequest></Presence>
+	[DEBUG] [APAS-DesktopMsgQueueWorker-11] [ClientConnectionMina.java:2869] - CMINA_XML:ClientConnection[Client[1, support@, , 6.0.3, Windows 10, 1, hashCode=487047b8], hashCode=78f36c8c]: sendXml(<Presence><ExchangeCalendarPresenceResponse start="2018-12-06T05:55" end="2018-12-07T05:55"><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></ExchangeCalendarPresenceResponse></Presence>)
+			
+	DC -> APAS:
+	
+		<Presence>
+			<ExchangeCalendarPresenceRequest end="2018-12-07T05:55" start="2018-12-06T05:55">
+				<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/>
+			</ExchangeCalendarPresenceRequest>
+		</Presence>			
 				
-		DC -> APAS:
-		
-			<Presence>
-				<ExchangeCalendarPresenceRequest end="2018-12-07T05:55" start="2018-12-06T05:55">
-					<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/>
-				</ExchangeCalendarPresenceRequest>
-			</Presence>			
-					
-		APAS -> DC:
-		
-			<Presence>
-				<ExchangeCalendarPresenceResponse start="2018-12-06T05:55" end="2018-12-07T05:55">
-					<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification>
-				</ExchangeCalendarPresenceResponse>
-			</Presence>			
+	APAS -> DC:
+	
+		<Presence>
+			<ExchangeCalendarPresenceResponse start="2018-12-06T05:55" end="2018-12-07T05:55">
+				<ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification>
+			</ExchangeCalendarPresenceResponse>
+		</Presence>			
+				
+- Presence enry unregistered - APAS sends message per entry:
+
+	APAS -> DC:
+		<Presence>
+			<PresenceUnregistered>
+				<ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification>
+			</PresenceUnregistered>
+		</Presence>
 				
 - Calendar entry changed:	Exchange server sends POST request subsribers (APAS):
 
@@ -325,33 +338,67 @@ Use Cases
 			--> LOG:	"Received event notification push from EWS server but no push entry matches subscriptionID"
 			
 			
-			
+
 -------------------------------------------------------------------------------------------------------------------
-Caching present result
-======================
-Desktop client
---------------
-DC only refreshes presence information either during the first occurence of a user in local (DC) cache or in every 10 minutes it generates a new <PresenceRegister>.
-If a user contained by DC cache it won't generate <PresenceRegister> for this user during the next query.
+Register
+========
+ExchangeCalendarPresenceSourceImpl		: it represents a presence source object for Exchange Calendar
+RegistrationEvent						: event to register/unregister
+											- addressToRegister (ExchangePresenceIdentification)
+											
+RegisteredAddressEntry					: CACHE element to store  registered oresence addresses
+											- attendeeInfo (from EWS API)
+											- identification (ExchangePresenceIdentification)
+											
+ExchangePresenceIdentification			: address to register
+											- state (ExchangePresenceState: Busy, Free, Tentative, ...)
+											- identifier
+											- identifierName
+
+
+- Registered addresses stored into a cache. It contains RegisteredAddressEntry items by identifier:
+
+	CACHE:	ConcurrentHashMap<String, RegisteredAddressEntry> registeredPresenceAddresses
+
+		 HashMap containing all data of the currently registered addresses.
+		 To each address we associate an AttendeeInfo (needed by exchange service) and the current presence status.
+
+
+- Registration/unregistration
+	Always created RegistrationEvent which is a thred which ecexuted by 
+	
+	com.andtek.andphone.presence.msews.ExchangeCalendarPresenceSourceImpl.RegistrationEvent created as THREAD -->RegistrationEvent.run()
+		--> ExchangeCalendarPresenceSourceImpl.doExecuteRegistration(RegistrationEvent event)
+			-------------------------------------- event.register --------------------------------------
+			--> registerPresenceAddress(ExchangePresenceIdentification address)
+				--------------- identifier of address contained by registeredPresenceAddresses ------------------
+				- YES:
+					getting address for event
+				- NO
+					--> 
+				--> send PresenceIdentificationRegisteredEvent with registeredAddress
+			
+			-------------------------------------- !(event.register) --------------------------------------
+			--> unregisterPresenceAddress(address)
+
+	
+-------------------------------------------------------------------------------------------------------------------
+Unregister
+==========
+		
+- Unregister all
+  --------------		
+	It gets entries from cache, creates RegistrationEvents (false) and executes them:
+	
+	--> ExchangeCalendarPresenceSourceImpl.unregisterAll()
+		-------------------- loop on registeredPresenceAddresses values --------------------------------
+			--> sendExecuteRegistration(new RegistrationEvent(value.identification, false))				// false -> unregister
+				--> registrationExecutor.execute(registrationEvent)
+
+
 	
 
-APAS
-----
-APAS makes snapshots about presence information.
-
-
-Tracing APAS cache
-------------------
-To get info call this debug page:
-
-	APAS:8080/andphone/JTAPIServlet?debug=presence_exchange
-
-	--> doPresenceExchangeDebug(request, response, out, output, noRequiredLogin, refreshSecs)
-		----------------------- loop on presence sources where instanceof ExchangeCalendarPresenceSourceImpl ----------------------------------
-		--> snapshots = exchangeSource.getPresenceSnaphsot()
-			
-		
-- Unregister snapshots:
+- Unregister presence adresses:
 
 		PresenceSource[] sources = com.andtek.andphone.presence.Module.getPresenceProvider().getPresenceSourcesAsArray();
 		for (PresenceSource source : sources) {
@@ -367,8 +414,45 @@ To get info call this debug page:
 		[DEBUG] [APAS-defaultWorker-23] [ClientConnectionMina.java:2864] - CMINA_XML:ClientConnection[Client[14, ftoth@ftoth-PC, , 6.0.3, Windows 7, 1, hashCode=4bef3299], hashCode=499f8535]: sendXml(<Presence><PresenceUnregistered><ExchangeCalendarIdentification email="ssotest2@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></PresenceUnregistered></Presence>)
 
 
+
+			
+-------------------------------------------------------------------------------------------------------------------
+Caching present result
+======================
+Desktop client
+--------------
+DC only refreshes presence information either during the first occurence of a user in local (DC) cache or in every 10 minutes it generates a new <PresenceRegister>.
+If a user contained by DC cache it won't generate <PresenceRegister> for this user during the next query.
 	
-	
+
+APAS
+----
+CACHE for registered addresses here:
+
+	ExchangeCalendarPresenceSourceImpl:
+		ConcurrentHashMap<String, RegisteredAddressEntry> registeredPresenceAddresses
+
+CACHE for Calendar events:
+
+	ExchangeCachedCalendarServer:
+		JCS cache
+
+
+
+Tracing APAS cache
+------------------
+To get info call this debug page:
+
+	APAS:8080/andphone/JTAPIServlet?debug=presence_exchange
+
+	--> doPresenceExchangeDebug(request, response, out, output, noRequiredLogin, refreshSecs)
+		----------------------- loop on presence sources where instanceof ExchangeCalendarPresenceSourceImpl ----------------------------------
+		--> snapshots = exchangeSource.getPresenceSnapshot()
+			
+	It creates a snapshot from the cache (registeredPresenceAddresses)before rendering a list of entries.
+		
+		
+		
 	
 -------------------------------------------------------------------------------------------------------------------
 Troubleshooting, tracing
