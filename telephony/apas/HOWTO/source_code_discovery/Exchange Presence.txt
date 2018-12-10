@@ -9,6 +9,7 @@ Exchange Presence
 - Register
 - Unregister
 - Caching present result
+- Refresing presencwe state
 - Troubleshooting, tracing
 
 -------------------------------------------------------------------------------------------------------------------
@@ -452,8 +453,12 @@ To get info call this debug page:
 	It creates a snapshot from the cache (registeredPresenceAddresses)before rendering a list of entries.
 		
 		
-		
-	
+-------------------------------------------------------------------------------------------------------------------		
+Refresing presencwe state
+=========================	
+
+
+
 -------------------------------------------------------------------------------------------------------------------
 Troubleshooting, tracing
 ========================
