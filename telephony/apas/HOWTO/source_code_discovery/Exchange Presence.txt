@@ -8,7 +8,9 @@ Exchange Presence
 	- Directory search and getting presence information
 - Register
 - Unregister
-- Caching present result
+- Caching present addresses
+- Handling calendar events
+- Caching calendar events
 - Troubleshooting, tracing
 
 -------------------------------------------------------------------------------------------------------------------
@@ -288,7 +290,7 @@ Use Cases
 			
 	and calls APAS servlet:	
 	
-	- Exchange server sends a groadcast message, e.g:
+	- Exchange server sends a broadcast message, e.g:
 
 		10.51.51.175	10.51.51.255	BROWSER	243	Host Announcement CEECS-WINAW-EX, Workstation, Server, NT Workstation, NT Server
 
@@ -403,7 +405,7 @@ Unregister
 		PresenceSource[] sources = com.andtek.andphone.presence.Module.getPresenceProvider().getPresenceSourcesAsArray();
 		for (PresenceSource source : sources) {
 			if (source instanceof ExchangeCalendarPresenceSourceImpl) {
-				return (ExchangeCalendarPresenceSourceImpl)source;
+				return (Exchange+CalendarPresenceSourceImpl)source;
 			}
 		}
 
@@ -417,8 +419,8 @@ Unregister
 
 			
 -------------------------------------------------------------------------------------------------------------------
-Caching present result
-======================
+Caching present addresses
+=========================
 Desktop client
 --------------
 DC only refreshes presence information either during the first occurence of a user in local (DC) cache or in every 10 minutes it generates a new <PresenceRegister>.
@@ -431,11 +433,6 @@ CACHE for registered addresses here:
 
 	ExchangeCalendarPresenceSourceImpl:
 		ConcurrentHashMap<String, RegisteredAddressEntry> registeredPresenceAddresses
-
-CACHE for Calendar events:
-
-	ExchangeCachedCalendarServer:
-		JCS cache
 
 
 
@@ -451,7 +448,21 @@ To get info call this debug page:
 			
 	It creates a snapshot from the cache (registeredPresenceAddresses)before rendering a list of entries.
 		
+-------------------------------------------------------------------------------------------------------------------
+Handling calendar events
+========================
+
+
 		
+-------------------------------------------------------------------------------------------------------------------
+Caching calendar events
+======================
+APAS store calendar events into JCS cache:
+	
+	ExchangeCachedCalendarServer.cache
+		
+		
+
 		
 	
 -------------------------------------------------------------------------------------------------------------------
