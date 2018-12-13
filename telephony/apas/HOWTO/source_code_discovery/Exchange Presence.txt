@@ -8,14 +8,9 @@ Exchange Presence
 	- Directory search and getting presence information
 - Register
 - Unregister
-<<<<<<< HEAD
-- Caching present result
-- Refresing presencwe state
-=======
-- Caching present addresses
+- Caching
 - Handling calendar events
-- Caching calendar events
->>>>>>> d4d4080c7725a70d1f030e8286340a3f06ea15d5
+- How presence information goes from Exchange Server to DC?
 - Troubleshooting, tracing
 
 -------------------------------------------------------------------------------------------------------------------
@@ -349,7 +344,13 @@ Use Cases
 -------------------------------------------------------------------------------------------------------------------
 Register
 ========
+Elements
+--------
+ExchangeCachedCalendarServer			: it  represents an Exchange Calendar Presence Server object which communicates with Microsoft Exchange Server
+											to get Calendar Free/Busy information via EWS SOAP interface.
+
 ExchangeCalendarPresenceSourceImpl		: it represents a presence source object for Exchange Calendar
+
 RegistrationEvent						: event to register/unregister
 											- addressToRegister (ExchangePresenceIdentification)
 											
@@ -361,28 +362,40 @@ ExchangePresenceIdentification			: address to register
 											- state (ExchangePresenceState: Busy, Free, Tentative, ...)
 											- identifier
 											- identifierName
+											
+microsoft.exchange.webservices.data.AttendeeInfo	: Attendee type + SMTP address
+
+ExchangeEventNotificationsManager		: A class for subscription management, containing the subscription, 
+											the on-event callback and a boolean indicating if subscription has been invalidated 
+											(e.g. should be removed / unsubscribed)
 
 
-- Registered addresses stored into a cache. It contains RegisteredAddressEntry items by identifier:
-
-	CACHE:	ConcurrentHashMap<String, RegisteredAddressEntry> registeredPresenceAddresses
-
-		 HashMap containing all data of the currently registered addresses.
-		 To each address we associate an AttendeeInfo (needed by exchange service) and the current presence status.
-
-
+ 
 - Registration/unregistration
-	Always created RegistrationEvent which is a thred which ecexuted by 
+	Always created RegistrationEvent which is a thread which ecexuted by 
 	
 	com.andtek.andphone.presence.msews.ExchangeCalendarPresenceSourceImpl.RegistrationEvent created as THREAD -->RegistrationEvent.run()
-		--> ExchangeCalendarPresenceSourceImpl.doExecuteRegistration(RegistrationEvent event)
+		--> ExchangeCalendarPresenceSourceImpl.doExecuteRegistration(RegistrationEvent this)
 			-------------------------------------- event.register --------------------------------------
 			--> registerPresenceAddress(ExchangePresenceIdentification address)
 				--------------- identifier of address contained by registeredPresenceAddresses ------------------
 				- YES:
 					getting address for event
-				- NO
-					--> 
+				- NO					
+					--> ExchangeCachedCalendarServer.subscribeToCalendarAutomaticInvalidation(AttendeeInfo attendeeInfo)
+						- SUBSCRIBE TO CALENDAR:
+						--> subscription = ExchangeEventNotificationsManager.subscribeToEventNotification(callback, exchangeService, enablePushNotification, impersonatedUserId, folders, EventType.Created,EventType.Deleted,EventType.Modified);
+								where:	
+									- callback:		InvalidationCallback(new AttendeeInfo(emailAddress)
+							- registering pull/push notifications
+							------------------ if PUSH URL and push enabled -----------------
+								- PUSH URL:	http://APAS:8080/andphone/exchange/pushlistener
+								--> subscribeToPushNotifications(requestService,folders,eventTypes)
+									--> MS....ExchangeService.subscribeToPushNotifications()	 
+							--> ExchangeEventNotificationsManager.pushSubscriptions.put(subscription.getId(), SubscriptionEntry<PushSubscription> entry)
+						--> ExchangeCachedCalendarServer.calendarNotificationSubscriptions.putIfAbsent(emailAddress, subscriptionId)
+					--> registeredPresenceAddresses.put 
+					
 				--> send PresenceIdentificationRegisteredEvent with registeredAddress
 			
 			-------------------------------------- !(event.register) --------------------------------------
@@ -424,8 +437,8 @@ Unregister
 
 			
 -------------------------------------------------------------------------------------------------------------------
-Caching present addresses
-=========================
+Caching 
+=======
 Desktop client
 --------------
 DC only refreshes presence information either during the first occurence of a user in local (DC) cache or in every 10 minutes it generates a new <PresenceRegister>.
@@ -434,12 +447,38 @@ If a user contained by DC cache it won't generate <PresenceRegister> for this us
 
 APAS
 ----
-CACHE for registered addresses here:
+- cache for registered addresses here:
 
 	ExchangeCalendarPresenceSourceImpl:
 		ConcurrentHashMap<String, RegisteredAddressEntry> registeredPresenceAddresses
 
+	Registered addresses stored into a cache. It contains RegisteredAddressEntry items by identifier:
 
+	CACHE:	ConcurrentHashMap<String, RegisteredAddressEntry> registeredPresenceAddresses
+		key: 		String - identifier (e.g. ssotest1@andtek.cee.cs.eilab.biz)
+		value:		ExchangeCalendarPresenceSourceImpl.RegisteredAddressEntry
+
+		 HashMap containing all data of the currently registered addresses.
+		 To each address we associate an AttendeeInfo (needed by exchange service) and the current presence status.
+		
+- cache for subscriptions
+
+	ExchangeCachedCalendarServer:
+		ConcurrentHashMap<String, String> calendarNotificationSubscriptions
+
+	Subscriptions are stored into also a cache map<emailAddress, subscriptionId>:
+	
+- caching calendar events
+
+	APAS store calendar events into JCS cache:
+	
+		ExchangeCachedCalendarServer.cache
+		
+- caching notification for an email:  map<Attendee email address, subscription ID>
+
+	ExchangeCachedCalendarServer.calendarNotificationSubscriptions
+	
+	
 
 Tracing APAS cache
 ------------------
@@ -456,29 +495,53 @@ To get info call this debug page:
 -------------------------------------------------------------------------------------------------------------------
 Handling calendar events
 ========================
+com.andtek.andphone.presence.msews.ExchangeCalendarPresenceSourceImpl
+	- Represents a presence source object for Exchange Calendar
+	- It implements a callback for the presence update executor.
+	 The  presence update executor is responsible for periodically
+	 computing presence status from the Calendar Events.
 
+ Initialization:
+ --> om.andtek.andphone.presence.msews.ExchangeCalendarPresenceSourceImpl.init()
+	--> restartPresenceUpdateExecutor()
+		--> Executors.newSingleThreadScheduledExecutor(new APASThreadFactory("ExchangePresenceUpdater"))
+		--> presenceUpdateExecutor.scheduleWithFixedDelay(new PresenceUpdateCallback(), BACKGROUND_UPDATER_THREAD_DELAY, BACKGROUND_UPDATER_THREAD_DELAY, TimeUnit.SECONDS);
+			- PresenceUpdateCallback() will be called and then waiting for BACKGROUND_UPDATER_THREAD_DELAY (5 secs)
 
+Running:
+--> PresenceUpdateCallback.run()
+	--> waiting
+	--> updatePresenceStatus(attendeesToUpdate)
+		- it collects attendees where events received and send them as event		
+		--> sendEvent(new PresenceIdentificationsStateChangedEvent(this, changedIdentifications)) ==> PresenceIdentificationsStateChangedEvent
 		
-<<<<<<< HEAD
--------------------------------------------------------------------------------------------------------------------		
-Refresing presencwe state
-=========================	
+--> ExchangeCalendarPresenceSourceImpl.PresenceUpdateCallback().run()
+	--> ExchangeCalendarPresenceSourceImpl.updatePresenceStatus(...)
+		--> ExchangeCachedCalendarServer.getAttendeeCalendarEvents(
+			--> doGetAttendeeCalendarEvents()
+				- it gets events either from cache or 
+				--> retrieveCalendarEventsFromCache(attendees,normalizedTimeWindows,cacheMisses)
+				--> updateCache(...)
+					--> putCalendarEventsInCache(AttendeeInfo attendeeInfo, Collection<CalendarEvent> events, TimeWindow timeWindow)
+						
+	
+		
+		
 
-
-
-=======
 -------------------------------------------------------------------------------------------------------------------
-Caching calendar events
-======================
-APAS store calendar events into JCS cache:
-	
-	ExchangeCachedCalendarServer.cache
-		
-		
+How presence information goes from Exchange Server to DC?
+=========================================================
+- APAS polling Exchange server in every 10 seconds
+
+
+- DC polling APAS in every 10 minute to refresh subscriptions ((<Presence><PresenceRegistered>....)
+
+
+
+
 
 		
 	
->>>>>>> d4d4080c7725a70d1f030e8286340a3f06ea15d5
 -------------------------------------------------------------------------------------------------------------------
 Troubleshooting, tracing
 ========================
