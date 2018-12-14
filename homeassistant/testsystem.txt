@@ -50,7 +50,7 @@ Additional config
 
 	apt-cache search mosquitto-clients
 
-	
+ 	
 	
 -------------------------------------------------------------------------------------------
 Testing, troubleshooting
@@ -58,3 +58,31 @@ Testing, troubleshooting
 mosquitto_sub
 mosquitto_pub
 
+-------------------------------------------------------------------------------------------
+Installing Wifi to Dell E5410 and Debian 9.6
+============================================
+- Add wireless-tools package:
+
+	apt-get install wireless-tools
+
+- Add a "non-free" component to /etc/apt/sources.list, for example:
+
+	deb http://httpredir.debian.org/debian/ stretch main contrib non-free
+
+- Update the list of available packages and install the firmware-iwlwifi package:
+
+	# apt-get update && apt-get install firmware-iwlwifi
+
+- As the iwlwifi module is automatically loaded for supported devices, reinsert this module to access installed firmware:
+
+	# modprobe -r iwlwifi ; modprobe iwlwifi
+	
+- Switch ON wifi 
+
+- iwconfig
+
+- list accessible WIFI APs:
+
+	iwlist scan
+	
+	

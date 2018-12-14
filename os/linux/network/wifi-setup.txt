@@ -1,0 +1,32 @@
+===================
+Debian 9 WiFi setup
+===================
+
+-----------------------------------------------------------------------------------------------------
+Preparation
+===========
+Install net-tools if you need old network commands (e.g. ifconfig):
+
+	npm intall net-tools
+
+
+-----------------------------------------------------------------------------------------------------
+Kernel module for Dell
+======================
+	
+- Add a "non-free" component to /etc/apt/sources.list, for example:
+
+	deb http://httpredir.debian.org/debian/ stretch main contrib non-free
+	
+- Update the list of available packages and install the firmware-iwlwifi package:
+
+	apt-get update && apt-get install firmware-iwlwifi
+	
+- As the iwlwifi module is automatically loaded for supported devices, reinsert this module to access installed firmware:
+
+	modprobe -r iwlwifi ; modprobe iwlwifi
+
+- Configure your wireless interface as appropriate.
+
+
+

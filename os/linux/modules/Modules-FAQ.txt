@@ -1,0 +1,157 @@
+===========
+Modules-FAQ
+===========
+Kernel can be extended with modules.
+
+- How to list loaded modules?
+- How to load/unload modules manually?
+- Where are kerner drivers?
+- How to list devices?
+- How to find the device driver used for a device?
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How to list loaded modules?
+===========================
+To show the status of modules in the Linux Kernel call:
+
+	less	/proc/modules
+	
+  OR
+
+	lsmod
+
+  lsmod is a trivial program which nicely formats the contents of the 
+  
+		/proc/modules
+		
+	showing what kernel modules are currently loaded.
+
+	Example output:
+	
+		Module                  Size  Used by
+		intel_powerclamp       16384  0
+		coretemp               16384  0
+		kvm_intel             200704  0
+		kvm                   598016  1 kvm_intel
+		uvcvideo               90112  0
+		snd_hda_codec_hdmi     49152  1
+		videobuf2_vmalloc      16384  1 uvcvideo
+		videobuf2_memops       16384  1 videobuf2_vmalloc
+		...
+		
+	where:
+		- Module: the name of the module. 
+				This is usually the name of the module file, minus the extension (.o or .ko), but it may have a custom name, which can be specified 
+				as an option when the module is inserted with the insmod command.
+	
+		- Size: the amount of memory used by the resident module, in bytes.
+		
+		- Used by: This column contains a number representing how many instances of the module are being used. 
+			If the number is zero, the module is not currently being used. 
+			Text after the number represents any available information about what is using the module: 
+			this is commonly a device name, a filesystem identifier, or the name of another module.
+	
+	
+To get detailed information about a module use:
+
+	modinfo <module>
+
+	
+----------------------------------------------------------------------------------------------------------------------------------------------
+How to load/unload modules manually?
+====================================
+- insmod:
+
+	To load a kernel module, we can use the insmod (insert module) command. Here, we have to specify the full path of the module. 
+	The command below will insert the speedstep-lib.ko module:
+
+		# insmod /lib/modules/4.4.0-21-generic/kernel/drivers/cpufreq/speedstep-lib.ko 
+
+- modprobe (RECOMMENDED):
+
+		'modprobe' is an intelligent command for listing, inserting as well as removing modules from the kernel. It searches in the module directory:
+
+			/lib/modules/$(uname -r) 
+			
+		for all the modules and related files, but excludes alternative configuration files in the /etc/modprobe.d directory.
+		To insert a module, simply provide its name as follows:
+
+			# modprobe speedstep-lib
+			
+modprobe -r
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+Where are kerner drivers?
+=========================
+
+	/lib/modules/$(uname -r)/kernel/drivers/
+	
+	
+	
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+How to list devices?
+====================
+- PCI devices:	
+	- in a simple list:
+	
+		lspci
+	
+	- in a list with details:
+	
+		lspci -v
+		
+	- in a tree - but only device IDs:
+	
+		lspci -t
+		
+	- in a tree - with device names:
+	
+		lspci -tv
+		
+	
+- USB devices:
+	- in a simple list:
+	
+		lsusb
+		
+	- in a list with details:
+	
+		lsusb -v
+		
+	- in a tree - with device names:
+	
+		lsusb -t
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------------
+How to install driver modules?
+==============================
+
+
+
+
+
+PnP ISA
+-------
+	pnpdump 
+
+You can redirect output intop a file, and isapnp will use this file.
+
+
+PCI
+---
+	lspci
+or
+	lspci -v
+
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------------------
+How to find the device driver used for a device?
+================================================
+
+lspci -v
+
+
