@@ -60,6 +60,7 @@ To get detailed information about a module use:
 ----------------------------------------------------------------------------------------------------------------------------------------------
 How to load/unload modules manually?
 ====================================
+Load:
 - insmod:
 
 	To load a kernel module, we can use the insmod (insert module) command. Here, we have to specify the full path of the module. 
@@ -77,8 +78,14 @@ How to load/unload modules manually?
 		To insert a module, simply provide its name as follows:
 
 			# modprobe speedstep-lib
-			
-modprobe -r
+
+
+Unload:
+- rmmod
+
+- modprobe (RECOMMENDED):
+
+	modprobe -r <module>
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -100,7 +107,7 @@ How to list devices?
 	
 	- in a list with details:
 	
-		lspci -v
+		lspci -v[vv]
 		
 	- in a tree - but only device IDs:
 	
