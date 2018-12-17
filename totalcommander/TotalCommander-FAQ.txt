@@ -1,0 +1,22 @@
+==================
+TotalCommander FAQ
+==================
+
+Search
+------
+- How to switch ON/OFF quick search filter?
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+How to switch ON/OFF quick search filter?
+=========================================
+Just press Ctrl+S when the quick search box is shown to turn this on/off.
+
+OR set this parameter in WINCMD.INI:
+	
+	QuickSearchAutoFilter=1 (or 0)
+
+0: Automatic quick search filter (Ctrl+S) disabled
+1: Automatic quick search filter (Ctrl+S) enabled
+
