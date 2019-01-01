@@ -18,6 +18,7 @@ Language elements
 - How to specify optional and default parameters in TS functions?
 - How to find out type of an instance?
 - How to check if a variable is an enum?
+- Loops
 
 Config, build
 -------------
@@ -848,7 +849,25 @@ function f(color: string | LogType) {
 By default type of enums is number. So it’s easy if other type is string -> just get typeof.
 
 
+------------------------------------------------------------------------------------------------------------------------
+Loops
+=====
+Both for..of and for..in statements iterate over lists.
 
+
+- for..in returns a list of keys on the object being iterated:
+
+- whereas for..of returns a list of values of the numeric properties of the object being iterated:
+
+	let list = [4, 5, 6];
+
+	for (let i in list) {
+	   console.log(i); // "0", "1", "2",
+	}
+
+	for (let i of list) {
+	   console.log(i); // "4", "5", "6"
+	}
 
 	
 ************************************************************************************************************************

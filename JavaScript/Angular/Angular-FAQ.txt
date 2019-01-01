@@ -14,6 +14,7 @@ Configuration
 - How to configure TS?
 - How to configure TSLint?
 - How to add global styles with Angular CLI?
+- How to specify default port (4200) of angular-cli server?
 
 Patterns
 --------
@@ -21,6 +22,7 @@ Patterns
 	- Bindigs
 - How to use interpolation (template expression)?
 - Conditional or dynamic CSS Style/Class
+- User input with forms
 
 Directives, Components
 ----------------------
@@ -28,6 +30,7 @@ Directives, Components
 - How to set CSS class of host element from component code?
 - How to change the default prefix of component to stop tslint warnings
 - How to set component input with a literal value?
+- How to prevent adding NgForm to forms automatically?
 
 Services
 --------
@@ -47,7 +50,7 @@ Troubleshooting
 ---------------
 - How to get versions?
 - TSLint: Type ... trivially inferred from a ... literal, remove type annotation (no-inferrable-types)
-  
+ERROR:	Can't bind to 'formControl' since it isn't a known property of 'input'  
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Structure of an Angular application
@@ -456,12 +459,13 @@ Setting styles:
 		
 		
 Conditional class:
-	<tag [class-<CSS CLASS>]='<boolean component property>'>
+	<tag [class.<CSS CLASS>]='<boolean component property>'>
 
-	For example:
+	For example:	Toggle background color with click.
+	
 	HTML:
 		
-		<p [class.clicked]='clicked'>
+		<p [class.clicked]='clicked' (click)="onClick()">
 		
 	TS:
 		
@@ -508,3 +512,218 @@ How to deploy for production?
 =============================
 
 	ng build --target=production --base-href /
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to specify default port (4200) of angular-cli server?
+=========================================================
+- In the new angular.json you now specify a port per "project"
+
+	"projects": {
+		"my-cool-project": {
+			... rest of project config omitted
+			"architect": {
+				"serve": {
+					"options": {
+						"port": 1337
+					}
+				}
+			}
+		}
+	}
+
+- OR in command line:
+
+	ng serve --port 4201
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+User input with forms
+=====================
+IN THE BACKGROUND:
+
+	JavaScript objects:
+		
+		- common ancestor:
+			AbstractControl
+				- value
+				- valid / invalid
+				- touched
+				- errors
+				- pristine (true: not changed yet in UI)
+				- dirty (true: changed in UI)
+				- ...
+	
+		- A FormControl represents a single input field - it is the smallest unit of an Angular form.
+				
+			// create a new FormControl with the value "Nate"
+			let nameControl = new FormControl("Nate");
+			let name = nameControl.value; // -> Nate
+			
+			// now we can query this control for certain values:
+			nameControl.errors // -> StringMap<string, any> of errors
+			nameControl.dirty // -> false
+			nameControl.valid // -> true
+
+		- FormGroup: manages multiple FormControls
+
+			let personInfo = new FormGroup({
+				firstName: new FormControl("Nate"),
+				lastName: new FormControl("Murray"),
+				zip: new FormControl("90210")
+			})
+
+			// now we can query this control group for certain values, which have sensible
+			// values depending on the children FormControl's values:
+			personInfo.errors // -> StringMap<string, any> of errors
+			personInfo.dirty // -> false
+			personInfo.valid // -> true
+			
+			
+	
+2 methods:
+	
+	- Template driven (FormsModule):
+
+		The FormsModule gives us template driven directives such as:
+		• ngForm and
+		• ngModel
+		
+			template:
+			
+			  <form #f="ngForm"									<<< ngForm ---> 'f' local variable
+					(ngSubmit)="onSubmit(f.value)"				<<< ngSubmit: output event on submit
+					class="ui form">
+
+				<div class="field">
+				  <label for="skuInput">SKU</label>
+				  <input type="text"
+						 id="skuInput"
+						 placeholder="SKU"
+						 name="sku" ngModel>					<<< ngModel: it builds a FormControl and associates this field to f.value.sku
+				</div>
+				<button type="submit" class="ui button">Submit</button>
+			  </form>
+		
+			controller:
+			
+			  onSubmit(form: any): void {
+				console.log('you submitted value:', form);
+			  }
+
+		- NgForm does something handy but non-obvious: it includes the form tag in its selector (instead
+			of requiring you to explicitly add ngForm as an attribute). What this means is that if you import
+			FormsModule, NgForm will get AUTOMATICALLY attached to any <form> tags you have in your view.
+
+		- The #v=thing syntax says that we want to create a local variable for this view.
+			
+			<form #f="ngForm" (ngSubmit)="onSubmit(f.value)"		  
+			  
+		- When we use ngModel with no attribute value we are specifying:
+			1. a one-way data binding
+			2. we want to create a FormControl on this form with the name sku (because of the name attribute on the input tag)
+			
+		- There are two important pieces of functionality that NgForm gives us:
+			1. A FormGroup named ngForm
+			2. A (ngSubmit) output
+			
+			
+	- Model driven / Reactive (using FormBuilder with ReactiveFormsModule gives us directives like):
+		• formGroup and
+		• formControl
+		
+		
+		template:
+		
+		  <form [formGroup]="myForm"
+				(ngSubmit)="onSubmit(myForm.value)"
+				class="ui form">
+
+			<div class="field">
+			  <label for="skuInput">SKU</label>
+			  <input type="text"
+					 id="skuInput"
+					 placeholder="SKU"
+					 [formControl]="myForm.controls['sku']">
+			</div>
+			<button type="submit" class="ui button">Submit</button>
+		  </form>
+			
+		controller:
+		
+			export class DemoFormSkuWithBuilderComponent implements OnInit {
+			  myForm: FormGroup;													<<< form group
+
+			  constructor(fb: FormBuilder) {
+				this.myForm = fb.group({
+				  'sku': ['ABC123'],
+				  'desc': ['']
+				});
+			  }
+
+			  ngOnInit() {
+			  }
+
+			  onSubmit(value: string): void {
+				console.log('you submitted values - SKU:', value.sku + ' description:' + value.desc);
+			  }
+			}
+			
+		- During injection an instance of FormBuilder will be created and we assign it to the fb variable (in the constructor).
+		- There are two main functions we’ll use on FormBuilder:
+			• control - creates a new FormControl
+			• group - creates a new FormGroup
+	
+	REMEMBER:
+	
+		To create a new FormGroup and FormControls implicitly use:
+			• ngForm and
+			• ngModel
+			
+		But to bind to an existing FormGroup and FormControls use:
+			• formGroup and
+			• formControl
+			
+			
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to prevent adding NgForm to forms automatically?
+====================================================
+SEE ALSO:
+	User input with forms
+	
+Remember how earlier we said that when using FormsModule that NgForm will be AUTOMATICALLY
+applied to a <form> element? 
+
+There is an exception: NgForm won’t be applied to a <form> that has formGroup.
+
+If you’re curious, the selector for NgForm is:
+
+	form:not([ngNoForm]):not([formGroup]),ngForm,[ngForm]
+	
+This means you could have a form that doesn’t get NgForm applied by using the ngNoForm attribute:
+
+	<form ngNoForm>
+		...
+	</form>
+	
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR:	Can't bind to 'formControl' since it isn't a known property of 'input'
+==============================================================================
+You are using Reactive form but you forgot 
+	- to import ReactiveFormsModule into main module 
+	OR
+	- to add ReactiveFormsModule to 'imports' of @NgModule
+
+	
+	import { ReactiveFormsModule } from '@angular/forms';
+	...
+	
+	@NgModule({
+	  imports:      [ ReactiveFormsModule ],
+	  ...
+	})	 
+
+
+

@@ -24,7 +24,7 @@ CSS Kick Guide
 5.1 Specificity
 5.2 Inheritance
 
-
+X. Some examples
 
 
 
@@ -367,4 +367,30 @@ The cascade rules for CSS2.1 are simple enough:
 	within the style sheet that imports them.
 
 
+X. Some examples
+----------------
+#header.callout {  }
+
+	Select the element which has an ID of header and also a class name of callout.
+	
+	<div id="header" class="callout"> ... </div>				<----------
+	
+	
+#header .callout { }
+
+	Select all elements with the class name callout that are decendents of the element with an ID of header.
+	
+	
+	<div id="header">
+		<div class="callout">...</div>							<----------
+	</div>
+
+	
+.three.four { color: red; }
+
+	Elements with MULTIPLE classes:
+	
+		<h1 class="three four">Double Class</h1>
+		
+		
 
