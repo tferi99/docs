@@ -1,0 +1,93 @@
+=================
+HomeAssistant-FAQ
+=================
+
+Configuration
+-------------
+- How to configure HA?
+- How to start/stop HA?
+
+REST API
+--------
+- How to authorize REST API?
+
+
+Troubleshooting
+---------------
+- ERROR: HA cannot be started
+
+
+---------------------------------------------------------------------------------------------------------
+How to start/stop HA?
+=====================
+systemctl start home-assistant@homeassistant
+systemctl stop home-assistant@homeassistant
+
+
+---------------------------------------------------------------------------------------------------------
+How to configure HA?
+====================
+Config file:
+	/home/homeassistant/.homeassistant/configuration.yaml
+	
+YAML rules:
+	- In YAML block styles, structure is determined by indentation. 
+	- In general, indentation is defined as a zero or more SPACE CHARACTERS at the start of a line.
+	- To maintain portability, TAB CHARACTERS MUST NOT BE USED in indentation, since different systems treat tabs differently. 
+		(Note that most modern editors may be configured so that pressing the tab key results in the insertion of an appropriate number of spaces.)
+
+---------------------------------------------------------------------------------------------------------
+How to authorize REST API?
+==========================
+SEE ALSO:	https://developers.home-assistant.io/docs/en/external_api_rest.html
+
+- HA runs a web server accessible on port 8123:
+	- http://IP_ADDRESS:8123/ is an interface to control Home Assistant.
+	- http://IP_ADDRESS:8123/api/ is a Rest API.
+	
+- The API accepts and returns only JSON encoded objects. All API calls have to be accompanied by the header 
+
+	X-HA-Access: YOUR_PASSWORD 
+	
+  YOUR_PASSWORD as specified in your configuration.yaml file in the http: section:
+  
+	http:
+	    api_password: YOUR_PASSWORD
+
+		
+	For example:
+
+		$ curl -X GET \
+			-H "X-HA-Access: pwd" \
+			-H "Content-Type: application/json" \
+			http://IP_ADDRESS:8123/config
+	
+- some important API calls:
+	
+	GET /api/
+	
+		{
+			"message": "API running."
+		}
+	
+	GET /api/config
+	GET /api/discovery_info
+	
+	
+---------------------------------------------------------------------------------------------------------
+ERROR: HA cannot be started
+===========================
+To check if HA running:
+
+	netstat -an | grep 8123
+	
+To get status/log:
+
+	systemctl status home-assistant@homeassistant
+	
+Sometimes configuration file has errors in log:
+	- "found character '\t' that cannot start any token"
+		
+		This means that you’ve mistakenly entered a tab character, instead of spaces.
+		
+

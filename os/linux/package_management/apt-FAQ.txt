@@ -1,0 +1,41 @@
+=======
+apt FAQ
+=======
+
+----------------------------------------------------------------------------------------------------
+apt-get
+=======
+apt-get update								: update package index
+apt-get upgrage								: update package index
+apt-get install <package>					: install a package
+apt-get remove <package>					: remove a package
+apt-get purge <package>						: remove a package + configuration
+	
+
+----------------------------------------------------------------------------------------------------
+apt-cache
+=========
+apt-cache search <package/keyword>			: search for a package
+	
+----------------------------------------------------------------------------------------------------
+dpkg
+====
+dpkg -i <packagename.deb>					: installing DEB packages
+dpkg -l										: listing installed packages
+dpkg -L <package>							: listing files owned by a packages
+dpkg -s <packagename.deb>					: info about package:
+	
+	
+
+
+
+	
+	
+
+
+	
+
+
+
+	
+	
