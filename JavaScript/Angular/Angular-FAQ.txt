@@ -16,14 +16,6 @@ Configuration
 - How to add global styles with Angular CLI?
 - How to specify default port (4200) of angular-cli server?
 
-Patterns
---------
-- Data binding
-	- Bindigs
-- How to use interpolation (template expression)?
-- Conditional or dynamic CSS Style/Class
-- User input with forms
-
 Directives, Components
 ----------------------
 - What is a directive? Directive vs component
@@ -31,6 +23,16 @@ Directives, Components
 - How to change the default prefix of component to stop tslint warnings
 - How to set component input with a literal value?
 - How to prevent adding NgForm to forms automatically?
+
+Tips
+----
+- Data binding
+	- Bindigs
+- How to use interpolation (template expression)?
+- Conditional or dynamic CSS Style/Class
+- User input with forms
+- How to control form UI by validation status?
+- How to check empty values in interpolations?
 
 Services
 --------
@@ -50,7 +52,9 @@ Troubleshooting
 ---------------
 - How to get versions?
 - TSLint: Type ... trivially inferred from a ... literal, remove type annotation (no-inferrable-types)
-ERROR:	Can't bind to 'formControl' since it isn't a known property of 'input'  
+- ERROR:	Can't bind to 'formControl' since it isn't a known property of 'input'  
+- How to trace value of  Reactive form?
+- ERROR: Unexpected token } in JSON at position ...
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Structure of an Angular application
@@ -581,10 +585,12 @@ IN THE BACKGROUND:
 			
 			
 	
-2 methods:
+2 approaches:
 	
 	- Template driven (FormsModule):
 
+		SEE ALSO:	https://angular.io/guide/forms
+	
 		The FormsModule gives us template driven directives such as:
 		• ngForm and
 		• ngModel
@@ -629,23 +635,26 @@ IN THE BACKGROUND:
 			
 			
 	- Model driven / Reactive (using FormBuilder with ReactiveFormsModule gives us directives like):
+		
+		SEE ALSO:	https://angular.io/guide/reactive-forms
+	
 		• formGroup and
 		• formControl
 		
 		
 		template:
 		
-		  <form [formGroup]="myForm"
-				(ngSubmit)="onSubmit(myForm.value)"
-				class="ui form">
-
+		  <form [formGroup]="myForm" (ngSubmit)="onSubmit(myForm.value)" class="ui form">
 			<div class="field">
 			  <label for="skuInput">SKU</label>
-			  <input type="text"
-					 id="skuInput"
-					 placeholder="SKU"
-					 [formControl]="myForm.controls['sku']">
+			  <input type="text" id="skuInput" placeholder="SKU" [formControl]="myForm.controls['sku']">		<<< v1
 			</div>
+			
+			<div class="field">
+			  <label for="skuInput">SKU</label>
+			  <input type="text" id="skuInput" placeholder="Description" formControlName="desc">		<<< v2
+			</div>
+			
 			<button type="submit" class="ui button">Submit</button>
 		  </form>
 			
@@ -725,5 +734,37 @@ You are using Reactive form but you forgot
 	  ...
 	})	 
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to trace value of  Reactive form?
+=====================================
+You can access values 
+
+Print to template with JSON pipe:
+
+	<h5>Form value: {{form.value | json}}</h5>
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to control form UI by validation status?
+============================================
+
+- Disable submit button if form is not valid:
+
+	<button type="submit" [disabled]="!form.valid">OK</button>
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to check empty values in interpolations?
+============================================
+In ngIf simply use variable (it can be non-boolean, too - eg. object, string, ...):
+
+	<span *ngIf="errorMsg" style="background-color: red">{{errorMsg}}</span>
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Unexpected token } in JSON at position ...
+=================================================
+Check angular.json for sytax error(s).
+
+	
+	
