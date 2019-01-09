@@ -10,6 +10,7 @@ Selectors
 ---------
 - Selector for a child on parent event
 - What happens when conflicts occur?
+- Multiple selectors
 
 Development
 -----------
@@ -66,7 +67,47 @@ How to build LESS to CSS with Grunt?
 Grunt will listen to changes of LESS files in the project directory recursively
 and compiles into CSS automatically - with dependencies.
 	
+-----------------------------------------------------------------------------------------------------------
+Multiple selectors
+==================
+What is the difference in this class selectors?
 
+	.c1.c2
+	
+	.c1 .c2
+	
+	.c1,.c2
+	
+- .c1.c2
+	Target is a single element with classes c1 AND c2
+
+	.c1.c2 {
+	  font-style: italic;
+	}
+
+	<div class="c1 c2">pig</div>
+
+	
+- .c1 .c2
+	Target is an element with class c2 which is a child of element with c1
+	
+	.c1 .c2 {
+	  font-style: italic;
+	}
+	
+	<div class="c1">
+		<div class="c2">cat</div>
+	</div>
+
+- .c1,.c2
+	
+	Target is an element which has class c1 OR c2
+	
+	.c1,.c2 {
+		font-style: italic;
+	}
+	
+	<div class="c2">dog</div>
 
 
 
