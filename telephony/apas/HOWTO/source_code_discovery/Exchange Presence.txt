@@ -12,6 +12,8 @@ Exchange Presence
 - Handling calendar events
 - How presence information goes from Exchange Server to DC?
 - Troubleshooting, tracing
+- Additional troubleshooting features for memory consumption
+
 
 -------------------------------------------------------------------------------------------------------------------
 Configuration
@@ -581,15 +583,84 @@ Set it with this JSP:
 
 
 			
-**************************************************************************************
-**************************************************************************************
-**************************************************************************************
-Classes:
+-------------------------------------------------------------------------------------------------------------------
+Additional troubleshooting features for memory consumption
+==========================================================
+I've added some features to stress memory and get information about state of memory:
 
-	com.andtek.andphone.presence.msews.ExchangeCachedCalendarServer
-	DynamicPresenceSubscriptionManager
+SEE ALSO:
+	https://uk-jira.enghouseinteractive.com/browse/APAS-681
+	https://uk-jira.enghouseinteractive.com/browse/APAS-823
 	
 	
-Import:
-	com.andtek.andphone.presence.msews.**
-	import microsoft.exchange.webservices.**
+	6.1.2[11675]
+	6.1.2[11679]
+	6.1.2[11680] - ZBalogh fix for compile error on OpenJDK
+	6.1.2[11692]
+	6.1.2[11701]
+	6.1.2[11710] - only 1 test mailbox user
+	6.1.2[11713] 
+	6.1.2[11714] 
+	6.1.2[11718] 
+	6.1.2[11727]	
+		
+	6.0.2[11721] - Merged revision(s) 11675, 11679 from trunk
+	6.0.2[11722] - Merged revision(s) 11692 from trunk
+	6.0.2[11723] - Merged revision(s) 11701 from trunk
+	6.0.2[11725] - Merged revision(s) 11710,11713,11713,11714,11718 from trunk
+	6.0.2[11726] - manual merge of ZBalogh fix
+	6.0.2[11728] - Merged revision(s) 11727 from trunk
+	
+Features implemented:
+	- JSP to call Exchange Presence related functions to stress memory and to try reproduce memoey leak (captured by customer):
+	
+		http://apas_test.com:8080/andphone/jsp/dev/presenceMemoryTest.jsp
+
+		- There are 5 test threads which calls functions in loop. You can configure the number of steps and frequency.
+			Page refreshed automatically. 
+		
+			NOTE: 
+			
+				If you want to change thread parameters switch off temporarly automatical page refresh before.
+				
+			Threads are:
+				- Connection-1:
+					It calls Echange Server connection test repeatedly.
+					
+				- Connection-2:
+					It calls Echange Server connection validation repeatedly.
+					
+				- PresenceRegister:
+					It simulates DC request which registers presence notification subsription in APAS.
+					
+				- UnregisterAll:
+					It unregisters all presence notification subsription in APAS.
+					
+				- Calendar:
+					It generates Calendar entries and changes type of entry reandomly.
+					
+			I tried to cover all use cases wich calls Exchange-related APAS functions.
+		
+		- You can get information about:
+			- Cached addresses
+			- Cached subscriptions
+			- Cached notifications
+			- Cached events (JCS)
+			
+	- APAS prints log entries into andphone-bg.log in every 10 minutes about:
+		- state of memory
+		- number of cache entries (addresses, subscriptions, notifications)
+		- JCS cache
+	
+		--> com.andtek.andphone.presence.Module.background(JTAPIThread jtapi)
+			--------------------------- backgroundCounter % 10) == 0 ------------------------------
+			--> ExchangePresenceStatistics.printToLog()
+
+		Filter for log entry:	ExchangePresenceStatistics.*statistics
+				
+		For example:
+		
+			[2019-01-10 13:11:56,189] [DEBUG] [APAS-TimerDaemon] [ExchangePresenceStatistics.java:101] - JVM Memory statistics: Max:2955935744, Allocated:756023296, Free:88966232, Used:667057064
+			[2019-01-10 13:11:56,190] [DEBUG] [APAS-TimerDaemon] [ExchangePresenceStatistics.java:102] - Exchange Presence statistics - RegisteredPresenceAdresses:0, PullSubscriptions:0, PushSubscriptions:0, Notifications:0
+			[2019-01-10 13:11:56,190] [DEBUG] [APAS-TimerDaemon] [ExchangePresenceStatistics.java:105] - Exchange Presence JCS statistics: Region Name = exchange_calendar_events, HitCountRam = 0, HitCountAux = 0, ---------------------------LRU Memory Cache, List Size = 0, Map Size = 0, Put Count = 0, Hit Count = 0, Miss Count = 0
+				
