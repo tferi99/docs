@@ -1,0 +1,45 @@
+===========================================================================
+Interface List
+ 37...24 77 03 dc 72 5d ......Microsoft Virtual WiFi Miniport Adapter #6
+ 35...24 77 03 dc 72 5d ......Microsoft Virtual WiFi Miniport Adapter #5
+ 34...24 77 03 dc 72 5c ......Intel(R) Centrino(R) Ultimate-N 6300 AGN
+ 11...d4 be d9 7a b6 fc ......Intel(R) 82579LM Gigabit Network Connection
+  1...........................Software Loopback Interface 1
+ 44...00 00 00 00 00 00 00 e0 Microsoft ISATAP Adapter
+ 43...00 00 00 00 00 00 00 e0 Microsoft ISATAP Adapter #2
+ 60...00 00 00 00 00 00 00 e0 Microsoft ISATAP Adapter #5
+ 63...00 00 00 00 00 00 00 e0 Microsoft ISATAP Adapter #6
+===========================================================================
+
+IPv4 Route Table
+===========================================================================
+Active Routes:
+Network Destination        Netmask          Gateway       Interface  Metric
+          0.0.0.0          0.0.0.0      192.168.8.1    192.168.8.100     25
+        127.0.0.0        255.0.0.0         On-link         127.0.0.1    306
+        127.0.0.1  255.255.255.255         On-link         127.0.0.1    306
+  127.255.255.255  255.255.255.255         On-link         127.0.0.1    306
+      192.168.8.0    255.255.255.0         On-link     192.168.8.100    281
+    192.168.8.100  255.255.255.255         On-link     192.168.8.100    281
+    192.168.8.255  255.255.255.255         On-link     192.168.8.100    281
+        224.0.0.0        240.0.0.0         On-link         127.0.0.1    306
+        224.0.0.0        240.0.0.0         On-link     192.168.8.100    281
+  255.255.255.255  255.255.255.255         On-link         127.0.0.1    306
+  255.255.255.255  255.255.255.255         On-link     192.168.8.100    281
+===========================================================================
+Persistent Routes:
+  None
+
+IPv6 Route Table
+===========================================================================
+Active Routes:
+ If Metric Network Destination      Gateway
+  1    306 ::1/128                  On-link
+ 34    281 fe80::/64                On-link
+ 34    281 fe80::cc55:7ec1:31f9:4384/128
+                                    On-link
+  1    306 ff00::/8                 On-link
+ 34    281 ff00::/8                 On-link
+===========================================================================
+Persistent Routes:
+  None

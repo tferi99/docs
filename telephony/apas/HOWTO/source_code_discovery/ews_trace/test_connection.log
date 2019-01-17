@@ -1,0 +1,45 @@
+[2019-01-16 15:31:49,306][http-nio-8080-exec-7]
+<Trace Tag="EwsRequestHttpHeaders" Tid="205" Time="2019-01-16 14:31:49Z">
+POST /EWS/Exchange.asmx HTTP/1.1
+Keep-Alive : 300
+Content-type : text/xml; charset=utf-8
+Accept : text/xml
+User-Agent : ExchangeServicesClient/0.0.0.0
+Connection : Keep-Alive
+
+
+</Trace>
+
+
+[2019-01-16 15:31:49,307][http-nio-8080-exec-7]
+<Trace Tag="EwsRequest" Tid="205" Time="2019-01-16 14:31:49Z">
+<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><soap:Header><t:RequestServerVersion Version="Exchange2010_SP2"></t:RequestServerVersion></soap:Header><soap:Body><m:ResolveNames ReturnFullContactData="false" SearchScope="ContactsActiveDirectory"><m:UnresolvedEntry>Administrator</m:UnresolvedEntry></m:ResolveNames></soap:Body></soap:Envelope>
+</Trace>
+
+
+[2019-01-16 15:31:49,697][http-nio-8080-exec-7]
+<Trace Tag="EwsResponseHttpHeaders" Tid="205" Time="2019-01-16 14:31:49Z">
+200 text/xml; charset=utf-8
+Transfer-Encoding : chunked
+Server : Microsoft-IIS/10.0
+X-CalculatedBETarget : ceecs-winaw-ex.andtek.cee.cs.eilab.biz
+Persistent-Auth : true
+request-id : 0a47d004-d2bc-4069-8dc1-20e2017ce1e8
+Date : Wed, 16 Jan 2019 14:32:50 GMT
+X-BEServer : CEECS-WINAW-EX
+Cache-Control : private
+X-DiagInfo : CEECS-WINAW-EX
+X-AspNet-Version : 4.0.30319
+Set-Cookie : X-BackEndCookie=S-1-5-21-2872944277-4050074794-1656473661-500=u56Lnp2ejJqBzM/Ky8rJmp7SyJqbydLLnZ6c0sadyMvSy8mczsmcnc/Iyc2dgYHNz87G0s/N0s7Kq87LxczNxcrPgb6Rm4ualNG8urrRvKzRupaTnp3RnZaFgc8=; expires=Fri, 15-Feb-2019 14:32:50 GMT; path=/EWS; secure; HttpOnly
+X-FEServer : CEECS-WINAW-EX
+Content-Type : text/xml; charset=utf-8
+X-Powered-By : ASP.NET
+
+
+</Trace>
+
+
+[2019-01-16 15:31:49,698][http-nio-8080-exec-7]
+<Trace Tag="EwsResponse" Tid="205" Time="2019-01-16 14:31:49Z">
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1415" MinorBuildNumber="2" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header><s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:ResolveNamesResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:ResolveNamesResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode><m:ResolutionSet TotalItemsInView="1" IncludesLastItemInRange="true"><t:Resolution><t:Mailbox><t:Name>Administrator</t:Name><t:EmailAddress>Administrator@andtek.cee.cs.eilab.biz</t:EmailAddress><t:RoutingType>SMTP</t:RoutingType><t:MailboxType>Mailbox</t:MailboxType></t:Mailbox></t:Resolution></m:ResolutionSet></m:ResolveNamesResponseMessage></m:ResponseMessages></m:ResolveNamesResponse></s:Body></s:Envelope>
+</Trace>

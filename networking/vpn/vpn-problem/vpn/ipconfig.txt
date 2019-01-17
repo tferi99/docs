@@ -1,0 +1,138 @@
+
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : ftoth-nb
+   Primary Dns Suffix  . . . . . . . : 
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+   DNS Suffix Search List. . . . . . : edge.local
+                                       edge.local
+                                       enghouse.com
+                                       zeacom.net
+                                       dev-mettoni1.com
+                                       dev-mettoni2.com
+                                       spccsp.local
+                                       englab.local
+                                       eilab.biz
+                                       enlab.biz
+                                       etlab.biz
+                                       edge.local
+                                       enghouse.com
+                                       zeacom.net
+                                       dev-mettoni1.com
+                                       dev-mettoni2.com
+                                       spccsp.local
+                                       englab.local
+                                       eilab.biz
+                                       enlab.biz
+                                       etlab.bi
+
+Ethernet adapter Local Area Connection 5:
+
+   Connection-specific DNS Suffix  . : edge.local
+   Description . . . . . . . . . . . : Cisco AnyConnect Secure Mobility Client Virtual Miniport Adapter for Windows x64
+   Physical Address. . . . . . . . . : 00-05-9A-3C-7A-00
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::252c:cd33:baf2:532d%26(Preferred) 
+   Link-local IPv6 Address . . . . . : fe80::36aa:9c80:62a6:55e1%26(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 10.255.248.76(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.254.0
+   Default Gateway . . . . . . . . . : ::
+   DNS Servers . . . . . . . . . . . : 10.50.13.5
+                                       10.50.12.5
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+
+Wireless LAN adapter Wireless Network Connection 7:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Microsoft Virtual WiFi Miniport Adapter #6
+   Physical Address. . . . . . . . . : 24-77-03-DC-72-5D
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+
+Wireless LAN adapter Wireless Network Connection 6:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Microsoft Virtual WiFi Miniport Adapter #5
+   Physical Address. . . . . . . . . : 24-77-03-DC-72-5D
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+
+Wireless LAN adapter Wireless Network Connection:
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Intel(R) Centrino(R) Ultimate-N 6300 AGN
+   Physical Address. . . . . . . . . : 24-77-03-DC-72-5C
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::cc55:7ec1:31f9:4384%34(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 192.168.8.100(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Lease Obtained. . . . . . . . . . : Wednesday, January 16, 2019 10:03:24 AM
+   Lease Expires . . . . . . . . . . : Thursday, January 17, 2019 10:03:23 AM
+   Default Gateway . . . . . . . . . : 192.168.8.1
+   DHCP Server . . . . . . . . . . . : 192.168.8.1
+   DHCPv6 IAID . . . . . . . . . . . : 707032835
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-22-31-6D-AD-D4-BE-D9-7A-B6-FC
+   DNS Servers . . . . . . . . . . . : fe80::1%34
+                                       192.168.8.1
+                                       192.168.8.1
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+
+Ethernet adapter Local Area Connection:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Intel(R) 82579LM Gigabit Network Connection
+   Physical Address. . . . . . . . . : D4-BE-D9-7A-B6-FC
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+
+Tunnel adapter isatap.{BB01BCC1-DE37-425D-88A3-A47161A47FF9}:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Microsoft ISATAP Adapter
+   Physical Address. . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes
+
+Tunnel adapter isatap.{89412D44-11F4-4EBA-ABF1-7CEB581FA29F}:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Microsoft ISATAP Adapter #2
+   Physical Address. . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes
+
+Tunnel adapter isatap.edge.local:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : edge.local
+   Description . . . . . . . . . . . : Microsoft ISATAP Adapter #4
+   Physical Address. . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes
+
+Tunnel adapter isatap.{D0FB4A82-3B69-47D4-B82D-76BE2F50C312}:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Microsoft ISATAP Adapter #5
+   Physical Address. . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes
+
+Tunnel adapter isatap.{FADF9A43-B329-4250-9432-08A580827F86}:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Microsoft ISATAP Adapter #6
+   Physical Address. . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes

@@ -1,0 +1,94 @@
+[2019-01-16 16:30:47,390][APAS-ExchangeCalendarPresenceSourceExecutor-Processor-[1]-1]
+<Trace Tag="EwsRequestHttpHeaders" Tid="547" Time="2019-01-16 15:30:47Z">
+POST /EWS/Exchange.asmx HTTP/1.1
+Keep-Alive : 300
+Content-type : text/xml; charset=utf-8
+Accept : text/xml
+User-Agent : ExchangeServicesClient/0.0.0.0
+Connection : Keep-Alive
+
+
+</Trace>
+
+
+[2019-01-16 16:30:47,396][APAS-ExchangeCalendarPresenceSourceExecutor-Processor-[1]-1]
+<Trace Tag="EwsRequest" Tid="547" Time="2019-01-16 15:30:47Z">
+<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><soap:Header><t:RequestServerVersion Version="Exchange2010_SP2"></t:RequestServerVersion><t:ExchangeImpersonation><t:ConnectingSID><t:SmtpAddress>ssotest1@andtek.cee.cs.eilab.biz</t:SmtpAddress></t:ConnectingSID></t:ExchangeImpersonation></soap:Header><soap:Body><m:Subscribe><m:PushSubscriptionRequest><t:FolderIds><t:DistinguishedFolderId Id="calendar"><t:Mailbox><t:EmailAddress>ssotest1@andtek.cee.cs.eilab.biz</t:EmailAddress></t:Mailbox></t:DistinguishedFolderId></t:FolderIds><t:EventTypes><t:EventType>CreatedEvent</t:EventType><t:EventType>DeletedEvent</t:EventType><t:EventType>ModifiedEvent</t:EventType></t:EventTypes><t:StatusFrequency>5</t:StatusFrequency><t:URL>http://localhost:8080/andphone/exchange/pushlistener</t:URL></m:PushSubscriptionRequest></m:Subscribe></soap:Body></soap:Envelope>
+</Trace>
+
+
+[2019-01-16 16:30:48,121][APAS-ExchangeCalendarPresenceSourceExecutor-Processor-[1]-1]
+<Trace Tag="EwsResponseHttpHeaders" Tid="547" Time="2019-01-16 15:30:48Z">
+200 text/xml; charset=utf-8
+Transfer-Encoding : chunked
+Server : Microsoft-IIS/10.0
+X-CalculatedBETarget : ceecs-winaw-ex.andtek.cee.cs.eilab.biz
+Persistent-Auth : true
+request-id : 01fe94a8-bc10-4f7b-8683-6aaf65ce4bb5
+Date : Wed, 16 Jan 2019 15:31:49 GMT
+X-BEServer : CEECS-WINAW-EX
+Cache-Control : private
+X-DiagInfo : CEECS-WINAW-EX
+X-AspNet-Version : 4.0.30319
+Set-Cookie : X-BackEndCookie=S-1-5-21-2872944277-4050074794-1656473661-500=u56Lnp2ejJqBzM/Ky8rJmp7SyJqbydLLnZ6c0sadyMvSy8mczsmcnc/Iyc2dgYHNz87G0s/N0s7Kq87KxczOxcvGgb6Rm4ualNG8urrRvKzRupaTnp3RnZaFgc8=; expires=Fri, 15-Feb-2019 15:31:49 GMT; path=/EWS; secure; HttpOnly
+X-FEServer : CEECS-WINAW-EX
+Content-Type : text/xml; charset=utf-8
+X-Powered-By : ASP.NET
+
+
+</Trace>
+
+
+[2019-01-16 16:30:48,121][APAS-ExchangeCalendarPresenceSourceExecutor-Processor-[1]-1]
+<Trace Tag="EwsResponse" Tid="547" Time="2019-01-16 15:30:48Z">
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1415" MinorBuildNumber="2" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header><s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:SubscribeResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:SubscribeResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode><m:SubscriptionId>JgBjZWVjcy13aW5hdy1leC5hbmR0ZWsuY2VlLmNzLmVpbGFiLmJpehAAAAAMPFm7AR8+T6hwfJNo+iDTYyJ7u8d71ggQAAAABbjnK3COSUqaJVHxdNsX5w==</m:SubscriptionId><m:Watermark>AQAAAOpWVDDWfqxLm3RGwWywdis6RNwAAAAAAAA=</m:Watermark></m:SubscribeResponseMessage></m:ResponseMessages></m:SubscribeResponse></s:Body></s:Envelope>
+</Trace>
+
+
+[2019-01-16 16:30:50,124][APAS-ExchangePresenceUpdater-1]
+<Trace Tag="EwsRequestHttpHeaders" Tid="342" Time="2019-01-16 15:30:50Z">
+POST /EWS/Exchange.asmx HTTP/1.1
+Keep-Alive : 300
+Content-type : text/xml; charset=utf-8
+Accept : text/xml
+User-Agent : ExchangeServicesClient/0.0.0.0
+Connection : Keep-Alive
+
+
+</Trace>
+
+
+[2019-01-16 16:30:50,130][APAS-ExchangePresenceUpdater-1]
+<Trace Tag="EwsRequest" Tid="342" Time="2019-01-16 15:30:50Z">
+<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><soap:Header><t:RequestServerVersion Version="Exchange2010_SP2"></t:RequestServerVersion></soap:Header><soap:Body><m:GetUserAvailabilityRequest><t:TimeZone><t:Bias>0</t:Bias><t:StandardTime><t:Bias>0</t:Bias><t:Time>02:00:00</t:Time><t:DayOrder>1</t:DayOrder><t:Month>3</t:Month><t:DayOfWeek>Sunday</t:DayOfWeek></t:StandardTime><t:DaylightTime><t:Bias>0</t:Bias><t:Time>02:00:00</t:Time><t:DayOrder>1</t:DayOrder><t:Month>10</t:Month><t:DayOfWeek>Sunday</t:DayOfWeek></t:DaylightTime></t:TimeZone><m:MailboxDataArray><t:MailboxData><t:Email><t:Address>ssotest1@andtek.cee.cs.eilab.biz</t:Address></t:Email><t:AttendeeType>Required</t:AttendeeType><t:ExcludeConflicts>false</t:ExcludeConflicts></t:MailboxData></m:MailboxDataArray><t:FreeBusyViewOptions><t:TimeWindow><t:StartTime>2019-01-15T23:01:00</t:StartTime><t:EndTime>2019-01-16T23:00:00</t:EndTime></t:TimeWindow><t:MergedFreeBusyIntervalInMinutes>30</t:MergedFreeBusyIntervalInMinutes><t:RequestedView>Detailed</t:RequestedView></t:FreeBusyViewOptions></m:GetUserAvailabilityRequest></soap:Body></soap:Envelope>
+</Trace>
+
+
+[2019-01-16 16:30:50,241][APAS-ExchangePresenceUpdater-1]
+<Trace Tag="EwsResponseHttpHeaders" Tid="342" Time="2019-01-16 15:30:50Z">
+200 text/xml; charset=utf-8
+Transfer-Encoding : chunked
+Server : Microsoft-IIS/10.0
+X-CalculatedBETarget : ceecs-winaw-ex.andtek.cee.cs.eilab.biz
+request-id : 9a71d31e-b10c-456f-a951-1303c6aed983
+Date : Wed, 16 Jan 2019 15:31:51 GMT
+X-BEServer : CEECS-WINAW-EX
+Cache-Control : private
+X-DiagInfo : CEECS-WINAW-EX
+X-AspNet-Version : 4.0.30319
+Set-Cookie : X-BackEndCookie=S-1-5-21-2872944277-4050074794-1656473661-500=u56Lnp2ejJqBzM/Ky8rJmp7SyJqbydLLnZ6c0sadyMvSy8mczsmcnc/Iyc2dgYHNz87G0s/N0s7Kq87KxczOxcrOgb6Rm4ualNG8urrRvKzRupaTnp3RnZaFgc8=; expires=Fri, 15-Feb-2019 15:31:51 GMT; path=/EWS; secure; HttpOnly
+X-FEServer : CEECS-WINAW-EX
+Content-Type : text/xml; charset=utf-8
+X-Powered-By : ASP.NET
+
+
+</Trace>
+
+
+[2019-01-16 16:30:50,241][APAS-ExchangePresenceUpdater-1]
+<Trace Tag="EwsResponse" Tid="342" Time="2019-01-16 15:30:50Z">
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1415" MinorBuildNumber="2" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header><s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><GetUserAvailabilityResponse xmlns="http://schemas.microsoft.com/exchange/services/2006/messages"><FreeBusyResponseArray><FreeBusyResponse><ResponseMessage ResponseClass="Success"><ResponseCode>NoError</ResponseCode></ResponseMessage><FreeBusyView><FreeBusyViewType xmlns="http://schemas.microsoft.com/exchange/services/2006/types">FreeBusy</FreeBusyViewType><CalendarEventArray xmlns="http://schemas.microsoft.com/exchange/services/2006/types"><CalendarEvent><StartTime>2019-01-15T23:01:00</StartTime><EndTime>2019-01-16T21:59:00</EndTime><BusyType>OOF</BusyType></CalendarEvent></CalendarEventArray><WorkingHours xmlns="http://schemas.microsoft.com/exchange/services/2006/types"><TimeZone><Bias>-60</Bias><StandardTime><Bias>0</Bias><Time>03:00:00</Time><DayOrder>5</DayOrder><Month>10</Month><DayOfWeek>Sunday</DayOfWeek></StandardTime><DaylightTime><Bias>-60</Bias><Time>02:00:00</Time><DayOrder>5</DayOrder><Month>3</Month><DayOfWeek>Sunday</DayOfWeek></DaylightTime></TimeZone><WorkingPeriodArray><WorkingPeriod><DayOfWeek>Monday Tuesday Wednesday Thursday Friday</DayOfWeek><StartTimeInMinutes>480</StartTimeInMinutes><EndTimeInMinutes>1020</EndTimeInMinutes></WorkingPeriod></WorkingPeriodArray></WorkingHours></FreeBusyView></FreeBusyResponse></FreeBusyResponseArray></GetUserAvailabilityResponse></s:Body></s:Envelope>
+</Trace>
+
+
+		

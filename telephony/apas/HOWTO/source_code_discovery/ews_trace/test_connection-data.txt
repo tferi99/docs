@@ -1,0 +1,56 @@
+---> EwsRequest
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<soap:Envelope
+		xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+		xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">
+		<soap:Header>
+			<t:RequestServerVersion Version="Exchange2010_SP2"></t:RequestServerVersion>
+		</soap:Header>
+		<soap:Body>
+			<m:ResolveNames ReturnFullContactData="false" SearchScope="ContactsActiveDirectory">
+				<m:UnresolvedEntry>Administrator</m:UnresolvedEntry>
+			</m:ResolveNames>
+		</soap:Body>
+	</soap:Envelope>	
+
+
+<--- EwsResponse
+			
+	<?xml version="1.0" encoding="utf-8"?>
+	<s:Envelope
+		xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+		<s:Header>
+			<h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1415" MinorBuildNumber="2" Version="V2017_07_11"
+				xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types"
+				xmlns="http://schemas.microsoft.com/exchange/services/2006/types"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+			</s:Header>
+			<s:Body
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<m:ResolveNamesResponse
+					xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+					xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">
+					<m:ResponseMessages>
+						<m:ResolveNamesResponseMessage ResponseClass="Success">
+							<m:ResponseCode>NoError</m:ResponseCode>
+							<m:ResolutionSet TotalItemsInView="1" IncludesLastItemInRange="true">
+								<t:Resolution>
+									<t:Mailbox>
+										<t:Name>Administrator</t:Name>
+										<t:EmailAddress>Administrator@andtek.cee.cs.eilab.biz</t:EmailAddress>
+										<t:RoutingType>SMTP</t:RoutingType>
+										<t:MailboxType>Mailbox</t:MailboxType>
+									</t:Mailbox>
+								</t:Resolution>
+							</m:ResolutionSet>
+						</m:ResolveNamesResponseMessage>
+					</m:ResponseMessages>
+				</m:ResolveNamesResponse>
+			</s:Body>
+		</s:Envelope>				
+
