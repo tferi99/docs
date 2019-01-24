@@ -8,7 +8,7 @@ Memory analysis FAQ
 - How to create heap dump?
 - How to analyse heap dump?
 - How to compare heap dumps?
-- Tips for MAT
+- Memory analysis with Eclipse MAT
 
 
 -------------------------------------------------------------------------------------------------	
@@ -150,6 +150,18 @@ How to compare heap dumps?
 	On classes page you can load another dumps.
 
 -------------------------------------------------------------------------------------------------	
-Tips for MAT
-============
+Memory analysis with Eclipse MAT
+================================
+Usable tools:
+
+- Histogram - to get get shallow and retained heap grouped by class/superclass/class loader/package
+	Tips:
+	- order by retained heap
+	- open a second histogram and click 'Compare to another Heap Dump'
+	
+- Dominator tree - to find dominator grouped by no/class/superclass/class loader/package
+	Tips:
+	- order by retained heap
+		
+
 
