@@ -7,6 +7,7 @@ WebClient authentication
 - Setting up 'Easy' authentication
 - Checking authentication on the client side
 - Remember me
+- Autoconfig
 - Troubleshooting
 
 
@@ -253,6 +254,37 @@ This is very weird and confusing.
 
 If you go into AuthenticationCacheImpl it will be clear. 
 It uses a 3rd party API (JCS) which applies a singleton inside.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Autoconfig
+==========
+WebClient configuration can be created automatically, this way:
+
+	WebProfileAutoConfig autoconfig = WebProfileAutoConfig.getInstance();
+	autoconfig.createProfileIfNeed();
+
+It called from 2 locations:
+	1. Manually from GWT page:
+	
+		--> com.andtek.andphone.andmobile.gwtapp.client.profiles_gwtappMain.buildSelectProfileTypeScreen()
+			- Answering 'Yes' to question 'Do you want that APAS create a default Web profile?'
+			--> RemoteAutoCreateWebProfile()
+				--> com.andtek.andphone.andmobile.gwtapp.server.RPCandmobileServiceImpl.RemoteAutoCreateWebProfile()
+
+	2. Automatically during startup
+	
+		--> com.andtek.andphone.webuser.Module.init(...)
+		
+How configuration is created?
+-----------------------------
+- If at least one WebCliernt profile already exists, it does not do anything -> return
+- It looks the oldest authentication profile where type is AUTH_PROFILE_CUCM_AXL
+...
+
+
+
+		
 		
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 Troubleshooting
