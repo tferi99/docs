@@ -30,32 +30,17 @@ On demand recording can be started with XML service served by recording servlet:
 
 		http://<apas host:port>/andphone/Recorder?page=ondemand&dev=#DEVICENAME# 
 		
-		--> com.andtek.andphone.ANDServlet.service(HttpServletRequest request, HttpServletResponse response)
-			--> com.andtek.andphone.ANDServlet.Request(...)
-				--> com.andtek.andphone.recorder.RecorderService.Request(...)
-					PARAM_PAGE_ONDEMAND:
-					
-					calls = module.getSniffer().getCalls();																		<<<<<<<<<<<<<<<<<<<<<< getting calls from recorder
-					
-						############################## recorder ########################################
-						record.cpp	getCalls()
-							--> calls = getCallList()
-						################################################################################
-					
-					
-					--------------------------------- loop on current calls returned from recorder to find matching calls ------------------------------------------
-					- looking for mathing calls:
-						- a call is matching if any extension of current device is matching any party of the call (called/calling/original_calling party)
-						- a call is matching if an 'allow' permission value (extension) is matching any party of the call
-	
-						--------------------------------- loop on matching calls ------------------------------------------
-						Here will be an XML message build and sent to recorder to start/stop recording.
-						
-						--> module.getSniffer().sendXml(xml + " />");
-						
-						############################## recorder ########################################
-						################################################################################
-
+		--> com.andtek.andphone.recorder.web.RecorderPhoneServicesServlet.doRequest(...)
+		---------------------------- if page == PARAM_PAGE_ONDEMAND -------------------------------------------
+			--> RecorderPhoneServicesServlet.doOnDemandRequest(..., deviceName, ...)
+				- searching live calls which belongs to current device ======> selectedCall				
+				--------------------- if call isCurrentlyOnDemandRecording ----------------------
+				--> onDemandStopRecord()
+					LOG:	<recordCall terminal="rec" callID="sip13293/1" onDemand="0" />
+				--------------------- else ----------------------
+				--> onDemandStartRecord()				
+					LOG:	<recordCall terminal="rec" callID="sip13293/1" onDemand="1" />
+		
 						
 			
 

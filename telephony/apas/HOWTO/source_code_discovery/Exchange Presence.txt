@@ -54,7 +54,10 @@ Configuration
 - Presence update period
 	set here: APAS/Presence/Sources/ITEM/(Status update period) (default: 10)
 	
-	....
+- Enable push notifications:
+	set here: 	APAS/General/Servers/CHOOSE/(Enable push notification)
+	stored:
+		DB: servers_attrs where name = 'enablePushNotification' and serverid = <SERVER_ID from servers>
 	
 -------------------------------------------------------------------------------------------------------------------
 Use Cases
@@ -391,9 +394,18 @@ ExchangeEventNotificationsManager		: A class for subscription management, contai
 									- callback:		InvalidationCallback(new AttendeeInfo(emailAddress)
 							- registering pull/push notifications
 							------------------ if PUSH URL and push enabled -----------------
-								- PUSH URL:	http://APAS:8080/andphone/exchange/pushlistener
+								- PUSH URL:	http://APAS:8080/andphone/exchange/pushlistener										<<<<<<<< PUSH notification is default, PULL is fallback solution
+									Initialized in: ExchangeEventNotificationsManager.setPushUrl(String baseUrl) 
+								- PUSH enabled:
+								
 								--> subscribeToPushNotifications(requestService,folders,eventTypes)
-									--> MS....ExchangeService.subscribeToPushNotifications()	 
+									--> MS....ExchangeService.subscribeToPushNotifications()
+							------------------ else -----------------
+								Fallback to pull subscription if false / push subscription failing
+								--> subscribeToPullNotifications(requestService,folders, eventTypes)
+									--> MS....ExchangeService.subscribeToPullNotifications()
+									
+									
 							--> ExchangeEventNotificationsManager.pushSubscriptions.put(subscription.getId(), SubscriptionEntry<PushSubscription> entry)
 						--> ExchangeCachedCalendarServer.calendarNotificationSubscriptions.putIfAbsent(emailAddress, subscriptionId)
 					--> registeredPresenceAddresses.put 
