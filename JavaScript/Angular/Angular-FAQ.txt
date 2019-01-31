@@ -24,6 +24,10 @@ Directives, Components
 - How to set component input with a literal value?
 - How to prevent adding NgForm to forms automatically?
 
+Design, CSS
+-----------
+- How works component level CSS?
+
 Tips
 ----
 - Data binding
@@ -766,5 +770,9 @@ ERROR: Unexpected token } in JSON at position ...
 =================================================
 Check angular.json for sytax error(s).
 
-	
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How works component level CSS?
+==============================
+
 	
