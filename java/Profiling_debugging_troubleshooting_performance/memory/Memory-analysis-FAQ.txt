@@ -162,6 +162,23 @@ Usable tools:
 - Dominator tree - to find dominator grouped by no/class/superclass/class loader/package
 	Tips:
 	- order by retained heap
-		
+
+- Threads	
+-------------------------------------------------------------------------------------------------	
+Eclipse MAT OQL
+===============
+Basic OQL syntax is as follows:
+
+	SELECT * FROM [ INSTANCEOF ]	<class_name> [ WHERE <filter-expression>]
+
+- to select object instances of a class:
+
+	SELECT * FROM <class_name>
+	
+	select * from java.lang.String
+	
+- to select class instance:
+
+	SELECT * FROM OBJECTS <class_name>
 
 
