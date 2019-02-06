@@ -30,13 +30,20 @@ Design, CSS
 
 Tips
 ----
-- Data binding
-	- Bindigs
+- Bindings:
+	- Property binding or interpolation?
+	- Attribute binding
+	- Class binding
+	- Style binding
+	- Event binding
+	- Data binding
+		- Bindigs
 - How to use interpolation (template expression)?
 - Conditional or dynamic CSS Style/Class
 - User input with forms
 - How to control form UI by validation status?
 - How to check empty values in interpolations?
+- How to access DOM elements from a controller?
 
 Services
 --------
@@ -771,6 +778,92 @@ ERROR: Unexpected token } in JSON at position ...
 Check angular.json for sytax error(s).
 
 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to access DOM elements from a controller?
+=============================================
+- template reference variable
+
+	<form #heroForm (ngSubmit)="onSubmit(heroForm)"> ... </form>
+
+	
+-  template input variable:	
+	
+	
+	<button *ngFor="let hero of heroes" (click)="deleteHero(hero)">{{hero.name}}</button>
+	
+-	@ViewChild:
+
+	<input #myname>
+	
+	@ViewChild('myname') input; 
+	
+	ngAfterViewInit() {
+	  console.log(this.input.nativeElement.value);
+	}
+
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Attribute binding
+=================
+<tr><td colspan="{{1 + 1}}">Three-Four</td></tr>
+
+And you get this error:
+
+	Template parse errors:
+	Can't bind to 'colspan' since it isn't a known native property
+	
+Why? 
+As the message says, the <td> element does not have a colspan property. It has the "colspan" ATTRIBUTE, but INTERPOLATION AND PROPERTY BINDING CAN SET ONLY PROPERTIES, NOT ATTRIBUTES.	
+You need attribute bindings to create and bind to such attributes:
+
+	 <tr><td [attr.colspan]="1 + 1">One-Two</td></tr>
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Property binding or interpolation?
+==================================
+They do the same - but with interpolation and property binding:
+	
+	<p><img src="{{heroImageUrl}}"> is the <i>interpolated</i> image.</p>
+	<p><img [src]="heroImageUrl"> is the <i>property bound</i> image.</p>
+
+	<p><span>"{{title}}" is the <i>interpolated</i> title.</span></p>
+	<p>"<span [innerHTML]="title"></span>" is the <i>property bound</i> title.</p>	
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Class binding
+=============
+-  all-or-nothing, replacement binding with string literal:
+
+	<div class="bad curly special" [class]="badCurly">Bad curly</div>
+	
+- add/remove class with boolean expression:
+
+	<div [class.special]="isSpecial">The class binding is special</div>
+	
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Style binding
+=============
+You can set inline styles with a style binding [style.style-property]:
+
+	<button [style.color]="isSpecial ? 'red': 'green'">Red</button>
+	<button [style.background-color]="canSave ? 'cyan': 'grey'" >Save</button>
+	<button [style.font-size.em]="isSpecial ? 3 : 1" >Big</button>
+	<button [style.font-size.%]="!isSpecial ? 150 : 50" >Small</button>
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Event binding
+=============
+Event binding syntax consists of a TARGET EVENT name within parentheses on the left of an equal sign, and a quoted TEMPLATE STATEMENT on the right.
+	
+	<button (click)="onSave()">Save</button>
+	
+	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How works component level CSS?
 ==============================

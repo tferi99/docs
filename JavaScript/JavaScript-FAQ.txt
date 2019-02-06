@@ -673,17 +673,26 @@ An arrow function expression has a shorter syntax compared to function expressio
 
 Basic Syntax
 -------------
-(param1, param2, …, paramN) => { statements }
-(param1, param2, …, paramN) => expression
-         // equivalent to:  => { return expression; }
+- Multiple parameters
+	(param1, param2, …, paramN) => { statements }
+		OR
+	(param1, param2, …, paramN) => singleExpression         // equivalent to:  => { return expression; }
 
-// Parentheses are optional when there's only one parameter:
-(singleParam) => { statements }
-singleParam => { statements }
+- Single parameter	
+	// Parentheses are optional when there's only one parameter:
+	(singleParam) => { statements }
+	singleParam => { statements }
 
-// A function with no parameters requires parentheses:
-() => { statements }
+- No parameters	
+	// A function with no parameters requires parentheses:
+	() => { statements }
 
+Examples:
+	() => 5						// always returns 5 
+	x => x + 1					// increment
+	(x, y) => x + y				// sum 
+
+	
 Advanced Syntax
 ---------------
 // Parenthesize the body to return an object literal expression:
@@ -696,3 +705,11 @@ params => ({foo: bar})
 // Destructuring within the parameter list is also supported
 var f = ([a, b] = [1, 2], {x: c} = {x: a + b}) => a + b + c;
 f();  // 6
+
+	where:
+		[a, b] = [1, 2]					// DESTRUCTURING into a and b
+		{x: c} = {x: a + b}				// DESCTRUCTURING object {x:val} into x then RENAMING into c
+		
+		
+		
+		

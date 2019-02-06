@@ -23,23 +23,20 @@ Keystores
 	Keystore type: 	JKS
 	Password:		changeit
 	Aliases: 		andphone (PrivateKeyEntry)
-	
-	
-	
+	Config:			Config(global/ApasKeystoreFile)
 	
 /var/lib/tomcat/.trust_keystore.jks						: Keystore of imported server certificates
 	Keystore type: 	JKS
 	Password:		changeit
 	Aliases: 		cucm70, cucm85
-		
-	
+	Config:			Config(global/TrustedCertificatesKeystoreFile)
 	
 	
 /var/lib/andphone/certificate.store						: used by recorder
 	Keystore type: 	JKS
 	Password:		ha
 	Aliases: 		andpk (PrivateKeyEntry)
-	
+	Config:			Config(recorder/CertificatePath)
 	
 ------------------------------------------------------------------------------------------------------------------------------
 List of certificates
@@ -99,6 +96,30 @@ Call flows:
 							
 						-- CALLBACK --> onSuccess
 							--> buildCSRDownloadPanel(...)
+							
+------------------------------------------------------------------------------------------------------------------------------
+Import APAS certificate	
+=======================
+APAS/Global/Security/[Certificate List]/(Import APAS Certificate)
+Event Handling
+--------------
+security_gwtappMain
+- Button 'Import APAS Certificate'
+	--> openApasCertificateImportWindow()
+		--> this.APAS_CERTIFICATE_IMPORT_WINDOW.buildFormPanel(record, func)
+			it renders 'Import' dialog
+			
+- Button 'Import'
+	--> GwtCertificateImportWindow.formPanel.getForm().submit(main.CERTIFICATE_LIST_BEAN.getCertUploadURL(), ...)
+		--> URL(/andphone/Admin?module=global&page=security&func=gwtcertimport)
+			--> com.andtek.andphone.Admin.doGet()
+				--> com.andtek.andphone.utils.Admin.getModuleAdminPage(connection);
+					-->	getModuleAdmin(module, connection);
+					  to get module Admin class (com.andtek.andphone.global)
+					  
+					--> com.andtek.andphone.global.Admin.security_gwtcertimport(ConnectionBean connection)			<<<<< by reflection
+						--> com.andtek.andphone.global.Module.importTrustedCertificate(import_certfile, alias);
+			
 ------------------------------------------------------------------------------------------------------------------------------
 Import trusted certificate
 ==========================
@@ -142,7 +163,7 @@ Call flows:
 		--> buildDynamicCertificateImportFormPanel()
 		  - to render certificate import dialog
 			--> CERTIFICATE_IMPORT_WINDOW.buildFormPanel(record, func);
-				it renders 'Import' button
+				it renders 'Import' dialog
 	
 	- Button 'Import'
 		--> GwtCertificateImportWindow.formPanel.getForm().submit(main.CERTIFICATE_LIST_BEAN.getCertUploadURL(), ...)

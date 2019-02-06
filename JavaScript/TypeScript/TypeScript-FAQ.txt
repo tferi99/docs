@@ -471,12 +471,14 @@ OR
 What is destructuring?
 ======================
 The destructuring assignment syntax is a JavaScript expression that makes it possible 
-to unpack values from arrays, or properties from objects, into distinct variables.
+to UNPACK VALUES from arrays, or properties from objects, INTO DISTINCT VARIABLES.
 
 Type of desturcturing:
 - array desturcturing
-	- into variables
 
+	[var1, var2, ...., varN] = [value1, value2, ...., valueN]
+
+	- into variables
 		let input = [1, 2];
 		let [first, second] = input;
 		console.log(first); // outputs 1
@@ -500,6 +502,10 @@ Type of desturcturing:
 		f(input);
 				
 - object desturcturing
+
+	{var1, var2, ..., varN} = { var1Prop: value1, var2Prop: value2, ..., varNProp: valueN} 
+	
+
 	- into variables
 
 		let o = {
@@ -512,12 +518,16 @@ Type of desturcturing:
 		document.write('> ' + a + '<br>');
 		document.write('>> ' + c + '<br>');
 
-	- into function attributes
+	- into function attributes (with default values):
 
+		var f = ({a, b} = {b:10, a:34}) => a + b;
+		f();					// 34
+		f({a:10, b:20});		// 30
+	
 	
 Renaming target variables (with arrays/objects):
 
-		let { a: newName1, b: newName2 } = o;
+		let { a: newName1, b: newName2 } = {a:5, b:10};
 	
 
 	

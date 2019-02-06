@@ -56,6 +56,7 @@ Recording
 - Recording
 - Playback recording
 - Recording XML services
+- Signing recordings
 
 Network, security
 ------------------
