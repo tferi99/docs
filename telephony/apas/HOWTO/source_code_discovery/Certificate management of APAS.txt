@@ -5,6 +5,7 @@ Certificate management of APAS
 - Keystores
 - List of certificates
 - Creating APAS certificate
+- Import APAS certificate
 - Import trusted certificate
 
 ------------------------------------------------------------------------------------------------------------------------------
@@ -111,19 +112,24 @@ security_gwtappMain
 			
 - Button 'Import'
 	--> GwtCertificateImportWindow.formPanel.getForm().submit(main.CERTIFICATE_LIST_BEAN.getCertUploadURL(), ...)
-		--> URL(/andphone/Admin?module=global&page=security&func=gwtcertimport)
+		--> URL(/andphone/Admin?module=global&page=security&func=gwtapascertimport)
 			--> com.andtek.andphone.Admin.doGet()
 				--> com.andtek.andphone.utils.Admin.getModuleAdminPage(connection);
 					-->	getModuleAdmin(module, connection);
 					  to get module Admin class (com.andtek.andphone.global)
 					  
-					--> com.andtek.andphone.global.Admin.security_gwtcertimport(ConnectionBean connection)			<<<<< by reflection
-						--> com.andtek.andphone.global.Module.importTrustedCertificate(import_certfile, alias);
-			
+					--> com.andtek.andphone.global.Admin.security_gwtapascertimport(ConnectionBean connection)			<<<<< by reflection
+						--> ca = AndPhoneCA.getInstance(AndPhoneCA.KS_PASSWD)			// ha
+						--> AndPhoneCA.importRecorderCertificate(import_certfile, certFileFormat, alias, keyStorePassword)
+							------------------------------ in not 'andpk' -----------------------------------------
+							- alias = "REC_" + alias
+
+
+				
 ------------------------------------------------------------------------------------------------------------------------------
 Import trusted certificate
 ==========================
-1. Getting certificate from CUCM
+1. Getting certificate from 3rd party server (e.g. CUCM, Exchange Server).
 
 Download a certificate 
 
@@ -234,6 +240,4 @@ Call flows:
 					...
 				-- CALLBACK --> onSuccess
 					- show message
-	
-	
 	
