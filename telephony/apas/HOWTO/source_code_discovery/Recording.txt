@@ -15,6 +15,7 @@ You need a configured recording environment (see more: APAS-FAQ.txt/Howto config
 - Writing/changing rec_call table
 - Start time of recording
 - KEEP values
+- 
 
 - ERROR - in APAS event log: The recording of call ... has been locked because a new call has reserved licenses in the ruleset
 
