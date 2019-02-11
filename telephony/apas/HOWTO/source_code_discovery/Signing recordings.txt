@@ -1,0 +1,52 @@
+==================
+Signing recordings
+==================
+
+- Configuration
+
+----------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+- Create certificate for Recorder:
+
+	Global/Security/[Certificate List]/(Create APAS Certificate)
+	
+		- fill fields
+		- choose type:	Recorder
+		
+	To sign certificate by a CA:
+		- at the end of creation Download CSR
+		- sign it by CA
+		- import:
+		
+			Global/Security/[Certificate List]/(Import APAS Certificate)
+			- choose type:	Recorder
+	
+	
+- Activate signing:
+
+	Recorder/Certificate/[Configuration]
+	
+		- There is a dropdown which contains Recorder Certificates
+		- Choose a certificate by alias from dropdown
+		- Set 'Digitally sign recordings' checkbox
+		- [Current Certificate] contains selected 
+		
+
+
+com.andtek.andphone.recorder.gwtapp.client.cert_gwtappMain
+	--> onModuleLoad()
+		--> RemoteGetCertificateList()
+			--> RPCrecorderServiceImpl.RPCServletService.RemoteGetCertificateList()			// getting rec rects
+			--> RemoteGetCertificate()			
+				--> RPCrecorderServiceImpl.RemoteGetCertificate(APAS_MODULE, new AsyncCallback() ======> record
+					- getting cert alias from Config(recorder/CertificateAlias)
+					--> ApasCertificateHelper.getCertFromKeystore("", "/var/lib/andphone/certificate.store", "pkcs12", alias, password)			// loading cert by alias
+						- loading keystore into memory
+						- getting cert chain by alias
+						
+					- getting boolean about signing from Config(recorder/SignRecordings)
+					
+				--> buildMainScreen(record)
+					--> buildCreateCertificatePanel(record, ...)
+						--> addCurrentCertificateFieldset()
