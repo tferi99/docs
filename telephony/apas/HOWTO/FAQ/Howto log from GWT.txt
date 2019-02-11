@@ -1,0 +1,12 @@
+===================
+Howto log from GWT?
+===================
+Use:
+
+	AndGWTCommonFunctions.consoleLog("Hello GWT!");
+	
+Log will be written to console of browser.
+
+
+
+
