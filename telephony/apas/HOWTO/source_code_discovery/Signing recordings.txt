@@ -3,6 +3,7 @@ Signing recordings
 ==================
 
 - Configuration
+- Message: "You use the default certificate. Please create a new certificate"
 
 ----------------------------------------------------------------------------------------------------------------
 Configuration
@@ -33,13 +34,16 @@ Configuration
 		- [Current Certificate] contains selected 
 		
 
+- Configuration page:
 
-com.andtek.andphone.recorder.gwtapp.client.cert_gwtappMain
-	--> onModuleLoad()
-		--> RemoteGetCertificateList()
-			--> RPCrecorderServiceImpl.RPCServletService.RemoteGetCertificateList()			// getting rec rects
-			--> RemoteGetCertificate()			
-				--> RPCrecorderServiceImpl.RemoteGetCertificate(APAS_MODULE, new AsyncCallback() ======> record
+	- Config(recorder/CertificateAlias)
+	- Config(recorder/SignRecordings)
+	
+	com.andtek.andphone.recorder.gwtapp.client.cert_gwtappMain
+		--> onModuleLoad()
+			--> RemoteGetCertificateList()
+				--> RPCrecorderServiceImpl.RPCServletService.RemoteGetCertificateList()			// getting rec rects
+				--> RPCrecorderServiceImpl.RemoteGetCertificate(APAS_MODULE, new AsyncCallback() // getting current certificagte ======> record
 					- getting cert alias from Config(recorder/CertificateAlias)
 					--> ApasCertificateHelper.getCertFromKeystore("", "/var/lib/andphone/certificate.store", "pkcs12", alias, password)			// loading cert by alias
 						- loading keystore into memory
@@ -50,3 +54,36 @@ com.andtek.andphone.recorder.gwtapp.client.cert_gwtappMain
 				--> buildMainScreen(record)
 					--> buildCreateCertificatePanel(record, ...)
 						--> addCurrentCertificateFieldset()
+
+				
+		
+-----------------------------------------------------------------------------------------------------------------------------------
+Message: "You use the default certificate. Please create a new certificate"
+===========================================================================
+What does it mean?
+
+It displayed on recording-related GWT pages if Config(recorder/ValidCertificate) is false.
+
+There is 2 independent implementation to show and use it :((((((((((((
+
+1. com.andtek.andphone.recorder.Admin
+read:
+
+	--> Admin.checkEnvironment(...)
+	
+write:
+	--> Admin.cert_gwtupload(ConnectionBean connection)
+	
+2. com.andtek.andphone.recorder.gwtapp.server.RPCrecorderServiceImpl.RPCrecorderServiceImpl
+read:
+
+	--> RPCrecorderServiceImpl.checkEnvironment(JTAPIThread jtapi, HttpServletRequest request, String apas_module)
+		
+write:
+
+	--> RPCrecorderServiceImpl.RemoteCreateCertificate(CertificateDataBean record, String APAS_MODULE)
+	
+	--> RPCrecorderServiceImpl.RemoteSaveCertificateConfig()
+	
+	
+
