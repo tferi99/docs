@@ -117,9 +117,10 @@ security_gwtappMain
 					-->	getModuleAdmin(module, connection);
 					  to get module Admin class (com.andtek.andphone.global)
 					  
-					--> com.andtek.andphone.global.Admin.security_gwtcertimport(ConnectionBean connection)			<<<<< by reflection
-						--> com.andtek.andphone.global.Module.importTrustedCertificate(import_certfile, alias);
-			
+					--> com.andtek.andphone.global.Admin.security_gwtapascertimport(ConnectionBean connection)			<<<<< by reflection
+					--------------------------- if cert type: Recorder --------------------------------------
+						--> com.andtek.andphone.security.AndPhoneCA(import_certfile, certFileFormat, alias, keyStorePassword)
+							- loading keystore
 ------------------------------------------------------------------------------------------------------------------------------
 Import trusted certificate
 ==========================

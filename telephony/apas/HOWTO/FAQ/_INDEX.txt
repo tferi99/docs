@@ -90,6 +90,7 @@ Development
 - Building APAS projects
 - Where can I download APAS update packages?
 - How to upgrade an ISO APAS to the latest version.txt
+- Howto log from GWT?
 
 ISO
 ---

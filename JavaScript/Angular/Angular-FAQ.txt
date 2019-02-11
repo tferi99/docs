@@ -23,6 +23,7 @@ Directives, Components
 - How to change the default prefix of component to stop tslint warnings
 - How to set component input with a literal value?
 - How to prevent adding NgForm to forms automatically?
+- Parent-child component interaction
 
 Design, CSS
 -----------
@@ -863,7 +864,92 @@ Event binding syntax consists of a TARGET EVENT name within parentheses on the l
 	
 	<button (click)="onSave()">Save</button>
 	
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Parent-child component interaction
+==================================
+PARENT =======> CHILD
+
+	- Pass data from parent to child with input binding
+
+		parent:
+			<app-hero-child *ngFor="let hero of heroes" [hero]="hero"></app-hero-child>
+			
+		child:
+			selector: 'app-hero-child',
+			@Input() hero: Hero;
+
+
+	- Intercept input property changes with a setter
+
+		Same as 'Pass data from parent to child with input binding' but with a setter.
+
+		parent:
+			<app-name-child *ngFor="let name of names" [name]="name"></app-name-child>
+		
+		child:
+			@Input()
+			set name(name: string) {
+				this._name = (name && name.trim()) || '<no name set>';
+			}
+
+	- Intercept input property changes with ngOnChanges()
+		parent:
+			app-version-child [major]="major" [minor]="minor"></app-version-child>
+
+		child:
+			export class VersionChildComponent implements OnChanges {
+
+				ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+					// propKey contains changed property
+				}
+			}
+
+CHILD =======> PARENT
 	
+	- Parent listens for child event
+
+		child:
+			selector: 'app-voter',
+			@Output() voted = new EventEmitter<boolean>();
+			
+			vote(agreed: boolean) {
+				this.voted.emit(agreed);
+			}
+	
+		parent:
+			<app-voter *ngFor="let voter of voters" (voted)="onVoted($event)"></app-voter>		
+	
+	
+	- Parent interacts with child via local variable
+		parent:
+			<button (click)="timer.start()">Start</button>
+			<button (click)="timer.stop()">Stop</button>
+			<div class="seconds">{{timer.seconds}}</div>
+			<app-countdown-timer #timer></app-countdown-timer>
+
+		child:
+			selector: 'app-countdown-timer'
+			
+			seconds: number;
+			start() { this.countDown(); }
+			stop()  {
+				this.clearTimer();
+				this.message = `Holding at T-${this.seconds} seconds`;
+			}		
+			
+	- Parent calls an @ViewChild()
+		The local variable approach is simple and easy. But it is limited because the parent-child wiring must 
+		be done entirely within the parent template. The parent component itself has no access to the child.
+		
+		parent:
+			@ViewChild(CountdownTimerComponent)
+			private timerComponent: CountdownTimerComponent;			
+
+		child:
+			
+			
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How works component level CSS?
 ==============================
