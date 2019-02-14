@@ -4,6 +4,8 @@ Signing recordings
 
 - Configuration
 - Message: "You use the default certificate. Please create a new certificate"
+- Signing recordings
+- Verify signature
 
 ----------------------------------------------------------------------------------------------------------------
 Configuration
@@ -86,4 +88,31 @@ write:
 	--> RPCrecorderServiceImpl.RemoteSaveCertificateConfig()
 	
 	
+	
+-----------------------------------------------------------------------------------------------------------------------------------
+Signing recordings	
+==================
+
+	--> com.andtek.andphone.recorder.SignTool.doSign(String filename)
+		--> byte[] sig = signFile(audioFile);
+			--> cert = AndPhoneCA.getPrivateKey()		// getting private key
+			
+		--> audioFile.seek(POS_SIGNATURE);
+		--> audioFile.write(sig);
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Verify signature
+================
+Recorder/Search/(VerifySignature)
+
+
+com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain
+	=> com.andtek.andphone.recorder.gwtapp.client.RecordingListPanel
+		button(Verify Signature)
+			--> com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain.RemoteVerifySignature(String keys)
+				--> com.andtek.andphone.recorder.gwtapp.server.RPCrecorderServiceImpl.RemoteVerifySignature(String keys, String APAS_MODULE)
+					--> com.andtek.andphone.recorder.SignTool.doVerify(String filename, String APAS_MODULE)
+						--> verifyFile(audioFile, sig, APAS_MODULE)
+							--> cert = AndPhoneCA.getCertificate()		// getting cert by Config(recorder/CertificateAlias) or andphonepk
+							--> pk = cert.getPublicKey()
 
