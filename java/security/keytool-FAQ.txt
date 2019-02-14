@@ -177,11 +177,11 @@ Steps of creating a signed certificate
 ------------------------------------------------------------------------------------------------
 Howto export the Public Key Certificate
 =======================================
-Export into PEM (Internet RFC 1421 Certificate Encoding Standard - human readable) format:
+1. Export into PEM (Internet RFC 1421 Certificate Encoding Standard - human readable) format:
 		
 	keytool -exportcert -keystore <KEYSTORE FILE> -alias <ALIAS> [-file <OUTPUT FILE>] -rfc
 		
-Export into DER (binary) format:
+2. Export into DER (binary) format:
 
 	keytool -exportcert -keystore <KEYSTORE FILE> -alias <ALIAS> [-file <OUTPUT FILE>]
 		

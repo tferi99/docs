@@ -7,6 +7,7 @@ Certificate management of APAS
 - Creating APAS certificate
 - Import APAS certificate
 - Import trusted certificate
+- Export certificate
 
 ------------------------------------------------------------------------------------------------------------------------------
 Keystores
@@ -240,4 +241,16 @@ Call flows:
 					...
 				-- CALLBACK --> onSuccess
 					- show message
+	
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Export certificate	
+==================
+
+
+
+
+	
+
 	
