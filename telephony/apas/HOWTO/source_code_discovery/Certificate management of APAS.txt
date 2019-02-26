@@ -5,9 +5,10 @@ Certificate management of APAS
 - Keystores
 - List of certificates
 - Creating APAS certificate
+- Export APAS certificate
+- Export CSR
 - Import APAS certificate
 - Import trusted certificate
-- Export certificate
 
 ------------------------------------------------------------------------------------------------------------------------------
 Keystores
@@ -75,34 +76,111 @@ Call flows:
 	
 	UI rendering
 	------------
-	SEE: Import trusted certificate (below)
-
+	com.andtek.andphone.global.gwtapp.client.security_gwtappMain
+	--> RemoteGetCertificateList()
+		--> buildCertificateManagerPanel(GwtCertificateListInitBean record, ...)
+			- certificate entries in record.getDatarows() which rendered in a list
+			
 	Event handling
 	--------------
 	- Button [Create APAS Certificate] 
 		--> record = CERTIFICATE_LIST_BEAN.getSelfSignedCertificateData();
 		--> openSignRequestPanel(record, "add");
-			--> CSR_REQUEST_WINDOW.buildFormPanel(record, func)
-				It renders 'Create' button
+			--> GwtCertSignRequestWindow.buildFormPanel(record, func)
+				- it renders certificate form with 'Create' button
 				
 	- Button [Create]
 		--> GwtCertSignRequestWindow.onFormPanelSubmitEvent(formPanel, false);
 			--> RemoteGenerateApasSelfSignedCertificate(DATA_RECORD, func, closeWindow);
-				--> main.RPCServletService.RemoteGenerateApasSelfSignedCertificate(..., SaveFormProgressTimerAsyncCallback)
-					-- RPC --> RPCglobalServiceImpl.RemoteGenerateApasSelfSignedCertificate(...)
+				RPC ==> RPCglobalServiceImpl.RemoteGenerateApasSelfSignedCertificate(...)
+					------------------------- if certificateType == recorder -------------------------
+						--> AndPhoneCA.createRecorderCertificate(...)
+					------------------------- else -------------------------
 						--> ApasCertificateHelper.generateV3Certificate(DN, validYear)
-							- it keypair generated in constructor --> generateRSAKeyPair(keySize)
+							- it keypair generated in constructor --> generateRSAKeyPair(keySize)								
 							--> generateV3Certificate(String DN, KeyPair pair, long year)								<<<<<<<<<<<< generating certificate from pre-generated key-pair
-								- 
+								- initialization of X509V3CertificateGenerator
+								- collecting SubjectAlternativeName items
+								- adding SubjectAlternativeName
 						-->	com.andtek.andphone.global.Module.importAPASCertificate(cert, alias, CertHelper.getKeyPair());
+						--> ApasCertificateHelper.generateCSR(...)
+							--> csr = generatePKCS10(...)
+							--> toPem(csr)
+						--> csrRequestFile = ApasCertificateHelper.saveCSR(...)
+						--> record.setCsrDownloadURL(csrDownloadURL)
+						
+							csrDownloadURL: /andphone/Admin?module=<MODULE>&page=security&func=gwtcsrdownload&csrrequestfile=<csrRequestFile>
 							
-						-- CALLBACK --> onSuccess
-							--> buildCSRDownloadPanel(...)
-							
+				SaveFormProgressTimerAsyncCallback CALLBACK ==> onSuccess
+					--> GwtCertSignRequestWindow.buildCSRDownloadPanel(...)
+						click button 'Download'			// exporting CSR
+							--> Window.open(DATA_RECORD.getCsrDownloadURL(), ...)
+								- file generated before downloaded in browser popup 
+
+------------------------------------------------------------------------------------------------------------------------------
+Export APAS certificate	
+=======================
+APAS/Global/Security/[Certificate List]/<item>('Export' icon)
+
+UI:
+com.andtek.andphone.global.gwtapp.client.security_gwtappMain
+--> RemoteGetCertificateList()
+	--> buildCertificateManagerPanel(GwtCertificateListInitBean record, ...)
+		- certificate entries in record.getDatarows()
+		------------------- loop on certificate entries ---------------------
+			- removing 'rec_' prefix from aliases
+			- building data array list for 
+			- building column data
+			- cell listeners:
+				- col index:4 -> url = certDownloadURL
+				
+	===> click 'Export' icon
+	Export certificate:
+		--> com.andtek.andphone.global.Admin.security_gwtcertexport(ConnectionBean connection)
+			- setting keystore type, real alias, password, keystore file by condition: certificateType == GwtCertificateDataBean.CERT_RECORDER ?
+			- loading keytore
+			- getting certificate by real alias
+			- writing certificate into file with PEM format							
+
+------------------------------------------------------------------------------------------------------------------------------
+Export CSR
+==========
+APAS/Global/Security/[Certificate List]/<item>('CSR' icon)
+
+UI:
+com.andtek.andphone.global.gwtapp.client.security_gwtappMain
+--> RemoteGetCertificateList()
+	--> buildCertificateManagerPanel(GwtCertificateListInitBean record, ...)
+		- certificate entries in record.getDatarows()
+		------------------- loop on certificate entries ---------------------
+			- removing 'rec_' prefix from aliases
+			- building data array list for 
+			- building column data
+			- cell listeners:
+				- col index:5 -> url = csrDownloadURL
+				
+	===> click 
+	Export certificate:
+		--> com.andtek.andphone.global.Admin.security_gwtcertexport(ConnectionBean connection)
+			------------------- if certificateType == GwtCertificateDataBean.CERT_RECORDER ------------------- 		// 'recorder'
+			...
+	
+			----------------------------- else -----------------------------
+			--> com.andtek.andphone.global.Admin.security_gwtcsrexport(ConnectionBean connection)
+				- getting parameters
+				- loading keystore
+				--> Certificate cert = keystore.getCertificate(realAlias)
+				- getting DN fields from cert
+				--> csr = certHelper.generateCSR(alg, dn);
+				--> csrFile = certHelper.saveCSR(csr, alias)
+				--> csrDownload(request, response, csrFile)
+					- CSR is written into HTTP response
+				
 ------------------------------------------------------------------------------------------------------------------------------
 Import APAS certificate	
 =======================
 APAS/Global/Security/[Certificate List]/(Import APAS Certificate)
+
 Event Handling
 --------------
 security_gwtappMain
@@ -126,6 +204,7 @@ security_gwtappMain
 							- alias = "REC_" + alias
 
 
+							
 				
 ------------------------------------------------------------------------------------------------------------------------------
 Import trusted certificate
@@ -242,11 +321,6 @@ Call flows:
 				-- CALLBACK --> onSuccess
 					- show message
 	
-
-
-------------------------------------------------------------------------------------------------------------------------------
-Export certificate	
-==================
 
 
 

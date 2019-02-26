@@ -14,6 +14,7 @@ keytool FAQ
 - Howto export/print a private key?
 - How to delete a certificate?
 - How to rename a certificate?
+- How to verify private public keys?
 
 SSL
 ---
@@ -377,5 +378,33 @@ Most web browsers displays a warning message when connecting to an address that 
 					 Version: 3
 
 
+
+---------------------------------------------------------------------------------------------------------------------------------
+How to verify private public keys?
+==================================
+Method 1:
+
+	The private key contains a series of numbers. Two of those numbers form the "public key", the others are part of your "private key". 
+	The "public key" bits are also embedded in your Certificate (we get them from your CSR). 
+	To check that the public key in your cert matches the public portion of your private key, you need to view the cert and the key and compare the numbers. 
+	To view the Certificate and the key run the commands:
+
+		$ openssl x509 -noout -text -in server.crt
+		$ openssl rsa -noout -text -in server.key
+		
+	The `modulus' and the `public exponent' portions in the key and the Certificate must match. But since the public exponent is usually 65537 and it's bothering 
+	comparing long modulus you can use the following approach:
+
+		# print modulus from a private key
+		$ openssl rsa -noout -modulus -in server.key | openssl md5
+		
+		# print modulus from a certificate
+		$ openssl x509 -noout -modulus -in server.crt | openssl md5		
+		
+		# print modulus from a CSR
+		$ openssl req -noout -modulus -in server.csr | openssl md5
+
+
+					 
 
 					
