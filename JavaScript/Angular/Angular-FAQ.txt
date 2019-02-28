@@ -430,8 +430,12 @@ Double-curly braces: interpolation, iut contains template expression.
 How to set component input with a literal value?
 ================================================
 Component input binding in template receives property name and not a value directly by default.
-If you want to set an input with a string literal value directly use '...' 
-if you want to set an input with a number literal value directly specify it directly:
+
+- If you want to set an input with a string literal value directly use '...' in expression:			[input-property]="'value'"
+	OR don't use input expression:																	input-property="value"
+
+- number values are recognized automatically:														[input-property]="num-value"
+	OR 																								input-property="num-value"
 	
 TS:
 	@Component({
@@ -455,6 +459,8 @@ TS:
 Caller template:
 
 	<app-my-form [title]="'literal'" [size]="3.2"></app-my-form>
+	OR
+	<app-my-form title="literal" [size]="3.2"></app-my-form>
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Conditional or dynamic CSS Style/Class
