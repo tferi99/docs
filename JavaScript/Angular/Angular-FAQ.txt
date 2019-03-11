@@ -26,6 +26,10 @@ Directives, Components
 - How to prevent adding NgForm to forms automatically?
 - Parent-child component interaction
 
+Observers
+---------
+- Observer vs. Observable
+
 Design, CSS
 -----------
 - How works component level CSS?
@@ -46,10 +50,15 @@ Tips
 - How to control form UI by validation status?
 - How to check empty values in interpolations?
 - How to access DOM elements from a controller?
+- Null check on objects
 
 Services
 --------
 - How to use a service?
+
+HTTP, Rest
+----------
+- How to prototype test Rest services?
 
 Development
 -----------
@@ -68,7 +77,7 @@ Troubleshooting
 - ERROR:	Can't bind to 'formControl' since it isn't a known property of 'input'  
 - How to trace value of  Reactive form?
 - ERROR: Unexpected token } in JSON at position ...
-
+- Property 'map' does not exist on type 'Observable<...>'
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Structure of an Angular application
 ===================================
@@ -968,5 +977,129 @@ CHILD =======> PARENT
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How works component level CSS?
 ==============================
+.....
+.....
+.....
 
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Null check on objects
+=====================
+Example:		<span class="subhead">{{project?.category}}</span>
+
+? is the safe navigation operator. 
+It checks whether the variable is null or undefined so that our template won't try to select a property of something falsy.
+
+Without ? operator if 'project' is null an error will generated:
+
+	TypeError: Cannot read property 'category' of null in [null].
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to prototype test Rest services?
+==============================
+https://jsonplaceholder.typicode.com/
+
+- create a repository in GitHub
+- create db.json into repository with the content like this:
+
+{
+    "posts": [
+        {
+            "id": 1,
+            "title": "Post 1"
+        },
+        {
+            "id": 2,
+            "title": "Post 2"
+        },
+        {
+            "id": 3,
+            "title": "Post 3"
+        }
+    ],
+    "person": [
+        {
+            "id": 1,
+            "name": "John Smith",
+            "gender": "M"
+        },
+        {
+            "id": 2,
+            "name": "Jane Doe",
+            "gender": "F"
+        }
+    ],   
+    "comments": [
+        {
+            "id": 1,
+            "body": "some comment",
+            "postId": 1
+        },
+        {
+            "id": 2,
+            "body": "some comment",
+            "postId": 1
+        }
+    ],
+    "profile": {
+        "name": "typicode"
+    }
+}
+
+
+TIP:
+	- changes not updated immediately, maybe a few of minutes later 
+	
+		After changing db.json check changes with:
+	
+			https://my-json-server.typicode.com/<user>/<repo>/db
+		
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Observer vs. Observable
+=======================
+this.http.get(url).subscribe(data => {
+		...
+		...
+    });
+
+	
+	this.http.get(url) 					: observable
+	this.http.get(url).subscribe(...)	: observer initialized and started
+
+Observable
+	Observable is a stream of events or data. They are often returned from Angular methods, 
+	such as the http.get and the myinputBox.valueChanges.
+
+Observer
+	The subscribe method takes in an observer. An observer has three methods:
+	- on event:	The method to process each time an item is emitted from the observable.
+	- on error:	The method to process any error that occurs.
+	- The method to clean up anything when the observer completes. 
+		This last one is seldom used when working with Angular's observables.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Property 'map' does not exist on type 'Observable<...>'
+=======================================================
+For versions of RxJS 6.x.x and above, you will have to use pipeable operators as shown in the code snippet below:
+
+	import { map } from 'rxjs/operators';
+	import { HttpClient } from '@angular/common/http';
+
+	// ...
+	export class MyComponent {
+	  constructor(private http: HttpClient) { }
+	  getItems() {
+		this.http.get('https://example.com/api/items').pipe(map(data => {})).subscribe(result => {
+		  console.log(result);
+		});
+	  }
+	}
+	
+	
+operators: Pipeable operators must now be imported from rxjs like so: 
+
+	import { map, filter, switchMap } from 'rxjs/operators';
+	
 	
