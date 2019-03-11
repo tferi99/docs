@@ -13,7 +13,7 @@ Exchange Presence
 - How presence information goes from Exchange Server to DC?
 - Troubleshooting, tracing
 - Additional troubleshooting features for memory consumption
-- ews-trace.log
+- ews-trace.log analysis
 
 -------------------------------------------------------------------------------------------------------------------
 Configuration
@@ -58,6 +58,11 @@ Configuration
 	set here: 	APAS/General/Servers/CHOOSE/(Enable push notification)
 	stored:
 		DB: servers_attrs where name = 'enablePushNotification' and serverid = <SERVER_ID from servers>
+		
+- ServerGroup availabily check config:
+
+	select * from servergroup
+
 	
 -------------------------------------------------------------------------------------------------------------------
 Use Cases
@@ -67,17 +72,20 @@ Use Cases
 	APAS/General/Servers/CHOOSE/[Servers]/[Server 1]/(Test Connection)
 		--> com.andtek.andphone.global.gwtapp.server.RPCglobalServiceImpl.RemoteTestServerConnection()
 			--> ExchangeCachedCalendarServer.testConnection()
-
+				--> ExchangeCachedCalendarServer.verifyConnection()										<--------- verifyConnection()
 			
 - Exchange server automatical (background) connection test:
 	ServerGroup.ServerGroup()
-		- verifyThread = new ServerGroupVerifier(this)
-		--> ServerGroupVerifier.ServerGroupVerifier()
-			--> APASThread.run()
-				--> com.andtek.andphone.global.servers.ServerGroup.ServerGroupVerifier.run()
-					--> ServerGroup.checkServerAvailability()
-						--> ExchangeCachedCalendarServer.verifyConnection()
-							--> ExchangeService exchangeService.resolveName(username);
+		--> ServerGroup(...)
+			- verifyThread = new ServerGroupVerifier(this)
+			--> ServerGroupVerifier.ServerGroupVerifier()
+				--> APASThread.run()
+					--> com.andtek.andphone.global.servers.ServerGroup.ServerGroupVerifier.run()
+						------------------------------ loop with 1000 msec steps --------------------------------------
+						--> ServerGroup.checkServerAvailability()
+							--> checkServerAvailability(false)
+								--> ExchangeCachedCalendarServer.verifyConnection()										<--------- verifyConnection()
+									--> ExchangeService exchangeService.resolveName(username);
 			
 - Directory search and getting presence information:
   		
@@ -678,8 +686,8 @@ Features implemented:
 				
 
 -------------------------------------------------------------------------------------------------------------------
-ews-trace.log
-=============
+ews-trace.log analysis
+======================
 - Connection test from APAS/Servers/EXCHANGE-SERVER/(Test Connection)
 				
 	---> EwsRequest

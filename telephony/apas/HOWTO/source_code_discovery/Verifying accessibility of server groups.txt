@@ -1,14 +1,27 @@
 ========================================
 Verifying accessibility of server groups
 ========================================
-
-- Call 
-- AXL server hints
+General
+-------
+- Description
+- Configuration
+- Server connection verification
 
 
 ------------------------------------------------------------------------------------------------------------
-Call
-====
+Description
+===========
+Server group provides multiple servers to 
+
+
+Server specific
+---------------
+- AXL server hints
+- Checking SIP server availability
+
+------------------------------------------------------------------------------------------------------------
+Server connection verification
+==============================
 
 --> com.andtek.andphone.global.servers.ServerGroup.run()
 
@@ -30,6 +43,26 @@ Call
 ------------------------------------------------------------------------------------------------------------
 AXL server hints
 ================
+Stored into database:
+
+	servergroup -- servergroup_members -- servers - servers_attrs
+	
+- servergroup
+	availperiod				- polling period when server is available
+	unavailperiod			- polling period when server is unavailable
+	
+- servergroup_members:	group server association
+
+- servers	
+	ip, port, credentials, protocol, is secure?
+	
+- servers_attrs: server specific metadata
+	value, default value, mandatory, data-type, readonly
+				
+				
+------------------------------------------------------------------------------------------------------------
+AXL server hints
+================
 				
 AXLServer toString:
 
@@ -38,4 +71,40 @@ AXLServer toString:
 	e.g:
 	AXLServer[1,Publisher,192.168.5.20,TOTH_APAS,***,false,9.0,timeout=10000,null]
 	
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------
+Checking SIP server availability
+================================
+
+[1] --> SIPServer.sendKeepAliveBlocking(KEEPALIVE_TIMEOUT);
+	- creates 'From' and 'To' SIP headers
+	- creates listening point by the given transport type
+	- creates 'Via' header
+	--> ClientTransaction.sendRequest()
+	
+------------------------------------- [1] : sendKeepAliveBlocking(KEEPALIVE_TIMEOUT) -------------------------------------
+RPCglobalServiceImpl.RemoteGetServerByID(int serverGroupID)			<<<<<< USECASE: calling servers dialog
+	--> RPCglobalServiceImpl.checkSIPServer(AndGWTServerGroup gwtsg, SIPServer server, AndGwtSIPServer gwtServer)
+		[2] --> TestSIPConnection(SIPServer server)
+			--> [1]
+
+- ServerGroupVerifier.run()							<<<<< USECASE:Availability check thread
+	--> ServerGroup.checkServerAvailability()
+		---------------------------- loop on priorities ----------------------------------
+			---------------------------------- loop on server group members -------------------------
+			--> boolean isAvailable = server.verifyConnection();
+				--> SIPServer.verifyConnection();
+					--> [1]
+					
+					
+-----------------------------[2] : TestSIPConnection(SIPServer server) --------------------------------------------
+- RPCglobalServiceImpl.RemoteGetServerByID(int serverGroupID)			<<<<<< USECASE: calling/saving servers dialog
+	--> RPCglobalServiceImpl.checkSIPServer(AndGWTServerGroup gwtsg, SIPServer server, AndGwtSIPServer gwtServer)
+		--> [2] 
+
+- RemoteTestServerConnection(AndGWTGenericServerIF gwtserver)			<<<<<< USECASE: clicking Test button on servers dialog
+	--> [2]
+	
+
 	

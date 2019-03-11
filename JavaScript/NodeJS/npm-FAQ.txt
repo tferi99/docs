@@ -7,9 +7,9 @@ npm FAQ
 - How to install packages?
 - How to update packages?
 - How to create package.json?
+- How to query versions?
+- How to update packages?	
 
-- Useful commands
-- Full list of commands
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 What is npm?
@@ -74,4 +74,18 @@ To initialize a project and create package.json call:
 
 	npm init
 	
+---------------------------------------------------------------------------------------------------------------------------------------------
+- How to query versions?
+========================
+npm -v 
+OR 
+npm version						: print NPM version
+
+npm view <package>				: get all information about a package
+npm view <package> version		: show specified package’s version in the registry
+npm view <package>@* version	: show all the published versions of a package (include pre-releases)
+
+
+
+
 

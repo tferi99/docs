@@ -14,6 +14,7 @@ Configuration
 - How to configure TS?
 - How to configure TSLint?
 - How to add global styles with Angular CLI?
+- How to access angular-cli server fro external host?
 - How to specify default port (4200) of angular-cli server?
 
 Directives, Components
@@ -535,6 +536,14 @@ How to deploy for production?
 
 	ng build --target=production --base-href /
 
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to access angular-cli server from external host?	
+====================================================
+It opens server on public interface:
+
+	ng serve --host <local-host-ip>
+	
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to specify default port (4200) of angular-cli server?

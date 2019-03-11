@@ -60,7 +60,6 @@ Recording
 
 Network, security
 ------------------
-- APAS server connections
 - Certificate management of APAS
 - APAS authentication
 - FTP client
