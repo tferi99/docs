@@ -5,7 +5,7 @@ NodeJS FAQ
 - NodeJS quick start
 - How to debug NodeJS?
 - How to refresh resources of a running NodeJS application?
-
+- How to update NodeJS?
 
 --------------------------------------------------------------------------------------------------------------
 NodeJS quick start
@@ -73,8 +73,30 @@ IDEA:
 	Ctrl-F5 ....
 	
 	
+--------------------------------------------------------------------------------------------------------------
+How to update NodeJS?
+=====================
+Check verion:
 
+	node -version
+	
+Linux:
 
+	Clear NPM's cache:
+
+		sudo npm cache clean -f
+		
+	Install a little helper called 'n'
+
+		sudo npm install -g n
+		
+	Install latest stable Node.js version
+
+		sudo n stable
+
+Windows:
+		
+	Download latest installer from nodejs.org and install.
 	
 
 	

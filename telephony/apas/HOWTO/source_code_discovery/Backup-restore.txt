@@ -63,6 +63,9 @@ Creating binary backup and sending to a FTP server:
 		
 [2] --> global.Module.binaryBackup(backup_outputfile)
 			- command = sudo sh /opt/apas/backup.sh -u -o <backup_file> 
+			
+				/opt/apas/backup_do.sh > $1 $2 $3 $4 $5 $6 $7 $8 $9 > /var/log/apas/last_backup.log
+			
 			--> process = runtime.exec(command);
 			--> int ret = process.waitFor();
 			--> processScriptMessages()

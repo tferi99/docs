@@ -26,7 +26,7 @@ Config, build
 -------------
 - How to generate tsconfig.json?
 - How to configure TS (tsconfig.json)?
-How to compile TS files to JS?
+- How to compile TS files to JS?
 - How to compile TS files automatically?
 - How to change WebStorm import double quotes?
 
@@ -40,6 +40,10 @@ Tools
 - What are Declaration Files?
 - What is Definitely Typed project?
 - How to generate Declaration Files?
+
+3rd party
+---------
+- How to use Lodash with TS?
 
 Troubleshooting
 ---------------
@@ -958,6 +962,12 @@ This behaviour is controlled by the following option:
 	- Settings/Preferences
 	- Editor | Code Style | TypeScript
 	- "Punctuation" tab | Generated code -> Quote marks
+		
+		
+------------------------------------------------------------------------------------------------------------------------
+How to use Lodash with TS?
+==========================
+
 		
 ************************************************************************************************************************
 ************************************************************************************************************************

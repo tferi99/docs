@@ -33,6 +33,7 @@ Observers
 Design, CSS
 -----------
 - How works component level CSS?
+- How to set browser title?
 
 Tips
 ----
@@ -78,6 +79,23 @@ Troubleshooting
 - How to trace value of  Reactive form?
 - ERROR: Unexpected token } in JSON at position ...
 - Property 'map' does not exist on type 'Observable<...>'
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Build architecture
+==================
+Install the following packages:
+
+	npm i -g typescript
+	npm i -g tslint
+	npm i -g @angular/cli
+	
+Typescript
+TSLint:			TSLint is an extensible static analysis tool that checks TypeScript code.
+Codelyzer:		A set of tslint rules for static code analysis of Angular TypeScript projects.
+
+
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Structure of an Angular application
 ===================================
@@ -97,15 +115,6 @@ Compiled index.html contains JS references which loads main.js (compiled from ma
 
 
 			
---------------------------------------------------------------------------------------------------------------------------------------------------
-Build architecture
-==================
-
-Typescript
-TSLint:			TSLint is an extensible static analysis tool that checks TypeScript code.
-Codelyzer:		A set of tslint rules for static code analysis of Angular TypeScript projects.
-
-
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Bootstrapping Angular application
 =================================
@@ -1101,5 +1110,18 @@ For versions of RxJS 6.x.x and above, you will have to use pipeable operators as
 operators: Pipeable operators must now be imported from rxjs like so: 
 
 	import { map, filter, switchMap } from 'rxjs/operators';
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to set browser title?	
+=========================
+Use Title service:
+
+	import {Title} from '@angular/platform-browser';
+	...
+
+	public constructor(titleService: Title ) {
+		titleService.setTitle(this.title);
+	}
 	
 	

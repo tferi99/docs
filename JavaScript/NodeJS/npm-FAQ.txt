@@ -3,12 +3,12 @@ npm FAQ
 =======
 
 - What is npm?
-
+- Where does npm install packages?
 - How to install packages?
 - How to update packages?
 - How to create package.json?
 - How to query versions?
-- How to update packages?	
+- How to update packages?
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -19,6 +19,19 @@ What is npm?
 - npm runs through the command line and manages dependencies for an application. 
 - It also allows users to install Node.js applications that are available on the npm registry. 
 - npm is written entirely in JavaScript 
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Where does npm install packages?
+================================
+Global libraries:
+
+	Windows XP - %USERPROFILE%\AppData\npm\node_modules
+	Windows 7, 8 and 10 - %USERPROFILE%\AppData\Roaming\npm\node_modules
+
+Non-global libraries:
+
+	Non-global libraries are installed the 'node_modules' sub folder in the folder you are currently in.
+
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 Useful comands
@@ -65,6 +78,29 @@ npm install --save-dev
 ---------------------------------------------------------------------------------------------------------------------------------------------
 How to update packages?	
 =======================
+- Check version of NPM:
+	
+	npm -version
+
+- Update NPM itself:
+
+	npm install npm@latest -g
+
+Update all global packages:
+
+	npm update -g	
+	
+Update a global packages:
+
+	npm update -g <package_name>
+	
+Check outdated global packages:	
+	
+	
+Project level:
+	- go into project directory
+	- npm update
+	
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------

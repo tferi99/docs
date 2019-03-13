@@ -8,22 +8,27 @@ Bootstrap 4 FAQ
 ----------------------------------------------------------------------------------------------------------------------------------
 How to use Bootstrap 4 with Angular?
 ====================================
+METHOD 1:
 
-- preparation:
-
-	ng update @angular/cli @angular/core        (OPTIONAL)
-	ng new newapp
-
-- install Bootstrap:
-
-	npm install bootstrap jquery popper
-
-- add Bootstrap CSS:
-
-	"styles": [
-        "src/styles.scss",
-        "node_modules/bootstrap/dist/css/bootstrap.min.css"
-    ],
+	ng add @ng-bootstrap/schematics
 	
 
-	
+METHOD 2:
+	- preparation:
+
+		ng update @angular/cli @angular/core        (OPTIONAL)
+		ng new newapp
+
+	- install Bootstrap:
+
+		npm install bootstrap jquery popper
+
+	- add Bootstrap CSS:
+
+		"styles": [
+			"src/styles.scss",
+			"node_modules/bootstrap/dist/css/bootstrap.min.css"
+		],
+		
+
+		
