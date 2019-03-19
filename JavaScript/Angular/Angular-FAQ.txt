@@ -6,6 +6,8 @@ General
 -------
 - Structure of an Angular application
 - Build architecture
+	- Bootstrap (4 or above)
+	- FontAwesome
 - Bootstrapping Angular application
 
 Configuration
@@ -85,16 +87,89 @@ Troubleshooting
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Build architecture
 ==================
+Prerequisities:
+	If you want a pure, clean system delete all NPM packages from:
+
+		Win:
+
+			HOME\AppData\Roaming\npm\node_modules 
+
 Install the following packages:
 
 	npm i -g typescript
 	npm i -g tslint
 	npm i -g @angular/cli
 	
-Typescript
-TSLint:			TSLint is an extensible static analysis tool that checks TypeScript code.
-Codelyzer:		A set of tslint rules for static code analysis of Angular TypeScript projects.
+		Typescript
+		TSLint:			TSLint is an extensible static analysis tool that checks TypeScript code.
+		Codelyzer:		A set of tslint rules for static code analysis of Angular TypeScript projects.
 
+Optional:
+
+	Bootstrap (4 or above):		
+
+		ng add @ng-bootstrap/schematics
+		
+	FontAwesome:
+		Method 1 - npm:
+			- install:
+				
+				npm install @fortawesome/fontawesome-free
+
+			- configure:
+			
+				add this entry to angular.json (into "styles"):
+				
+					"styles": [ 
+						...
+						"./node_modules/@fortawesome/fontawesome-free/css/all.css"
+					],
+				
+			- usage:
+
+				<i class="fa fa-check"></i>
+
+
+			SEE ALSO:	https://fontawesome.com/how-to-use/on-the-web/setup/using-package-managers
+	
+		Method 2 - Angular-fontawesome:
+			- install:
+
+				npm i @fortawesome/fontawesome-svg-core
+				npm i @fortawesome/free-solid-svg-icons
+				npm i @fortawesome/angular-fontawesome
+	
+			- usage:
+
+				src/app/app.module.ts:
+
+					import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+					...
+					imports: [
+						...,
+						FontAwesomeModule
+					],
+					
+				src/app/app.component.ts:
+
+					import { Component } from '@angular/core';
+					import { faCoffee } from '@fortawesome/free-solid-svg-icons';
+					 
+					@Component({
+					  selector: 'app-root',
+					  templateUrl: './app.component.html',
+					  styleUrls: ['./app.component.css']
+					})
+					export class AppComponent {
+					  title = 'app';
+					  faCoffee = faCoffee;
+					}
+
+				src/app/app.component.html:
+
+					<fa-icon [icon]="faCoffee"></fa-icon>
+
+			SEE ALSO:	https://fontawesome.com/how-to-use/on-the-web/using-with/angular
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Structure of an Angular application
