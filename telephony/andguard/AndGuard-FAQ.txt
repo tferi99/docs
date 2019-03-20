@@ -1,0 +1,15 @@
+============
+AndGuard FAQ
+============
+
+Configuration
+-------------
+- Database connection info
+
+
+------------------------------------------------------------------------------------------------------
+Database connection info
+========================
+- PostgreSQL 9.x
+- port:	5433
+- acc:	janitor / aGd5ytXk39B
