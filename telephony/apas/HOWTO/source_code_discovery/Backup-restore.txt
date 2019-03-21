@@ -1,40 +1,63 @@
 ==============
 Backup-restore
 ==============
-
-- Backup call flow
-- Error handling
+- Structure of APAS binary backup file 
+- APAS Backup call flow
+- APAS Restore call flow
+- APAS Scheduled backup call flow
+- APAS Error handling
+- AndGuard Backup call flow
+- AndGuard Restore call flow
 
 -----------------------------------------------------------------------------------------------------------------------------
-Backup call flow of manual backup
-=================================
+Structure of APAS binary backup file 
+====================================
+APAS
+----
+- restore_backup.sh																						<<< restore-backup script
+- update_restore_history.txt																			<<< update/restore history log
+- version.txt																							<<< current version
+- backup.tar
+	- apas
+		- andguard
+			- backup
+				- andguard_backup_APAS-backup_<DATE>-<HOUR>.pkg											<<< Guard backup
+	- tmp																			
+		- dbdump.sql																					<<< APAS database backup
+	- var
+		- lib
+			- andphone
+				- conf
+				- certificate.store																		<<< recorder kestore
+			- tomcat
+				- webapps
+					- ....																				<<< APAS configuration/created files
+				- .keytore.jks																			<<< APAS kestore
+				- .trust_keytore.jks																	<<< trust kestore
+	
+ANDGuard (stored into APAS backup file)
+---------------------------------------
+- update_restore_history.txt																			<<< update/restore history log
+- version.txt																							<<< current version
+- tmp
+	- andguard_dbdump.sql																				<<< Guard database backup
+	
+-----------------------------------------------------------------------------------------------------------------------------
+APAS Backup call flow of manual backup
+======================================
 --> GWT:	Global/Backup.../Manual Backup Methods/[Download Binary Backup]
 	backup_gwtappMain.java - BinaryBackupButton	--> HTTP request
 	--> com.andtek.andphone.utils.Admin.getModuleAdminPage(ConnectionBean connection)		
 		REFLECTION --> com.andtek.andphone.global.Admin.backup_gwtbindownload(...)
-			--> [2]                                                                                        <<<<<<<<< com.andtek.andphone.global.Module.binaryBackup((...)
-			--> UPLOAD (binary/octet-stream)
+			--> [2]    //// com.andtek.andphone.global.Module.binaryBackup((...)
+			--> encryptBackup(backupFile, encPassword)
+			--> DOWNLOAD (binary/octet-stream)
 		- EVENTLOG on error ("Unable to create binary backup file ...") - WITH 'request' parameter
 		
 			
 -----------------------------------------------------------------------------------------------------------------------------
-Restore call flow
-=================
-backup_gwtappMain.java - BinaryBackupButton	--> HTTP request
---> createRestoreConfiguration(AndGWTDataRecordIF)
-	--> restoreformPanel.addFormListener(new FormListener()
-		--> RemoteGetDataRecordBeanFromSession(...)
-			--> RPC: RPCServletService.RemoteGetDataRecordBeanFromSession(recordSessionName, new AndGWTAsyncCallback()
-				onSuccess --> onRestoreSubmitActionCompleted(...)
-				
-				--> com.andtek.andphone.global.Admin.backup_gwtrestore(ConnectionBean connection)
-			
-					- Saving uploaded data into /tmp/update.jar
-			
-
------------------------------------------------------------------------------------------------------------------------------
-Scheduled backup
-================
+APAS Scheduled backup call flow
+===============================
 GWT:	Global/Backup.../Scheduled Backup/[Save and Backup Now]
 	backup_gwtappMain.java - backupNow --> onScheduledFormPanelSubmitEvent(...)
 		--> RemoteSaveScheduledBackup(record, func, backupNow)
@@ -62,9 +85,14 @@ Creating binary backup and sending to a FTP server:
 		- EVENTLOG on error ("Unable to create binary backup file ...") - WITHOUT 'request' parameter
 		
 [2] --> global.Module.binaryBackup(backup_outputfile)
+			--------------- if  LicenseHelper.isAnyAndGuardLicense() -------------------------------------
+			- is any license to Guard?
+				--> andguardBackupFile = ANDGuardConnector.createAndguardBackup(andguardBackupFile)				// creating Guard backup
 			- command = sudo sh /opt/apas/backup.sh -u -o <backup_file> 
-			
-				/opt/apas/backup_do.sh > $1 $2 $3 $4 $5 $6 $7 $8 $9 > /var/log/apas/last_backup.log
+			- calling command as external process:
+				--> sudo sh /opt/apas/backup.sh -u -o /var/lib/andphone/backup/APAS-backup_20190314-09.pkg -i /apas/andguard/backup/andguard_backup_APAS-backup_20190314-09.pkg
+					--> /opt/apas/backup_do.sh > $1 $2 $3 $4 $5 $6 $7 $8 $9 > /var/log/apas/last_backup.log
+				
 			
 			--> process = runtime.exec(command);
 			--> int ret = process.waitFor();
@@ -73,10 +101,27 @@ Creating binary backup and sending to a FTP server:
 				--> delete BACKUP_SCRIPT_MESSAGES
 			- THROWS EXCEPTION on error
 		
+-----------------------------------------------------------------------------------------------------------------------------
+APAS Restore call flow
+======================
+backup_gwtappMain.java - BinaryBackupButton	--> HTTP request
+--> createRestoreConfiguration(AndGWTDataRecordIF)
+	--> restoreformPanel.addFormListener(new FormListener()
+		--> RemoteGetDataRecordBeanFromSession(...)
+			--> RPC: RPCServletService.RemoteGetDataRecordBeanFromSession(recordSessionName, new AndGWTAsyncCallback()
+				onSuccess --> onRestoreSubmitActionCompleted(...)
+				
+				--> com.andtek.andphone.global.Admin.backup_gwtrestore(ConnectionBean connection)					
+					- Saving uploaded data into /tmp/update.jar
+					- filename store into request parameter: PARAM_UPDATE_FILENAME
+					--> decryptUploaded(...)
+					
+					
+			
 				
 -----------------------------------------------------------------------------------------------------------------------------
-Error handling				
-==============
+APAS Error handling				
+===================
 Draft call flow of backup:
 
 --> global.Module.binaryBackup(backup_outputfile)
@@ -92,5 +137,98 @@ Returning error information:
 - events are returned in: 						/tmp/backup_messages.txt		(will be deleted)
 - detailed information about last backup:		/var/log/apas/last_backup.log	(will be overwritten by next backup)
 		
+
+-----------------------------------------------------------------------------------------------------------------------------
+AndGuard Backup call flow
+=========================
+from app.js:
+	.constant('PATH', {
+		appContext: '/andguard',
+		restContext: '/andguard/rest',
+		appImg: '/andguard/app/imgs'
+	})
+
+
+
+GUARD/Administration/Backup/(Create Backup)				// backup.html
+	--> BackupCtrl.createFile()							// backup_controller.js
+		--> AdminApi.createBackup()						// adminApi.js
+			POST ==> REST_CONTEXT_PATH + "/admin/backup"
+					REST POST -> com.andtek.andguard.rest.frontend.controller.AdminController.createFile(...)
+						--> com.andtek.andguard.rest.frontend.service.AdminService.createBackup(fileName)				// creating backup
+							- calling script:
+								/opt/andguard/backup.sh -B -f /apas/andguard/backup/<fileName>
+						
+				OK -> // creatingBackup()   									// in comment WHY??? It should be call here, in OK callback !!!!!!!!!!!
+				ERR -> error msg
+		--> creatingBackup()													// ... instead of here !!!!!!!!!!!
 		
-		
+			PROCESS DIALOG --> WaitStatusSvc.show(..., "/andguard/servlet/CreateBackup", ...)											// loading backup status log file into app (content see below)
+					--> com.andtek.andguard.servlet.CreateBackupServlet.doGet(...)
+						--> content = adminService.readBackupStatusFile();
+							- read backup log file (LOG_DIRECTORY/backup.log) and return as string
+						- and write content into response as UTF8 text
+				OK --> loadBackupList()
+					--> BackupRestoreSvc.loadBackupList()		// backupRestore_service.js
+						-->	ASYNC AdminApi.getBackupList()
+							REST GET: REST_CONTEXT_PATH + "/admin/backup"
+								--> ...
+							OK -> setAllBackUpFiles(backupList)
+								// setting backup file list into service member variable
+							ERR -> err msg
+				ERR -->	error msg
+
+				
+- Backup status log file created by backup script:
+	Thu Mar 14 15:44:01 CET 2019 : dump andguard db
+	Thu Mar 14 15:44:01 CET 2019 : check dumpfile
+	Thu Mar 14 15:44:01 CET 2019 : ... size check ok (87699)
+	Thu Mar 14 15:44:01 CET 2019 : ... expected final line found
+	Thu Mar 14 15:44:01 CET 2019 : create jarfile
+	added manifest
+	adding: tmp/andguard_dbdump.sql(in = 87699) (out= 9872)(deflated 88%)
+	adding: update_restore_history.txt(in = 14020) (out= 1270)(deflated 90%)
+	adding: version.txt(in = 8) (out= 10)(deflated -25%)
+	jar signed.
+
+	Warning:
+	No -tsa or -tsacert is provided and this jar is not timestamped. Without a timestamp, users may not be able to validate this jar after the signer certificate's expiration date (2026-03-02) or after any future revocation date.
+	Thu Mar 14 15:44:02 CET 2019 : file /apas/andguard/backup/andguard_backup_20190314_154401.pkg created
+	Thu Mar 14 15:44:02 CET 2019 : STATUS: SUCCESS: Backup finished successfully
+
+	
+-----------------------------------------------------------------------------------------------------------------------------
+AndGuard Restore call flow
+==========================
+Restore file is in JAR format.
+
+GUARD/Administration/Restore/(Restore)				// restore.html
+	--> RestoreCtrl.restoreFile()					// restore_controller.js
+		--> PopupSvc.confirm_danger(msg)
+			--> confirmed()
+				--> recoveryProcess()
+					PROCESS DIALOG --> WaitStatusSvc.show(..., "/andguard/servlet/RestoreUpload", ...)
+						--> com.andtek.andguard.servlet.RestoreUploadServlet.doPost(...)							// restoring backup
+							
+				--> AdminApi.restoreFile($ctrl.backupFileList)
+					REST POST: REST_CONTEXT_PATH+ "/admin/restore/" + filename,
+						--> com.andtek.andguard.rest.frontend.controller.AdminController.restoreFile(@PathVariable String name, ...)
+							--> com.andtek.andguard.rest.frontend.service.AdminService.restoreFile(fileName, directory: null)
+								- deleting LOG_DIRECTORY/restore.log
+								--> SCRIPT CALL: sudo /opt/andguard/admin_option.pl restore <file-to-restore-with-path>
+									--> /opt/andguard/restore.sh -B -f $oparg >/var/log/andguard/restore.log
+										- restores file and write status log into /tmp/restore_status.andguard
+										--> jarsigner -verify <file>
+										- delete /tmp/ag-restore (previous restore directory) with content
+										- re-create /tmp/ag-restore directory
+										- extracting restore (JAR) into /tmp/ag-restore
+										--> restore()
+											- wait for db active
+											- drop current DB
+											-  /opt/andguard/dbutils.sh -r -d andguard shell < database_SQL
+												--> /opt/apas/dbutils.sh -r -d andguard shell						// restoring database SQL with psql
+								
+					OK --> nothing
+					ERR --> err msg
+					
+					
