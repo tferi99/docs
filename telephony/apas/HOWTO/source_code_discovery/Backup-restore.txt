@@ -92,8 +92,25 @@ Creating binary backup and sending to a FTP server:
 			- calling command as external process:
 				--> sudo sh /opt/apas/backup.sh -u -o /var/lib/andphone/backup/APAS-backup_20190314-09.pkg -i /apas/andguard/backup/andguard_backup_APAS-backup_20190314-09.pkg
 					--> /opt/apas/backup_do.sh > $1 $2 $3 $4 $5 $6 $7 $8 $9 > /var/log/apas/last_backup.log
-				
-			
+						
+						backup_do.sh 
+						------------
+						- creates a temporary directory (with mktemp), e.g: /tmp/tmp.G9jZRPME1R
+						- go into temp directory
+						- getting DB password from dbutil
+						- pg_dump into /tmp/dbdump.sql
+						- create a package with TAR into backup.tar with the following content:
+							- some directories from WEB application (e.g modules)
+							- /tmp/JtapiClientKeyStore*
+							- AndGuard backup file (specified as CLI argument)
+							- /tmp/dbdump.sql
+						- collect backup history files
+						- copy /etc/apas/backup/restore_backup.sh to current (temp) directory
+						- compress backup.tar and collected files into backup.jar
+						- signing JAR
+						- copy JAR file to default (/var/lib/andphone/backup/${TODAY}_backup.pkg) or to stated output file (-o CLI argument)
+						--> /opt/apas/dbutils.sh stop
+						
 			--> process = runtime.exec(command);
 			--> int ret = process.waitFor();
 			--> processScriptMessages()
@@ -113,8 +130,46 @@ backup_gwtappMain.java - BinaryBackupButton	--> HTTP request
 				
 				--> com.andtek.andphone.global.Admin.backup_gwtrestore(ConnectionBean connection)					
 					- Saving uploaded data into /tmp/update.jar
-					- filename store into request parameter: PARAM_UPDATE_FILENAME
 					--> decryptUploaded(...)
+					- filename store into request parameter: PARAM_UPDATE_FILENAME
+					- deleting last update status file: /var/log/apas/restore_status.txt
+					- CALLING SCRIPT:		/opt/apas/admin_restart.pl restore
+						--> /opt/apas/restore.sh >/var/log/restore.log 2>&1 &
+							--> jarsigner -verify <file>
+							- deleting and creating /tmp/restore (make it empty)
+							- extracting /tmp/restore.jar --> /tmp/restore
+								- it creates restore script (/tmp/restore/restore_backup.sh)
+							--> checkMigrationRequired
+							--> checkVersion
+							--> /opt/apas/stop.sh
+							- STARTING RESTORE SCRIPT: 		/tmp/restore/restore_backup.sh
+							
+								restore_backup.sh
+								------------------
+								- deleting old SQL dump (/tmp/dbdump.sql)
+								- detecting AndGuard backup in backup package
+									-------------------- if AndGuard backup found --------------------
+									- getting name of Guard backup  (file which packed into apas/andguard/backup directory in TAR) without extension (FILENAME)
+										e.g:  apas/andguard/backup/andguard_backup_APAS-backup_20190320-09.pkg -> andguard_backup_APAS-backup_20190320-09
+									- write ${FILENAME}_restore.pkg into /tmp/restore/.include_andguard_backup
+									- extracting (but changing current directory to / before)
+										and Guard package will be extracted as /apas/andguard/backup/${FILENAME}_restore.pkg
+											e.g /apas/andguard/backup/andguard_backup_APAS-backup_20190320-09_restore.pkg
+									
+									--> /opt/andguard/admin_option.pl restore <file-to-restore-with-path>									// since ANDFD-358
+									
+									
+							--> /opt/apas/start.sh
+							- writing restor status into /var/log/update_restore_history.txt
+						
+						
+						
+					- reading output of from script and logging + sending to UI
+					- putting JSP into returned record: /andphone/restore_status.jsp
+					- deleting file:	/var/lib/tomcat/webapps/andphone/tmp/sync.md5
+					
+					...
+					
 					
 					
 			
@@ -216,18 +271,22 @@ GUARD/Administration/Restore/(Restore)				// restore.html
 							--> com.andtek.andguard.rest.frontend.service.AdminService.restoreFile(fileName, directory: null)
 								- deleting LOG_DIRECTORY/restore.log
 								--> SCRIPT CALL: sudo /opt/andguard/admin_option.pl restore <file-to-restore-with-path>
-									--> /opt/andguard/restore.sh -B -f $oparg >/var/log/andguard/restore.log
+									LOG:   [2019-03-20 14:47:01,485] [DEBUG] [http-nio-8081-exec-8] [AdminService:253] - Restore File: sudo /opt/andguard/admin_option.pl restore /apas/andguard/backup/andguard_backup_APAS-backup_20190320-14_restore.pkg
+									--> /opt/andguard/restore.sh -B -f $oparg >/var/log/andguard/restore.log &
+										restore.sh
+										----------
+										- delete /tmp/restore_status.andguard
 										- restores file and write status log into /tmp/restore_status.andguard
 										--> jarsigner -verify <file>
 										- delete /tmp/ag-restore (previous restore directory) with content
 										- re-create /tmp/ag-restore directory
 										- extracting restore (JAR) into /tmp/ag-restore
+										--> /opt/andguard/andguard.sh -E stop
 										--> restore()
 											- wait for db active
 											- drop current DB
-											-  /opt/andguard/dbutils.sh -r -d andguard shell < database_SQL
-												--> /opt/apas/dbutils.sh -r -d andguard shell						// restoring database SQL with psql
-								
+											-  /opt/andguard/dbutils.sh -r -d andguard shell < /tmp/ag-restore/tmp/andguard_dbdump.sql			// restoring database SQL with psql
+										--> /opt/andguard/andguard.sh -E start
 					OK --> nothing
 					ERR --> err msg
 					
