@@ -272,7 +272,7 @@ GUARD/Administration/Restore/(Restore)				// restore.html
 								- deleting LOG_DIRECTORY/restore.log
 								--> SCRIPT CALL: sudo /opt/andguard/admin_option.pl restore <file-to-restore-with-path>
 									LOG:   [2019-03-20 14:47:01,485] [DEBUG] [http-nio-8081-exec-8] [AdminService:253] - Restore File: sudo /opt/andguard/admin_option.pl restore /apas/andguard/backup/andguard_backup_APAS-backup_20190320-14_restore.pkg
-									--> /opt/andguard/restore.sh -B -f $oparg >/var/log/andguard/restore.log &
+									--> /opt/andguard/restore.sh -B -f $oparg >/var/log/andguard/restore.log &					// 
 										restore.sh
 										----------
 										- delete /tmp/restore_status.andguard
