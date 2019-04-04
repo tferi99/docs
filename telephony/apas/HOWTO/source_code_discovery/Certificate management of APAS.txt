@@ -46,7 +46,7 @@ List of certificates
 ====================
 You can get list of certificates in:
 
-	APAS/General/Security/[Certificatge List]
+	APAS/General/Security/[Certificate List]
 	
 	
 --> security_gwtappMain

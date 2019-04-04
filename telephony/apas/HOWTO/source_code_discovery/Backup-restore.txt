@@ -8,6 +8,7 @@ Backup-restore
 - APAS Error handling
 - AndGuard Backup call flow
 - AndGuard Restore call flow
+- Scheduled backup
 
 -----------------------------------------------------------------------------------------------------------------------------
 Structure of APAS binary backup file 
@@ -160,7 +161,7 @@ backup_gwtappMain.java - BinaryBackupButton	--> HTTP request
 									
 									
 							--> /opt/apas/start.sh
-							- writing restor status into /var/log/update_restore_history.txt
+							- writing restore status into /var/log/update_restore_history.txt
 						
 						
 						
@@ -291,3 +292,20 @@ GUARD/Administration/Restore/(Restore)				// restore.html
 					ERR --> err msg
 					
 					
+-----------------------------------------------------------------------------------------------------------------------------
+Scheduled backup
+================
+Rendering form:
+	--> com.andtek.andphone.global.gwtapp.client.backup_gwtappMain.buildMainPanel
+		--> RemoteGetScheduledBackup()
+			RPC --> RPCglobalServiceImpl.RemoteGetScheduledBackup(String id)		// id is always "_RD"
+				- loading configuration from config
+			-------------------- onSuccess ------------------------
+			--> createScheduledBackupForm(record, "edit")
+
+Configuration:
+	- Daily Backup checkbox:		config(global / DoMaintenanceBackup + "_RD")
+	- Include AndGuard backup:		config(global / IncludeAndguardBackup + "_RD")
+	...
+	
+	

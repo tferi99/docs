@@ -21,6 +21,8 @@ Language elements
 - How to check if a variable is an enum?
 - How to add static methods to an enum?
 - Loops
+- How to pass callback function to class method with generics type?
+- Initialize arrays
 
 Config, build
 -------------
@@ -43,11 +45,16 @@ Tools
 
 3rd party
 ---------
-- How to use Lodash with TS?
+- How to use Lodash with TS? <<<<<<<<<<<<<<<<<<<<<<<<<<
+
+TSLint
+------
+- How to disable/enable TSLint from source code?
 
 Troubleshooting
 ---------------
-ERROR - TS: Argument of type 'number[]' is not assignable to parameter of type '[number, number]'
+- ERROR - TS: Argument of type 'number[]' is not assignable to parameter of type '[number, number]'
+- ERROR - TSLint : variable name must be in loverCamelCase or PascalCase or UPPER_CASE
 
 ------------------------------------------------------------------------------------------------------------------------
 TS types
@@ -956,12 +963,67 @@ This behaviour is controlled by the following option:
 	- Editor | Code Style | TypeScript
 	- "Punctuation" tab | Generated code -> Quote marks
 		
-		
+	
 ------------------------------------------------------------------------------------------------------------------------
-How to use Lodash with TS?
-==========================
+How to pass callback function to class method with generics type?
+=================================================================
+Use the following format:
 
+	Class: 
+		class<T>
+
+	Caller:
 		
+		called_instance.called_method(callback: (t: T) => return_type)
+
+
+For example you can pass a callback to an event broadcaster event handler with generics parameter:
+
+	import {Subject} from 'rxjs';
+
+	export class EventBroadcaster<T> {
+	  private subject: Subject<T>;
+
+	  constructor() {
+		this.subject = new Subject<T>();
+	  }
+
+	  sendEvent(eventData: T) {
+		this.subject.next(eventData);
+	  }
+
+	  subscribe(func: (t: T) => void) {								<<<<<<<<<<< generics type in passed callback function
+		this.subject.subscribe(func);
+	  }
+	}
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to disable/enable TSLint from source code?
+==============================================
+Use tslint:disable / tslint:enable:
+
+/* tslint:disable:max-line-length */
+...
+export function concat<T, T2, T3, T4, T5>(v1: ObservableInput<T>, v2: ObservableInput<T2>, v3: ObservableInput<T3>, v4: ObservableInput<T4>, v5: ObservableInput<T5>, scheduler?: SchedulerLike): Observable<T | T2 | T3 | T4 | T5>;
+export function concat<T, T2, T3, T4, T5, T6>(v1: ObservableInput<T>, v2: ObservableInput<T2>, v3: ObservableInput<T3>, v4: ObservableInput<T4>, v5: ObservableInput<T5>, v6: ObservableInput<T6>, scheduler?: SchedulerLike): Observable<T | T2 | T3 | T4 | T5 | T6>;
+...
+/* tslint:enable:max-line-length */
+
+
+------------------------------------------------------------------------------------------------------------------------
+Initialize arrays
+=================
+If you want to use an array you have to initialize first.
+
+	let arr = number[] = [];				// initialize an empty number array
+	...
+	arr.push(1);							// adding values later
+	arr.push(2, 3, 4, 5);					// adding values later
+
+
+	
 ************************************************************************************************************************
 ************************************************************************************************************************
                                         T R O U B L E S H O O T I N G
@@ -989,4 +1051,29 @@ Fix:
 		...
 		
 		
+------------------------------------------------------------------------------------------------------------------------
+ERROR - TSLint : variable name must be in loverCamelCase or PascalCase or UPPER_CASE
+====================================================================================
+Problem: 
+	If you hava a private member property with getter/setter the name of property starting with underscore (_).
+	In this case TSLint often claims:
+	
+	export class Person {
+		private _name: string;
+		...
+		get name(): string {
+			return this.name;
+		}
+	}
 
+Fix:
+
+	Add the following rule:
+	
+		"variable-name": [
+		  true,
+		  "ban-keywords",
+		  "check-format",
+		  "allow-leading-underscore"
+		]
+	

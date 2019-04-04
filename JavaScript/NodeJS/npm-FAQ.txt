@@ -5,7 +5,6 @@ npm FAQ
 - What is npm?
 - Where does npm install packages?
 - How to install packages?
-- How to update packages?
 - How to create package.json?
 - How to query versions?
 - How to update packages?

@@ -15,7 +15,7 @@ You need a configured recording environment (see more: APAS-FAQ.txt/Howto config
 - Writing/changing rec_call table
 - Start time of recording
 - KEEP values
-- 
+- Search
 
 - ERROR - in APAS event log: The recording of call ... has been locked because a new call has reserved licenses in the ruleset
 
@@ -597,7 +597,27 @@ call.cpp
 .... UNDER COSTRUCTION
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Search
+======
+APAS/Recorder/Search
 
+GWT page
+--------
+-->com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain
+	--> initGWTPanels()
+		--> buildSearchPanel()
+			
+			
+com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain  (Search button) ===> 
+	--> RemoteSearchRecordingFiles(...)
+		RCP --> com.andtek.andphone.recorder.gwtapp.server.RemoteSearchRecordingFiles(...)
+				--> wherer = buildCompleteRecordingWhereClause(userattrs)
+					--> SELECT FROM rec_call ...
+					
+		onSuccess --> buildSearchDynamicListGrid(datarows, ...)
 
-
+		LIST RENDERED:
+			com.andtek.andphone.recorder.gwtapp.client.RecordingListPanel
+			
 

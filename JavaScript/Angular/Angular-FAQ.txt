@@ -28,9 +28,10 @@ Directives, Components
 - How to prevent adding NgForm to forms automatically?
 - Parent-child component interaction
 
-Observers
----------
+RxJS
+----
 - Observer vs. Observable
+- How to bind an event observable to an HTTP element?
 
 Design, CSS
 -----------
@@ -54,6 +55,7 @@ Tips
 - How to check empty values in interpolations?
 - How to access DOM elements from a controller?
 - Null check on objects
+- How to interpolate enum values in template?
 
 Services
 --------
@@ -81,8 +83,9 @@ Troubleshooting
 - How to trace value of  Reactive form?
 - ERROR: Unexpected token } in JSON at position ...
 - Property 'map' does not exist on type 'Observable<...>'
-
-
+- ERROR: Can't bind to 'formGroup' since it isn't a known property of 'form'
+- ERROR: No provider for ControlContainer ("[ERROR ->]<form...
+- ERROR: Uncaught Error: Unexpected directive '...' imported by the module '...'. Please add a @NgModule annotation
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Build architecture
@@ -1198,5 +1201,138 @@ Use Title service:
 	public constructor(titleService: Title ) {
 		titleService.setTitle(this.title);
 	}
+
 	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Can't bind to 'formGroup' since it isn't a known property of 'form'
+=========================================================================
+EXPLANATION
+-----------
+	In order to use the new forms library we need to first make sure we import the forms library in our
+	NgModule.
+
+		import {
+			FormsModule,
+			ReactiveFormsModule
+		} from '@angular/forms';
+		
+		...
+		@NgModule({
+			declarations: [
+				...
+			],
+			imports: [
+				BrowserModule,
+				FormsModule, 						// <-- add this
+				ReactiveFormsModule 				// <-- and this
+			],
+			...
+		})
+		class FormsDemoAppModule {}
+
+	This ensures that we’re able to use the form directives in our views. At the risk of jumping ahead,
+	the FormsModule gives us template driven directives such as:
+
+		• ngModel and
+		• NgForm
+		
+	whereas ReactiveFormsModule gives us model driven directives like
+
+		• formControl and
+		• ngFormGroup
+
+COUSE
+-----
+	If you build a reactive (model driven) form, like this:
+
+		<form class="section" [formGroup]="form" (ngSubmit)="onSubmit()">
+			...
+		</form>
+		
+	, but you forget import ReactiveFormsModule into your (app) module
+	these directives won't be added to <form> tags.
+		
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: No provider for ControlContainer ("[ERROR ->]<form...
+============================================================
+SEE ALSO:	ERROR: Can't bind to 'formGroup' since it isn't a known property of 'form'
+
+Similarly to previous problem:
+	If you have a (non-reactive) form but you forget to add
+		
+		FormsModule
+		
+	to your (app) module then you will get this error.
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Uncaught Error: Unexpected directive '...' imported by the module '...'. Please add a @NgModule annotation
+=================================================================================================================
+This error frequently comes up when we are not importing, providing, or declaring the angular modules, services, 
+components properly.
+
+Make sure that we should only
+
+	- import modules and not the components or services
+	- declare components and not the modules or services.
+	- provide services and not components or modules.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to bind an event observable to an HTTP element?
+===================================================
+1. Add # element reference to elent
+
+2. Bind this reference into TS with @ViewChild
+
+3. Create observable in ngAfterViewInit with fromEvent(...), use nativeElement of HTML element reference.
+
+View:
+
+	<span #clickTarget>Click here to ...</span>
+
+TS:
+	@ViewChild('clickTarget') clickTarget: ElementRef;
+
+	ngAfterViewInit(): void {
+		fromEvent(this.clickTarget.nativeElement, 'click').pipe(
+		  tap(() => console.log('Clicked --> start processing')),
+		  concatMap(this.startLongProcessing)
+		).subscribe(
+		  (evt) => console.log('event: ' + evt),
+		  noop,
+		  () => console.log('----------- processing completed -----------------')
+		);
+	}
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to interpolate enum values in template?
+===========================================
+Add reference pointing to enum as member ito class and you will be able to access from template:
+
+TS:
+	enum FlatteningType {
+	  MERGE = 'merge',
+	  SWITCH = 'switch',
+	  CONCAT = 'concat',
+	  EXHAUST = 'exchaust'
+	}
+
+	export class FlatteningComponent implements OnInit, AfterViewInit {
+		...
+		flatteningTypeEnum = FlatteningType;
+		...
+	}
+
+HTML:
+
+	<input type="radio" id="flattMerge" name="flatteningType" [(ngModel)]="flatteningType" value="{{flatteningTypeEnum.MERGE}}">
+	
+	
+	
+
+
+
 	
