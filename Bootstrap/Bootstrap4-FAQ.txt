@@ -4,14 +4,35 @@ Bootstrap 4 FAQ
 
 - How to use Bootstrap 4 with Angular?
 
+Examples
+--------
+- Input group with FontAwesome icon
+
+
 
 ----------------------------------------------------------------------------------------------------------------------------------
 How to use Bootstrap 4 with Angular?
 ====================================
-METHOD 1:
+METHOD 1 - install ng-bootstrap instead of simple Bootstrap:
 
-	ng add @ng-bootstrap/schematics
+	- npm:
 	
+		ng add @ng-bootstrap/schematics
+	
+	- import module:
+	
+		import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+
+		@NgModule({
+		  ...
+		  imports: [NgbModule, ...],
+		  ...
+		})
+		export class YourAppModule {
+		}	
+
+	SEE ALSO:	https://ng-bootstrap.github.io/#/getting-started
+		
 
 METHOD 2:
 	- preparation:
@@ -31,4 +52,17 @@ METHOD 2:
 		],
 		
 
+----------------------------------------------------------------------------------------------------------------------------------
+Input group with FontAwesome icon
+=================================
+		
+  <div class="input-group mb-2 col-4">
+    <input type="text" class="form-control" id="cFilter" #cFilter>
+    <div class="input-group-append">
+      <span class="input-group-text">
+        <i class="fa fa-search"></i>
+      </span>
+    </div>
+  </div>
+		
 		
