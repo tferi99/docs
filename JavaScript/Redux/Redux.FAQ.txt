@@ -1,0 +1,55 @@
+=========
+Redux FAQ
+=========
+
+Concept
+-------
+- Redux: Key Ideas
+- When it makes sense to use Redux?
+
+
+-----------------------------------------------------------------------------------------------------------------
+Redux: Key Ideas
+================
+The key ideas of Redux are this:
+	• All of your application’s data is in a single data structure called the state which is held in the
+		store
+	• Your app reads the state from this store
+	• This store is never mutated directly
+	• User interaction (and other code) fires actions which describe what happened
+	• A new state is created by combining the old state and the action by a function called the
+		reducer.
+
+        Action --------->|---------|           |-------|
+                         | Reducer |---------->| State |----|
+    |-->Old state ------>|---------|           |-------|    |
+	|                                                       |
+    |-------------------------------------------------------|
+		
+
+Reducer
+-------
+It takes the old state and an action and returns a new state.
+
+A reducer must be a pure function. That is:
+	
+	1. It must not mutate the current state directly
+	2. It must not use any data outside of its arguments
+
+	- Put another way, a pure function will always return the same value, given the same set of	arguments. 
+	- A pure function won’t call any functions which have an effect on the outside world, (
+		e.g. no database calls, no HTTP calls) and no mutating outside data structures.
+	- Reducers should always treat the current state as read-only. A reducer does not change the state
+		instead, IT RETURNS A NEW STATE.
+	- By default, reducers return the original state.
+		
+-----------------------------------------------------------------------------------------------------------------
+When it makes sense to use Redux?
+=================================
+Here are some suggestions on when it makes sense to use Redux:
+
+	- You have reasonable amounts of data changing over time.
+	- You need a SINGLE SOURCE OF TRUTH for your state (https://en.wikipedia.org/wiki/Single_source_of_truth).
+	- You find that keeping all your state in a top-level component is no longer sufficient.
+	
+	

@@ -1,0 +1,25 @@
+========================
+Funkcionális programozás
+========================
+A funkcionális programnyelvek a programozási feladatot egy függvény kiértékelésének tekintik. 
+Szemben az imperatív programnyelvekkel, ahol az utasítások új állapotokat határoznak meg a számítógépnek, 
+egy funkcionális nyelvben az eredményhez vezető út nem is feltétlenül ismert, 
+a program végrehajtásához csak az eredmény pontos definíciója szükséges.
+
+- A függvények első osztályú entitások, 
+	ami a gyakorlatban azt jelenti, hogy változókban tárolhatjuk őket — ez ismerős lehet, ha fejlesztettél már JavaScriptben. 
+
+- A függvények emellett magasabb fokúak is, 
+	azaz egy függvény lehet egy másik függvény paramétere, ill. visszatérési értéke lehet egy függvény is (a JS ezt is tudja, gondoljunk csak az eseménykezelésre). 
+	
+- A függvények tiszták, 
+	ami annyit jelent, hogy nincsenek mellékhatásaik: nem módosítanak semmilyen értéket, csak elfogadnak inputot, és visszaadnak outputot. 
+	Ha f függvény x inputra y eredményt adta egyszer, akkor mindig azt fogja. 
+	
+- Fontos a closure fogalma is: 
+	egy függvényen belül specifikálhatunk olyan adatokat, amelyek kizárólag ezen függvényen belül elérhetőek, 
+	más szóval megmarad a végrehajtási környezet (már mondanom sem kell, hogy JS-ben ezzel is mindenki találkozott már). 
+	
+- Nagy újdonság lehet viszont az állapot állandósága: 
+	ha x értéke egyszer 5 lett, akkor onnantól x és 5 felcserélhetőek, ugyanazt jelentik. 
+	

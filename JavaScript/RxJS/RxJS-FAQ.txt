@@ -1,0 +1,290 @@
+========
+RxJS FAQ
+========
+
+- Concept
+- What changed in RxJS 6?
+- Types of Subjects
+
+Operators
+---------
+- How to share an observable (shareReplay)?
+
+
+
+Patterns
+--------
+- How to perform a transformation on values from an observable?
+- How to process values from an observable with multiple operators?
+- How to join multiple observers into single onserver?
+- How to join multiple observers into single onserver v2 (flattening)?
+
+Error handling
+--------------
+- Error handling strategies
+
+----------------------------------------------------------------------------------------------------
+Concept
+=======
+- Observable: This is a class representing a stream of data.
+
+- Observer: This is a class able to emit data.
+
+- Producer: This is what internally produces data, which the Observer
+	ultimately emits.
+	
+- Operator: This is a method on an Observable, which allows us to manipulate the
+	stream itself or the data it emits.
+	
+- Stream: This is synonymous with an instance of an Observable. The reason for it
+	being called a stream is that you should think of the data as continuous and not
+	really having an end, unless you explicitly define an end.
+	
+	
+----------------------------------------------------------------------------------------------------	
+What changed in RxJS 6?
+=======================
+RxJS 6 (or higher) introduces two important changes compared to RxJS version 5:
+
+	- Different internal structure that requires you to change your import statements
+	
+	- pipe() as a method to chain your operators, the old way of chaining them will not work
+	- Additionally, some operators were renamed.	
+	
+Migration:
+
+Method 1 (recommended in new or small old projects):
+	- fix all unresolved imports
+	- replace all operator chaining with pipe()
+	- fix all operator calls
+
+Method 2 (not recommended in new projects):
+
+	- npm install --save rxjs-compat
+
+	Behind the scenes, rxjs still supports your old import statements and operator usage 
+	but it only does so if it can find the rxjs-compat package in the same project.
+	
+----------------------------------------------------------------------------------------------------
+Types of Subjects
+=================
+- Subject:
+	A Subject is a special type of Observable that allows values to be multicasted to many Observers. 
+	Subjects are like EventEmitters.
+	
+- ReplaySubject:
+	A variant of Subject that "replays" or emits old values to new subscribers. It buffers last value 
+	and will emit this value immediately to any new subscribers in addition to emitting new values to existing subscribers.
+	
+- BehaviorSubject:
+	A variant of Subject that requires an initial value and emits its current value whenever it is subscribed to.
+	In addition to emitting new values to existing subscribers.
+	
+- AsyncSubject:
+	A variant of Subject that only emits a value when it completes. 
+	It will emit its latest value to all its observers on completion.
+	
+SEE ALSO:
+	https://stackblitz.com/edit/ftoth-rxjs-subjects	
+	
+	
+----------------------------------------------------------------------------------------------------
+How to share an observable (shareReplay)?
+==================================================================================
+Ensure that all observers see the same sequence of emitted items, 
+even if they subscribe after the Observable has begun emitting items.
+
+So you can subscribe to observable multiple times and you will have the same result.
+
+To make an observable multicast:
+
+    obs:Observable<Course[]> = this.http.get<Course[]>('/courses');
+	...
+	
+	obsMulti:Observable<Course[]> = obs.pipe(shareReplay());
+	
+	...
+	obs.subscribe(...);
+	...
+	obs.subscribe(...);
+
+----------------------------------------------------------------------------------------------------
+How to perform a transformation on values from an observable?
+=============================================================
+Use map operator:
+
+	of(1, 2, 3).pipe(
+	  map(x => x * 10) 
+	).subscribe(console.log);
+
+	-------------------
+	10
+	20
+	30
+
+----------------------------------------------------------------------------------------------------
+How to process values from an observable with multiple operators?
+=================================================================
+In other words: How do I chain operators?
+
+If you have multiple operations which you want to apply sequentially to values from an observer 
+then use multiple operators and join them in a chain using pipe():
+
+	of(1, 2, 3).pipe(
+	  tap(x => console.log('INPUT: ' + x)),
+	  map(x => x+1),
+	  filter(x => x % 2 == 0)
+	).subscribe(console.log);
+
+	-------------------
+	INPUT: 1
+	2
+	INPUT: 2
+	INPUT: 3
+	4
+
+----------------------------------------------------------------------------------------------------
+How to join multiple observers into single onserver?
+====================================================
+Use concat() to concatenate observers in a sequence:
+
+	const o1 = of(1, 2, 3);
+	const o2 = interval(1000).pipe(       // waiting 1 sec 3 times
+		tap(x => console.warn(x + ' : after 1 sec ')),
+		take(3));
+	const o3 = of(5, 6, 7);
+	concat(o1, o2, o3).subscribe(console.log);
+
+	-----------------------
+	1
+	2
+	3
+	waiting 1 sec
+	0
+	waiting 1 sec
+	1
+	waiting 1 sec
+	2
+	5
+	6
+	7
+	
+NOTE: if any observable in infinite next observables won't be called.
+
+
+----------------------------------------------------------------------------------------------------
+How to join multiple observers into single onserver v2 (flattening)?
+====================================================================
+SEE ALSO:	https://medium.com/@shairez/a-super-ninja-trick-to-learn-rxjss-switchmap-mergemap-concatmap-and-exhaustmap-forever-88e178a75f1b
+
+Flattening (Flattening just means — “subscribing inside a subscribe”):
+	When you map values from an observer into observers and you subscribe to them, too.
+	So subscribes in subscribe. Steps are again:
+	
+	1. map some value to an observable (you are the one in charge of returning an observable value from them, they just map it)
+	2. They flatten the observable you return ( they just subscribe to it)
+	3. They decide about what to do before / after they flatten (“Flattening Strategy”)	
+
+	
+In this case you have to decide what happening with subscriptions.
+There are 4 “Flattening Strategies” and there are 4 maps which implement these strtategies:
+
+	- “Merge” Strategy - merge() / mergeMap()
+		deciding not to do anything, basically, we just keep subscribing to every new observable that we return from the map.
+		
+		Real-life use-case:
+			For each movie, you might want to also call a 3rd party service, like IMDB to show it’s “up to date” movie rank.
+			So you can mergeMap the movie into an http request to IMDB and by that, to ENHANCE YOUR MOVIE CARDS WITH THIS ADDITIONAL DATA.		
+	
+	- “Switch” Strategy - switchMap()
+		unsubscribing from the last mapped observable, when the new one arrives.
+		
+		Real-life use-case:
+			AutoComplete: If you google something, you press a key on the big input box, so every new input triggers a new ajax request for that 
+			search term. But switchMap will make sure that the ongoing http request is being canceled on every new search input, and 
+			ONLY THE NEWEST HTTP REQUEST IS LIVE.
+		
+			Search type-ahaed: 
+			
+	- “Concat” Strategy - concat() / concatMap()
+		Queuing up every new Observable, and subscribing to a new observable only when the last observable completed.
+		
+		Real-life use-case:
+			Changes reactive form (form.onChanges()) are saved automatically, by flattening these changes into save observers.
+			These saves should not overlap each other.
+		
+	- “Exhaust” strategy - exhaust() / exhaustMap()
+		the “don’t interrupt me” strategy, ignores (and never subscribe to) any new mapped Observable while the current Observable is still emitting values.
+
+		Real-life use-case:
+			Login screen: Let’s say you have a login screen with a login button, where you map each click to an login ajax request.
+			If the user clicks more than once on the login button, it will cause MULTIPLE CALLS TO THE SERVER, AND YOU PROBABLY DON’T WANT THAT…
+			So you can use exhaustMap to temporarily “disable” the mapping while the first http request is still on the go - THIS MAKES SURE YOU NEVER 
+			CALL THE SERVER WHILE THE CURRENT REQUEST IS RUNNING.			
+	
+			Save button: preventing clicking save during previous save and triggering multiple, parallel save process.
+	
+
+----------------------------------------------------------------------------------------------------
+Error handling strategies
+=========================
+1. Recovery Observable:
+
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+		catchError(err => <RECOVERY_OBSERVABLE>)
+	);
+
+	for example:
+	
+		http$.pipe(
+			map(res => Object.values(res['payload']),
+			catchError(err => of([]))
+		)
+		
+2. Catch and re-throw:
+
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+		catchError(err => {
+			ERROR_HANDLING (e.g. message)						
+			RE-THROW										<<<< here an Observable should be returned
+		})
+	);
+
+	Example:
+	
+		http$.pipe(
+			map(res => Object.values(res['payload']),
+			catchError(err => {
+				console.log('Error occcured: ' + err);
+				return throwErr(err);
+			})
+		)
+
+3. Cleanup logic:
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+		catchError(err => {
+			ERROR_HANDLING (e.g. message)						
+			RE-THROW										<<<< here an Observable should be returned
+		}),
+		finalize(() => {
+			CLEANUP
+		})
+	);
+		
+4. Retry strategy:		
+		
+		
+	NOTE: 
+		You can catch error immediately in the 1st operator, or everywhere error can generated,
+		Event you can use multiple error catch after any operator.
+		
+		
