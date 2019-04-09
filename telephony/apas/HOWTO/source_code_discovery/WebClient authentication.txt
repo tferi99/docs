@@ -218,7 +218,7 @@ If you activate remember-me on login page next time you don't have to authentica
 Based on SpringSecurity RememberMe feature.
 - Tokens are stored into inMemoryTokenRepository
 - Users are strored into cache during manual login first.
-- Users stored into cache and will be resored from cache by rememberMeUserDetailsService diring the next login (authenticated automatically).
+- Users stored into cache and will be resored from cache by rememberMeUserDetailsService during the next login (authenticated automatically).
 
 
 <http>
@@ -247,13 +247,13 @@ Based on SpringSecurity RememberMe feature.
 		
 		
 NOTE for implementation:
-Very strange that AuthenticationCacheFactory does not provide a singleton but always a new instance of AuthenticationCacheImpl.
-And very strange that you put something into one cache instance but you get it from another cache instance :(
+	Very strange that AuthenticationCacheFactory does not provide a singleton but always a new instance of AuthenticationCacheImpl.
+	And very strange that you put something into one cache instance but you get it from another cache instance :(
 
-This is very weird and confusing. 
+	This is very weird and confusing. 
 
-If you go into AuthenticationCacheImpl it will be clear. 
-It uses a 3rd party API (JCS) which applies a singleton inside.
+	If you go into AuthenticationCacheImpl it will be clear. 
+	IT USES A 3RD PARTY API (JCS) WHICH APPLIES A SINGLETON INSIDE.
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
