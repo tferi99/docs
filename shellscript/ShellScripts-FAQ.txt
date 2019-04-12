@@ -95,27 +95,50 @@ tar tips
 -------------------------------------------------------------------------------------------------
 Returning values from a function
 ================================
-1. using a global
+1. Echo result and capturing output string
 
-	function func1
-	{
-		calculated_value=$(echo 'cica')
-		eval "$1=$calculated_value"
-	}
-	
-	declare ret_var
-	func1 'ret_var'
-	echo $ret_var
-	
-2. capturing output
-
-	function func2
+	function func
 	{
 		echo "result"
 	}
 	
-	ret_var=$(func2)
+	ret_var=$(func)
 	echo $ret_var
+
+2. Return exit status - ONLY for numeric values
+
+	function func
+	{
+		return 9
+	}
+	
+	func
+	ret_var=$?
+	echo $ret_var
+
+	
+
+	
+3. Use global shared variable
+
+	declare ret_var
+	function func1
+	{
+		ret_var=kutya
+	}
+	func1
+	echo $ret_var
+	
+4. Pass the name of a global variable
+
+	declare ret_var
+	function func1
+	{
+		eval "$1=cica"
+	}
+	func1 'ret_var'
+	echo $ret_var
+
 
 -------------------------------------------------------------------------------------------------
 How to do calculations?
