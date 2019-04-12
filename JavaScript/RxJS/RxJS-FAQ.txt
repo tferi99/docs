@@ -232,7 +232,39 @@ There are 4 “Flattening Strategies” and there are 4 maps which implement the
 ----------------------------------------------------------------------------------------------------
 Error handling strategies
 =========================
-1. Recovery Observable:
+LIFECYCLE ENDED
+---------------
+1. Error handling in error callback of subscribe():
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+	).subscribe(
+		NEXT,
+		ERROR,
+		COMPLETED
+	);
+
+	for example:
+	
+		http$.pipe(
+			map(res => Object.values(res['payload']),
+		).subscribe(
+			x => this.current = x;
+			err => {
+				log(err);
+				...
+			}
+		);
+
+	LIMITATIONS: cannot be recovered, mapping into alternative Observable​
+		
+		
+DURING LIFECYCLE (IN OPERATOR CHAIN)
+------------------------------------
+using catchError() operator:
+
+2. Catch and Replace Strategy (Alternative Observable returned om error)
 
 	<OBSERVABLE>.pipe(
 		...
@@ -245,10 +277,11 @@ Error handling strategies
 	
 		http$.pipe(
 			map(res => Object.values(res['payload']),
-			catchError(err => of([]))
+			catchError(err => of([alternativeValue]))
 		)
+
 		
-2. Catch and re-throw:
+3. Catch and Rethrow Strategy:
 
 	<OBSERVABLE>.pipe(
 		...
@@ -270,7 +303,7 @@ Error handling strategies
 			})
 		)
 
-3. Cleanup logic:
+4. Cleanup logic:
 	<OBSERVABLE>.pipe(
 		...
 		...
@@ -284,8 +317,7 @@ Error handling strategies
 		})
 	);
 		
-4. Retry strategy:		
-		
+5. Retry Strategy (immediate or delayed):		
 		
 	NOTE: 
 		You can catch error immediately in the 1st operator, or everywhere error can generated,
@@ -295,3 +327,14 @@ Error handling strategies
 Subjects
 ========
 		
+=======
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+		retryWhen(err => err.pipe(
+			delayWhen()
+		)
+	);
+		
+

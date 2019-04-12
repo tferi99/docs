@@ -79,8 +79,8 @@ LoginCtrl CONTROLLER
 							
 							NOTE: 
 								A user contained by a pool if:
-								- user added to the pool
-								- group name of a user's group is the same as pool name
+									- user added to the pool
+									- group name of a user's group is the same as pool name
 								
 								During authentication assigned pool name added as group to user dinamically.
 							
