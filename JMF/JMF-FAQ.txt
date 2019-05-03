@@ -24,9 +24,11 @@ Development
 - How demultiplexers are selected for input data source?
 - How chain built-up with custom processing?
 - How media duration will be calculated?
+- Format chooser in JMF
 
 Samples
 -------
+- JMF Studio source in Maven project
 - How to configure RTP session in JMStudio?
 
 Troubleshooting
@@ -137,7 +139,7 @@ File will be stored in classpath directories.
 Hint:
 	Generally you will find it in directory where jmf.jar resides.
 
-Algorythm of registry file lookup:
+Algorythm of registry file lookup in com.sun.media.util.Registry.findJMFPropertiesFile():
 	- it gets the classpath
 	- splits by path separator
 	- if a token is a directory adds "jmf.properties"
@@ -182,17 +184,20 @@ How to configure RTP session in JMStudio?
 =========================================
 - Start 2 JMStudio instances in 2 (or more) DIFFERENT machines.
 
-- Server settings:
-	- File/Transmit
-	- Choose source media
-	- Setup encoding	
-	- Specify destination address and port:
-		- a specific IP address for p2p (e.g. 192.168.5.112)
-		- broadcast address for multicast distribution (e.g. 192.168.5.255)
-		
-- Client setting:
-	- File/Open RTP session
-	- Specify server address and port
+- Method 1 - unicast:
+
+
+- Method 2 - broadcast:
+	- Server settings:
+		- File/Transmit
+		- Choose source media
+		- Setup encoding	
+		- Specify broadcast address of current network for multicast distribution (e.g. 192.168.5.255)
+		- Specify port
+			
+	- Client setting:
+		- File/Open RTP session
+		- Specify ANY address in network (or the same broadcast address) and port
 
 ---------------------------------------------------------------------------------------------------------------------------
 Preparing custom processing
@@ -825,5 +830,25 @@ BasicPlayer.getDuration()
 Log message:  No multiplexer is found for that content type
 ===========================================================
 				
-
+---------------------------------------------------------------------------------------------------------------------------
+JMF Studio source in Maven project
+==================================
 				
+	d:\WORK_PRIVATE\work\general\jmf\JMStudio 
+				
+				
+---------------------------------------------------------------------------------------------------------------------------
+Format chooser in JMF
+=====================
+JMStudion contains media chooser panel:
+
+
+	jmapps.export.PanelMediaTargetFormat
+	
+	
+	
+	
+	
+
+
+
