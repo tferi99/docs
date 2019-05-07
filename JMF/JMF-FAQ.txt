@@ -24,6 +24,7 @@ Development
 - How demultiplexers are selected for input data source?
 - How chain built-up with custom processing?
 - How media duration will be calculated?
+- Call stack of media format chooser (Called from JMStudio)
 
 Samples
 -------
@@ -39,7 +40,6 @@ Troubleshooting
 - Exception: CannotRealizeException (no message)
 - Exception: NoProcessorException: Processor doesn't support output
 - Log message: The input format is not compatible with the given codec plugin
-- Log message:  No multiplexer is found for that content type
 
 ----------------------------------------------------------------------------------------------------------------------------
 How media is processed?
@@ -820,10 +820,109 @@ BasicPlayer.getDuration()
 		-> PlaybackEngine.getDuration()
 			-> BasicSourceModule.getDuration()
 				-> Demultiplexer.getDuration()
-				
+
+
 ---------------------------------------------------------------------------------------------------------------------------
-Log message:  No multiplexer is found for that content type
-===========================================================
+Call stack of media format chooser (Called from JMStudio)
+=========================================================
+- JMSTUDIO/File/Transmit
+
+	--> dlgTransmit = JMStudio.transmitMedia()
+		--> new TransmitWizard()
+			--> ExportWizard()
+				--> onPageActivate(PanelMediaSource)
+					- rendering input media page ('RTP Transmit')
+			- RAW_RTP ("raw.rtp") to TransmitWizard.panelTargetFormat.arrAllowContentType
+	
+	--> dlgTransmit.show()----------------|
+		                                  |
+		                                  |
+ |----------------------------------------|
+ |
+ |      AFTER WIZARD CONFIGURATION
+ |      -------------------------- if action ACTION_FINISH -------------------
+ |      --> mediaPlayer = JMFUtils.createMediaPlayer(processorTransmit, ...)
+ |      --> open(mediaPlayer)
+ |      --> mediaPlayer.realize()
+ |      ############################## PLAYING MEDIA ########################################
+ V	
+ 
+	
+	
+	
+	
+- on 'RTP Transmit' page choose an audio file and click 'Next'
+	--> ProcessEngine.doConfigure()
+		-->  new ProcessEngine.ProcTControl(...)
+			--> BasicTrackControl.BasicTrackControl
+
+	--> jmapps.export.ExportWizard
+		================= closing media source page ================
+		--> onPageDone(panelPage)				// PanelMediaSource
+			--> processor = PanelMediaSource.createProcessor()
+				--> mediaSource = new MediaLocator(strSourceUrl)						// file:C:\Users\ftoth\Documents\media\nobody-8000Hz-16b-mono.wav
+				--> dataSource = Manager.createDataSource(mediaSource)
+				--> processor = Manager.createProcessor(dataSource)
+			--> configureProcessor()									// it's just about waiting for processor to be configured
+			
+		================= opening output format chooser page ================
+		--> onPageActivate(...)
+			------------------- panelPage == jmapps.export.PanelMediaTargetFormat  --------------------
+			--> PanelMediaTargetFormat.setProcessor ( processor, strContentType, strTargetType )      // strContentType: audio.x_wav; strTargetType: "Transmit over the network"
+				- setting processor of wizard page
+				--> arrContentDescriptors = processor.getSupportedContentDescriptors()		// getting supported content descriptors (RAW, RAW/RTP, WAV, AVI, ...)
+				--> arrTrackControls = processor.getTrackControls()							// getting track controls (==> ProcTControl)
+				- removing all panel content 
+				--> buildPage()
+					- BUILDING DROPDOWN: Format
+						------------------------ loop on content descriptors ------------------------
+						- building a dropdown with content descriptor strings for output format
+						- building a map, where key is dropdown item label and value is content descriptor. E.g:
+	
+							key: RAW/RTP	value: content descriptor (javax.media.protocol.ContentDescriptor)
+							
+					--> buildTrackFormatPanel()			// output audio track configuration
+						------------------------ loop on output tracks ------------------------
+							format = input format from track control 					// LINEAR, 8000.0 Hz, 16-bit, Mono, LittleEndian, Signed, 16000.0 frame rate, FrameSize=16 bits)
+							- choosing track tab label									// Audio
+							- getting encoding from input format						// LINEAR
+							--> supFormats = supported format from track control
+							--> new AudioFormatChooser(supFormats, ...)
+								- supFormats ==> vectorContSuppFormats
+								--> init()
+									- building format page input elements
+									- collecting encodings into 
+										- comboEncoding
+										AND
+										- vectorEncoding
+									--> updateFields(...)
+										--> updateFieldsFromEncoding(formatDefault))
+											- collecting encodings into 
+												- comboSampleRate
+												AND
+												- vectorRates											
+											--> updateFieldsFromRate(formatDefault)
+												--> updateFieldsFromBits(formatDefault)
+													--> updateFieldsFromChannels(formatDefault)
+														--> updateFieldsFromEndian(formatDefault)
+															--> updateFieldsFromSigned(formatDefault)
+										
+				--> changeContentType ()
+					--> setSupportedFormats(supFormats, fmt)
+						--> processor.setContentDescriptor(contentDescriptor) 		// RAW/RTP
+						==> com.sun.media.MediaProcessor.setContentDescriptor(contentDescriptor)
+										
+arrContentDescriptors: 9
+arrTrackControls: 1
+supFormats: 266
+vectorContSuppFormats: 266
+comboEncoding: 11
+vectorRates: 7					
+					
+									
+			
+
 				
 
+				
 				

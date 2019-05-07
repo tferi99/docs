@@ -5,27 +5,30 @@ RxJS FAQ
 - Concept
 - What changed in RxJS 6?
 - Types of Subjects
+- How to describe streams, operators (ASCII marble)?
+
+Observables
+-----------
+- Hot vs cold observables (creating)
+- How to perform a transformation on values from an observable?
+- How to process values from an observable with multiple operators?
+- How to join multiple observables into single onserver?
+- How to join multiple observables into single onserver v2 (flattening)?
 
 Operators
 ---------
 - How to share an observable (shareReplay)?
 
 
-Patterns
---------
-- How to perform a transformation on values from an observable?
-- How to process values from an observable with multiple operators?
-- How to join multiple observers into single onserver?
-- How to join multiple observers into single onserver v2 (flattening)?
-
-Observables
------------
-- Subjects
-
+Angular
+-------
+- Avoiding memory leaks
 
 Error handling
 --------------
 - Error handling strategies
+
+
 
 ----------------------------------------------------------------------------------------------------
 Concept
@@ -148,8 +151,8 @@ then use multiple operators and join them in a chain using pipe():
 	4
 
 ----------------------------------------------------------------------------------------------------
-How to join multiple observers into single onserver?
-====================================================
+How to join multiple observables into single onserver?
+======================================================
 Use concat() to concatenate observers in a sequence:
 
 	const o1 = of(1, 2, 3);
@@ -177,8 +180,8 @@ NOTE: if any observable in infinite next observables won't be called.
 
 
 ----------------------------------------------------------------------------------------------------
-How to join multiple observers into single onserver v2 (flattening)?
-====================================================================
+How to join multiple observables into single onserver v2 (flattening)?
+======================================================================
 SEE ALSO:	https://medium.com/@shairez/a-super-ninja-trick-to-learn-rxjss-switchmap-mergemap-concatmap-and-exhaustmap-forever-88e178a75f1b
 
 Flattening (Flattening just means — "subscribing inside a subscribe"):
@@ -323,6 +326,153 @@ using catchError() operator:
 		You can catch error immediately in the 1st operator, or everywhere error can generated,
 		Event you can use multiple error catch after any operator.
 		
+
 ----------------------------------------------------------------------------------------------------
-Subjects
-========
+Hot vs cold observables
+=======================
+- COLD is when your observable creates the producer (Producers created *inside*)
+- Producer created and activated during subscription:
+- Subscription is receiving all emitted values
+
+	1. creates the producer
+	2. activates the producer
+	3. starts listening to the producer
+	4. unicast
+
+	- How to create:		Observable.create(...)
+	
+		const cold = Observable.create((observer: any) => {
+		  // producer created here
+		  const name = 'COLD Observable-1';
+		  observer.next(name + ' is ALIVE');							// emitting value here
+		  setInterval(() => {
+			observer.next(name)											// emitting value here
+			}, 2000);
+		});
+
+		const subsCold = cold.subscribe(									// producer created and activated here
+		  x => console.log('o1: ', x),
+		  noop,
+		  () => name + ' COMPLETED'
+		);
+			
+- Producers created *outside*
+- Not guaranteeded that subscription is receiving all emitted values
+
+	1. shares a reference to a producer
+	2. starts listening to the producer
+	3. multicast (usually)
+
+		const cold = Observable.create((observer: any) => {
+		  // producer created here
+		  const name = 'HOT Observable-1';
+		  observer.next(name + ' is ALIVE');							// emitting value here
+		  setInterval(() => {
+			observer.next(name)											// emitting value here
+			}, 2000);
+		});
+
+		const hot = cold.pipe(share());									// making hot from cold (it can be shareReplay(), too)
+		
+		const subsHot = hot.subscribe(									// producer created and activated here
+		  x => console.log('o1: ', x),
+		  noop,
+		  () => name + ' COMPLETED'
+		);
+
+
+----------------------------------------------------------------------------------------------------
+How to describe streams, operators (ASCII marble)?
+==================================================
+Marble diagrams are a cool way of visualising streams but it’s hard to put those marble-diagrams in our code right?! 
+There is an ASCII variant of these marble.
+
+Rules:
+	- (stands for a time frame)
+	a-z (are the values that are next’ed in the stream)
+	| (indicates that the stream has completed)
+	... (indicates that the stream will keep on living)
+	# (indicates that an error occurred)
+	^ (indicates where we start subscribing (only for hot streams)
+
+For example:
+
+	const interval$ = interval(1000)            // 0--1--2--3--4--5--6...
+	const new$ = interval$
+		.pipe(
+			skip(1),                            // ---1--2--3--4--5--6...
+			take(5),                            // ---1--2--3--4--5|
+			filter(v => v % 2 === 0),           // ------2-----4---|
+			map(v => v + 1)                     // ------3-----5---|
+		)	
+	
+		
+----------------------------------------------------------------------------------------------------
+Avoiding memory leaks
+=====================
+Subscription will keep on living 
+	1. until we UNSUBSCRIBE MANUALLY
+	2. or THE STREAM IS COMPLETED 
+	
+Managing subscriptions is very important and in a number of cases we will have to manually unsubscribe an existing 
+subscription to avoid memory leaks. 
+  
+  
+Method 1 - unsubscribe manually:
+
+	To remove the memory-leak in this component we can keep track of the subscriptions.
+	
+	class AppComponent implements OnInit, OnDestroy {
+		subscriptions = [];
+		
+		ngOnInit() {
+			const interval$ = interval(1000);
+			
+			// manually keep track of the subscriptions in a subscription array
+			this.subscriptions.push(
+				interval$.subscribe(r => console.log(r));								// <<<<<<<<<<<<<<
+			);
+		}
+
+		ngOnDestroy() {
+			// when the component get's destroyed, unsubscribe all the subscriptions
+			this.subscriptions.forEach(sub => sub.unsubscribe());						// <<<<<<<<<<<<<<
+		}
+	}
+
+	
+Method 2 - force stream to be completed:
+	Use a notifier (secondary) Observable to stop target observable(s).
+	Notifier should be multicast - so a Subject.
+	
+	class AppComponent implements OnInit, OnDestroy {
+		destroy$ = new Subject();							// notifier (secondary) Observable
+		
+		ngOnInit() {
+			// interval$: 0--1--2--3--4--5--6--...
+			// destroy$:  -------------true|
+			// result:    0--1--2--3--4|
+			
+			const interval$ = interval(1000);
+			interval$
+				// let the interval$ stream live 
+				// until the destroy$ Subject gets a value
+				.pipe(
+					takeUntil(this.destroy$)					// it should be final operator in the pipe
+				).subscribe(r => console.log(r));
+		}
+
+		ngOnDestroy() {
+			// when the component get's destroyed, pass something to the
+			// destroy$ Subject
+			this.destroy$.next(true);							// complete 
+		}
+	}	
+
+	
+Method 3 - async pipe:
+
+	Async pipe unsubscribes automatically when the component gets destroyed 
+	(removes a lot of unsubscribe logic).
+	
+	

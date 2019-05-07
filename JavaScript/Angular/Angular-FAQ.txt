@@ -86,6 +86,7 @@ Troubleshooting
 - ERROR: Can't bind to 'formGroup' since it isn't a known property of 'form'
 - ERROR: No provider for ControlContainer ("[ERROR ->]<form...
 - ERROR: Uncaught Error: Unexpected directive '...' imported by the module '...'. Please add a @NgModule annotation
+- ERROR: Error: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked.
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Build architecture
@@ -1331,7 +1332,11 @@ HTML:
 	<input type="radio" id="flattMerge" name="flatteningType" [(ngModel)]="flatteningType" value="{{flatteningTypeEnum.MERGE}}">
 	
 	
-	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Error: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked.	
+=======================================================================================================
+
+
 
 
 
