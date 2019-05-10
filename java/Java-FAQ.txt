@@ -11,8 +11,11 @@ Annotations
 - How to use @link in JavaDoc?
 - How to add annotations at runtime?
 
-Date/time
----------
+Troubleshooting
+---------------
+ERROR: Can't load IA 32-bit .dll on a AMD 64-bit platform
+
+
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------
@@ -71,4 +74,34 @@ It is a class library for editing bytecodes in Java; it enables Java programs to
 SEE MORE:	
 	How to add Annotations at Runtime.pdf
 
+
+----------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Can't load IA 32-bit .dll on a AMD 64-bit platform
+=========================================================
+If a JAVA application uses native Windows DLL but it compiled in 32bit and you have JAVA x64 you can get this exception.
+
+For example:
+
+	Fobs4JMF - Native shared library NOT found
+	java.lang.UnsatisfiedLinkError: D:\WORK_PRIVATE\work\general\jmf\JMStudio\fobs4jmf.dll: Can't load IA 32-bit .dll on a AMD 64-bit platform
+		at java.lang.ClassLoader$NativeLibrary.load(Native Method)
+		at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1941)
+		at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1857)
+		at java.lang.Runtime.loadLibrary0(Runtime.java:870)
+		at java.lang.System.loadLibrary(System.java:1122)
+		at com.moesol.bindings.NativeLibraryFinder.loadLibrary(Nativ
+
+Fix:
+
+Method 1:
+	- find 64bit version of DLL
+	- compile it to x64
+	
+Method 2:
+	- copile application into 32 bit and
+	- Use 32bit (x86) JRE/JDK to run application
+
+	
+	
+	
 
