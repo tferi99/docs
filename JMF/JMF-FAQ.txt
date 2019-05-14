@@ -180,7 +180,7 @@ Unfortunately this exception will be hidden by InvocationTargetException :(.
 
 Solution:
 	Place a jmf.properties file into classpath (may be next to JARs).
-	If you put an emty one you will get an error (IOException in readRegistry: java.io.EOFException) but commit will fix it.
+	If you put an empty one you will get an error (IOException in readRegistry: java.io.EOFException) but commit will fix it.
 	
 
 ---------------------------------------------------------------------------------------------------------------------------
@@ -277,7 +277,7 @@ You have to set content type to 'null' if you want to redirect data to a rendere
 Selecting a Renderer:
 	To select the Renderer that you want to use, you:
 		1. Call getTrackControls on the Processor to get a TrackControl for each track in the media stream. 
-			The Processor must in the Con?gured state before you call getTrackControls.
+			The Processor must in the Configured state before you call getTrackControls.
 		2. Call the TrackControl setRenderer() method to specify the Renderer plug-in.
 		
 ---------------------------------------------------------------------------------------------------------------------------
@@ -376,7 +376,7 @@ Player.realize()
 
 										-> SimpleGraphBuilder.buildGraph(candidates)								<<<<<<<<<<<<<<<<<<<< building graph to join track (multiplexer)	and starting codec of custom codec chain together
 											
-											It build a graph until it reaches a target (so the staring codec of custom codec chain)
+											It build a graph until it reaches a target (so the starting codec of custom codec chain)
 										
 											----------------------- loop to consume candidates ----------------------------
 											-> ProcGraphBuilder.doBuildGraph(candidates)
