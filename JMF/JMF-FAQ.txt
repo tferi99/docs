@@ -26,6 +26,8 @@ Development
 - How media duration will be calculated?
 - Call stack of media format chooser (Called from JMStudio)
 - Format chooser in JMF
+- How to add custom format (and payload type) to RTP session?
+
 
 Samples
 -------
@@ -43,6 +45,7 @@ Troubleshooting
 - Exception: NoProcessorException: Processor doesn't support output
 - Log message: The input format is not compatible with the given codec plugin
 - Log message:  No multiplexer is found for that content type
+- Exception: Format of Stream not supported in RTP Session Manager
 
 ----------------------------------------------------------------------------------------------------------------------------
 How media is processed?
@@ -868,15 +871,16 @@ Call stack of media format chooser (Called from JMStudio)
  |      -------------------------- if action ACTION_FINISH -------------------
  |      --> mediaPlayer = JMFUtils.createMediaPlayer(processorTransmit, ...)
  |      --> open(mediaPlayer)
- |      --> mediaPlayer.realize()
+ |          --> open(mediaPlayer, true)
+ |              --> mediaPlayer.realize()
  |      ############################## PLAYING MEDIA ########################################
  V	
  
 	
-	
-	
-	
 - on 'RTP Transmit' page choose an audio file and click 'Next'
+	
+
+
 	--> ProcessEngine.doConfigure()
 		-->  new ProcessEngine.ProcTControl(...)
 			--> BasicTrackControl.BasicTrackControl
@@ -898,7 +902,7 @@ Call stack of media format chooser (Called from JMStudio)
 				--> arrContentDescriptors = processor.getSupportedContentDescriptors()		// getting supported content descriptors (RAW, RAW/RTP, WAV, AVI, ...)
 				--> arrTrackControls = processor.getTrackControls()							// getting track controls (==> ProcTControl)
 				- removing all panel content 
-				--> buildPage()
+				--> PanelMediaTargetFormat.buildPage()
 					- BUILDING DROPDOWN: Format
 						------------------------ loop on content descriptors ------------------------
 						- building a dropdown with content descriptor strings for output format
@@ -906,12 +910,18 @@ Call stack of media format chooser (Called from JMStudio)
 	
 							key: RAW/RTP	value: content descriptor (javax.media.protocol.ContentDescriptor)
 							
-					--> buildTrackFormatPanel()			// output audio track configuration
+					--> PanelMediaTargetFormat.buildTrackFormatPanel()			// output audio track configuration
 						------------------------ loop on output tracks ------------------------
 							format = input format from track control 					// LINEAR, 8000.0 Hz, 16-bit, Mono, LittleEndian, Signed, 16000.0 frame rate, FrameSize=16 bits)
 							- choosing track tab label									// Audio
 							- getting encoding from input format						// LINEAR
-							--> supFormats = supported format from track control
+							--> supFormats = arrTrackControls[i].getSupportedFormats() 
+								- getting supported format from track control
+								==> ProcTControl.getSupportedFormats()					// Here ProcTControl.supportedFormats is still null. It will be loaded on-demand from configuration DB.
+									- verifyMuxInputs(...)								// first cd:ROW, loaded formats not filtered
+							
+								>>>>>>> PanelMediaTargetFormat.supFormats still contains all formats
+							
 							--> new AudioFormatChooser(supFormats, ...)
 								- supFormats ==> vectorContSuppFormats
 								--> init()
@@ -932,11 +942,22 @@ Call stack of media format chooser (Called from JMStudio)
 														--> updateFieldsFromEndian(formatDefault)
 															--> updateFieldsFromSigned(formatDefault)
 										
-				--> changeContentType ()
+				--> PanelMediaTargetFormat.changeContentType ()
 					--> setSupportedFormats(supFormats, fmt)
 						--> processor.setContentDescriptor(contentDescriptor) 		// RAW/RTP
-						==> com.sun.media.MediaProcessor.setContentDescriptor(contentDescriptor)
-										
+							==> com.sun.media.MediaProcessor.setContentDescriptor(contentDescriptor)
+							---------------------- loop on audio tracks ----------------------
+								--> supFormats = trackControl.getSupportedFormats()
+									==> ProcTControl.getSupportedFormats()					// Here ProcTControl.supportedFormats is still contains all formats (loaded before from DB)
+										--> verifyMuxInputs(...)								// now cd:ROW/RTP -> formats filtered by RTP MUX
+											mux: com.sun.media.multiplexer.RTPSyncBufferMux
+											--> SimpleGraphBuilder.createPlugIn
+											---------------------- filteringloop on original input formats -----------------
+												--> RTPSyncBufferMux.setInputFormat(format, trackID)
+													--> !RTPSessionMgr.formatSupported ? null : ...				// check if format is supported by MUX
+														--> supportedList.getPayload(format)				// looking for format in FormatInfo.formatList which contains default supported formats indexed by payload type
+															IF NOT FOUND
+															------------------ loop on (static) added list --------------------
 arrContentDescriptors: 9
 arrTrackControls: 1
 supFormats: 266
@@ -945,9 +966,126 @@ comboEncoding: 11
 vectorRates: 7					
 					
 									
+---------------------------------------------------------------------------------------------------------------------------
+How to add custom format (and payload type) to RTP session?
+===========================================================
+Supported formats are checked twice during RTP transmission.
+
+1. Building codec chain 
+
+	--> ProcessorModel m = new ProcessorModel(inputLocator, formats, contentType);
+			inputLocator: URL pointing to input media (file), e.g: file:/c:/Users/ftoth/Documents/media/pcm-8000Hz-16b-mono.wav
+			formats: desired output format, e.g: ALAW/rtp, 8000.0 Hz, 8-bit, Mono, 8000.0 frame rate, FrameSize=8 bits
+			contentType: content type of output media, e.g: raw.rtp
+			
+	--> Processor processor = Manager.createRealizedProcessor(m);
+		--> com.sun.media.ProcTControl.getSupportedFormats()
+			--> verifyMuxInputs(...)
+				--> if javax.media.Multiplexer.setInputFormat(...)							// collecting suported formats
+					==> com.sun.media.multiplexer.RTPSyncBufferMux.formatSupported(Format input, int trackID) 
+						--> RTPSessionMgr.formatSupported(input) 
+							--> if supportedList.getPayload(format)							// looking for format in built-in formatList (ALAW is missing here)
+								formatList contains 14 built-in RTP formats 				
+							--> OR loop on static RTPSessionMgr.addedList 					// it's empty by default but you can add entries via RTPSessionMgr.addFormat(...)
+							
+							
+2. Beginning of transmission
+	--> org.ftoth.general.util.jmf.MediaProcessor.initAndStart()
+		--> presenting() and presentingTarget == RTPManager
+			--> startTransmitter(rtpTargetAddress, rtpTargetPort)
+				--> RTPSessionMgr.createSendStream(...)
+					--> payload = this.formatinfo.getPayload(fmt);
+					------------------------ payload == -1 ------------------------
+					--> throw new UnsupportedFormatException("Format of Stream not supported in RTP Session Manager", fmt);					<<<< error here if format not known
+
+
+	
+
+How to add?
+-----------
+1. Before calling createRealizedProcessor(...) call initCustomFormatsForProcessor() which creates a dummy RTPSessionMgr instance and adds 
+	item to static RTPSessionMgr.addedList list.
+	
+	OTHERWISE YOU WILL GET THIS ERROR:
+	
+		javax.media.CannotRealizeException: Unable to provide all requested tracks
+			at javax.media.Manager.createRealizedProcessor(Manager.java:908)
+			at org.ftoth.general.util.jmf.JmfFactory.createRealizedProcessor(JmfFactory.java:35)
+			at org.ftoth.general.util.jmf.JmfFactory.createRealizedProcessor(JmfFactory.java:25)	
+			...
+			
+2. Before creating real RTPSessionMgr instances get custom formats from initCustomFormatsForRtp() again and add to 
+	RTPSessionMgr instances.
+	
+	Map<Integer, Format> customFormats = initCustomFormatsForRtp();
+	...
+	RTPManager mgr = RTPManager.newInstance();
+	for (Integer payloadType : customFormats.keySet()) {
+		Format fmt = customFormats.get(payloadType);
+		mgr.addFormat(fmt, payloadType);
+	}
+
+	OTHERWISE YOU WILL GET THIS ERROR:
+	
+		javax.media.format.UnsupportedFormatException: Format of Stream not supported in RTP Session Manager
+			at com.sun.media.rtp.RTPSessionMgr.createSendStream(RTPSessionMgr.java:1104)
+			at com.sun.media.rtp.RTPSessionMgr.createSendStream(RTPSessionMgr.java:1262)
+			....
+	
+For detecting of supported format see also:
+
+	Call stack of media format chooser (Called from JMStudio)
+
 			
 
-				
+Source code
+-----------				
+	
+	private Map<Integer, Format> initCustomFormatsForRtp()
+	{
+		Map<Integer, Format> formats = new HashMap<Integer, Format>();
+
+		// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< add here custom codecs
+		
+		// for example: ALAW
+		org.ftoth.general.util.onesec.codec.alaw.libjitsi.Packetizer alawPck = new org.ftoth.general.util.onesec.codec.alaw.libjitsi.Packetizer();
+		Format alawInFormat = (alawPck.getSupportedInputFormats())[0];
+		Format alawRtpFormat = (alawPck.getSupportedOutputFormats(alawInFormat))[0];
+		formats.put(8, alawRtpFormat);
+		if (log.isDebugEnabled()) {
+			log.debug("ALAW Packetizer (" + org.ftoth.general.util.onesec.codec.alaw.libjitsi.Packetizer.class.getName() + ") successfully added");
+		}
+
+		return formats;
+	}
+	
+	
+	private void initCustomFormatsForProcessor()
+	{
+		// dummy (to access internal static format list via non-static addFormat() )
+		RTPSessionMgr mgr = JMFUtils.createSessionManager("127.0.0.1", 65000, 32, new ReceiveStreamListener()
+		{
+			public void update(ReceiveStreamEvent receiveStreamEvent)
+			{
+				// do nothing
+			}
+		});
+
+		Map<Integer, Format> customFormats = initCustomFormatsForRtp();
+
+		for (Integer payloadType : customFormats.keySet()) {
+			Format fmt = customFormats.get(payloadType);
+			mgr.addFormat(fmt, payloadType);
+		}
+	}
+	
+
+---------------------------------------------------------------------------------------------------------------------------
+Exception: Format of Stream not supported in RTP Session Manager
+================================================================
+Yuo gets this error if RTP session manager does not know output format of 
+
+SEE ALSO:	How to add custom format (and payload type) to RTP session?
 
 				
 				

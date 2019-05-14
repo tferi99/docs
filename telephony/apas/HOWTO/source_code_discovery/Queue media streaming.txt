@@ -3,6 +3,7 @@ Queue media streaming
 =====================
 
 - Streaming pre-queue media
+- Streaming queue media
 - Wireshark
 
 -----------------------------------------------------------------------------------------------------------------------------
@@ -178,8 +179,44 @@ Events:
 	[2017-04-11 10:15:31,230] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:428] - MRP: Stop Hash: null
 	--> stopRTPStream(rtpStream)		// NOT CALLED HERE
 
+
+-----------------------------------------------------------------------------------------------------------------------------
+Streaming queue media
+=====================
+
+Streaming queue media
+## Processor created: com.sun.media.processor.unknown.Handler@60496d67
+##   using DataSource: com.andtek.andphone.recorder.MultiDataSource@4b8d90d5
+
+$$ Profile: parsing: 1 ms
+
+## Building flow graph for: null
+
+## Building Track: 0
+## Input: ULAW, 8000.0 Hz, 8-bit, Mono, Unsigned, 8000.0 frame rate, FrameSize=8 bits
+## Custom options specified.
+## A custom codec is specified: com.sun.media.codec.audio.ulaw.Packetizer@1880289c
+## An output format is specified: ULAW/rtp, 8000.0 Hz, 8-bit, Mono, Unsigned, FrameSize=8 bits
+## An output content type is specified: RAW/RTP
+    
+
+## Here's the completed flow graph:
+      com.sun.media.parser.audio.WavParser@7bd32da9
+         connects to: com.sun.media.codec.audio.ulaw.Packetizer@1880289c
+         format: ULAW, 8000.0 Hz, 8-bit, Mono, Unsigned, 8000.0 frame rate, FrameSize=8 bits
+      com.sun.media.codec.audio.ulaw.Packetizer@1880289c
+         connects to: com.sun.media.multiplexer.RTPSyncBufferMux@1d5a060
+         format: ULAW/rtp, 8000.0 Hz, 8-bit, Mono, Unsigned, FrameSize=8 bits
 	
 
+ULAW
+----	
+MultiDataSource ==> WavParser --> com.sun.media.codec.audio.ulaw.Packetizer
+	
+	
+	
+	
+	
 -----------------------------------------------------------------------------------------------------------------------------
 Wireshark	
 =========
@@ -187,6 +224,18 @@ Filtering RTP related packets:
 
 	rtcp || rtp || udp && udp[8:1] == 0x80
 	
+The most easy way:
+	- set filter to:				udp || rtp
+	
+	- almost all remaining packets are RTP so Right-mouse on any UDP line and call 'Decode as...'
+	
+	- choose RTP in the last column (Current)
+	
+	- UDP packets will be identified and recognized as RTP packets
+	
+	
+	
 If RTP cannot be recognized by Wireshark (because of lack of SIP dialog or RTCP) you can force RTP stream recognition by selecting an UDP package (length is 214) and (rightmouse + Decode as...).
 Here add RTP an entry for current packet with RTP protocol. If it is really an RTP packet you will be able to analyse and play stream under Telephony/RTP.
+
 
