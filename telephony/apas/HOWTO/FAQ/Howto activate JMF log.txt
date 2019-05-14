@@ -7,4 +7,4 @@ Add config entry to database:
 		
 Location of log:
 
-	/tmp/jmf/jmf.log
+	/var/log/apas/jmf.log
