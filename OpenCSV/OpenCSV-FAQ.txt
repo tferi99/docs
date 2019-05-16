@@ -1,0 +1,64 @@
+===========
+OpenCSV-FAQ
+===========
+
+- Mapping strategies
+- How to customize separator-, quote- and escape-characters for during CSV?
+
+------------------------------------------------------------------------------------------------------------------------------
+Mapping strategies
+==================
+HeaderColumnNameMappingStrategy
+-------------------------------
+It's an interface to define the mapping between the data being written to the header of the CSV. 
+
+- Reading CSV:
+	It allows to map CVS file columns to bean fields based on custom name.
+	
+- Writing CSV:
+	When writing bean to CSV this allows to change column header name but we have no control on column order.
+
+If you have an annotataed 
+By default this strategy contains header names in CAPITAL and ordered ALPHABETICALLY.
+
+
+
+	
+ColumnPositionMappingStrategy
+-----------------------------
+This is defining how to map the field values from CSV row (String[]) to the properties of your JavaBean.
+
+	ColumnPositionMappingStrategy strat = new ColumnPositionMappingStrategy(); 
+	strat.setType(YourOrderBean.class); 
+	String[] columns = new String[] {"name", "orderNumber", "id"}; // the fields to bind do in your JavaBean 
+	strat.setColumnMapping(columns); 
+	CsvToBean csv = new CsvToBean(); 
+	List list = csv.parse(strat, yourReader);
+
+The key points to note about this class are:
+	- Use a public noargs constructor; this is default in Java so no constructor needs to be specified.
+	- All properties are private.
+	- All properties have getters, i.e. methods called getXxxx that return their value.
+	- All properties have setter, i.e. methods called setXxxx that set their value.		
+	
+- Reading CSV:
+	It allows to map CSV file columns to bean fields based on column ordering.
+
+- Writing CSV:
+	When writing bean to CSV we can control column order but we get an empty header (implementation returns new String[0] as a header)
+	
+HeaderColumnNameTranslateMappingStrategy
+----------------------------------------
+Expands on HeaderColumnNameMappingStrategy by allowing the user to pass in a map of column names to bean names. 
+This way the fields in the bean do not have to match the fields in the CSV file. 
+
+This is only for when the user passes in the header names programmatically, and not for annotated beans.
+
+
+------------------------------------------------------------------------------------------------------------------------------
+How to customize separator-, quote- and escape-characters for during CSV?
+=========================================================================
+The maximum possible signature of the constructor is:
+
+	public CSVWriter(Writer writer, char separator, char quotechar, char escapechar)
+

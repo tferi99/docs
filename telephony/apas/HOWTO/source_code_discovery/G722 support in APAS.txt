@@ -1,0 +1,102 @@
+====================
+G722 support in APAS
+====================
+- APAS classes with G722 feature
+
+
+
+-----------------------------------------------------------------------------------------------------------------------
+APAS classes with G722 feature
+==============================
+	
+	
+- package com.andtek.andphone.callroutingModule.setupRouteCallBack(...)
+				CiscoMediaCapability [] caps = new CiscoMediaCapability [6];
+				caps[0] = CiscoMediaCapability.G711_64K_30_MILLISECONDS;
+				...
+				caps[5] = new CiscoMediaCapability(CiscoRTPPayload.G722_64K,160);
+				
+				if(!routePoint.isRegistered()) {
+					routePoint.register ( caps, CiscoRouteTerminal.DYNAMIC_MEDIA_REGISTRATION );
+				}
+				
+- package com.andtek.andphone.global.Admin.medialist_gwtedit(ConnectionBean connection)
+	--------------------------- mediaType == MEDIA_TYPE_AUDIO ---------------------------
+	
+	- G729 will be converted after upload, but not G722
+	
+- com.andtek.andphone.JTAPIDecoder.getPayloadType ( int payloadType )
+	- it retrieves type=name pairs for payload types
+	
+- com.andtek.andphone.media.codec.audio.g722.
+	- G722AudioFormat
+	- G722Encoder
+	- G722EncodeState
+	- G722Packetizer
+	- G722Parser
+
+- com.andtek.andphone.media.codec.audio.HeadlessAudioMux
+	
+- com.andtek.andphone.media.datasource.audio.g722.G722Stream
+
+- com.andtek.andphone.media.protocol.audio.g722.DataSource
+
+- com.andtek.andphone.media.utils.G722Converter
+
+- com.andtek.andphone.recorder.Module.setupMediaRoutePoint(Provider provider)
+	
+				CiscoMediaCapability [] caps = new CiscoMediaCapability [3];
+				caps[0] = CiscoMediaCapability.G711_64K_30_MILLISECONDS;
+				caps[1] = CiscoMediaCapability.G729_30_MILLISECONDS;
+				caps[2] = new CiscoMediaCapability(CiscoRTPPayload.G722_64K,160);
+
+				if(!routePoint.isRegistered()) {
+					routePoint.register(caps, CiscoRouteTerminal.DYNAMIC_MEDIA_REGISTRATION);
+				} 
+				
+- com.andtek.andphone.recorder.MultiDataSource
+
+	public String getContentType() {
+		if(detailedLog) Module.log.debug( "MultiDataSource.getContentType()="+FileTypeDescriptor.WAVE);
+		if(detailedLog) Module.log.debug( "realSource.getContentType()="+procInfo.realSource.getContentType());
+		if (procInfo.realSource.getLocator().getRemainder().endsWith(".g722")) {
+			return "audio.g722";
+		}
+		return procInfo.realSource.getContentType();
+	} 
+
+- com.andtek.andphone.recorder.RecorderSipTrunk.buildSDP(...)
+			...
+			sdpData.append("a=rtpmap:9 G722/8000\r\n");
+			...
+			
+- com.andtek.andphone.recorder.RTPStream
+	
+	- initRTPManager()
+	
+	- initDataSource()
+	
+	- getInputByRtpCodecType()
+	
+	- createProcessor()
+	
+	- makeRTPOutput()
+	
+- com.andtek.andphone.sccp.message.Capability
+
+- com.andtek.andphone.sip.SIPTrunk.processInvite()
+	
+				String sdpData = "v=0\r\n"
+					...
+					...
+					
+					
+			IN COMMENT !!!
+			
+			
+			
+					
+	
+	G722Encoder
+	
+	
