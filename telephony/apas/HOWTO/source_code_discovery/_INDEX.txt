@@ -49,6 +49,7 @@ Media
 - Queue media upload
 - Queue media streaming
 - Silent monitoring
+- Text-to-Speech (TTS)
 
 Recording
 ---------
