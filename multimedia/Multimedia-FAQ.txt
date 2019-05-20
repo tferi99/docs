@@ -1,0 +1,22 @@
+==============
+Multimedia-FAQ
+==============
+
+Audio
+-----
+- How to convert G729 audio to PCM?
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to convert G729 audio to PCM?
+=================================
+- 
+
+- Covert to RAW with VoiceAge decoder, e.g:
+
+	va_g729_decoder.exe ring-8000Hz-16b-mono.g729 ring-8000Hz-16b-mono.raw
+	
+- Import RAW file into AudaCity:
+
+	AC/File/Import/Raw Data
+

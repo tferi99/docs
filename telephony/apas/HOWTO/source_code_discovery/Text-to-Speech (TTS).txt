@@ -1,0 +1,44 @@
+====================
+Text-to-Speech (TTS)
+====================
+
+- Creating TTS entry
+
+
+--------------------------------------------------------------------------------------------------------------------------
+Creating TTS entry
+==================
+
+	APAS/Global/Media/[Media List]/(Add)/(TTS Text)
+
+	--> medialist_gwtappMain.buildDynamicFormPanel(...)
+		okbutton.addListener() ... onClick
+		
+		--> onFormPanelSubmitEvent(...)
+			AndFormPanel.getForm().submit(...)
+			
+			http://apas_test.com:8080/andphone/Admin?module=global&page=medialist&func=gwtedit
+			
+			--> com.andtek.andphone.Admin.doPost()
+				--> doGet()			
+					--> com.andtek.andphone.utils.Admin.getModuleAdminPage(ConnectionBean connection)
+						REFLECTION ===> com.andtek.andphone.global.Admin.medialist_gwtedit(ConnectionBean connection)
+							- getting fields with commons-fileupload.jar
+							
+							--> addOrUpdateTTSMedia(String mediaID, String mediaName, int mediaType, String ttsText, String ttsLanguage, String ttsVoice, MediaTableRecordBean record)
+								mediaType: 2
+								--> id = MediaHelper.insertIntoMediaTable(mediaName, mediaType, ttsText, ttsLanguage, ttsVoice)
+								
+									SQL: INSERT INTO media ....
+									
+									TTS inserted into media[text]
+									
+							--> ttsFileBase = Config(global/MediaPath) + '/' + id
+							--> voices = MaryTTSProvider.getAvailableVoices()				// checking if input voice is available
+								if NOT then use MaryTTSProvider.DEFAULT_VOICE
+								
+							--> audio = MaryTTSProvider.generateAudio(ttsText, voiceToUse)
+							
+							--> AudioSystem.write(audio, AudioFileFormat.Type.WAVE, tmpfile)	// saving audio into TMP file
+							--> Wav2uLaw.convert(...) 											// converting into ULaw file (for RTP)
+							--> delete TMP file

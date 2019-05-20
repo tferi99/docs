@@ -1,0 +1,13 @@
+===========
+JMF in APAS
+===========
+
+Initialization
+---------------
+--> com.andtek.andphone.JTAPIThread.run()
+	-->  JmfTweak.setPlaybackEngineDebug(false)				// disabling JMF debug window UI
+	--> loadConfig()										// JMF initialization here
+		--> RTPStream.initCustomJmfPlugins()				// registering custom plugins
+		--> JmfTweak.setJmfLogging(true)					// enabling JMF logging into /var/log/apas/jmf.log
+
+
