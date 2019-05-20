@@ -2,10 +2,12 @@
 OpenCSV-FAQ
 ===========
 - Reading CSV into beans
+- Writing beans to CSV
 - Mapping strategies
 - How to customize separator-, quote- and escape-characters for during CSV?
-
-
+- How to specify order columns during writing?
+- Limitations
+ 
 ------------------------------------------------------------------------------------------------------------------------------
 Reading CSV into beans
 ======================
@@ -20,23 +22,196 @@ How to specify column and bean property name mapping?
 - By default:
 	- properies are optional
 	- if properties are strings values are mapped as is
-	- if properties are not strings they are converted 
+	- if properties are not strings they are converted (or exception)
+- Empty lines ignored
+- Whitespace characters are NOT ignored, so garbage characters will be recognized as data rows and parsed, which can lead to parsing error
 	
-https://uk-jira.enghouseinteractive.com/browse/ANDFD-544
-
-
+	
 Case 1:	without header
+- If you specify only Class the first line parsed as header so values from there identified as property names.
+	In this case n-1 bean will be created with possible null or default values.
 
 
-Case 2:	with header with property names
-	- You can specify property names in 
-If property name specified 
-
+Case 2:	with property name header
+- If you specify only Class (without annotation) the first line parsed as header so values from there identified as property names.
+	In this case colums are identified but conversion not used.
 
 Case 3:	with header with custom names
+...
+
+RECOMMENDED METHOD
+------------------
+There is no header just data rows
+---------------------------------
+- annotate entity with @CsvBindByPosition
+- use CsvToBeanBuilder().withType(entity)
+
+There is a header
+-----------------
+- annotate entity with @CsvBindByName
+- if column name and property names are different use  column="..." argument
+- use CsvToBeanBuilder().withType(entity)
+
+OR SAME LIKE WITHOUT HEADER, BUT withSkipLines(...)
+- annotate entity with @CsvBindByPosition
+- use CsvToBeanBuilder().withType(entity).withSkipLines(1)
+
+OOOOR
+- annotate entity with @CsvBindByName
+- annotate entity with @CsvBindByPosition
+- use CsvToBeanBuilder().withType(entity).withSkipLines(1)
+
+CONVERSIONS
+-----------
+- String			: read as is, no problem
+
+- int/Integer		: value should be integer, otherwise (e.g. 100.12) you get a NumberFormatException
+						to fix it change format to float or use @CsvNumber annotation (e.g: @CsvNumber("#.##") )
+						
+- Date				: use @CsvDate (e.g: @CsvDate("yyyy-MM-dd")
+
+- boolean/Boolean	: valid values: true/false, 1/0 - other values cause 
+
+						[org.apache.commons.beanutils.ConversionException: Can't convert value '4' to type class java.lang.Boolean]
+
+						
+NOTE:						
+	YOU CAN USE FORMATTING ANNOTATION WITH @CsvBindByName OR @CsvBindByPosition ANNOTATIONS.
+						
+						
+						
+------------------------------------------------------------------------------------------------------------------------------
+Writing beans to CSV
+====================
+If you have a CSV with header and you want to write the same CSV on output 
+use both name and position annotations, e.g.:
+
+		@CsvBindByName(column = "ID", required = true)
+		@CsvBindByPosition(position = 0)
+		private String id;
+
+and read this way:
+
+		List beans2 = null;
+		try {
+			String file2 = "emp-withColumn.csv";
+			Reader rd2 = new FileReader(file2);
+				beans2 = new CsvToBeanBuilder(rd2)
+					.withType(EmployeeNamedAndPositioned.class)
+					.withSeparator(',')
+					.withQuoteChar('\'')
+					.withSkipLines(1)
+					.build().parse();
+			printBeans(beans2);
+			rd2.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+and write this way:
 
 
+		try {
+			String file2 = "emp-withColumn.csv";
+			Reader rd2 = new FileReader(file2);
+			CSVReader rd2csv = new CSVReader(rd2);
+			HeaderColumnNameMappingStrategy<EmployeeNamedAndPositioned> strategy = new HeaderColumnNameMappingStrategy<EmployeeNamedAndPositioned>();
+			strategy.setType(EmployeeNamedAndPositioned.class);
+			strategy.captureHeader(rd2csv);													// <<<<<<<<<<<<<<<<<<<<<< capturing original header 
+			Writer writer = new FileWriter("out-withColumn.csv");
+			StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer)
+					.withApplyQuotesToAll(false)
+					.withMappingStrategy(strategy)
+					.build();
+			beanToCsv.write(beans2);
+			writer.close();
+			rd2.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+If you want to write a new CVS then:
+	- create a sample output file with header
+	- capture header from this sample file
+	OR
+	- write a header name order comparator
+	- and use it:		
+			
+			strategy.setColumnOrderOnWrite(new EmployeeHeaderNameComparator());	
+			
+
+------------------------------------------------------------------------------------------------------------------------------
+How to specify order columns during writing?
+============================================
+1. use pattern from: Writing beans to CSV 
+	(search: ... and you want to write the same CSV on output)
+
+2. 	
+	- write a header name order comparator
+	- and use it:		
+		
+		For example:
+		
+			HeaderColumnNameMappingStrategy<EmployeeNamedAndPositioned> strategy = new HeaderColumnNameMappingStrategy<EmployeeNamedAndPositioned>();
+			strategy.setType(EmployeeNamedAndPositioned.class);
+			strategy.setColumnOrderOnWrite(new EmployeeHeaderNameComparator());	
+			StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer)
+					.withApplyQuotesToAll(false)
+					.withMappingStrategy(strategy)
+					.build();
+			beanToCsv.write(beans2);
+			writer.close();
+
+		Comparator:
+
+			public class EmployeeHeaderNameComparator extends OutputHeaderNameComparatorBase implements java.util.Comparator<String>
+			{
+				private static final String[] columnNames = {
+					"ID",
+					"Full Name",
+					"Age",
+					"Country/Location",
+					"Salary",
+					"Birth Date",
+					"Is Active"
+				};
+
+				static {
+					for (int n=0; n<columnNames.length; n++) {
+						columnNames[n] = columnNames[n].toUpperCase();
+					}
+				}
+
+				@Override
+				protected String[] getColumns() {
+					return columnNames;
+				}
+			}
+						
+			
+			public abstract class OutputHeaderNameComparatorBase implements java.util.Comparator<String>
+			{
+
+				@Override
+				public int compare(String fld1, String fld2)
+				{
+					String[] columns = getColumns();
+					int idx1 = ArrayUtils.indexOf(columns, fld1);
+					int idx2 = ArrayUtils.indexOf(columns, fld2);
+					int decision = idx1 > idx2 ? 1 : -1;
+
+					System.out.println("COMPARATION: " + fld1 + " [" + idx1 + "] ? " + fld2 + " [" + idx2 + "] --> " + decision);
+
+
+					return decision;
+				}
+
+				protected abstract String[] getColumns();
+			}
+			
+			
+			
 ------------------------------------------------------------------------------------------------------------------------------
 Mapping strategies
 ==================
@@ -53,7 +228,6 @@ It's an interface to define the mapping between the data being written to the he
 - Writing CSV:
 	When writing bean to CSV this allows to change column header name but we have no control on column order.
 
-If you have an annotataed 
 By default this strategy contains header names in CAPITAL and ordered ALPHABETICALLY.
 
 
@@ -96,4 +270,14 @@ How to customize separator-, quote- and escape-characters for during CSV?
 The maximum possible signature of the constructor is:
 
 	public CSVWriter(Writer writer, char separator, char quotechar, char escapechar)
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Limitations
+===========
+- Headers in output CSV are always written in CAPITAL
+- You cannot specify quotation of specific fields. All always ON or OFF.
+- @CsvNumber works unexpectedly - dont use it
+
+
 
