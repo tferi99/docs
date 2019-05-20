@@ -1,15 +1,50 @@
 ===========
 OpenCSV-FAQ
 ===========
-
+- Reading CSV into beans
 - Mapping strategies
 - How to customize separator-, quote- and escape-characters for during CSV?
+
+
+------------------------------------------------------------------------------------------------------------------------------
+Reading CSV into beans
+======================
+- For reading CSV into beans you need to specify a mapping between CSV columns and bean property names.
+- A mapping can be specified by a mapping strategy.
+- if you dont specify anything you get this error:
+
+	java.lang.IllegalStateException: Either a mapping strategy or the type of the bean to be populated must be specified.
+
+How to specify column and bean property name mapping?
+-----------------------------------------------------
+- By default:
+	- properies are optional
+	- if properties are strings values are mapped as is
+	- if properties are not strings they are converted 
+	
+https://uk-jira.enghouseinteractive.com/browse/ANDFD-544
+
+
+Case 1:	without header
+
+
+Case 2:	with header with property names
+	- You can specify property names in 
+If property name specified 
+
+
+Case 3:	with header with custom names
+
+
 
 ------------------------------------------------------------------------------------------------------------------------------
 Mapping strategies
 ==================
 HeaderColumnNameMappingStrategy
 -------------------------------
+Maps data to objects using the column names in the first row of the CSV file as reference. 
+This way the column order does not matter.
+
 It's an interface to define the mapping between the data being written to the header of the CSV. 
 
 - Reading CSV:
