@@ -106,6 +106,9 @@ tcpdump -i <interface> -s 65535 -w <some-file>
 		
 	Older versions of tcpdump truncate packets to 68 or 96 bytes. If this is the case, use -s to capture full-sized packets:		
 
+OR use tshark. E.g:
+
+	tshark -R "ip.addr == 10.51.51.32" -w tls.pcap 
 
 
 ------------------------------------------------------------------------------------------------------------------------------
