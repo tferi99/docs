@@ -277,7 +277,23 @@ Limitations
 ===========
 - Headers in output CSV are always written in CAPITAL
 - You cannot specify quotation of specific fields. All always ON or OFF.
-- @CsvNumber works unexpectedly - dont use it
+- @CsvNumber works unexpectedly, maybe depends on localization - dont use it, forget it.
+	Workaround: 
+		- use DecimalFormat:
+		
+			NumberFormat nf = DecimalFormat.getInstance(Locale.ENGLISH);
+			DecimalFormat decimalFormatter = (DecimalFormat) nf;
+			decimalFormatter.applyPattern("#,###,###.##");
+			String fString = decimalFormatter.format(number);
+			System.out.println(fString);
 
-
-
+			Rounding based on this setting:
+				decimalFormat.setRoundingMode(RoundingMode.CEILING);
+				decimalFormat.setRoundingMode(RoundingMode.FLOOR);
+				decimalFormat.setRoundingMode(RoundingMode.HALF_DOWN);
+				decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+				decimalFormat.setRoundingMode(RoundingMode.UP);
+		
+		- OR use String.format(...):
+		
+			System.out.println(String.format("%,.2f", number));
