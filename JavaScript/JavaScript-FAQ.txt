@@ -38,6 +38,7 @@ OO
 Tips
 ----
 - Howto call a function asynchronously by timer?
+- Three dots ( … ) in JavaScript
 
 Debug, log, trace
 -----------------
@@ -711,5 +712,9 @@ f();  // 6
 		{x: c} = {x: a + b}				// DESCTRUCTURING object {x:val} into x then RENAMING into c
 		
 		
-		
+------------------------------------------------------------------------------------------------
+Three dots ( … ) in JavaScript
+==============================
+GO TO: ES6/ES6-FAQ.txt
+
 		

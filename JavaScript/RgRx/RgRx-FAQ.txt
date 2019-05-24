@@ -1,0 +1,331 @@
+========
+RgRx FAQ
+========
+
+Basics
+------
+- Installation
+- How to generate basics?
+
+
+General
+-------
+- Steps - How to use it?
+- How to setup Store Development Tools?
+- Concept
+- How we can specify initial state of store?
+- What is a side-effect?
+
+Tips
+----
+- How to specify root object of module specific part of store?
+
+Troubleshooting
+---------------
+- ERROR: StaticInjectorError... [...Effects -> Actions]: ... NullInjectorError: No provider for Actions!
+
+
+
+---------------------------------------------------------------------------------------------------------------
+Installation
+============
+- install:
+
+	npm install @ngrx/schematics --save-dev
+	npm install @ngrx/store @ngrx/effects @ngrx/store-devtools @ngrx/router-store @ngrx/entity --save
+
+- set @ngrx/schematics as default schematic collection:
+
+	ng config cli.defaultCollection @ngrx/schematics
+
+  This command adds the following to the angular.json file:
+
+	"cli": {
+		"defaultCollection": "@ngrx/schematics"
+	}
+
+
+---------------------------------------------------------------------------------------------------------------
+How to setup Store Development Tools?
+=====================================
+1. npm install @ngrx/store-devtools --save
+
+2. If you generate a store with schematics this way:
+
+		ng generate store AppState --root --module app.module.ts
+		
+	It adds Store and StoreDevtoolsModule to module:
+
+		@NgModule({
+		  ...
+		  imports: [
+			...
+			StoreModule.forRoot(reducers, { metaReducers }),											<<<<< store
+			!environment.production ? StoreDevtoolsModule.instrument() : [],							<<<<< dev tools
+		  ]
+		})
+
+3. Install Chrome extension:	Redux DevTools
+
+
+---------------------------------------------------------------------------------------------------------------
+Concept
+=======
+1. Action dipatched to store
+2. Store calculates new store from current state and action payload
+	- by calling all reducers from reducers map
+	- a reducer catches action by type and handles it 
+
+
+         dispatch
+Action -----------> 
+
+
+- Application state fragmented into 'state' (pieces) which are maintained by reducers.
+- A single reducer is responsible only for a piece of the state
+- state partitions are embedded by state interface
+
+Elements:
+	- Store (imported into module)
+		--> Reducers (reducers/index.js) - is a map of application state partition and reducer functions
+			--> Reducer function
+				- swith-case by action types --> <module>/<module>Actions.js		
+		
+			--> State partition <--- embedded by AppState interface
+				- piece-1 ---> type state1 (or interface)
+				- piece-2 ---> type state2 (or interface)
+				...
+				- piece-N ---> type stateN (or interface)
+	
+	
+	
+	
+Store --> Reducers --> Reducer function
+                   --> State partition
+	
+
+
+
+
+---------------------------------------------------------------------------------------------------------------
+How we can specify initial state of store?
+==========================================
+- Initial state calculated in response of first 'init' action
+- On 'init' action - as usual - ALL REDUCERS are called
+- initially reducer get 'undefined' as initial state, so we can assign initial state as DEFAULT PARAMATER to reducer
+
+For example:
+
+	reducers/index.js
+
+	type AuthState = {
+	  loggedIn: boolean,
+	  user: User
+	};
+
+	const initialAuthState: AuthState = {
+	  loggedIn: false,
+	  user: undefined
+	};
+
+	function authReducer(state: AuthState = initialAuthState, action): AuthState {
+	  switch (action.type) {
+		case AuthActionTypes.LoginAction:
+		  return {
+			loggedIn: true,
+			user: action.payload.user
+		  };
+		  ...
+		default:
+		  return state;
+	  }
+	}
+
+
+---------------------------------------------------------------------------------------------------------------
+Steps - How to use it?
+======================
+
+1. At the beginning add a store to a package
+
+	Generate store into a package:
+
+		ng generate store AppState --root --module app.module.ts
+		
+		
+	By default index.js is generated into /reducers directory.
+	To change it specify --statePath <dir>
+
+	For example:
+
+		ng generate store AppStore --statePath ngrx/reducers --root --module ngrx/ngrx.module.ts
+
+		
+2. Define action file
+	Action file contains action types and actions which are emitted by this module.
+	File:
+	
+		<module path>/<action file>.action.ts
+	
+	You can generate action file into your module with schematics:
+	
+		ng generate action <module path>/<action file>
+		
+	For example:
+	
+		ng generate action auth/Auth
+		
+	Here you have to specify:
+		- action types
+		- actions with payloads
+		
+	FREQUENTY USED CONVENTION: 
+	Data object shipped by action contained by 'payload' member of action:
+	
+		export enum AuthActionTypes {
+		  LoginAction = '[Login] Action',
+		  // ... other action types
+		}
+
+		// Login action
+		export class Login implements Action {
+		  readonly type = AuthActionTypes.LoginAction;
+
+		  constructor(public payload: {user: User}) {}					// <<<<<<<<<<<<<<<<< payload
+		}
+			
+		
+3. Dispatch action from a component or backend service with a payload:
+
+	store.dispatch(new Login({user}))
+
+	
+4. Build state, add reducers
+
+	- reducers/index.js
+		Reducers are in index.js generated by store generation.
+		
+		This JS contains:
+		- state interface
+		- map of reducers 
+	
+	- Method 1: add everything to global reducers directly
+	
+		- add action payload to state interface as property
+	
+		- add reducer function into reducers action map
+	
+		- add action handlers (switch-case)
+		
+	- Method 2: add modul-specific elements to module:
+
+		ng generate reducer <Module> --flat=false --module <module>/<module>.module.ts
+			
+		It generates: <module>/<module>.reducer.ts		
+	
+		NOTE: 
+			- it works with lazy loaded modules, too
+			- during startup 2 actions generated: 
+				- 'init' 				: store initialized
+				- 'update-reducers'		: module registered
+		
+5. Create side-effect services
+	A side effect is a usual way to synchronize the state of elements
+	outside the store transparently in the background.
+
+	You can generate side-effect service into your module with schematics:
+	
+		ng generate effect <module>/<Module> --module <module>/<module>.module.ts
+		
+	For example:
+	
+		ng generate effect auth/Auth --module auth/auth.module.ts
+
+
+6. Add selector to access a piece of state
+
+		
+---------------------------------------------------------------------------------------------------------------
+What is a side-effect?
+======================
+A side effect is a usual way to synchronize the state of elements
+outside the store transparently in the background.
+
+So the state is also being sent to 3rd-party elements (database, local storage).
+
+Side effects are implemented as services:
+
+	import { Injectable } from '@angular/core';
+	import { Actions, Effect } from '@ngrx/effects';
+
+	@Injectable()
+	export class NgrxEffects {
+
+	  constructor(private actions$: Actions) {}
+	}
+
+	'actions$' observable injected into effect service.
+	Whenever an action is dispatched to store this observable emits a value.
+
+---------------------------------------------------------------------------------------------------------------
+ERROR: StaticInjectorError... [...Effects -> Actions]: ... NullInjectorError: No provider for Actions!
+======================================================================================================
+After added Effects I got this error:
+
+	main.ts:12 Error: StaticInjectorError(AppModule)[NgrxEffects -> Actions]: 
+	  StaticInjectorError(Platform: core)[NgrxEffects -> Actions]: 
+		NullInjectorError: No provider for Actions!
+		at NullInjector.push../node_modules/@angular/core/fesm5/core.js.NullInjector.get (core.js:8896)
+		at resolveToken (core.js:9141)
+		at tryResolveToken (core.js:9085)
+		at StaticInjector.push../node_modules/@angular/core/fesm5/core.js.StaticInjector.get (core.js:8982)
+		at resolveToken (core.js:9141)
+		at tryResolveToken (core.js:9085)
+		...
+
+Fix-1
+-----
+If EffectsModule added before StoreModule into imports of (app) module, change the order.
+StoreModule SHOULD BE THE 1ST.
+		
+Fix-2
+-----
+If you generated Effects into a module add EffectsModule import into app module, too - after StoreModule:
+
+	@NgModule({
+	  declarations: [
+		...
+	  ],
+	  imports: [
+		...
+		StoreModule.forRoot(reducers, { metaReducers }),
+		!environment.production ? StoreDevtoolsModule.instrument() : [],
+		EffectsModule.forRoot([])															<<<<<<<<< here
+	  ],
+	  providers: [],
+	  bootstrap: [AppComponent]
+	})
+	export class AppModule { }
+
+			
+---------------------------------------------------------------------------------------------------------------
+How to specify root object of module specific part of store?
+============================================================
+If a module has its own reducer then payload of actions will be mapped into state with a module specific offset.
+
+This node will be specified during registering StoreModule into module:
+
+	@NgModule({
+	  declarations: [MainComponent, LoginComponent, LogoutComponent],
+	  imports: [
+		CommonModule,
+		ReactiveFormsModule,
+		StoreModule.forFeature('auth', fromAuth.authReducer),					<<<<<<<< here: 'auth'
+		EffectsModule.forFeature([AuthEffects]),
+	  ]
+	})
+	export class NgrxModule { }
+
+
+
+			

@@ -9,6 +9,7 @@ RxJS FAQ
 
 Observables
 -----------
+- Observer vs. Observable
 - Hot vs cold observables (creating)
 - How to perform a transformation on values from an observable?
 - How to process values from an observable with multiple operators?
@@ -30,6 +31,7 @@ Error handling
 
 
 
+
 ----------------------------------------------------------------------------------------------------
 Concept
 =======
@@ -47,6 +49,28 @@ Concept
 	being called a stream is that you should think of the data as continuous and not
 	really having an end, unless you explicitly define an end.
 	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Observer vs. Observable
+=======================
+this.http.get(url).subscribe(data => {
+		...
+		...
+    });
+
+	
+	this.http.get(url) 					: observable
+	this.http.get(url).subscribe(...)	: observer initialized and started
+
+Observable
+	Observable is a stream of events or data. They are often returned from Angular methods, 
+	such as the http.get and the myinputBox.valueChanges.
+
+Observer
+	The subscribe method takes in an observer. An observer has three methods:
+	- on event:	The method to process each time an item is emitted from the observable.
+	- on error:	The method to process any error that occurs.
+	- The method to clean up anything when the observer completes. 
+		This last one is seldom used when working with Angular's observables.
 	
 ----------------------------------------------------------------------------------------------------	
 What changed in RxJS 6?

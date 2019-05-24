@@ -19,6 +19,13 @@ Configuration
 - How to add global styles with Angular CLI?
 - How to access angular-cli server from external host?
 - How to specify default port (4200) of angular-cli server?
+- How to analyze/update package versions?
+
+
+Scaffolding
+-----------
+- Schematics
+- How to set default schematics collection?
 
 Directives, Components
 ----------------------
@@ -31,13 +38,16 @@ Directives, Components
 
 RxJS
 ----
-- Observer vs. Observable
 - How to bind an event observable to an HTTP element?
 
 Design, CSS
 -----------
 - How works component level CSS?
 - How to set browser title?
+
+Routing
+-------
+- How to navigate from a controller code?
 
 Tips
 ----
@@ -1146,29 +1156,6 @@ TIP:
 		
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Observer vs. Observable
-=======================
-this.http.get(url).subscribe(data => {
-		...
-		...
-    });
-
-	
-	this.http.get(url) 					: observable
-	this.http.get(url).subscribe(...)	: observer initialized and started
-
-Observable
-	Observable is a stream of events or data. They are often returned from Angular methods, 
-	such as the http.get and the myinputBox.valueChanges.
-
-Observer
-	The subscribe method takes in an observer. An observer has three methods:
-	- on event:	The method to process each time an item is emitted from the observable.
-	- on error:	The method to process any error that occurs.
-	- The method to clean up anything when the observer completes. 
-		This last one is seldom used when working with Angular's observables.
-
---------------------------------------------------------------------------------------------------------------------------------------------------
 Property 'map' does not exist on type 'Observable<...>'
 =======================================================
 For versions of RxJS 6.x.x and above, you will have to use pipeable operators as shown in the code snippet below:
@@ -1353,7 +1340,104 @@ Lifecycle hooks are:
 	- ngOnDistroy
 	
 
+https://angular.io/guide/lifecycle-hooks
 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to analyze/update package versions?		
+=======================================
+- To analyze package versions:
+
+	ng update
+	
+	
+		We analyzed your package.json, there are some packages to update:
+
+		  Name                               Version                  Command to update
+		 --------------------------------------------------------------------------------
+		  rxjs                               6.3.3 -> 6.5.2           ng update rxjs
 
 	
-https://angular.io/guide/lifecycle-hooks
+	
+	
+	
+- To update a package:
+
+	ng update <package>
+	
+	as recommended from table.
+	
+- To update all:
+
+	ng update --all
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Schematics
+==========
+- A schematic is a template-based code generator.
+- Schematics are packaged into COLLECTIONS and installed with npm.
+- Schematics that are included in the 
+
+		@schematics/angular 
+		
+	collection are run BY DEFAULT by the commands ng generate and ng add. 
+
+-  You can specify a particular schematic (or collection of schematics) to generate, using the long form:
+	
+	ng generate my-schematic-collection:my-schematic-name
+
+  OR
+  
+	ng generate my-schematic-name --collection collection-name	
+	
+- To get available schematics:
+
+		ng generate --help
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to set default schematics collection?
+=========================================
+If you want to call a schematic from a non-default colection the syntax is:
+
+	ng generate my-schematic-collection:my-schematic-name
+
+
+Call this command in a project:
+				
+	ng config cli.defaultCollection @ngrx/schematics
+
+Running this command adds the following to the angular.json file:
+
+	"cli": {
+		"defaultCollection": "@ngrx/schematics"
+	}
+
+	
+Without this you from 	
+	
+	
+After this 	you will be able to call schematics from default collection without collection name:
+
+	
+	ng generate my-schematic-name
+	
+  OR
+		
+	ng g my-schematic-name
+	
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to navigate from a controller code?
+=======================================
+- inject router 
+
+  constructor(private router: Router, ...) { }
+	
+
+- call:
+
+	this.router.navigateByUrl(url);
+	OR
+	this.router.navigate(commands);
