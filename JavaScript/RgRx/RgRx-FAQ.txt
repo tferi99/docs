@@ -18,7 +18,9 @@ General
 
 Tips
 ----
+- How to specify feature-level reducers?
 - How to specify root object of module specific part of store?
+
 
 Troubleshooting
 ---------------
@@ -244,6 +246,11 @@ Steps - How to use it?
 
 6. Add selector to access a piece of state
 
+
+7. Do all in a single step:
+
+	ng generate feature <module>/<Module> --module <module>/<module>.module.ts
+
 		
 ---------------------------------------------------------------------------------------------------------------
 What is a side-effect?
@@ -306,6 +313,13 @@ If you generated Effects into a module add EffectsModule import into app module,
 	  bootstrap: [AppComponent]
 	})
 	export class AppModule { }
+
+	
+---------------------------------------------------------------------------------------------------------------
+How to specify feature-level reducers?
+======================================
+
+
 
 			
 ---------------------------------------------------------------------------------------------------------------

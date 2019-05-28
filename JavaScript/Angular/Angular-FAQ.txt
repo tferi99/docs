@@ -39,6 +39,7 @@ Directives, Components
 RxJS
 ----
 - How to bind an event observable to an HTTP element?
+- Howto use boolean observable with async pipe and ngIf?
 
 Design, CSS
 -----------
@@ -1441,3 +1442,32 @@ How to navigate from a controller code?
 	this.router.navigateByUrl(url);
 	OR
 	this.router.navigate(commands);
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto use boolean observable with async pipe and ngIf?
+======================================================
+You have a boolean observable in a component:
+
+	main.component.ts:
+	
+		export class MainComponent implements OnInit {
+			isLoggedIn$: Observable<boolean>;
+			...
+		}
+	
+To render the true value is trivial, just use async pipe.
+But what about false? Evaluate it and compare with 'false'.
+
+	main.component.html:
+	
+		<div class="container mt-2">
+		  <ngrx-login *ngIf="(isLoggedIn$ | async) === false"></ngrx-login>
+		  <ngrx-logout *ngIf="isLoggedIn$ | async"></ngrx-logout>
+		</div>
+
+	
+
+
+
+
