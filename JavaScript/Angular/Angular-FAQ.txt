@@ -665,7 +665,7 @@ How to specify default port (4200) of angular-cli server?
 			"architect": {
 				"serve": {
 					"options": {
-						"port": 1337
+						"port": 4201
 					}
 				}
 			}
