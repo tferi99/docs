@@ -1,0 +1,11 @@
+============
+WebStorm-FAQ
+============
+
+- NPM tool window is missing
+
+------------------------------------------------------------------------------------------------------------------------------------
+NPM tool window is missing
+==========================
+Fix:	package.json/Right-mouse/Show npm Scripts
+
