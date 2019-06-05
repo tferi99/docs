@@ -1,0 +1,245 @@
+==========
+JRebel FAQ
+==========
+
+- Howto stop creating files into source directory?
+- Howto use JRebel remotely?
+- Howto enable JRebel logging?
+- Howto call static initializator during reload?
+- Calling constructor during reload
+- How to switch off auto-generating rebel.xml?
+- How to start native JRebel agent?
+
+Install
+-------
+- How to install JRebel for Idea?
+
+Spring
+------
+- Howto reload Spring beans?
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+Howto stop creating files into source directory?
+================================================
+JRebel generates rebel.xml:
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+
+		<classpath>
+			<dir name="D:/usr/andphone4/war/WEB-INF/classes">
+			</dir>
+		</classpath>
+
+		<web>
+			<link target="/">
+				<dir name="D:/usr/andphone4/WebContent">
+				</dir>
+			</link>
+		</web>
+	</application>
+
+where <web> tag contains a directory where WEB tag defines separate locations for static resources that can be referenced from
+the web application. Runtime generated files will be generated into linked location.
+
+Remove/comment out this tag to stop 
+
+!!! IMPORTANT !!!
+Remove flag 'Automatically generate rebel.xml' otherwise XML will be overwritten during next build. 
+ - Go to 'JRebel Config Centre' 
+ - Find your project in 'Projects' panel 
+ - You can find/change flag in right-mouse context menu
+ 
+---------------------------------------------------------------------------------------------------------------------------------
+Howto use JRebel remotely?
+==========================
+1. Extract JRebel on remote server (e.g. under /opt)
+
+2. Enable remote server support (menu).
+
+	It will generate rebel-remote.xml into sources.
+	
+		<?xml version="1.0" encoding="UTF-8"?>
+		<rebel-remote>
+		<id>andphone</id>
+		</rebel-remote>
+	
+
+	NOTE: 'id' should be the name of WEB application on remote server otherwise IDE won't find it.
+	
+	
+3. Add JVM parameters to remote application:
+	
+	-Drebel.remoting_plugin=true [-Drebel.log=true]
+	
+  Tomcat configuration:
+		
+		# --- jrebel ---
+		export JAVA_OPTS="-javaagent:/opt/jrebel/jrebel.jar -Drebel.remoting_plugin=true $JAVA_OPTS"
+	
+	BETTER TO USE NATIVE AGENT:
+	
+		# --- jrebel ---
+		export JAVA_OPTS="-agentpath:/opt/jrebel/lib/libjrebel64.so -Drebel.remoting_plugin=true $JAVA_OPTS"
+	
+	
+	
+		
+JRebel will cache application during startup in
+
+		~/.jrebel/cache/andphone/deployment
+	
+	where ~ is home of application user:
+	
+		/usr/share/tomcat6/.jrebel/cache/andphone/deployment
+		
+		
+
+Troubleshooting
+---------------
+You get a message like this in Tomcat log:
+
+	Error opening zip file or JAR manifest missing : /root/jrebel/jrebel.jar
+	Error occurred during initialization of VM
+
+- Check 'javaagent' setting in JAVA_OPTS, maybe it points to a wrong location.
+- Maybe tomcat user doesn't have permission to access specified location (like here, where content of /root is inaccessible for tomcat user)
+	
+	Put JRebel stuff into /opt/jrebel instead, and set permissions.
+
+	
+SEE MORE:		
+	doc\software\tools_and_languages\java\JRebel\JRebel Remoting.mht
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------
+Howto enable JRebel logging?
+============================
+Add the following JVM parameter:
+
+	-Drebel.log=true	
+		
+The jrebel.log file will be created by default in {user.home}/.jrebel directory.	
+You can override it:
+
+	-Drebel.log.file=/path/to/jrebel.log 
+	
+There are three levels of JRebel logging:
+
+	off – JRebel logging is off by default.
+	
+	debug – Enabled by adding -Drebel.log=true to your VM arguments or enabling it from the JRebel IDE plugin settings.
+			This is the “regular” log level that you should generate the log file with when asked for the jrebel.log file.
+			Minor impact on performance.
+			
+	trace – Enabled by adding -Drebel.log=trace to your VM arguments or enabling it from the JRebel IDE plugin settings.
+			This is the detailed “trace” log level for hard to debug issues. Enable this level only when asked by our support team since it generates a lot of additional info to the log file making the log file harder to read.
+			Medium impact on performance.
+	
+Additionally there are two settings that can be configured for the log file contents:
+
+	performance logging – Enabled by adding -Drebel.log.perf=true to your VM arguments.
+							Add this flag when you are having performance issues.
+							Major impact on performance.
+							
+	http request logging – Enabled by adding -Drebel.log.request=true to your VM arguments.
+							Add this flag only when requested, it will log the HTTP requests to your web application.
+							
+							
+---------------------------------------------------------------------------------------------------------------------------------
+Howto reload Spring beans?
+==========================
+JRebel Spring plugin takes advantage of JRebel class reloading to reload Spring dependencies. 
+It supports registering new Spring beans, adding/removing dependencies and adding new MVC controllers and handler methods. 
+These can be done using either XML configuration or annotations. The minimal supported Spring version is 2.0.x.
+
+Plugin does the followings:
+
+1. Reload all changes to configuration. This stage will reload all Spring XMLs and find new @Component/@Service/@Controller annotated beans. 
+	It will not have any effect on existing beans, but all beans created after that will be configured according to the newly loaded metadata.
+	
+2. Call 
+
+		AutowireCapableBeanFactory.configureBean() 
+		
+	on all singletons that had code changes in this session. This will reinject all configured field or method dependencies on those singletons.
+							
+							
+---------------------------------------------------------------------------------------------------------------------------------
+Howto call static initializator during reload?
+==============================================
+By default NO.
+
+This is by design. Static initializers are run only when new static variables are introduced, 
+otherwise it falls into the category of JRebel preserving your application state.
+
+Add a dummy static variable and change its name.
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+Calling constructor during reload
+=================================
+Re-invoking the constructor will break the existing bean’s state 
+so this is very unlikely that this will ever be implemented.
+
+:((((((
+
+---------------------------------------------------------------------------------------------------------------------------------
+How to switch off auto-generating rebel.xml?
+============================================
+Since version 5.2 rebel.xml re-generated during build by default.
+
+You can setup behavior per projects. To switch off uncheck this option:
+
+Eclipse:
+	Project/Properties/JRebel/rebel.xml generator setting/[Generate on Build]
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------
+How to install JRebel for Idea?	
+================================
+- Go to: 		Settings/Plugin
+- Browse Repository
+- Find JRebel
+- Right mouse and 'Download and Install'
+- Restart
+
+NOTE:
+	In 64bit version of Idea 12 JRebel icons are not displayed in toolbar, ONLY EMPTY BUTTONS.
+	But it works.
+	
+
+---------------------------------------------------------------------------------------------------------------------------------
+How to start native JRebel agent?
+=================================
+Windows
+	64-bit JDK:
+
+		java -agentpath:<JREBEL_HOME>\lib\jrebel64.dll foo.bar.MyServer
+
+	32-bit JDK:
+
+		java -agentpath:<JREBEL_HOME>\lib\jrebel32.dll foo.bar.MyServer
+
+Mac OS
+
+	64-bit JDK:
+
+		java -agentpath:<JREBEL_HOME>/lib/libjrebel64.dylib foo.bar.MyServer
+		
+	32-bit JDK:
+
+		java -agentpath:<JREBEL_HOME>/lib/libjrebel32.dylib foo.bar.MyServer
+
+Linux
+
+	64-bit JDK:
+
+		java -agentpath:<JREBEL_HOME>/lib/libjrebel64.so foo.bar.MyServer
+		
+	32-bit JDK:
+
+		java -agentpath:<JREBEL_HOME>/lib/libjrebel32.so foo.bar.MyServer
+
+
