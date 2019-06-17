@@ -1,0 +1,21 @@
+=========================
+Maintenance configuration
+=========================
+- CronJob is a Quartz Job implementation.
+- created in global.Module.init(...)
+- event listener is global.Module 
+
+
+Configuration
+-------------
+- APAS/Global/Configuration CUCM
+- APAS/Recorder/Configuration
+
+Execution
+---------
+Daily maintenance:
+	--> CronJob.execute(...)
+		--> CronJob.cronEvent(...)						<<<<<<<<< CronEventListener callback
+			--> global.Module.cronEvent(...)
+				-->	global.Module.doDailyMaintenanceJob()
+					
