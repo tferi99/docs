@@ -16,10 +16,17 @@ General
 - How we can specify initial state of store?
 - What is a side-effect?
 
+Reducers
+--------
+
+Selectors
+---------
+
 Tips
 ----
 - How to specify feature-level reducers?
 - How to specify root object of module specific part of store?
+- How to retrieve an object tree for modification?
 
 
 Troubleshooting
@@ -342,4 +349,41 @@ This node will be specified during registering StoreModule into module:
 
 
 
-			
+---------------------------------------------------------------------------------------------------------------
+How to retrieve an object tree for modification?
+================================================
+Main rule: don't mutate previos state.
+
+That means if you retrieve an object from store you cannot change members of it.
+
+- Solution 1 - simple object:
+	If you have a simple object in sub-tree and you want to change properties directly use spread operator:
+	
+	
+- Solution 2 - multi-level object tree:
+	If you have a complex object you want to change properties directly create a deep-copy from it:
+	
+		import * as _ from 'lodash';
+
+		ngOnInit() {
+			this.gridSubscription = this.store.pipe(
+				select(selectGrids),
+			).subscribe(
+				grids => this.dashboard = _.cloneDeep(grids)					<<<<<<<<<<<<<<<<<< deep copy
+			);
+		}
+		
+- Solution 3 - simple object with form
+	With reactive form (created by FormBuilder) you can change a properties of an object directly,
+	since inthis case form values copied from store object:
+	
+	
+		this.form = fb.group({
+			description: [course.description, Validators.required],						<<<<<< course is an object from state
+			category: [course.category, Validators.required],
+			longDescription: [course.longDescription, Validators.required],
+			promo: [course.promo, []]
+		}
+	
+
+
