@@ -10,7 +10,7 @@ RxJS FAQ
 Observables
 -----------
 - Observer vs. Observable
-- Hot vs cold observables (creating)
+- Hot vs cold observables
 - How to perform a transformation on values from an observable?
 - How to process values from an observable with multiple operators?
 - How to join multiple observables into single onserver?
@@ -354,6 +354,8 @@ using catchError() operator:
 ----------------------------------------------------------------------------------------------------
 Hot vs cold observables
 =======================
+COLD
+----
 - COLD is when your observable creates the producer (Producers created *inside*)
 - Producer created and activated during subscription:
 - Subscription is receiving all emitted values
@@ -380,6 +382,8 @@ Hot vs cold observables
 		  () => name + ' COMPLETED'
 		);
 			
+HOT
+---			
 - Producers created *outside*
 - Not guaranteeded that subscription is receiving all emitted values
 
