@@ -88,11 +88,12 @@ Maintenance
 - Maintenance configuration
 - Backup-restore
 
-WebClient
----------
+Web/WebClient
+-------------
 - RNL popup
 - WebClient pushed events
 - WebClient authentication
+- Pushing APAS events with Atmosphere
 
 REST API
 --------

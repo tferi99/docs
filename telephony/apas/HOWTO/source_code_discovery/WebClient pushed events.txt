@@ -14,7 +14,7 @@ WebClient Events
 - QeueueChangedWebEvt
 - RecordingCreatedWebEvt
 - TermConnDroppedWebEvt
-Call- TermConnRingingWebEvt
+- TermConnRingingWebEvt
 - TerminalInServiceWebEvt
 - UpdateGroupStateWebEvt
 - UpdateRecordingOnDemandWebEvt
