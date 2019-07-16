@@ -8,6 +8,7 @@ General
 - Build architecture
 	- Bootstrap (4 or above)
 	- FontAwesome
+- How to add Bootstrap to an Angular project?
 - Bootstrapping Angular application
 - Lifecycle Hooks
 
@@ -102,6 +103,32 @@ Troubleshooting
 - ERROR: Uncaught Error: Encountered undefined provider! Usually this means you have a circular dependencies
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
+How to add Bootstrap to an Angular project?
+===========================================
+SEE ALSO:	https://ng-bootstrap.github.io/#/getting-started
+
+NOTE:	Should I add bootstrap.js or bootstrap.min.js to my project?
+
+			No, the goal of ng-bootstrap is to completely replace JavaScript implementation for components. 
+			Nor should you include other dependencies like jQuery or popper.js. 
+			It is not necessary and might interfere with ng-bootstrap code.
+			
+- Installation:			
+
+	npm install --save @ng-bootstrap/ng-bootstrap
+
+- Usage:
+
+	import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+
+	@NgModule({
+	  ...
+	  imports: [NgbModule, ...],
+	  ...
+	})
+	export class YourAppModule {
+	}	
+--------------------------------------------------------------------------------------------------------------------------------------------------
 Build architecture
 ==================
 Prerequisities:
@@ -122,10 +149,12 @@ Install the following packages:
 		Codelyzer:		A set of tslint rules for static code analysis of Angular TypeScript projects.
 
 Optional:
-
+	
 	Bootstrap (4 or above):		
-
-		ng add @ng-bootstrap/schematics
+		
+		npm install --save @ng-bootstrap/ng-bootstrap
+		
+		SEE ALSO:		How to add Bootstrap to an Angular project?	
 		
 	FontAwesome:
 		Method 1 - npm:

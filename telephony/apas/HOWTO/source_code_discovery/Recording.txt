@@ -611,7 +611,7 @@ GWT page
 			
 com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain  (Search button) ===> 
 	--> RemoteSearchRecordingFiles(...)
-		RCP --> com.andtek.andphone.recorder.gwtapp.server.RemoteSearchRecordingFiles(...)
+		RCP --> com.andtek.andphone.recorder.gwtapp.server.RPCrecorderServiceImpl.RemoteSearchRecordingFiles(...)
 				--> wherer = buildCompleteRecordingWhereClause(userattrs)
 					--> SELECT FROM rec_call ...
 					
