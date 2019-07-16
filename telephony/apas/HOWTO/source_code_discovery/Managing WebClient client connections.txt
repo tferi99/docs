@@ -1,0 +1,26 @@
+=====================================
+Managing WebClient client connections
+=====================================
+
+- Search active clients:
+
+	APAS/Client/Active Clients/(Search)
+
+--> com.andtek.andphone.andmobile.gwtapp.client.activeclient_gwtappMain
+	--> buildSearchPanel()
+		- searchButton
+			--> RemoteGetActiveClientsList(...)
+				--> buildDynamicListGrid(...)
+					-- RCP --> com.andtek.andphone.andmobile.gwtapp.server.RPCandmobileServiceImpl.RemoteGetActiveClientsList
+						- ALL:  clientType == -1
+						--> servers = JTAPIThread.CLIENTCORE.getAllServer();
+							------------------------------- loop on servers -------------------------------
+							--> activeConnenctions = server.getClientConnections()
+								
+								WebClient -	server = com.andtek.andphone.andmobile.AndMobileServer
+
+Server types displayed from:
+
+		com.andtek.andphone.clientcore.GenericCommServerIF.SERVER_TYPES 
+			and 
+		SERVER_DISPLAY_NAMES
