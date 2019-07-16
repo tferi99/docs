@@ -10,7 +10,7 @@ RxJS FAQ
 Observables
 -----------
 - Observer vs. Observable
-- Hot vs cold observables (creating)
+- Hot vs cold observables
 - How to perform a transformation on values from an observable?
 - How to process values from an observable with multiple operators?
 - How to join multiple observables into single onserver?
@@ -20,6 +20,9 @@ Operators
 ---------
 - How to share an observable (shareReplay)?
 
+Troubleshooting, testing
+------------------------
+How to test RxJs?
 
 Angular
 -------
@@ -28,7 +31,6 @@ Angular
 Error handling
 --------------
 - Error handling strategies
-
 
 
 
@@ -354,6 +356,8 @@ using catchError() operator:
 ----------------------------------------------------------------------------------------------------
 Hot vs cold observables
 =======================
+COLD
+----
 - COLD is when your observable creates the producer (Producers created *inside*)
 - Producer created and activated during subscription:
 - Subscription is receiving all emitted values
@@ -380,6 +384,8 @@ Hot vs cold observables
 		  () => name + ' COMPLETED'
 		);
 			
+HOT
+---			
 - Producers created *outside*
 - Not guaranteeded that subscription is receiving all emitted values
 
@@ -499,4 +505,36 @@ Method 3 - async pipe:
 	Async pipe unsubscribes automatically when the component gets destroyed 
 	(removes a lot of unsubscribe logic).
 	
+
+----------------------------------------------------------------------------------------------------
+How to test RxJs?
+=================
+RxJs watcher is a browser extension (Chrome, Firefox) to visualize Rxjs observables.
+
+Usage:
+- Install npm package
+
+	npm i rxjs-watcher --save-dev
+
+- Install browser extension for chrome or firefox
 	
+- Add watch() operator to observable pipe.
+
+	import { watch } from "rxjs-watcher";
+
+	interval(2000).pipe(
+		watch("Interval (2000)", 10),
+		filter(v => v % 2 === 0),
+		watch("Filter odd numbers out", 10),
+	).subscribe();
+
+- You can also group your marbles in to sections by using "getGroup" functions which returns rxjs operator.	
+	
+	const innerWatch = getGroup("Inner");
+	interval(2000).pipe(
+		watch("Interval (2000)", 10),
+		switchMap(id => interval(500).pipe(innerWatch("Interval (500)"))),
+		watch("SwitchMap to interval(500)", 10),
+		take(10)
+	).subscribe();
+

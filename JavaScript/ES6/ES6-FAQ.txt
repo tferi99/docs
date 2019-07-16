@@ -10,6 +10,11 @@ New features
 ------------
 - Three dots ( … ) in JavaScript
 
+Tips
+----
+- How to copy data with spread operator?
+
+
 ---------------------------------------------------------------------------------------------------------------------------------
 How to include modules?
 =======================
@@ -79,5 +84,21 @@ Conclusion
 ----------
 - three dots (…) is at the end of function parameters:		it's "rest parameters" and gathers the rest of the list of arguments into an array.
 - three dots (…) occurs in a function call or alike:		it's called a "spread operator" and expands an array into a list.			
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+How to copy data with spread operator?
+======================================
+Objects:
+
+	var newObj = {...obj};
+	
+Array:
+
+	var newArr = [...arr];
+	
+	
+	
 
 
