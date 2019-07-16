@@ -1,0 +1,27 @@
+=============
+User Profiles
+=============
+
+Database
+--------
+- generic_profiles
+	- desktop_profiles	(Desktop Client)
+	- webuser_profiles	(WebClient)
+	- webattendant_profiles	(WebAttendant)
+
+
+
+
+User Interface
+--------------
+- APAS/Client/Profiles:
+	--> profiles_gwtappMain.RemoteGetProfilesList()
+		-- RPC --> RPCandmobileServiceImpl.RemoteGetProfilesList()
+			--> GenericProfileIF[] profiles = GenericProfile.getAllProfiles()
+				- getting profiles from GenericProfile.profiles
+				----------------------- if profiles empty -----------------------
+					--> load()
+						
+						SELECT * FROM generic_profiles ORDER BY name
+					
+				

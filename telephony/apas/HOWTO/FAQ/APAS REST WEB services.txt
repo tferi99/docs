@@ -19,6 +19,7 @@ General REST API
 Config:					springApasRestAPI-servlet.xml
 Component scan base:	com.andtek.andphone.api
 URI  pattern:			/api/*		
+Security config:		src/apas-restapi-spring-security.xml
 
 Communicator
 ------------
@@ -31,7 +32,7 @@ Recorder
 --------
 Config:					springRecorder-servlet.xml
 Component scan base:	com.andtek.andphone.recorder.web
-URI  pattern:			/recorder/*		
+URI  pattern:			/recorder/*
 
 WebClient API
 -------------

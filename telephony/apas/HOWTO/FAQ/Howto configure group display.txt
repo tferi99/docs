@@ -11,6 +11,6 @@ Howto configure group display?
 Troubleshooting
 ---------------
 - com.andtek.andphone.ANDCallObserver should be listen on line
-
+- com.andtek.andphone.partner.RPGroupObserver registered on RP configured in APAS/Group/Settings/[Group Service]
 - IP address should be correct in CUCM settings
 

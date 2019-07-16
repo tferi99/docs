@@ -35,7 +35,7 @@ Authentication
         auth_profiles ----------- pools ------------ webuser_profiles ------- generic_profiles
 	
 NOTE:
-	There are not  contraints in database to protect associations but APAS tries to force association rules.
+	There are not contraints in database to protect associations but APAS tries to force association rules.
 	
 	
 3. Finally it loads user settings
@@ -44,27 +44,149 @@ NOTE:
 	During authentication assigned pool name added as group to user dinamically.
 
 	
-LoginCtrl CONTROLLER
+
+
+Configuration
+-------------
+Authentication configured in springApasRestAPI-servlet.xml which calls NormalLoginAuthenticationProvider
+
+	<http>	--> <form-login>
+			--> <authentication-manager id="webClientAuthenticationManager"> 
+				--> <beansid="customAuthenticationProvider" class="com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider"/>
+
+
+
+	- WebClient calls auth entry point of Spring Security (login-processing-url="/rest-api/login"):
+
+			<form-login 
+				 always-use-default-target='false' 
+				 login-page="/rest-api/login/401"
+				 login-processing-url="/rest-api/login" 
+				 default-target-url="/rest-api/login/200" 
+				 authentication-failure-url="/rest-api/login/403" /> 
+
+	- this request processed by NormalLoginAuthenticationProvider
 	
---> LoginSvc.logMeIn(userName)
-	- userName == undefined : get logged user 
-		--> getCurrentUser()
-			success:
-				--> fillProfile() [1]
-	- username specified
-		--> LoginSvc.login()
-			success:
-				--> fillProfile() [1]
+	- on success request redirected to default-target-url (/rest-api/login/200)
 
-	success:
-		- if profile.id found
-			SettingsSvc.getUserSettings()
-		- if profile.id NOT found
+
+Call stack
+----------
+LoginCtrl CONTROLLER (controller_login.js)
+--> $scope.login
+	--> LoginSvc.logMeIn(userName)
+		---------------------- userName  ----------------------
+			--> login(userName, ...)
+				--> REST: /andphone/rest-api/login
+					-->  Spring Security entry point
+						--> LoginSvc.login() [1]
+						
+		---------------------- userName == undefined ----------------------
+			--> getCurrentUser()
+				--> REST: /andphone/rest-api/login/check
+					==> self.user
+				- success:
+					--> fillProfile() [2]
+		- username specified
+			--> LoginSvc.login()
+				success:
+					--> fillProfile() [2]
+
+		success:
+			- if profile.id found
+				SettingsSvc.getUserSettings()
+			- if profile.id NOT found
+				MidflightAuth.requestAuth();				<<<<<<<<<<<< redirect to login page
+		error:
 			MidflightAuth.requestAuth();				<<<<<<<<<<<< redirect to login page
-	error:
-		MidflightAuth.requestAuth();				<<<<<<<<<<<< redirect to login page
+						
 
-[1]
+		
+[1]		
+	--> LoginSvc.login()
+	WebClient authentication performed similarly to APAS authentication:
+	- Usernap/password pair is authenticated AGAINST AUTHENTICATION PROFILES calling ANDRealm.authenticate(...).
+
+	- Authentication profiles are in a list ordered by priority and authentication process iterates on this list till 
+		the FIRST successful authentication.
+		
+	- Only difference is that WebClient calls this functionality via SpringSecurity and APAS directly from GWT.
+
+
+	Types from AuthenticationProfileIF:
+			public static final int AUTH_PROFILE_LOCAL_USERS = 0;
+			public static final int AUTH_PROFILE_TOMCAT_USERS = 1;
+			public static final int AUTH_PROFILE_AD_DOMAIN = 2;
+			public static final int AUTH_PROFILE_CUCM_AXL = 3;
+			
+	You can add only these profiles by APAS:
+		- Active Directory
+		- CUCM AXL
+		
+
+	SpringSecurity configuration:  		applicationContext-security.xml
+
+			<form-login
+				...
+				login-processing-url="/rest-api/login"
+				...
+			/>
+			
+			<authentication-manager id="webClientAuthenticationManager">
+				<authentication-provider ref="customAuthenticationProvider" />
+			</authentication-manager>
+
+			<bean id="customAuthenticationProvider" class="com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider"/>
+
+	CLIENT:		service_login.js
+		
+		LoginSvc.login({name, password, rememberme, forceLogin})
+			--> POST: /andphone/rest-api/login									<<<<<<<< SpringSecurity login-processing-url
+				j_username: loginData.name
+				j_password: loginData.password
+				_spring_security_remember_me:  loginData.rememberme
+				force_login: loginData.forceLogin
+				
+				Content-Type: 'application/x-www-form-urlencoded; charset=UTF-8'
+
+				
+
+				
+	SERVER:
+
+			Spring Security model for authentication:
+				
+				authentication manager -> authentication provider -> userdetails service
+
+			APAS model for authentication:			
+				
+				webClientAuthenticationManager -> NormalLoginAuthenticationProvider -> ANDRealm -> authentication profiles
+				
+			--> webClientAuthenticationManager
+				--> customAuthenticationProvider:	com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider.authenticate(Authentication auth)
+					--> authResult = com.andtek.andphone.users.securityfilter.service.impl.LoginServiceImpl.authenticate(userName, password)
+						--> ANDRealm.authenticate(userName, password)
+						
+							SELECT * FROM auth_profiles WHERE enabled=? ORDER BY priority
+							
+							------------------------- loop on auth_profiles ------------------------
+							profile.authenticate(username, password, this)
+							
+								--> CucmAXLAuthenticationProfile.authenticate(String username, String password, ANDRealm andRealm)
+							
+							
+					authResult == NULL --> cache.invalidateByName(userName);
+					
+					--> UserDetails userDetails = new RememberMeUserDetails(userName, password, authResult)
+					--> cache.put(userName, userDetails)
+					--> adding to authorities
+					<== UsernamePasswordAuthenticationToken(userDetails, "", authorities)
+
+			APAS user object:
+			
+				ANDUser -> RememberMeUserDetails -> UsernamePasswordAuthenticationToken
+			
+[2]
 	--> LoginSvc.fillProfile()
 		--> ProfileSvc.getCurrentUserProfile()
 			GET:	/andphone/rest-api/users/profile
@@ -84,91 +206,16 @@ LoginCtrl CONTROLLER
 								
 								During authentication assigned pool name added as group to user dinamically.
 							
-		
-LoginSvc.login()
-----------------				
-WebClient authentication performed similarly to APAS authentication:
-- Usernap/password pair is authenticated AGAINST AUTHENTICATION PROFILES calling ANDRealm.authenticate(...).
 
-- Authentication profiles are in a list ordered by priority and authentication process iterates on this list till 
-	the FIRST successful authentication.
-	
-- Only difference is that WebClient calls this functionality via SpringSecurity and APAS directly from GWT.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Logout
+======
+Configured in springApasRestAPI-servlet.xml:
+
+	<logout invalidate-session="true" logout-url="/rest-api/logout" logout-success-url="/rest-api/logout/200" />
 
 
-Types from AuthenticationProfileIF:
-		public static final int AUTH_PROFILE_LOCAL_USERS = 0;
-		public static final int AUTH_PROFILE_TOMCAT_USERS = 1;
-		public static final int AUTH_PROFILE_AD_DOMAIN = 2;
-		public static final int AUTH_PROFILE_CUCM_AXL = 3;
-		
-You can add only these profiles by APAS:
-	- Active Directory
-	- CUCM AXL
-	
-
-SpringSecurity configuration:  		applicationContext-security.xml
-
-		<form-login
-			...
-			login-processing-url="/rest-api/login"
-			...
-		/>
-		
-		<authentication-manager id="webClientAuthenticationManager">
-			<authentication-provider ref="customAuthenticationProvider" />
-		</authentication-manager>
-
-		<bean id="customAuthenticationProvider" class="com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider"/>
-
-CLIENT:		service_login.js
-	
-	LoginSvc.login({name, password, rememberme, forceLogin})
-		--> POST: /andphone/rest-api/login									<<<<<<<< SpringSecurity login-processing-url
-			j_username: loginData.name
-			j_password: loginData.password
-			_spring_security_remember_me:  loginData.rememberme
-			force_login: loginData.forceLogin
-			
-			Content-Type: 'application/x-www-form-urlencoded; charset=UTF-8'
-
-			
-
-			
-SERVER:
-
-		Spring Security model for authentication:
-			
-			authentication manager -> authentication provider -> userdetails service
-
-		APAS model for authentication:			
-			
-			webClientAuthenticationManager -> NormalLoginAuthenticationProvider -> ANDRealm -> authentication profiles
-			
-		--> webClientAuthenticationManager
-			--> customAuthenticationProvider:	com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider.authenticate(Authentication auth)
-				--> authResult = com.andtek.andphone.users.securityfilter.service.impl.LoginServiceImpl.authenticate(userName, password)
-					--> ANDRealm.authenticate(userName, password)
-					
-						SELECT * FROM auth_profiles WHERE enabled=? ORDER BY priority
-						
-						------------------------- loop on auth_profiles ------------------------
-						profile.authenticate(username, password, this)
-						
-							--> CucmAXLAuthenticationProfile.authenticate(String username, String password, ANDRealm andRealm)
-						
-						
-				authResult == NULL --> cache.invalidateByName(userName);
-				
-				--> UserDetails userDetails = new RememberMeUserDetails(userName, password, authResult)
-				--> cache.put(userName, userDetails)
-				--> adding to authorities
-				<== UsernamePasswordAuthenticationToken(userDetails, "", authorities)
-
-		APAS user object:
-		
-			ANDUser -> RememberMeUserDetails -> UsernamePasswordAuthenticationToken
-			
+							
 				
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SAML SSO

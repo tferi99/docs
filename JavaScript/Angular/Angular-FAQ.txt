@@ -99,7 +99,6 @@ Troubleshooting
 - ERROR: No provider for ControlContainer ("[ERROR ->]<form...
 - ERROR: Uncaught Error: Unexpected directive '...' imported by the module '...'. Please add a @NgModule annotation
 - ERROR: Error: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked.
-- ERROR: Uncaught Error: Encountered undefined provider! Usually this means you have a circular dependencies
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Build architecture
@@ -1466,12 +1465,4 @@ But what about false? Evaluate it and compare with 'false'.
 		  <ngrx-login *ngIf="(isLoggedIn$ | async) === false"></ngrx-login>
 		  <ngrx-logout *ngIf="isLoggedIn$ | async"></ngrx-logout>
 		</div>
-
---------------------------------------------------------------------------------------------------------------------------------------------------
-ERROR: Uncaught Error: Encountered undefined provider! Usually this means you have a circular dependencies	
-==========================================================================================================
-
-
-
-
 

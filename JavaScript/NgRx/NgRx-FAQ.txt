@@ -10,6 +10,7 @@ Basics
 
 General
 -------
+- FUC (Frequently Used Commands)
 - Steps - How to use it?
 - How to setup Store Development Tools?
 - Concept
@@ -26,6 +27,16 @@ Tips
 Troubleshooting
 ---------------
 - ERROR: StaticInjectorError... [...Effects -> Actions]: ... NullInjectorError: No provider for Actions!
+
+
+
+
+---------------------------------------------------------------------------------------------------------------
+FUC (Frequently Used Commands)
+==============================
+Generating a feature into 'reducers' directory and register into app.module:
+
+	ng g f reducers/Telephony -m app.module.ts
 
 
 
@@ -144,6 +155,8 @@ For example:
 	  }
 	}
 
+	
+- Usable commands	
 
 ---------------------------------------------------------------------------------------------------------------
 Steps - How to use it?
