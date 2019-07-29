@@ -46,9 +46,7 @@ Desktop client
 
 Media
 -----
-- Queue media upload
-- Queue media streaming
-- Silent monitoring
+- Media in APAS
 - Text-to-Speech (TTS)
 
 Recording

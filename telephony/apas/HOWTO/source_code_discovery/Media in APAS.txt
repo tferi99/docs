@@ -1,11 +1,143 @@
-=====================
-Queue media streaming
-=====================
+=============
+Media in APAS
+=============
 
+- Media configuration
+- Media playback
+- Queue media streaming
+
+Queue media streaming
+---------------------
 - Streaming pre-queue media
 - Streaming queue media
-- Wireshark
 
+Debug
+-----
+- Debugging RTP packets with Wireshark
+ 
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Media configuration
+===================
+
+APAS/Global/Media/(Add)
+
+- A metadata record will be inserted into 'media' DB table about uploaded media.
+- Uploaded media will be saved into media directory, file name contains metadata ID:
+
+	APAS_WEB_APP/modules/global/media/<ID>_ulaw.wav
+
+
+Media List
+----------
+
+	UI rendering 
+	------------
+		medialist_gwtappMain.onModuleLoad()
+			--> RemoteGetDataRowsFromMediaTable()
+				--> RPCServletService.RemoteGetDataRowsFromMediaTable(...)
+					-- RPC --> RPCglobalServiceImpl.RemoteGetDataRowsFromMediaTable()						<<< it reads uploaded media from DB 'media'
+						-- CALLBACK --> onSuccess
+							--> buildDynamicListGrid(datarows);												
+								- rendering 'Add' and 'Delete' button
+								- building media list table 
+								- listners on edit icon click and dblclick on row ===> calls media dialog
+								
+	Event handling
+	--------------
+	- 'Delete' button
+		- collecting IDs of selected rows into ',' separated list
+		--> confirm message box
+			-- CALLBACK --> execute
+				--> RemoteDeleteRowsMediaTable(getKeys())
+					--> RPCServletService.RemoteDeleteRowsMediaTable(keys, new AndGWTAsyncCallback()
+						-- RPC --> RPCglobalServiceImpl.RemoteDeleteRowsMediaTable()
+							- it deletes media ONLY FROM DATABASE
+						
+	- edit icon or DblClick in row
+		--> row = getDataRowByKey(key);
+		--> buildDynamicFormPanel(row, "edit");															<<< rendering media dialog
+		
+	
+		
+Media Dialog
+------------
+	UI rendering 
+	------------
+	medialist_gwtappMain.buildDynamicFormPanel()
+	- rendering upload components and OK button
+	
+	Event handling
+	--------------
+	- Button 'OK'
+		--> medialist_gwtappMain.onFormPanelSubmitEvent(...)
+			--> AndGWTStandardFormPanel.getForm().submit(...);
+				- URL:	/andphone/Admin?module=global&page=medialist&func=gwtedit
+					--> com.andtek.andphone.global.Admin.medialist_gwtedit()
+						- adding/updating database record for uploaded media (into 'media' DB table)
+						--> Wav2uLaw.convert(...)
+							- converting uploaded media into uLaw and saving into media directory
+
+							
+							
+							
+-----------------------------------------------------------------------------------------------------------------------------
+Media playback
+==============
+Media can be played with:		com.andtek.andphone.common.servlet.MediaPlaybackServlet
+	Configuration in web.xml:
+
+		<servlet>
+			<servlet-name>MediaPlaybackServlet</servlet-name>
+			<servlet-class>com.andtek.andphone.common.servlet.MediaPlaybackServlet</servlet-class>
+		</servlet>
+
+		<servlet-mapping>
+			<servlet-name>MediaPlaybackServlet</servlet-name>
+			<url-pattern>/media</url-pattern>
+		</servlet-mapping>
+
+Playing from Admin GUI:			APAS/Global/Media/(Play icon in list)
+
+	Steps:
+		1. GWT calls global.Admin which renders HTML player form as browser dialog
+		2. Player form calls MediaPlaybackServlet with POST request:		/andphone/media?mediaId=<media ID>
+		3. Servlet converts U-Law media file into a temporary file under /tmp with linear PCM encoding
+		
+
+	It renders an HTML5 player form or if HTML5 not supported renders a player with jspeex-applet.jar:
+	
+		<body>
+			<audio controls><source src="/andphone/media?mediaId=<<media ID>> type="audio/wav">												<<<<<<< HTML5
+				<embed height="50" width="100%" src="/andphone/media?mediaId=<<media ID>>">
+				<p>Your browser does not support the HTML5 playback. Please upgrade your browser</p>
+					<applet archive="jspeex-applet.jar" code="org.xiph.speex.player.PlayerApplet.class" width="280" height="48">		<<<<<<< applet	
+						<param name="file" value="/andphone/media?mediaId=<<media ID>>"/>
+						<param name="length" value="<<audioLength * 4>>\"/>
+					</applet>";
+			</audio
+		</body>
+
+	
+	--> com.andtek.andphone.global.Admin.medialist_playmedia(...)
+		- media DB ID: 'fileName' request parameter
+		- it renders player form which call servlet with POST
+		--> POST /andphone/media?mediaId=ID
+			--> com.andtek.andphone.common.servlet.MediaPlaybackServlet.doPost(...)
+				- building filename:				/modules\global\media/<ID>_ulaw.wav
+				- generating TMP filename, e.g:		/tmp/playback-3931500221289979048.wav
+				- media conversion parameters:		AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN, Format.NOT_SPECIFIED, Format.NOT_SPECIFIED, Format.NOT_SPECIFIED, Format.byteArray)
+				--> com.andtek.andphone.media.utils.MediaProcessor.initAndStart()
+					--> p = JmfFactory.createRealizedProcessor(inputDataUrl, desiredOutputFormat, contentType)
+						--> presenting()		getPresentingTarget: SINK										<<<< generating TMP file
+							--> out = processor.getDataOutput();
+							--> sink = JmfFactory.createAndOpenDataSink(...)
+							--> sink.start()
+						--> p.start()																			<<<< writing data into TMP file
+				--> writing content of TMP file into servlet response
+				
+				=====> HTML5 Player plays audio media
+				
 -----------------------------------------------------------------------------------------------------------------------------
 Streaming pre-queue media
 =========================
@@ -218,8 +350,8 @@ MultiDataSource ==> WavParser --> com.sun.media.codec.audio.ulaw.Packetizer
 	
 	
 -----------------------------------------------------------------------------------------------------------------------------
-Wireshark	
-=========
+Debugging RTP packets with Wireshark
+====================================
 Filtering RTP related packets:
 
 	rtcp || rtp || udp && udp[8:1] == 0x80
@@ -239,3 +371,4 @@ If RTP cannot be recognized by Wireshark (because of lack of SIP dialog or RTCP)
 Here add RTP an entry for current packet with RTP protocol. If it is really an RTP packet you will be able to analyse and play stream under Telephony/RTP.
 
 
+							
