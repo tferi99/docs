@@ -21,6 +21,7 @@ Configuration
 - Howto setup pickup group?
 - How to change TFTP server or Device name in Cisco Communicator?
 - How to configure private number?
+- How to force G.711 A-Law codec in CUCM?
 
 Maintenance
 -----------

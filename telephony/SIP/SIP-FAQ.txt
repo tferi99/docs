@@ -13,11 +13,16 @@ CUCM:
 	- Specify this end user as digest user of this phone
 	- Go to end user and specify digest credential.
 
+	CUCM:
+		- set end user as 'Digest user' on phone device
+	
 X-Lite account:
 	- User ID:				line DN
 	- Domain:				host of CUCM
 	- Password:				digest credential
 	- Authorization name:	end user
 	
-	CUCM:
-		- set end user as 'Digest user' on phone device
+		
+MicroSIP account:		
+
+?????
