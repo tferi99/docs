@@ -1,0 +1,47 @@
+====================================
+ How to force using a codec in CUCM?
+====================================
+
+Method 1 - CUCM Service Parameters:
+
+	For example: 	G.711 A-Law 
+
+	Change configuration: 
+
+		- CUCM/System/Service Parameters:			select CUCM server
+		- Service:									Cisco CallManager
+		
+		G.711 A-law Codec Enabled:					Enabled for All Devices
+		G.711 mu-law Codec Enabled:					Disabled
+
+		
+		
+Method 2 - CUCM region:
+
+	SEE ALSO:		Cisco Unified Communications Manager Administration Guide/System setup/Region setup
+
+	- Create a Codec Preference List:		CUCM/System/REgion Information/Audio Codec Preference List
+		- copy from other old one
+		- push your favorite codec to the beginning of the list
+		- Save
+
+	- Create a region:			CUCM/System/Region Information/Region
+		- Add new
+		- Build 'Region Relationships' matrix where you specify rules, how to choose codec 
+			when you have a call with 2 phones and these phones reside in Region-1 and Region-2
+			
+	- Create a device pool:		CUCM/System/Device Pool
+	
+		Assign your region to this pool.
+		
+	- Assign a phone to this pool.
+	
+	Test:
+		- enable WEB access of this phone
+		- make a call to this phone
+		- open: Streaming statistics log (Stream 1?), here you can check:
+			- status of device
+			- Sender/Rcvr Codec
+		
+	
+		

@@ -8,8 +8,8 @@ Media in APAS
 
 Queue media streaming
 ---------------------
-- Streaming pre-queue media
 - Streaming queue media
+- Streaming pre-queue media
 
 Debug
 -----
@@ -74,7 +74,8 @@ Media Dialog
 			--> AndGWTStandardFormPanel.getForm().submit(...);
 				- URL:	/andphone/Admin?module=global&page=medialist&func=gwtedit
 					--> com.andtek.andphone.global.Admin.medialist_gwtedit()
-						- adding/updating database record for uploaded media (into 'media' DB table)
+						--> updateMediaInTable
+							- adding/updating database record for uploaded media (into 'media' DB table)
 						--> Wav2uLaw.convert(...)
 							- converting uploaded media into uLaw and saving into media directory
 
@@ -137,6 +138,52 @@ Playing from Admin GUI:			APAS/Global/Media/(Play icon in list)
 				--> writing content of TMP file into servlet response
 				
 				=====> HTML5 Player plays audio media
+				
+				
+-----------------------------------------------------------------------------------------------------------------------------
+Streaming queue media
+=====================
+- Managed by Route Point configured in:		APAS/Call Center/Settings/[General Options]/(Route Point Prefix)
+- this route point has 
+
+
+
+
+
+
+
+
+Streaming queue media
+## Processor created: com.sun.media.processor.unknown.Handler@60496d67
+##   using DataSource: com.andtek.andphone.recorder.MultiDataSource@4b8d90d5
+
+$$ Profile: parsing: 1 ms
+
+## Building flow graph for: null
+
+## Building Track: 0
+## Input: ULAW, 8000.0 Hz, 8-bit, Mono, Unsigned, 8000.0 frame rate, FrameSize=8 bits
+## Custom options specified.
+## A custom codec is specified: com.sun.media.codec.audio.ulaw.Packetizer@1880289c
+## An output format is specified: ULAW/rtp, 8000.0 Hz, 8-bit, Mono, Unsigned, FrameSize=8 bits
+## An output content type is specified: RAW/RTP
+    
+
+## Here's the completed flow graph:
+      com.sun.media.parser.audio.WavParser@7bd32da9
+         connects to: com.sun.media.codec.audio.ulaw.Packetizer@1880289c
+         format: ULAW, 8000.0 Hz, 8-bit, Mono, Unsigned, 8000.0 frame rate, FrameSize=8 bits
+      com.sun.media.codec.audio.ulaw.Packetizer@1880289c
+         connects to: com.sun.media.multiplexer.RTPSyncBufferMux@1d5a060
+         format: ULAW/rtp, 8000.0 Hz, 8-bit, Mono, Unsigned, FrameSize=8 bits
+	
+
+ULAW
+----	
+MultiDataSource ==> WavParser --> com.sun.media.codec.audio.ulaw.Packetizer
+	
+				
+				
 				
 -----------------------------------------------------------------------------------------------------------------------------
 Streaming pre-queue media
@@ -311,42 +358,6 @@ Events:
 	[2017-04-11 10:15:31,230] [DEBUG] [ObserverThread(com.andtek.andphone.partner.acd.ProxyRpCallObserver@3c8e4538)] [MediaRoutePointBase.java:428] - MRP: Stop Hash: null
 	--> stopRTPStream(rtpStream)		// NOT CALLED HERE
 
-
------------------------------------------------------------------------------------------------------------------------------
-Streaming queue media
-=====================
-
-Streaming queue media
-## Processor created: com.sun.media.processor.unknown.Handler@60496d67
-##   using DataSource: com.andtek.andphone.recorder.MultiDataSource@4b8d90d5
-
-$$ Profile: parsing: 1 ms
-
-## Building flow graph for: null
-
-## Building Track: 0
-## Input: ULAW, 8000.0 Hz, 8-bit, Mono, Unsigned, 8000.0 frame rate, FrameSize=8 bits
-## Custom options specified.
-## A custom codec is specified: com.sun.media.codec.audio.ulaw.Packetizer@1880289c
-## An output format is specified: ULAW/rtp, 8000.0 Hz, 8-bit, Mono, Unsigned, FrameSize=8 bits
-## An output content type is specified: RAW/RTP
-    
-
-## Here's the completed flow graph:
-      com.sun.media.parser.audio.WavParser@7bd32da9
-         connects to: com.sun.media.codec.audio.ulaw.Packetizer@1880289c
-         format: ULAW, 8000.0 Hz, 8-bit, Mono, Unsigned, 8000.0 frame rate, FrameSize=8 bits
-      com.sun.media.codec.audio.ulaw.Packetizer@1880289c
-         connects to: com.sun.media.multiplexer.RTPSyncBufferMux@1d5a060
-         format: ULAW/rtp, 8000.0 Hz, 8-bit, Mono, Unsigned, FrameSize=8 bits
-	
-
-ULAW
-----	
-MultiDataSource ==> WavParser --> com.sun.media.codec.audio.ulaw.Packetizer
-	
-	
-	
 	
 	
 -----------------------------------------------------------------------------------------------------------------------------
