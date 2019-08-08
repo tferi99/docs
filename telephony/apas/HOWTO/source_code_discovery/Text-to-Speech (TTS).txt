@@ -40,5 +40,5 @@ Creating TTS entry
 							--> audio = MaryTTSProvider.generateAudio(ttsText, voiceToUse)
 							
 							--> AudioSystem.write(audio, AudioFileFormat.Type.WAVE, tmpfile)	// saving audio into TMP file
-							--> Wav2uLaw.convert(...) 											// converting into ULaw file (for RTP)
+							--> Wav2G711ULaw.convert(...) 											// converting into ULaw file (for RTP)
 							--> delete TMP file

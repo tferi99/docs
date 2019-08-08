@@ -20,9 +20,19 @@ X-Lite account:
 	- User ID:				line DN
 	- Domain:				host of CUCM
 	- Password:				digest credential
-	- Authorization name:	end user
+	- Authorization name:	end user name
 	
 		
 MicroSIP account:		
-
-?????
+	- Account name:		<arbitrary>
+	- SIP Server:		host of CUCM
+	- SIP Proxy:		<empty>
+	- Username:			line DN
+	- Domain:			host of CUCM
+	- Login:			end user name
+	- Password:			digest credential
+	- Display Name:		<arbitrary>
+	- Transport:		Auto (UDP & TCP)
+	- Public Address:	Auto
+	
+SEE ALSO:	telephony/sip/images/microsip-account.jpg
