@@ -49,9 +49,17 @@ Configuration
 			- create an LDAP directory which uses the same LDAP as used by Exchange Presence
 			
 			- add attributes 
+				
+				for example:
+					- Server Name/IP:	10.51.51.40
+					- Login:			CN=Administrator,CN=Users,DC=andtek,DC=cee,DC=cs,DC=eilab,DC=biz
+					- Password:			And33dbadmin
+					- Base-DN:			CN=Users,DC=andtek,DC=cee,DC=cs,DC=eilab,DC=biz 
+					
 				SEE ALSO:
 				exchange_presence_ldap_dir_1.jpg
 				exchange_presence_ldap_dir_2.jpg
+					
 				
 			- enable Web Access
 							
@@ -61,7 +69,7 @@ Configuration
 		
 		AND
 	
-			APAS/Client/Profiles/(DC profile)/[Directory Search]/(Enable Dynamic presence user subscription)		: true
+			APAS/Client/Profiles/(choose DC profile)/[Directory Search]/(Enable Dynamic presence user subscription)		: true
 	
 -----------------------------------------------------------------------------------------------------------------
 Troubleshooting
