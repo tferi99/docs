@@ -1,0 +1,6 @@
+==================================================
+Howto add contacts to Exchange 2016 public folder?
+==================================================
+
+See steps in images/ES2016-public-folder-*.jpg
+

@@ -1,0 +1,8 @@
+====================================
+How to configure Exchange mailboxes?
+====================================
+
+Login into Exchange server:			https://10.51.51.175/ecp/
+User:		andtekcee\administrator
+Pwd:		And33dbadmin
+

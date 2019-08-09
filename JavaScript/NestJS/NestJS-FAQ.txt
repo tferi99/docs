@@ -1,0 +1,16 @@
+==========
+NestJS-FAQ
+==========
+
+Troubleshooting
+---------------
+- ERROR: Nest can't resolve dependencies of the XXX. Please make sure that the argument at index [0] is available in the current context
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Nest can't resolve dependencies of the XXX. Please make sure that the argument at index [0] is available in the current context
+======================================================================================================================================
+This error generated when componenet XXX cannot inject element specified in constructor.
+
+Fix:	maybe expected component did not added to 'providers' of current module.
+
