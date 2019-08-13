@@ -46,6 +46,8 @@ Troubleshooting
 - Log message: The input format is not compatible with the given codec plugin
 - Log message:  No multiplexer is found for that content type
 - Exception: Format of Stream not supported in RTP Session Manager
+- Exception: javax.media.CannotRealizeException: Unable to provide all requested tracks
+- Exception: javax.media.format.UnsupportedFormatException: Format of Stream not supported in RTP Session Manager
 
 ----------------------------------------------------------------------------------------------------------------------------
 How media is processed?
@@ -969,7 +971,7 @@ vectorRates: 7
 ---------------------------------------------------------------------------------------------------------------------------
 How to add custom format (and payload type) to RTP session?
 ===========================================================
-Supported formats are checked twice during RTP transmission.
+Supported formats are checked twice during initialization of RTP transmission.
 
 1. Building codec chain 
 
@@ -1003,8 +1005,38 @@ Supported formats are checked twice during RTP transmission.
 
 How to add?
 -----------
-1. Before calling createRealizedProcessor(...) call initCustomFormatsForProcessor() which creates a dummy RTPSessionMgr instance and adds 
-	item to static RTPSessionMgr.addedList list.
+	private void initCustomFormatsForProcessor()
+	{
+		// ------------------- RTP formats -------------------
+		// dummy (to access internal static format list via non-static addFormat() )
+		RTPManager mgr = RTPManager.newInstance();
+		Map<Integer, Format> customFormats = initCustomFormatsForRtp();
+		for (Integer payloadType : customFormats.keySet()) {
+			Format fmt = customFormats.get(payloadType);
+			mgr.addFormat(fmt, payloadType);
+		}
+	}
+	
+	private Map<Integer, Format> initCustomFormatsForRtp()
+	{
+		Map<Integer, Format> formats = new HashMap<Integer, Format>();
+
+		// ALAW
+		org.ftoth.general.util.onesec.codec.alaw.libjitsi.Packetizer alawPck = new org.ftoth.general.util.onesec.codec.alaw.libjitsi.Packetizer();
+		Format alawInFormat = (alawPck.getSupportedInputFormats())[0];
+		Format alawRtpFormat = (alawPck.getSupportedOutputFormats(alawInFormat))[0];
+		formats.put(8, alawRtpFormat);
+		if (log.isDebugEnabled()) {
+			log.debug("ALAW Packetizer (" + org.ftoth.general.util.onesec.codec.alaw.libjitsi.Packetizer.class.getName() + ") successfully added");
+		}
+
+		return formats;
+	}
+
+
+
+1. Before calling createRealizedProcessor(...) call initCustomFormatsForProcessor to add  dynamic payload to format mapping of RTPManager. 
+	It creates a dummy RTPSessionMgr instance and adds item to static RTPSessionMgr.addedList list.
 	
 	OTHERWISE YOU WILL GET THIS ERROR:
 	
@@ -1016,14 +1048,6 @@ How to add?
 			
 2. Before creating real RTPSessionMgr instances get custom formats from initCustomFormatsForRtp() again and add to 
 	RTPSessionMgr instances.
-	
-	Map<Integer, Format> customFormats = initCustomFormatsForRtp();
-	...
-	RTPManager mgr = RTPManager.newInstance();
-	for (Integer payloadType : customFormats.keySet()) {
-		Format fmt = customFormats.get(payloadType);
-		mgr.addFormat(fmt, payloadType);
-	}
 
 	OTHERWISE YOU WILL GET THIS ERROR:
 	
@@ -1089,3 +1113,17 @@ SEE ALSO:	How to add custom format (and payload type) to RTP session?
 
 				
 				
+---------------------------------------------------------------------------------------------------------------------------
+Exception: javax.media.CannotRealizeException: Unable to provide all requested tracks
+=====================================================================================
+SEE:	How to add custom format (and payload type) to RTP session?
+
+Root cause:		Supported formats are checked twice during initialization of RTP transmission.
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Exception: javax.media.format.UnsupportedFormatException: Format of Stream not supported in RTP Session Manager
+===============================================================================================================
+SEE:	How to add custom format (and payload type) to RTP session?
+
+Root cause:		Supported formats are checked twice during initialization of RTP transmission.
