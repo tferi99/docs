@@ -1,0 +1,21 @@
+================================
+Force logout in Web applications
+================================
+
+APAS/Client/Active Clients/(Force Logout)
+
+This function force logout clients in 2 steps:
+- it deletes connection
+- it sends a ForceLogout push event to client appication
+
+--> activeclient_gwtappMain.RemoteDoClientRemoteControl("forceLogout", getKeys())
+	-- RPC --> RPCandmobileServiceImpl.RemoteDoClientRemoteControl()
+		----------------------------------- loop on keys --------------------------------------
+		- key: id#serverType
+			--> server = JTAPIThread.CLIENTCORE.getServer(type)
+			--> connection = server.getClientConnectionByID(id)
+			--> service = ServiceLocator.getWebXXXConnectionService();
+			--> service.notifyWebByUser(ForceLogoutWebEvt)
+			--> service.removeConnection(username)
+	
+
