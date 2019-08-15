@@ -2,6 +2,10 @@
 Eclipse FAQ
 ===========
 
+Configuration
+-------------
+- How to fix decompiler problem?
+
 UI
 --
 - How to show current method in a breadcrumb?
@@ -42,9 +46,20 @@ Go to server.xml in server folder under in Servers.
 - Find: <Context ..../>
 - Remove duplications
 
+--------------------------------------------------------------------------------------------------
+How to fix decompiler problem?
+==============================
+If you open a class file and you get: "Source not found" instead of decompiled source
+do the following steps:
 
+1. Go to Windows-->Preferences-->General-->Editors-->File Association
+	-->Select '*.class' from File Types-->Select Class Decompiler Viewer-->click on Default
 
+2. Go to Windows-->Preferences-->General-->Editors-->File Association
+	-->Select '*.class without Source' from File Types-->Select Class Decompiler Viewer-->click on Default
 
+3. Go to command prompt and run 'eclipse -clean' command by going to eclipse folder once it restarted 
+	then you can check for all class files in project it should get decompiled.
 
 
 
