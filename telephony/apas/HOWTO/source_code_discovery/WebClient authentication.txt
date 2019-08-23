@@ -13,7 +13,7 @@ WebClient authentication
 
 
 NOTE: During refactoring some classes and configuration variables have been renamed.
-	- MyAuthenticationProvider -> NormalLoginAuthenticationProvider
+	- MyAuthenticationProvider -> WebClientAuthenticationProvider
 	- MyUserDetailsService -> RememberMeUserDetailsService
 	
 
@@ -21,6 +21,10 @@ NOTE: During refactoring some classes and configuration variables have been rena
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 Authentication
 ==============
+- Managed by a custom authentication provider:	WebClientAuthenticationProvider
+- extended with a persistent remember-me UserDetailsService
+
+
 1. Authentication started by calling LoginSvc.logMeIn(), it's the FIRST operation of all page controllers.
 2. If authenticated it tries to get client profile and loads profile settings, 
 	profiles are bound to a user via authenticated security profile which is bound to a user pool, which referred from a client profile:
@@ -44,17 +48,13 @@ NOTE:
 	During authentication assigned pool name added as group to user dinamically.
 
 	
-
-
 Configuration
 -------------
-Authentication configured in springApasRestAPI-servlet.xml which calls NormalLoginAuthenticationProvider
+Authentication configured in springApasRestAPI-servlet.xml which calls WebClientAuthenticationProvider
 
 	<http>	--> <form-login>
-			--> <authentication-manager id="webClientAuthenticationManager"> 
-				--> <beansid="customAuthenticationProvider" class="com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider"/>
-
-
+			--> <authentication-manager id="webClientAuthenticationManager">
+				-->  <beans:bean id="webClientAuthenticationProvider" class="com.andtek.andphone.web.webclient.security.WebClientAuthenticationProvider"/>
 
 	- WebClient calls auth entry point of Spring Security (login-processing-url="/rest-api/login"):
 
@@ -65,7 +65,7 @@ Authentication configured in springApasRestAPI-servlet.xml which calls NormalLog
 				 default-target-url="/rest-api/login/200" 
 				 authentication-failure-url="/rest-api/login/403" /> 
 
-	- this request processed by NormalLoginAuthenticationProvider
+	- this request processed by WebClientAuthenticationProvider
 	
 	- on success request redirected to default-target-url (/rest-api/login/200)
 
@@ -136,7 +136,7 @@ LoginCtrl CONTROLLER (controller_login.js)
 				<authentication-provider ref="customAuthenticationProvider" />
 			</authentication-manager>
 
-			<bean id="customAuthenticationProvider" class="com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider"/>
+			<bean id="customAuthenticationProvider" class="com.andtek.andphone.restapi.web.security.WebClientAuthenticationProvider"/>
 
 	CLIENT:		service_login.js
 		
@@ -160,10 +160,10 @@ LoginCtrl CONTROLLER (controller_login.js)
 
 			APAS model for authentication:			
 				
-				webClientAuthenticationManager -> NormalLoginAuthenticationProvider -> ANDRealm -> authentication profiles
+				webClientAuthenticationManager -> WebClientAuthenticationProvider -> ANDRealm -> authentication profiles
 				
 			--> webClientAuthenticationManager
-				--> customAuthenticationProvider:	com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider.authenticate(Authentication auth)
+				--> customAuthenticationProvider:	com.andtek.andphone.restapi.web.security.WebClientAuthenticationProvider.authenticate(Authentication auth)
 					--> authResult = com.andtek.andphone.users.securityfilter.service.impl.LoginServiceImpl.authenticate(userName, password)
 						--> ANDRealm.authenticate(userName, password)
 						
@@ -262,9 +262,15 @@ Remember me
 ===========
 If you activate remember-me on login page next time you don't have to authenticate manually during WebClient start even you have restarted the browser.
 
+################################################################## LATEST ##################################################################
+inMemoryTokenRepository has been replaced with a datasource based one:
+<remember-me key="rest-api" token-validity-seconds="31536000" user-service-ref="rememberMeUserDetailsService" data-source-ref="dataSource"/>
+
+
+################################################################## OLD ##################################################################
 Based on SpringSecurity RememberMe feature.
 - Tokens are stored into inMemoryTokenRepository
-- Users are strored into cache during manual login first.
+- Users are stored into cache during manual login first.
 - Users stored into cache and will be resored from cache by rememberMeUserDetailsService during the next login (authenticated automatically).
 
 
@@ -277,7 +283,7 @@ Based on SpringSecurity RememberMe feature.
 
 1. During first manual login authenticated user stored into cache
 
-	--> com.andtek.andphone.restapi.web.security.NormalLoginAuthenticationProvider
+	--> com.andtek.andphone.restapi.web.security.WebClientAuthenticationProvider
 		--> authResult = LoginServiceImpl.authenticate(userName, password)
 		--> if authResult == null
 			--> cache.invalidateByName(userName)

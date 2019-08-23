@@ -4,6 +4,7 @@ SpringSecurity-FAQ
 
 Authentication
 --------------
+- Default processing of authentication
 - How to authenticate in a standalone application?
 - How to access saved requests when redirecting to login page?
 - How to use SpringSec in JSP?
@@ -24,6 +25,41 @@ Troubleshooting
 - How to get info about SpringSecurity filter chain?
 
 
+-------------------------------------------------------------------------------------------------------------
+Default processing of authentication
+====================================
+<authentication-manager> = ProviderManager
+
+<authentication-provider> = DaoAuthenticationProvider (extends AbstractUserDetailsAuthenticationProvider)
+
+DEFAULT CALL-STACK OF AUTHENTICATION:
+-------------------------------------
+--> ProviderManager
+	-->	AbstractUserDetailsAuthenticationProvider.authenticate() (DaoAuthenticationProvider.authenticate())
+		--> username = userCache.getUserFromCache(username)
+			-------------------------------------- no username ------------------------------------------------
+			--> retrieveUser(...) (e.g. DaoAuthenticationProvider.retrieveUser())
+				--> UserDetails = UserDetailsService().loadUserByUsername(username)
+				
+				
+		--> preAuthenticationChecks.check(user);
+			--> user.isAccountNonLocked()
+			--> user.isEnabled()
+			--> user.isAccountNonExpired()
+			
+		--> additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) (e.g. DaoAuthenticationProvider.additionalAuthenticationChecks())
+			--> presentedPassword = authentication.getCredentials()
+			 --> !passwordEncoder.isPasswordValid(userDetails.getPassword(), presentedPassword, salt)		
+					===> LOG: "Authentication failed: password does not match stored value"	
+					===> Exception: "Bad credentials"
+		
+		--> postAuthenticationChecks.check(user)
+			--> isCredentialsNonExpired()
+
+		--> return createSuccessAuthentication(principalToReturn, authentication, user)
+			--> new UsernamePasswordAuthenticationToken filled with username, credentials and authorities
+			
+		
 ACL
 ---
 - How to create ACL schema?

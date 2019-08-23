@@ -93,6 +93,7 @@ Web/WebClient/WebAttendant
 - WebClient authentication
 - Pushing APAS events with Atmosphere
 - Managing WebClient client connections
+- Force logout in Web applications
 
 REST API
 --------
