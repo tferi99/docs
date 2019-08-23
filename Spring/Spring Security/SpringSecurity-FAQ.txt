@@ -10,6 +10,7 @@ Authentication
 - How to use SpringSec in JSP?
 - How to show authenticated user in JSP?
 - How do hierarchical roles work?
+- How to login/logout programmatically?
 
 Authorization
 -------------
@@ -293,4 +294,37 @@ How to get info about SpringSecurity filter chain?
 	FilterChainProxy filterChainProxy;
 	
 2. Activate Debug and watch log. See more: 'How to debug spring security?'
+
+
+-------------------------------------------------------------------------------------------------------------
+How to login/logout programmatically?
+=====================================
+Login:
+------
+	UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, "", authorities);
+	SecurityContextHolder.getContext().setAuthentication(auth);
+	
++ remember-me	
+
+	<remember-me key="webattendant" token-validity-seconds="31536000" user-service-ref="rememberMeUserDetailsService" data-source-ref="dataSource" services-alias="WebAttendantRememberMeService"/>
+
+	@Autowired()
+	@Qualifier("WebAttendantRememberMeService")
+	PersistentTokenBasedRememberMeServices rememberMeServices; 
+
+	rememberMeServices.onLoginSuccess(request, response, auth);  
+
+Logout:
+-------
+	CookieClearingLogoutHandler cookieClearingLogoutHandler = new CookieClearingLogoutHandler(AbstractRememberMeServices.SPRING_SECURITY_REMEMBER_ME_COOKIE_KEY);
+	SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
+	cookieClearingLogoutHandler.logout(request, response, null);
+	securityContextLogoutHandler.logout(request, response, null);
+	
++ remember-me	
+
+	UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getName(), "");		
+	rememberMeServices.logout(request, response, auth);
+
+
 
