@@ -3,7 +3,7 @@ npm FAQ
 =======
 
 - What is npm?
-- Where does npm install packages?
+- Where are global npm packages installed?
 - How to install packages?
 - How to create package.json?
 - How to query versions?
@@ -20,8 +20,8 @@ What is npm?
 - npm is written entirely in JavaScript 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
-Where does npm install packages?
-================================
+Where are global npm packages installed?
+========================================
 Global libraries:
 
 	Windows XP - %USERPROFILE%\AppData\npm\node_modules

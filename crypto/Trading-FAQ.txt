@@ -3,7 +3,7 @@ Trading FAQ
 ===========
 
 - What is a pip? 
-
+- What is arbitrage?
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
 What is a pip?
@@ -20,4 +20,32 @@ or one basis point.
 
 
 
+-------------------------------------------------------------------------------------------------------------------------------------------------
+What is arbitrage?
+==================
+Arbitrage is basically buying a security in one market and simultaneously selling it in another market at a higher price, 
+profiting from the temporary difference in prices. This is considered a risk-free profit for the investor/trader.
 
+Olyan lehetőségek kihasználást jelenti a tőkepiacon, amelyek a kockázatmentes hozamhoz képest 
+	1) azonnal és 
+	2) kockázatmentesen nyújtanak magasabb hozamot. 
+Ezek a lehetőségek valamilyen félreárazásból adódnak.
+
+
+1. Egy adott értékpapír több piacra is bevezetésre került (mint a fenti példában), és különböző árakon kereskednek vele.
+
+2. Háromszög-arbitrázs: két termék árfolyamából adódik egy harmadik eszköz árfolyama, de a harmadik eszköz árfolyama az elméleti ártól eltérő árfolyamon kereskedik. 
+Pl. a forint/euró árfolyam 225 forint, a dollár/euró árfolyam 1,5 dollár, akkor a forint/dollár árfolyamnak 150 forintnak kell lennie, de a valóságban az árfolyam 155 forint. 
+Ebben az esetben a forint/dollárt adni kell, a másik kettőt pedig venni egyidejűleg.
+
+3. Felvásárlási (M&A - Merger & Acquisition) arbitrázs: Amikor egy vállalat felvásárlási ajánlatot tesz egy másik vállalatra, azt általában egy a piacinál magasabb árfolyamon teszi meg, 
+más néven prémiumot fizet. Általában persze a hír kijötte után szinte azonnal arra a szintre ugrik az árfolyam, ahol az ajánlatot tette a felvásárló cég, de elképzelhető, 
+hogy valamilyen okból (jellemzően bizonytalanság miatt) még egy ideig fennáll az arbitrázs lehetőség.
+
+4. Egy piacon kereskedett eszköz árfolyama más eszközök árfolyamától függ. Pl. egy ETF (tőzsdén kereskedett befektetési alap) árfolyama eltér annak indikatív árfolyamától 
+	(az az árfolyam, amit a benne levő eszközök árfolyama indokolna), vagy egy ADR árfolyama eltér a mögöttes részvény árfolyamától, stb.
+
+5. Egy eszköz azonnali és határidős árfolyama közötti különbség nem felel meg az elméleti különbségnek, vagyis a kamattartalom (azaz határidős és azonnali ár közötti különbség) 
+	arbitrázs-lehetőséget kínál. A határidős árnak az azonnali ár jövőértékének kell, hogy megfeleljen (lásd jövőérték-számítás a lexikonban). Ha a határidős ár ettől eltér, akkor érdemes az egyik eszközt adni, és a másikat venni, majd lejáratig megtartani, vagy addig, ameddig a két ár közötti különbség nem éri el az elméleti szintet. Pl. ha a BUX index határidős árfolyama az azonnali ár alatt tartózkodik, ami néha előfordult már, érdemes a határidős BUX-ot venni, és az azonnali BUX-ot, azaz a részvényeket shortolni. Ez azonban nehezen megoldható a valóságban, így az ilyen arbitrázs-lehetőségek sokszor kihasználatlanul maradnak.
+
+SEE ALSO:	http://abszoluthozam.hu/tudastar/lexikon/arbitrazs.php

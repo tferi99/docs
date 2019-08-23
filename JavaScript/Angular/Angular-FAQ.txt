@@ -11,6 +11,7 @@ General
 - How to add Bootstrap to an Angular project?
 - Bootstrapping Angular application
 - Lifecycle Hooks
+- i18n
 
 Configuration
 -------------
@@ -1495,3 +1496,64 @@ But what about false? Evaluate it and compare with 'false'.
 		  <ngrx-logout *ngIf="isLoggedIn$ | async"></ngrx-logout>
 		</div>
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+i18n
+====
+Steps
+-----
+	1. add i18n (i18n-*) tag to your template tags (properties)
+	
+		i18n="meaning|description@@id"
+		
+		For example:
+		
+			<h1 i18n="main title">This is a title text</h1>
+			<h1 i18n="@@mainTitle">This is a title text</h1>
+	
+	2. call 'xi18n' to generate locale files, e.g:
+	
+		ng xi18n --output-path locale
+	
+		The command can read and write files in three translation formats:
+			- XLIFF 1.2 (default)
+			- XLIFF 2
+			- XML Message Bundle (XMB)
+			
+		You can specify the translation format explicitly with the --i18nFormat command option, as illustrated in these example commands:
+
+
+			ng xi18n  --i18n-format=xlf
+			ng xi18n  --i18n-format=xlf2
+			ng xi18n  --i18n-format=xmb
+	
+	3. (Optional) You can specify the base locale of your app with the --i18n-locale command option (default: en):
+	
+		ng xi18n  --output-path locale --i18n-format=xlf --i18n-locale en
+		
+		The extraction tool uses the locale to add the app locale information into your translation source file. 
+		This information is not used by Angular, but external translation tools may need it.
+	
+	4. 	Translate
+	
+	5. Copy back:
+		- Rename the translated file. Add locale ID (e.g.: messages.fr.xlf for the French language translation).
+		- Put the copy in the locale folder.
+
+Translation in detail
+---------------------
+	
+
+Rules
+-----
+	-  Don't call private methods, fields or properties from the HTML
+	
+		When compiling the *.ts code to *.js, AOT refuse to connect non-public members with the HTML template.
+
+	In detailed:
+		
+		For a given component all its members (methods, properties) accessed by its template must be public in the AOT compilation scenario.
+		This is due to the fact that a template is turned into a TS class. A generated class and a component are 2 separate classes now and 
+		you can't access private members cross-class.		
+
+
+		

@@ -1,0 +1,45 @@
+===========
+WolfBot-FAQ
+===========
+
+
+- ERROR: Error: ENOENT: no such file or directory, scandir 'C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework'
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Error: ENOENT: no such file or directory, scandir 'C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework'
+========================================================================================================================================
+ANSWER-1: 
+	I have sucessfully installed TA-LIB on Windows...
+	You just need to install the windows-build-tools package globally. At least on my Win10 system, this works without problems.
+
+	Here's how I've done it:
+	Be sure to close all running gekko instances first.
+
+	Open Admin prompt, install the tools via npm install -g windows-build-tools
+	cd into you gekko intallation
+	npm install --save talib
+
+
+ANSWER-2: 
+
+	Could get talib to install on windows
+
+	after downloading it via Git to a folder (say d:\talib)
+	Changing in d:\talib\src\lib\build.js
+	frameworkPath = 'C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework';
+	to
+	frameworkPath = 'C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework';
+	(Noticed in the machine C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework had two folders v3.0 and v3.5 instead of .NETFramework)
+
+	Then in admin command prompt:
+	changed directory to d:
+	npm install --save talib
+
+	as H256 suggested: npm install --save talib
+
+	Then talib installed in d:\node_modules
+	(As H256 suggested, do items like
+	"Open Admin prompt, install the tools via npm install -g windows-build-tools" so that windows can allow node-gyp to make the .node file for talib
+	)

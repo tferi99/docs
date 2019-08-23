@@ -1,0 +1,21 @@
+========
+CCXT FAQ
+========
+
+- Terminology
+
+------------------------------------------------------------------------------------------------------------------------------
+Terminology
+===========
+Market:		A market is usually a pair of traded crypto/fiat currencies.
+
+Base (or Accounting) Currency/quote currency: 
+
+			The base currency represents how much of the quote currency is needed for you to get one unit of the base currency. 
+			For example, if you were looking at the BTC/USD currency pair, the Bitcoin would be the base currency and the U.S. dollar 
+			would be the quote currency.
+			
+			- The base currency as the domestic currency or accounting currency to represent all profits and losses.
+			- The quote currency, commonly known as "counter currency," is the second currency in both a direct and indirect currency pair 
+				and is used to determine the value of the base currency.
+			

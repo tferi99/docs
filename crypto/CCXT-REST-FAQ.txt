@@ -1,0 +1,49 @@
+=============
+CCXT-REST FAQ
+=============
+
+- How to install/run ccxt-rest with npm?
+- How to change server port?
+
+----------------------------------------------------------------------------------------------------------------------------
+How to install/run ccxt-rest with npm?
+======================================
+Pre-requisities:
+- Install windows-build-tools:
+
+	npm install --global --production windows-build-tools
+
+- install node-gyp
+
+	npm install node-gyp -g
+
+Method1 - global:
+
+	npm install -g ccxt-rest
+	ccxt-rest
+
+Method2 - local:
+
+	npm new
+	cd <app>
+	npm i
+	
+	node_modules\.bin\ccxt-rest
+
+
+SEE ALSO:		https://github.com/ccxt-rest/ccxt-rest
+				https://catalin.me/how-to-fix-node-js-gyp-err-cant-find-python-executable-python-on-windows/
+	
+----------------------------------------------------------------------------------------------------------------------------
+How to change server port?
+==========================
+Change port value here:
+	
+	node_modules/ccxt-rest/api/config/index.js
+
+Default value:	
+
+	port : (process.env.PORT || 3000)
+	
+
+
