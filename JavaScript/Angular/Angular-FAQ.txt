@@ -12,6 +12,7 @@ General
 - Bootstrapping Angular application
 - Lifecycle Hooks
 - i18n
+- Change detection
 
 Configuration
 -------------
@@ -1361,9 +1362,14 @@ ERROR: Error: ExpressionChangedAfterItHasBeenCheckedError: Expression has change
 Lifecycle Hooks
 ===============
 Lifecycle hooks are:
-	- ngOnChanges					: on (re)setting input properties
-	- ngOnInit						: 
-	- ngDoCheck
+	- ngOnChanges					: ngOnChanges called BEFORE ngOnInit() and WHENEVER one/more data-bound input properties change.
+										It means, whenever any input properties changed than the code under this function will be triggered
+										
+	- ngOnInit						: ngOnInit is there to give us a signal that Angular has finished initializing
+	
+	- ngDoCheck						:  it’s called WHENEVER any changes during the app execution happened.
+										In addition, it’s called IMMEDIATELY AFTER ngOnChange and ngOnInit.
+	
 	- ngAfterContentInit
 	- ngAfterContentChecked
 	- ngAfterViewInit
@@ -1556,4 +1562,93 @@ Rules
 		you can't access private members cross-class.		
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Change detection
+================
+SEE ALSO:
+	https://medium.com/@bencabanes/angular-change-detection-strategy-an-introduction-819aaa7204e7
+	https://blog.angular-university.io/how-does-angular-2-change-detection-really-work/
+	https://blog.nrwl.io/essential-angular-change-detection-fe0e868dcc00
+	https://blog.angular-university.io/onpush-change-detection-how-it-works/
+	https://netbasal.com/optimizing-the-performance-of-your-angular-application-f222f1c16354
+	
+- Change Detection means updating the view (DOM) when the data has changed.
+	2 steps:
+	- Update the application model (developer);
+	- Reflect the state of the model in the view (Angular).
+	
+- Angular provides you 2 Change Detection Strategies:
+	1. default
+	2. onPush
+	
+##############################################################################################################
+By default, Angular runs change detection ON ALL COMPONENTS EVERY TIME SOMETHING CHANGES IN YOUR APP 
+— from a click event to data received from an ajax call. ( user events, timers, xhr, promises, etc. )	
+##############################################################################################################	
 		
+	
+1. Default
+----------
+By default, Angular makes no assumption on what the component depends upon. 
+So it has to be conservative and will checks every time something may have changed, this is called DIRTY CHECKING. 
+
+In a more concrete way, it will perform checks for:
+	- each browser events
+	- timers
+	- XHRs
+	- promises
+	
+2. onPush
+---------
+It will rely only on the change of the:
+	- input references
+	- some events triggered by itself (the component) or one of its children
+	- or the use of the async pipe in the template
+	- lastly, you, the developer, can ask explicitly Angular to do it with the 
+	
+		componentRef.markForCheck()
+		
+		
+	When using OnPush detectors, then the framework will check an OnPush component 
+		- when any of its input properties changes, 
+		- when it fires an event, 
+		- or when an Observable fires an event
+		
+		
+Who triggers change detection?
+------------------------------
+Angular at startup time will patch several low-level browser APIs.
+In fact, a lot of browser APIs are patched by Zone.js to transparently trigger Angular change detection, 
+such as:
+
+	- addEventListener()
+	- all browser events (click, mouseover, keyup, etc.)
+	- setTimeout() and setInterval()
+	- Ajax requests
+	- Websockets
+	
+Example of patch:
+
+	function addEventListener(eventName, callback) {
+     // call the real addEventListener
+     callRealAddEventListener(eventName, function() {
+        // first call the original callback
+        callback(...);     
+		
+        // and then run Angular-specific functionality
+        var changed = angular2.runChangeDetection();
+         if (changed) {
+             angular2.reRenderUIPart();
+         }
+     });
+	}		
+
+How does it detect changes?
+---------------------------
+- By default, Angular Change Detection works by checking if the value of template expressions have changed. This is done for all components.
+- By default, Angular does not do deep object comparison to detect changes, it only takes into account properties used by the template.
+
+
+
+
+	

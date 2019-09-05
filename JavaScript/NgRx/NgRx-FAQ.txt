@@ -22,6 +22,7 @@ Reducers
 
 Selectors
 ---------
+- How to call a selector from a reducer?
 
 Tips
 ----
@@ -422,6 +423,39 @@ That means if you retrieve an object from store you cannot change members of it.
 			promo: [course.promo, []]
 		}
 	
+---------------------------------------------------------------------------------------------------------------
+How to call a selector from a reducer?
+======================================
+You can call selector method directly where the parameter itself the 'state':
+
+
+	Selector:
+	---------
+	export const getState = createFeatureSelector<State>('feature');
+
+	export const getIsLoading = createSelector(
+	   getState,
+	   state => state.loading
+	);
+
+
+	Reducer:
+	--------
+	export function reducer(state = initialAuthState, action: AuthActions): AuthState {
+		switch (action.type) {
+			case Action Types.ACTION: {
+				const loading = getIsLoading(state);
+				return {
+					atribute1: false,
+					attribute2: action.payload,
+				}
+			}
+			default: {
+				return state;
+			} 
+		}
+	}
+
 
 
 
