@@ -13,6 +13,7 @@ General
 - Lifecycle Hooks
 - i18n
 - Change detection
+- Why called change detection 2x in developer mode?
 
 Configuration
 -------------
@@ -102,6 +103,7 @@ Troubleshooting
 - ERROR: No provider for ControlContainer ("[ERROR ->]<form...
 - ERROR: Uncaught Error: Unexpected directive '...' imported by the module '...'. Please add a @NgModule annotation
 - ERROR: Error: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked.
+- ERROR: Uncaught Error: Can't resolve all parameters for ...
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to add Bootstrap to an Angular project?
@@ -1561,6 +1563,25 @@ Rules
 		This is due to the fact that a template is turned into a TS class. A generated class and a component are 2 separate classes now and 
 		you can't access private members cross-class.		
 
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Why called change detection 2x in developer mode?
+=================================================
+In prod mode the change detection should happen just ONCE per trigger (ApplicationRef#tick). 
+In dev mode it should happen TWICE.
+
+Angular utilizes Zones.js to know when an event is fully processed by patching some async APIs like (addEventHandler, setTimeout, ...) 
+and then runs change detection AFTER EACH EVENT.
+
+In dev mode Angular does AN ADDITIONAL CHANGE DETECTION RUN, just after the first one. 
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Uncaught Error: Can't resolve all parameters for ...
+===========================================================
+Can be generated when:
+- missing @Injectable decorator in service.ts file
+- you have added constructor parameters to service
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Change detection
@@ -1590,21 +1611,23 @@ By default, Angular runs change detection ON ALL COMPONENTS EVERY TIME SOMETHING
 1. Default
 ----------
 By default, Angular makes no assumption on what the component depends upon. 
-So it has to be conservative and will checks every time something may have changed, this is called DIRTY CHECKING. 
+So it has to be conservative and will checks EVERY TIME SOMETHING MAY HAVE CHANGED, this is called DIRTY CHECKING. 
 
 In a more concrete way, it will perform checks for:
 	- each browser events
 	- timers
 	- XHRs
 	- promises
+	- pushed data
 	
 2. onPush
 ---------
 It will rely only on the change of the:
-	- input references
+	- input reference changes
 	- some events triggered by itself (the component) or one of its children
 	- or the use of the async pipe in the template
-	- lastly, you, the developer, can ask explicitly Angular to do it with the 
+	- lastly, you, the developer, can ask explicitly Angular to do it with the detectChanges() / tick() / markForCheck()
+		for example:
 	
 		componentRef.markForCheck()
 		
