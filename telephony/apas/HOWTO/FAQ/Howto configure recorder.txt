@@ -6,6 +6,7 @@ Howto configure recorder?
 - SIP Trunk Recording Configuration
 - Secured SIP Trunk Recording Configuration
 - Cleanup recordings
+- Configuring filename template for recordings
 - Troubleshooting
 
 
@@ -265,8 +266,28 @@ Call flow of setting configuration:
 		--(RPC)--> RPCrecorderServiceImpl.RemoteSaveRecorderConfiguration()
 			--> value saved into Config[recorder, DeleteThreshold]
 	
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------		
+Configuring filename template for recordings
+============================================
+You can specify filename template for soring recording in the filesystem here:
 
+	APAS/Recorder/Configuration/[Recording Parameters]/(Filename Template:)
+	
+	
+File name will be:
+		<template>_<dbId>.rec
+	
+	
+For example adding all fieds:
 
+	%A_%D_%Y_%M_%J_%H_%N_%S_%U
+		
+		
+NOTE:	
+	It's not a historical data but download/replay will work even after template configuration changed
+	because filename has been saved into rec_call record.
 		
 ---------------------------------------------------------------------------------------------------------------------------------		
 Troubleshooting

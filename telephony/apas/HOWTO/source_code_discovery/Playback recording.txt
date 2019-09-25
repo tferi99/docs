@@ -118,7 +118,7 @@ Playing recording by pressing rendered button:
 	--> com.andtek.andphone.Admin.doGet()			
 		--> com.andtek.andphone.utils.Admin.getModuleAdminPage()
 			--> com.andtek.andphone.recorder.Admin.archive_downloadpw()
-				--> com.andtek.andphone.recorder.util.archive_downloadpw_util(...)
+				--> com.andtek.andphone.recorder.util.Admin.archive_downloadpw_util(...)
 					--> renderPasswordFormForRecording(request, response, mode)
 						- it renders password form with submit button
 						

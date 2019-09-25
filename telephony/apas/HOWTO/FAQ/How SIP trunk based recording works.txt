@@ -42,7 +42,7 @@ Cisco MediaSense recorder.
 of the near-end party, near-end device name, near-end directory number or address.
 
 - With the SIP header enhancement, the far-end call information gets added to the INVITE message From
-header. The far-end call information contains farendRefCI or the call ID of the far-end party, far-end device
+header. The far-end call information contains farend refci or the call ID of the far-end party, far-end device
 name, and far-end directory number.
 
 - Previously, Cisco Unified Communications Manager only sent a SIP INVITE message to a recorder. Now,
@@ -58,6 +58,9 @@ whether the call is for the near-end voice stream or for the far-end voice strea
 
 
 ----------------------------------------------------------------------------------------------------------------
-SIP in APAS
-===========
+How dows it work in detail?
+===========================
+SEE:	telephony/apas/HOWTO/source_code_discovery/Recording.txt
 
+In short:
+- 

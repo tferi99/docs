@@ -72,6 +72,7 @@ Tips
 - How to access DOM elements from a controller?
 - Null check on objects
 - How to interpolate enum values in template?
+- How to use environment variables?
 
 Services
 --------
@@ -1671,7 +1672,30 @@ How does it detect changes?
 - By default, Angular Change Detection works by checking if the value of template expressions have changed. This is done for all components.
 - By default, Angular does not do deep object comparison to detect changes, it only takes into account properties used by the template.
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to use environment variables?
+=================================
+- add your wariables to:
 
+	src/environments/environment.ts
+	AND
+	src/environments/environment.prod.ts
+
+- import environment.ts into controller:
+
+	import {environment} from '../../environments/environment';
+	
+	NOTE: In productive mode it will be replaced with file environment.prod.ts.
+
+- if you want to use it also in template add a member variable:
+
+		env = environment;
+	
+	AND use it in template:
+	
+		<div class="d-flex flex-column h-100" *ngIf="!env.production">
+			...
+		</div>
 
 
 	

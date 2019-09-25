@@ -118,3 +118,7 @@ WebClient
 WEB services
 ------------
 - APAS REST WEB services
+
+WebAttendant
+------------
+- Widget data management in WAC

@@ -1,0 +1,27 @@
+=====================
+NodeBinanceTrader FAQ
+=====================
+
+- server.js
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+server.js
+=========
+
+--> run()
+	--> get_pairs()
+		- getting assets which quote asset is USDT or BTC and status is TRADING
+		- getting intersection of 2 arrays
+		- creating pairs of assets and BTC
+			
+			returmed ['ETHBTC', 'BNBBTC', ...]
+			
+	- pairs = 'BTCUSDT' + pairs
+	
+	--> trackData()
+		------------------------- loop on pairs -------------------------
+		--> trackPairData(pair)
+			
+		
+		

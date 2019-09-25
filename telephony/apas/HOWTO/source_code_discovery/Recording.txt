@@ -13,7 +13,7 @@ You need a configured recording environment (see more: APAS-FAQ.txt/Howto config
 - Post-processing recorded media
 - SIP management
 - Writing/changing rec_call table
-- Start time of recording
+- Recording start time information
 - KEEP values
 - Search
 
@@ -527,9 +527,9 @@ Writing/changing rec_call table
 			
 			
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Writing/changing rec_call table
-===============================
-Start time of recording	- stored into rec_call/start database field.
+Recording start time information
+================================
+Start time of recording	- stored into [rec_call/start] database field.
 
 INSERTED:
 	calls.cpp:

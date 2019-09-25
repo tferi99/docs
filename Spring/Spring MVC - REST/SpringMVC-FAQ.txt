@@ -6,6 +6,8 @@ Spring MVC FAQ
 
 Troubleshooting
 ---------------
+- Spring MVC - HTTP status code 400 (Bad Request)
+- Spring MVC - HTTP status code 405 (Method Not Allowed)
 - Spring MVC not returning JSON content - Error 406
 - Spring MVC not returning XML content - Error 406
 
@@ -36,6 +38,81 @@ or in global config:
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 
+	
+-----------------------------------------------------------------------------------------------------------------------------------------
+Spring MVC - HTTP status code 400 (Bad Request)	
+===============================================
+If your JSON and Java classes don’t match, Spring MVC will return a 400 Bad Request without telling you why. 
+You can get a better insight at what’s going wrong by adding an exception handler in the controller.
+
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public void handle(Exception e) {
+		log.error("Returning HTTP 400 Bad Request", e);
+	}
+	
+Troubleshooting:	find detailed info in server log.	
+	
+-----------------------------------------------------------------------------------------------------------------------------------------
+Spring MVC - HTTP status code 405 (Method Not Allowed)
+======================================================
+This error found if URL does not match with controller methods.
+
+Troubleshooting:	find detailed info in server log.
+
+Example controller:
+
+	@Controller
+	@RequestMapping("/gridster")
+	public class GridsterController extends WebAttendantControllerBase
+	{
+		...
+		
+		@RequestMapping(value="/featuredata/{widgetId:[\\d]}", method = RequestMethod.PUT)
+		public @ResponseBody void updateWidgetFeatureData(@PathVariable("widgetId") int widgetId, @RequestBody String data, HttpServletRequest request, HttpServletResponse response)
+		{
+			...
+		}	
+	}
+
+
+	- PROBLEM:	URL matches but HTTP method not (GET instead of PUT)
+			
+		Result in browser:
+		
+			Request URL: http://localhost:4200/andphone/webattendant-api/gridster/featuredata/5
+			Request Method: GET
+			Status Code: 405 Method Not Allowed
+			
+		Result in log:
+			
+			[2019-09-19 08:50:21,920] [WARN] [http-nio-8080-exec-5] [DefaultHandlerExceptionResolver.java:198] - Request method 'GET' not supported
+			
+			
+	- PROBLEM:	Path contains a typo:
+	
+		Result in browser:
+		
+			Request URL: http://localhost:4200/andphone/webattendant-api/gridster/featuredataX/5
+			Request Method: PUT
+			Status Code: 405 Method Not Allowed
+	
+		Result in log:
+		
+			[2019-09-19 08:53:32,730] [WARN] [http-nio-8080-exec-7] [DispatcherServlet.java:1120] - No mapping found for HTTP request with URI [/andphone/webattendant-api/gridster/featuredataX/5] in DispatcherServlet with name 'springWebattendantAPI'
+
+	- PROBLEM:	bad data in path (e.g. regular expression protects a path variable)
+		Result in browser:
+		
+			Request URL: http://localhost:4200/andphone/webattendant-api/gridster/featuredata/5X
+			Request Method: PUT
+			Status Code: 405 Method Not Allowed
+			
+		Result in log:
+		
+			[2019-09-19 08:58:53,295] [WARN] [http-nio-8080-exec-5] [DispatcherServlet.java:1120] - No mapping found for HTTP request with URI [/andphone/webattendant-api/gridster/featuredata/5X] in DispatcherServlet with name 'springWebattendantAPI'
+			
+			
 -----------------------------------------------------------------------------------------------------------------------------------------
 Spring MVC not returning JSON content - Error 406
 =================================================

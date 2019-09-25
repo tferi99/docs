@@ -3,7 +3,7 @@
 - Use case 2: 	Both of endpoints are recorded.	In this case CUCM initilizes recording for 2 terminals
 				but sniffer supresses one of them to eliminate duplications.
 				
-- Use case 3:	Recorded called party has a bad line recording configuration
+- Use case 3:	...
 
 	
 	

@@ -3,9 +3,15 @@ WebStorm-FAQ
 ============
 
 - NPM tool window is missing
+- Tricks
 
 ------------------------------------------------------------------------------------------------------------------------------------
 NPM tool window is missing
 ==========================
 Fix:	package.json/Right-mouse/Show npm Scripts
 
+
+------------------------------------------------------------------------------------------------------------------------------------
+Tricks
+======
+Jump to CSS class definition:		point with mouse and Ctrl-Shift-i

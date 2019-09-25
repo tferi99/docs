@@ -18,6 +18,7 @@ Language elements
 - How to specify optional and default parameters in TS functions?
 - How to find out type of an instance?
 - Types of enums
+- How to get an enum by value?
 - How to check if a variable is an enum?
 - How to add static methods to an enum?
 - Loops
@@ -856,7 +857,7 @@ export enum LogType {
 }
 
 function f(color: string | LogType) {
-	if (typeof color == ‘number’) {
+	if (typeof color == 'number') {
 		// it’s enum
 		...
 	}
@@ -1022,7 +1023,49 @@ If you want to use an array you have to initialize first.
 	arr.push(1);							// adding values later
 	arr.push(2, 3, 4, 5);					// adding values later
 
+	
+	
+	
+------------------------------------------------------------------------------------------------------------------------
+How to get an enum by value?
+============================
+Here is a number and string enum:
 
+	export enum Num {
+	  ONE, TWO, THREE
+	};
+
+	export enum WidgetTypeEnum {
+	  EMPTY = 'wac-empty',
+	  PLACEHOLDER = 'wac-placeholder',
+	  CALL = 'wac-call',
+	  CALLCENTER = 'wac-callcenter',
+	  CALLCENTER2 = 'wac-callcenter2',
+	  DIRECTORY = 'wac-directory',
+	  CALLLIST = 'wac-call-list',
+	  DEV = 'wac-dev'
+	}
+
+
+You can check if a value is member of an enum:
+
+	export class EnumUtils {
+	  static existValueInEnum(type: any, value: any): boolean {
+		return Object.keys(type).filter(k => isNaN(Number(k))).filter(k => type[k] === value).length > 0;
+	  }
+	}
+
+	EnumUtils.existValueInEnum(WidgetTypeEnum, 'wac-empty')			// true
+	EnumUtils.existValueInEnum(WidgetTypeEnum, 'something else')			// false
+
+	EnumUtils.existValueInEnum(Num, 1)			// true
+	EnumUtils.existValueInEnum(Num, 999)		// false
+	EnumUtils.existValueInEnum(Num, 'something else')		<<<<<<<< compile error
+	
+Then you simply cast value to enum:
+
+	const wType = 'wac-callcenter' as WidgetTypeEnum;
+	
 	
 ************************************************************************************************************************
 ************************************************************************************************************************
@@ -1076,4 +1119,5 @@ Fix:
 		  "check-format",
 		  "allow-leading-underscore"
 		]
+	
 	

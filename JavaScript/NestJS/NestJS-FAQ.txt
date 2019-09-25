@@ -2,6 +2,12 @@
 NestJS-FAQ
 ==========
 
+Validations
+-----------
+- How to validate a DTO member agains enum?
+
+
+
 Troubleshooting
 ---------------
 - ERROR: Nest can't resolve dependencies of the XXX. Please make sure that the argument at index [0] is available in the current context
@@ -13,4 +19,33 @@ ERROR: Nest can't resolve dependencies of the XXX. Please make sure that the arg
 This error generated when componenet XXX cannot inject element specified in constructor.
 
 Fix:	maybe expected component did not added to 'providers' of current module.
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to validate a DTO member agains enum?
+=========================================
+- create an array from enum values (ColorValues)
+- use validatoy on value property: @IsIn(valuesArray)
+
+	export enum Color {
+	  WHITE = 'white',
+	  BLACK = 'black',
+	  CIRMOS = 'cirmos',
+	}
+
+	export const ColorValues = Object.values(Color);
+
+	export class CatsCreateDto {
+	  @IsNotEmpty()
+	  name: string;
+
+	  @IsNotEmpty()
+	  @IsIn(ColorValues)
+	  color: Color;
+	}
+
+	@Post()
+	@UsePipes(ValidationPipe)
+	create(@Body() dto: CatsCreateDto) {
+		return this.catsService.create(dto);
+	}
 

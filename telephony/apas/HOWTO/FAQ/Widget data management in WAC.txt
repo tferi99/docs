@@ -1,0 +1,64 @@
+=============================
+Widget data management in WAC
+=============================
+
+- Grid data
+- Feature data
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Grid data
+=========
+ACTION[GridsterChangedAction]
+	--> GridsterEffects.gridsterChanged$
+		--> GridApiService.saveGrid(WacGridster)
+			==> REST: POST /gridster body: grid data
+				--> com.andtek.andphone.webmvc.webattendant.controllers.GridsterController.saveGrid(...)
+					--> com.andtek.andphone.web.webattendant.services.GridsterService.save(...)
+						--> com.andtek.andphone.web.webattendant.dao.WebAttendantWidgetDao.saveForSettings(widgets, settings)
+							
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Feature data
+============
+
+- From widgets in WebAttendantConsole (WAC) can be created multiple instances.
+	In this case widget specific data stored into NgRx store under feature state 
+	into 'widgets' note, which is an entity collection (managed by EntityAdapter).
+
+- Feature specific data stored in the backend side in DB/attendant_widget/feature_data 
+	(varchar) field as JSON string.
+	
+- If any feature data which should be persisted changed in widget the whole widget data 
+	should be sent to server side.
+	
+Saving widget data into database
+--------------------------------
+For ecample selected queue changed in CallCenter widget.
+- widget data saved by gridApiService.changeWidgetFeatureData()
+
+--> CallCenterComponent.selectQueue(widgetId, queueId)
+	ACTION[CallCenterSelectQueueAction] ==>
+		--> CallCenterEffects.queueChanged$
+			--> gridApiService.changeWidgetFeatureData(action.payload.widgetId, {id: action.payload.widgetId, selectedQueueId: action.payload.queueId, ...}
+				- it sends data object to Spring MVC REST API which saves into database
+					PUT /gridster/featuredata/<widget ID> Body: data
+					REST ===> com.andtek.andphone.webmvc.webattendant.controllers.GridsterController.updateWidgetFeatureData
+						--> com.andtek.andphone.web.webattendant.services.GridsterService.updateWidgetFeatureData(widgetId, data, settings)
+							--> com.andtek.andphone.web.webattendant.dao.WebAttendantWidgetDao.updateWidgetFeatureData(widgetId, featureData, settingsId)
+								- UPDATE attendant_widget SET feature_data WHERE attendant_user_settings_id AND widget_id
+				---> ACTION[CallCenterSelectQueueAppliedAction(same payload)]
+
+
+Fetching widget feature data and loading into store:
+----------------------------------------------------
+ACTION[AppDataLoadRequestedAction] ==>
+	--> InitEffects.appDataLoadRequested
+		--> initService.appReload()
+			ACTIONS ==>
+			...
+			- GridsterLoadedAction
+			
+			--> CallCenterEffects.widgetsLoaded$
+				- collection widget type specific data 
