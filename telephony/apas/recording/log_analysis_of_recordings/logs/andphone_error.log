@@ -1,0 +1,254 @@
+[2019-10-11 09:50:12,706] [WARN] [APAS-JTAPIThread] [ANDProperties.java:147] - Sent HUP to Sniffer to reread config. Message from Sniffer: 
+[2019-10-11 09:50:13,393] [WARN] [APAS-JTAPIThread] [Admin.java:6061] - APAS version: 6.1.2-11661 (Appliance-64bit)(rev:11661) [1]
+[2019-10-11 09:50:13,672] [ERROR] [APAS-JTAPIThread] [Module.java:1336] - Unable to set smbpasswd for user backup, does the user have global_backup permissions?
+[2019-10-11 09:50:16,202] [WARN] [APAS-JTAPIThread] [ApacheCommonsLog.java:47] - Schema "public" has a version (4.7.1) that is newer than the latest available migration (1) !
+[2019-10-11 09:50:17,441] [ERROR] [http-nio-8080-exec-10] [EventLog.java:298] - RECORDER: Sniffer process (andphone_record) went out of service (status=DISCONNECTED).
+[2019-10-11 09:50:17,455] [ERROR] [http-nio-8080-exec-7] [EventLog.java:298] - RECORDER: Sniffer process (andphone_record) went out of service (status=DISCONNECTED).
+[2019-10-11 09:50:21,262] [ERROR] [APAS-JTAPIThread] [Module.java:224] - Unable to connect server
+javax.sip.ObjectInUseException: Provider already attached!
+	at gov.nist.javax.sip.SipStackImpl.createSipProvider(SipStackImpl.java:961) ~[jain-sip-ri-1.2.129-mod-SNAPSHOT.jar:?]
+	at com.andtek.andphone.sip.trunk.SIPServer.listen(SIPServer.java:1149) ~[classes/:?]
+	at com.andtek.andphone.recorder.Module.init(Module.java:222) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:535) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:515) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:392) [classes/:?]
+[2019-10-11 09:50:22,557] [WARN] [APAS-JTAPIThread] [RestTemplate.java:608] - POST request for "http://127.0.0.1:8081/andguard/rest/apas/licenses/notification" resulted in 404 (Not Found); invoking error handler
+[2019-10-11 09:50:22,560] [ERROR] [APAS-JTAPIThread] [RestCall.java:137] - Restcall failed for url http://127.0.0.1:8081/andguard/rest/apas/licenses/notification.
+org.springframework.web.client.HttpClientErrorException: 404 Not Found
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:91) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.web.client.RestTemplate.handleResponseError(RestTemplate.java:615) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:573) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:529) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.web.client.RestTemplate.postForEntity(RestTemplate.java:356) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at com.andtek.andphone.api.rest.RestCall.sendPostRequest(RestCall.java:119) [classes/:?]
+	at com.andtek.andphone.api.rest.RestCall.sendPostRequest(RestCall.java:159) [classes/:?]
+	at com.andtek.andphone.andguard.rest.ANDGuardConnector.notifyGuardToUpdateLicenseInformation(ANDGuardConnector.java:96) [classes/:?]
+	at com.andtek.andphone.andguard.Module.init(Module.java:90) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:535) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:515) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:392) [classes/:?]
+[2019-10-11 09:50:22,561] [ERROR] [APAS-JTAPIThread] [ANDGuardConnector.java:100] - Exception when notifying Guard about license changes
+org.springframework.web.client.HttpClientErrorException: 404 Not Found
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:91) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.web.client.RestTemplate.handleResponseError(RestTemplate.java:615) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:573) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:529) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.web.client.RestTemplate.postForEntity(RestTemplate.java:356) ~[spring-web-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at com.andtek.andphone.api.rest.RestCall.sendPostRequest(RestCall.java:119) ~[classes/:?]
+	at com.andtek.andphone.api.rest.RestCall.sendPostRequest(RestCall.java:159) ~[classes/:?]
+	at com.andtek.andphone.andguard.rest.ANDGuardConnector.notifyGuardToUpdateLicenseInformation(ANDGuardConnector.java:96) [classes/:?]
+	at com.andtek.andphone.andguard.Module.init(Module.java:90) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:535) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:515) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:392) [classes/:?]
+[2019-10-11 09:50:23,029] [WARN] [APAS-JTAPIThread] [Admin.java:6061] - APAS version: 6.1.2-11661 (Appliance-64bit)(rev:11661) [1], Cisco Jtapi version: 11.5(1.10000)-1 Release
+[2019-10-11 09:50:23,819] [WARN] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@3fbc5b3a)] [CiscoJtapiProviderObserver.java:137] - ProvOutOfServiceEv
+[2019-10-11 09:50:34,043] [WARN] [APAS-TimerDaemon] [Admin.java:511] - InMaintenance changed from 2 to 0
+[2019-10-11 09:50:34,104] [ERROR] [APAS-JTAPIThread] [PGroupMember.java:1311] - No Address found on JTAPI provider for +36110009098. Check if the device is associated with the user FTOTH_APAS2 on Cisco CallManager.
+[2019-10-11 09:50:34,114] [ERROR] [APAS-JTAPIThread] [Module.java:338] - Exception from the init process. 
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_CONF is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:498) ~[classes/:?]
+	at com.andtek.andphone.mcast.Module.setupRouteCallBack(Module.java:137) ~[classes/:?]
+	at com.andtek.andphone.mcast.Module.initJTAPI(Module.java:334) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:746) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:731) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2755) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2508) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:406) [classes/:?]
+[2019-10-11 09:50:34,117] [ERROR] [APAS-JTAPIThread] [Module.java:635] - Failed to setup the recorder media route point. Recording will probably NOT work without it!
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:498) ~[classes/:?]
+	at com.andtek.andphone.recorder.Module.setupMediaRoutePoint(Module.java:355) ~[classes/:?]
+	at com.andtek.andphone.recorder.Module.initJTAPI(Module.java:633) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:746) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:731) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2755) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2508) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:406) [classes/:?]
+[2019-10-11 09:50:34,147] [WARN] [APAS-JTAPIThread] [Module.java:1037] - CallBackModule: WARNING: we are installing CallbackCallObservers for callrouting on ALL terminals!
+[2019-10-11 09:50:34,151] [ERROR] [APAS-JTAPIThread] [Modules.java:750] - Exception while initializing JTAPI for module callrouting
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal  is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:498) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1982) ~[classes/:?]
+	at com.andtek.andphone.callrouting.CTIPortObserver.observe(CTIPortObserver.java:162) ~[classes/:?]
+	at com.andtek.andphone.callrouting.Module.initJTAPI(Module.java:707) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:746) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:731) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2755) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2508) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:406) [classes/:?]
+[2019-10-11 09:50:34,153] [WARN] [APAS-JTAPIThread] [Module.java:709] - WARNING: we are installing observers on ALL terminals!
+[2019-10-11 09:50:34,156] [ERROR] [APAS-JTAPIThread] [Modules.java:750] - Exception while initializing JTAPI for module communicator
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_COMM is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:498) ~[classes/:?]
+	at com.andtek.andphone.communicator.Module.setupRouteCallBack(Module.java:428) ~[classes/:?]
+	at com.andtek.andphone.communicator.Module.initJTAPI(Module.java:721) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:746) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:731) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2755) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2508) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:406) [classes/:?]
+[2019-10-11 09:50:34,159] [ERROR] [APAS-JTAPIThread] [Modules.java:750] - Exception while initializing JTAPI for module phonemenu
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_MENU is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:498) ~[classes/:?]
+	at com.andtek.andphone.phonemenu.Module.initJTAPI(Module.java:52) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:746) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:731) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2755) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2508) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:406) [classes/:?]
+[2019-10-11 09:50:34,161] [ERROR] [APAS-JTAPIThread] [Modules.java:750] - Exception while initializing JTAPI for module andmobile
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_CP_MOBILE is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:498) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1982) ~[classes/:?]
+	at com.andtek.andphone.andmobile.CTIPortObserver.observe(CTIPortObserver.java:182) ~[classes/:?]
+	at com.andtek.andphone.andmobile.Module.initJTAPI(Module.java:109) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:746) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:731) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2755) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2508) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:406) [classes/:?]
+[2019-10-11 09:50:34,624] [ERROR] [APAS-PGMWorker-12] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
+[2019-10-11 09:50:34,863] [WARN] [APAS-PGMWorker-12] [LockoutProfile.java:699] - LOCKOUT: No found lockout profile for extension '+36110009020'. fallback to default profile. 
+[2019-10-11 09:50:34,960] [ERROR] [APAS-PGMWorker-8] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
+[2019-10-11 09:50:35,105] [ERROR] [APAS-PGMWorker-12] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
+[2019-10-11 09:50:35,114] [ERROR] [APAS-PGMWorker-10] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
+[2019-10-11 09:50:35,117] [ERROR] [APAS-PGMWorker-11] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
+[2019-10-11 09:50:35,183] [WARN] [APAS-PGMWorker-8] [LockoutProfile.java:699] - LOCKOUT: No found lockout profile for extension '+36110009021'. fallback to default profile. 
+[2019-10-11 09:50:35,222] [ERROR] [APAS-PGMWorker-8] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
+[2019-10-11 09:50:35,223] [ERROR] [APAS-PGMWorker-7] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
+[2019-10-11 09:50:35,224] [ERROR] [APAS-PGMWorker-9] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
+[2019-10-11 09:50:37,562] [ERROR] [APAS-PGMAXLWorker-1] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
+[2019-10-11 09:50:37,662] [ERROR] [APAS-PGMAXLWorker-1] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
+[2019-10-11 09:50:38,658] [WARN] [APAS-JTAPIThread] [JTAPIThread.java:535] - Provider went out of service 1
+[2019-10-11 09:51:07,522] [WARN] [http-nio-8080-exec-10] [ANDRealm.java:180] - ANDRealm.authenticate(): Authentication failure: Verify username and password. | Profile: Web Client default authentication profile [type=CUCM AXL]
+[2019-10-11 09:51:08,386] [ERROR] [pool-3-thread-1] [WackerPhoneNumberMgmtServiceImpl.java:59] - Log PhoneNumberMgmt - LDAP sync faild! Project : com.andtek.andphone.provisioning.project.Project@3a94f139
+java.lang.NullPointerException
+	at com.andtek.andphone.provisioning.project.utils.wacker.cacheimpl.WackerLdapPhoneNumberCacheServiceImpl.runSync(WackerLdapPhoneNumberCacheServiceImpl.java:109) ~[classes/:?]
+	at com.andtek.andphone.provisioning.project.utils.wacker.cacheimpl.WackerPhoneNumberMgmtServiceImpl.sync(WackerPhoneNumberMgmtServiceImpl.java:57) [classes/:?]
+	at com.andtek.andphone.provisioning.project.task.ProvisioningSyncTask.executeTask(ProvisioningSyncTask.java:82) [classes/:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_144]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_144]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_144]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_144]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:65) [spring-context-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) [spring-context-4.1.2.RELEASE.jar:4.1.2.RELEASE]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_144]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_144]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_144]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_144]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_144]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_144]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:51:08,387] [WARN] [pool-3-thread-1] [WackerCucmPhoneNumberCacheServiceImpl.java:63] - Log PhoneNumberMgmt - Run sync failed for CUCM phone numbers - input location list is null or empty!
+[2019-10-11 09:54:01,051] [ERROR] [APAS-DesktopPhoneEventQueueWorker-1] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:54:01,053] [ERROR] [APAS-DesktopPhoneEventQueueWorker-1] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:54:13,227] [ERROR] [APAS-DesktopPhoneEventQueueWorker-2] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:54:29,819] [ERROR] [APAS-DesktopPhoneEventQueueWorker-3] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:54:29,836] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2019-10-11 09:54:29,846] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2019-10-11 09:54:29,846] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@1fc6bc53)] [EventBroadcaster.java:85] - EVENT_BROADCASTER: Ignore event broadcasting for the terminal 'SEPA45630BB1748' because no active webclient and broadcaster found for this terminal. Maybe at the moment no active webclient running associated to this terminal.
+[2019-10-11 09:56:02,168] [ERROR] [APAS-DesktopPhoneEventQueueWorker-4] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:56:02,170] [ERROR] [APAS-DesktopPhoneEventQueueWorker-4] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:56:04,490] [ERROR] [APAS-DesktopPhoneEventQueueWorker-5] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:57:22,292] [ERROR] [APAS-DesktopPhoneEventQueueWorker-6] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:57:22,308] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@1fc6bc53)] [EventBroadcaster.java:85] - EVENT_BROADCASTER: Ignore event broadcasting for the terminal 'SEPA45630BB1748' because no active webclient and broadcaster found for this terminal. Maybe at the moment no active webclient running associated to this terminal.
+[2019-10-11 09:57:22,324] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2019-10-11 09:57:22,362] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2019-10-11 09:59:00,846] [ERROR] [APAS-DesktopPhoneEventQueueWorker-7] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:59:00,848] [ERROR] [APAS-DesktopPhoneEventQueueWorker-7] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:59:03,319] [ERROR] [APAS-DesktopPhoneEventQueueWorker-8] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:59:25,941] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@1fc6bc53)] [EventBroadcaster.java:85] - EVENT_BROADCASTER: Ignore event broadcasting for the terminal 'SEPA45630BB1748' because no active webclient and broadcaster found for this terminal. Maybe at the moment no active webclient running associated to this terminal.
+[2019-10-11 09:59:25,949] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2019-10-11 09:59:25,951] [ERROR] [APAS-DesktopPhoneEventQueueWorker-9] [DesktopCallObserver.java:855] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:853) [classes/:?]
+	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1036) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2019-10-11 09:59:25,964] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID

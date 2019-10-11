@@ -1,0 +1,41 @@
+==========================
+Use case 1 - on demand off
+==========================
+- Only one endpoint recorded, the called party (+36110009020)
+- on demand: off
+
+- Call:				18635/1
+- Time: 2019-10-11 09:54:00,957 - 2019-10-11 09:57:22,330  :  202 sec(s)
+- Calling party:	+36110009098	(SEP100000009098)
+- Called party:		+36110009020	(SEPA45630BB1748)
+
+RECORDING[1][sip18635/1, SEPA45630BB1748] : 2019-Oct-11 09:54:13 - 2019-Oct-11 09:54:29, DB:52, DiskThread:true 
+   - callingPartyName=
+   - srcIP=10.51.51.122
+   - callID=sip18635/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=39187
+   - initiated=false
+   - dstIP=10.51.51.122
+   - lastRedirectingParty=
+   - callingParty=+36110009098
+   - originalCallingParty=+36110009098
+   - dstPort=36006
+   - calledParty=+36110009020 
+
+Time of recording[sip18635/1]: [2019-10-11 09:54:13,174] - [2019-10-11 09:54:29,801]  :  16 sec(s)
+
+Recording parameters:
+
+    - callID = sip18635/1
+    - dstIP = 10.51.51.122
+    - dstPort = 36006
+    - terminal = SEPA45630BB1748
+	
+Sip:
+- Refci:		25151453	
+	
+

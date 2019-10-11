@@ -1,0 +1,73 @@
+====================================================================
+SIP x-refci: 25151462
+====================================================================
+
+[1] - [2019-10-11 09:56:04,606] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009090@10.51.51.122:5060]
+    INVITE sip:+36110009090@10.51.51.122:5060 SIP/2.0
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e32108c7bce
+    From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500754~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151466
+
+[2] - [2019-10-11 09:56:04,608] [SENT>] [SIPServer-3] [100 Trying]
+    SIP/2.0 100 Trying
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e32108c7bce
+    From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500754~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151466
+
+[3] - [2019-10-11 09:56:04,610] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e32108c7bce
+    From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500754~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151466
+
+[4] - [2019-10-11 09:56:04,689] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009090@10.51.51.122:5060]
+    INVITE sip:+36110009090@10.51.51.122:5060 SIP/2.0
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e36fef3fb
+    From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500757~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151469
+
+[5] - [2019-10-11 09:56:04,691] [SENT>] [SIPServer-3] [100 Trying]
+    SIP/2.0 100 Trying
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e36fef3fb
+    From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500757~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151469
+
+[6] - [2019-10-11 09:56:04,692] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e36fef3fb
+    From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500757~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151469
+
+[7] - [2019-10-11 09:56:04,709] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+    ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e3970c0a71f
+    From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500754~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151466
+
+[8] - [2019-10-11 09:56:04,784] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+    ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e3b4e83acae
+    From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500757~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151469
+
+[9] - [2019-10-11 09:57:22,315] [>RECEIVED] [SIPServer-3] [BYE sip:APAS@10.51.51.122:5060;transport=udp]
+    BYE sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e4467aabfc0
+    From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500757~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151469
+
+[10] - [2019-10-11 09:57:22,316] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e4467aabfc0
+    From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500757~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151469
+
+[11] - [2019-10-11 09:57:22,317] [>RECEIVED] [SIPServer-3] [BYE sip:APAS@10.51.51.122:5060;transport=udp]
+    BYE sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e426c5bf625
+    From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500754~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151466
+
+[12] - [2019-10-11 09:57:22,317] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e426c5bf625
+    From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500754~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151466
+
+[13] - [2019-10-11 09:57:22,319] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e4467aabfc0
+    From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500757~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151469
+
+[14] - [2019-10-11 09:57:22,321] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+    Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e426c5bf625
+    From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151462;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151461;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500754~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151466

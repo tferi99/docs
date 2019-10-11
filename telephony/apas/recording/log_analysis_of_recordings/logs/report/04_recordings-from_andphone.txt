@@ -1,0 +1,65 @@
+From: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/logs//andphone.log*
+START: sip18635/1, SEPA45630BB1748 - 2019-10-11 09:54:13
+[2019-10-11 09:54:13,174] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@37428ff5)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip18635/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+END: sip18635/1, SEPA45630BB1748 - 2019-10-11 09:54:29
+END: csip25151453, SEPA45630BB1748 - 2019-10-11 09:54:29
+END: csip25151453, SEPA45630BB1748 - 2019-10-11 09:54:29
+START: sip18638/1, SEPA45630BB1748 - 2019-10-11 09:56:04
+[2019-10-11 09:56:04,480] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@37428ff5)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip18638/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+END: sip18638/1, SEPA45630BB1748 - 2019-10-11 09:57:22
+END: csip25151462, SEPA45630BB1748 - 2019-10-11 09:57:22
+END: csip25151462, SEPA45630BB1748 - 2019-10-11 09:57:22
+START: sip18641/1, SEPA45630BB1748 - 2019-10-11 09:59:03
+[2019-10-11 09:59:03,315] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@37428ff5)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip18641/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+END: sip18641/1, SEPA45630BB1748 - 2019-10-11 09:59:25
+END: csip25151471, SEPA45630BB1748 - 2019-10-11 09:59:25
+END: csip25151471, SEPA45630BB1748 - 2019-10-11 09:59:25
+=======================================
+RECORDING[0][sip18641/1, SEPA45630BB1748] : 2019-10-11 09:59:03 - 2019-10-11 09:59:25, DB:54
+   - callingPartyName=
+   - srcIP=10.51.51.122
+   - callID=sip18641/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=33168
+   - initiated=false
+   - dstIP=10.51.51.122
+   - lastRedirectingParty=
+   - callingParty=+36110009098
+   - originalCallingParty=+36110009098
+   - dstPort=46295
+   - calledParty=+36110009020
+RECORDING[1][sip18635/1, SEPA45630BB1748] : 2019-10-11 09:54:13 - 2019-10-11 09:54:29, DB:52
+   - callingPartyName=
+   - srcIP=10.51.51.122
+   - callID=sip18635/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=39187
+   - initiated=false
+   - dstIP=10.51.51.122
+   - lastRedirectingParty=
+   - callingParty=+36110009098
+   - originalCallingParty=+36110009098
+   - dstPort=36006
+   - calledParty=+36110009020
+RECORDING[2][sip18638/1, SEPA45630BB1748] : 2019-10-11 09:56:04 - 2019-10-11 09:57:22, DB:53
+   - callingPartyName=
+   - srcIP=10.51.51.122
+   - callID=sip18638/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=56589
+   - initiated=false
+   - dstIP=10.51.51.122
+   - lastRedirectingParty=
+   - callingParty=+36110009098
+   - originalCallingParty=+36110009098
+   - dstPort=34349
+   - calledParty=+36110009020

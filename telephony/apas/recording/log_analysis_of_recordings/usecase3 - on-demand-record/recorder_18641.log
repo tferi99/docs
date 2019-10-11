@@ -1,0 +1,7 @@
+[2019-10-11 09:59:03,558] [INFO] [111 ] [18641/1] [SIPTRUNK       ]  - SipTrunkRTPInEv [from: +36110009020, device: SEPA45630BB1748, call-id: 25151471]
+[2019-10-11 09:59:03,558] [INFO] [111 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id SEPA45630BB1748#18641/1
+[2019-10-11 09:59:03,558] [INFO] [111 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id does not exist in repository
+[2019-10-11 09:59:03,637] [INFO] [113 ] [18641/1] [SIPTRUNK       ]  - SipTrunkRTPOutEv [from: +36110009020, device: SEPA45630BB1748, call-id: 25151471]
+[2019-10-11 09:59:03,637] [INFO] [113 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id SEPA45630BB1748#18641/1
+[2019-10-11 09:59:03,637] [INFO] [113 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id does not exist in repository
+

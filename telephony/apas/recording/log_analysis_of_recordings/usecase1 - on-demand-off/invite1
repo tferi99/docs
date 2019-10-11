@@ -1,0 +1,25 @@
+[2019-10-11 09:54:13,339] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009090@10.51.51.122:5060]
+INVITE sip:+36110009090@10.51.51.122:5060 SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK24e1649f11138
+From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151453;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151452;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500719~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151457
+To: <sip:+36110009090@10.51.51.122>
+Date: Fri, 11 Oct 2019 07:54:13 GMT
+Call-ID: 4f7f8600-da013525-22be0-2233330a@10.51.51.34
+Supported: timer,resource-priority,replaces,X-cisco-srtp-fallback,Geolocation
+Min-SE: 1800
+User-Agent: Cisco-CUCM11.5
+Allow: INVITE,OPTIONS,INFO,BYE,CANCEL,ACK,PRACK,UPDATE,REFER,SUBSCRIBE,NOTIFY
+CSeq: 101 INVITE
+Expires: 180
+Allow-Events: presence,kpml
+Call-Info: <urn:x-cisco-remotecc:callinfo>;security=Unknown;gci=1-18636;isVoip,<sip:10.51.51.34:5060>;method="NOTIFY;Event=telephone-event;Duration=500",<urn:x-cisco-remotecc:callinfo>;x-cisco-video-traffic-class=DESKTOP
+Session-ID: f6b78649c8d249488d4d36c1aa500717;remote=00000000000000000000000000000000
+Cisco-Guid: 1333757440-0000065536-0000000466-0573780746
+P-Charging-Vector: icid-value="4F7F860000010000000001D12233330A";icid-generated-at=CEERD-CUCM-11;orig-ioi=IMS Inter Operator Identification
+Session-Expires: 1800
+P-Asserted-Identity: <sip:+36110009020@10.51.51.34>
+Remote-Party-ID: <sip:+36110009020@10.51.51.34>;party=calling;screen=yes;privacy=off
+Contact: <sip:+36110009020@10.51.51.34:5060>;isFocus
+Max-Forwards: 70
+Content-Length: 0
+

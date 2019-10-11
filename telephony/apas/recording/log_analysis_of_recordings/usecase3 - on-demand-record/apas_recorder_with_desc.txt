@@ -1,0 +1,62 @@
+------------------------------------------- Call-1 (call-start-end) -------------------------------------------
+### Call start - on-demand not started:
+2019-Oct-11 12:59:49.942: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip18644/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+2019-Oct-11 12:59:49.948: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18644/1" dbID="55" state="1"/>
+2019-Oct-11 12:59:50.314: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip18644/1" srcIP="10.51.51.122" srcPort="42972"/>
+2019-Oct-11 12:59:50.316: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18644/1" dbID="55" state="1"/>
+2019-Oct-11 12:59:50.399: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip18644/1" dstIP="10.51.51.122" dstPort="44739"/>
+2019-Oct-11 12:59:50.401: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18644/1" dbID="55" state="1"/>
+
+### 'RTP Recorded' stopped
+
+### On-demand start
+2019-Oct-11 13:01:21.920: 1: ->recordCall: <recordCall terminal="rec" callID="sip18644/1" onDemand="1" />
+2019-Oct-11 13:01:21.922: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18644/1" dbID="55" state="1"/>
+
+### 'RTP Recorded' changing 
+
+### Call end
+2019-Oct-11 13:01:43.832: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="csip25151480" stopOut="1" />
+2019-Oct-11 13:01:43.832: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+2019-Oct-11 13:01:43.832: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="csip25151480" stopOut="1" />
+2019-Oct-11 13:01:43.832: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+2019-Oct-11 13:01:43.837: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip18644/1" stopOut="1" />
+2019-Oct-11 13:01:43.837: 1: worker::send(<recordCallResponse code="100" string="Call removed"/>
+
+
+------------------------------------------- Call-2 (call-start-stop-start-end) -------------------------------------------
+### Call start - on-demand not started:
+2019-Oct-11 13:02:19.194: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip18647/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+2019-Oct-11 13:02:19.197: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18647/1" dbID="56" state="1"/>
+2019-Oct-11 13:02:19.547: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip18647/1" srcIP="10.51.51.122" srcPort="51619"/>
+2019-Oct-11 13:02:19.549: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18647/1" dbID="56" state="1"/>
+2019-Oct-11 13:02:19.640: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip18647/1" dstIP="10.51.51.122" dstPort="43350"/>
+2019-Oct-11 13:02:19.642: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18647/1" dbID="56" state="1"/>
+
+### 'RTP Recorded' stopped
+
+### On-demand start
+2019-Oct-11 13:02:26.527: 1: ->recordCall: <recordCall terminal="rec" callID="sip18647/1" onDemand="1" />
+2019-Oct-11 13:02:26.528: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18647/1" dbID="56" state="1"/>
+
+### 'RTP Recorded' changing 
+
+### On-demand stop
+2019-Oct-11 13:02:43.049: 1: ->recordCall: <recordCall terminal="rec" callID="sip18647/1" onDemand="0" />
+2019-Oct-11 13:02:43.049: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18647/1" dbID="56" state="1"/>
+
+### 'RTP Recorded' stopped
+
+### On-demand start again
+2019-Oct-11 13:02:52.578: 1: ->recordCall: <recordCall terminal="rec" callID="sip18647/1" onDemand="1" />
+2019-Oct-11 13:02:52.579: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip18647/1" dbID="56" state="1"/>
+
+### 'RTP Recorded' changing 
+
+### Call end
+2019-Oct-11 13:03:10.545: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip18647/1" stopOut="1" />
+2019-Oct-11 13:03:10.545: 1: worker::send(<recordCallResponse code="100" string="Call removed"/>
+2019-Oct-11 13:03:10.588: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="csip25151489" stopOut="1" />
+2019-Oct-11 13:03:10.589: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+2019-Oct-11 13:03:10.589: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="csip25151489" stopOut="1" />
+2019-Oct-11 13:03:10.589: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
