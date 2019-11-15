@@ -226,7 +226,7 @@ How to create/get SRTP keys?
 		...
 		
 During a secure call (when both of terminals has a Secure Device Profile) phones sends payload in SRTP.
-To encrypt data terminals has security key-pairs.
+To encrypt data terminals have security key-pairs.
 
 	Terminal A incoming key --------------- Terminal B outgoing key
 	Terminal A outgoing key --------------- Terminal B incoming key
@@ -284,6 +284,8 @@ SIP ships keys in SDP layer. You can trace SIP data in sip_protocol.log:
 											
 											Log written into recorder log:
 											
+											....
+											
 
 2. Via JTAPI event
 ------------------
@@ -303,7 +305,8 @@ CiscoRTPOutputKeyEv ==> PhoneCallObserver.terminalChangedEvent()
 	--> sendOutputKeyToRecorderIfEncrypted(...)
 		
 
-3. 
+3. .....
+
 		
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Packet sniffing

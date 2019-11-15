@@ -15,6 +15,8 @@ Observables
 - How to process values from an observable with multiple operators?
 - How to join multiple observables into single onserver?
 - How to join multiple observables into single onserver v2 (flattening)?
+- Do we need to unsubscribe all the observables?
+- Do I need to unsubscribe completed observables?
 
 Operators
 ---------
@@ -538,3 +540,36 @@ Usage:
 		take(10)
 	).subscribe();
 
+
+----------------------------------------------------------------------------------------------------
+Do we need to unsubscribe all the observables?
+==============================================
+The answer is No, you don't. 
+
+You only need to unsubscribe 
+- infinite observables 
+	(or the observables that does not completes) for example the "interval()" observable 
+- the DOM event listener observable 
+
+This implies that you don't usually need to manually unsubscribe from finite observables 
+(or the observables that completes for example httpClient observables etc.) 
+unless you want to prematurely end the observable execution (in case you find out your work is done with an observable and 
+you don't need it any more then you can decide to dispose finite observable execution as well) 
+or the observable is gonna have a greater lifespan that the component, service or directive in which it is subscribed. 
+
+But there are exceptions to this rule as well, you don't need to unsubscribe infinite observables subscribed by angular itself for example 
+when you are using ASYNC PIPE, in this case the Angular framework will unsubscribe the observable automatically when the component is destroyed.
+
+		
+----------------------------------------------------------------------------------------------------
+Do I need to unsubscribe completed observables?
+===============================================
+You DON'T NEED to unsubscribe from a completed/errored observable, but it won't hurt if you do.
+
+SEE ABOVE:	Do we need to unsubscribe all the observables?
+
+
+
+	
+	
+	

@@ -2,6 +2,10 @@
 NestJS-FAQ
 ==========
 
+Depenency injection
+-------------------
+- How to resolve circular dependencies?
+
 Validations
 -----------
 - How to validate a DTO member agains enum?
@@ -49,3 +53,29 @@ How to validate a DTO member agains enum?
 		return this.catsService.create(dto);
 	}
 
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to resolve circular dependencies?
+=====================================
+Nest enables resolving circular dependencies using a technique called forward referencing.
+
+A forward reference allows Nest to reference classes which aren't yet defined using the forwardRef() utility function. 
+For example, if ConfigService and ConnectionService depend on each other, both sides of the relationship can use @Inject() and the forwardRef() utility 
+to resolve the circular dependency. Otherwise Nest won't instantiate them because all of the essential metadata won't be available.
+
+	export class ConfigService {
+		constructor(
+			@Inject(forwardRef(() => ConnectionService))
+			private connectionService: ConnectionService,
+		) {}
+		...
+	}
+	
+	export class ConnectionService {
+		constructor(
+			@Inject(forwardRef(() => ConfigService))
+			private configService: ConfigService,
+		) {}
+	}
+	
+	
