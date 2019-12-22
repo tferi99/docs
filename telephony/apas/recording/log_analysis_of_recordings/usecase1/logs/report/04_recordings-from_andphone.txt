@@ -1,23 +1,23 @@
-From: /cygdrive/d/_MYWORK/doc/software/tools_and_languages/telephony/Apas/recording/Log_analysis_of_recordings/usecase1/logs//andphone.log*
-START: sip99720/1, SEP64A0E714F271 - 2017-05-03 08:56:56
-[2017-05-03 08:56:56,616] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@5c5820a6)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" callingParty="9030" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9030" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>]
-END: csip31117820, SEP64A0E714F271 - 2017-05-03 08:57:24
-END: sip99720/1, SEP64A0E714F271 - 2017-05-03 08:57:24
-END: csip31117820, SEP64A0E714F271 - 2017-05-03 08:57:24
+From: /cygdrive/d/b/logs//andphone.log*
+START: sip19329/1, SEPA45630BB1748 - 2019-12-19 15:53:02
+[2019-12-19 15:53:02,419] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@369f3e9e)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip19329/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+END: sip19329/1, SEPA45630BB1748 - 2019-12-19 15:53:33
+END: csip25153617, SEPA45630BB1748 - 2019-12-19 15:53:33
+END: csip25153617, SEPA45630BB1748 - 2019-12-19 15:53:33
 =======================================
-RECORDING[0][sip99720/1, SEP64A0E714F271] : 2017-05-03 08:56:56 - 2017-05-03 08:57:24, DB:308
+RECORDING[0][sip19329/1, SEPA45630BB1748] : 2019-12-19 15:53:02 - 2019-12-19 15:53:33, DB:90
    - callingPartyName=
-   - srcIP=192.168.5.245
-   - callID=sip99720/1
-   - calledPartyName=Cicamica
+   - srcIP=10.51.51.122
+   - callID=sip19329/1
+   - calledPartyName=
    - stopOut=1
-   - terminal=SEP64A0E714F271
-   - originalCalledParty=9000
-   - srcPort=39923
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=47793
    - initiated=false
-   - dstIP=192.168.5.245
+   - dstIP=10.51.51.122
    - lastRedirectingParty=
-   - callingParty=9030
-   - originalCallingParty=9030
-   - dstPort=39575
-   - calledParty=9000
+   - callingParty=+36110009098
+   - originalCallingParty=+36110009098
+   - dstPort=41899
+   - calledParty=+36110009020

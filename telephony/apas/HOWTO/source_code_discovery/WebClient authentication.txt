@@ -314,14 +314,14 @@ Autoconfig
 ==========
 WebClient configuration can be created automatically, this way:
 
-	WebProfileAutoConfig autoconfig = WebProfileAutoConfig.getInstance();
+	WebClientProfileAutoConfig autoconfig = WebClientProfileAutoConfig.getInstance();
 	autoconfig.createProfileIfNeed();
 
 It called from 2 locations:
 	1. Manually from GWT page:
 	
 		--> com.andtek.andphone.andmobile.gwtapp.client.profiles_gwtappMain.buildSelectProfileTypeScreen()
-			- Answering 'Yes' to question 'Do you want that APAS create a default Web profile?'
+			- Answering 'Yes' to question 'Do you want that APAS create a default Web Client profile?'
 			--> RemoteAutoCreateWebProfile()
 				--> com.andtek.andphone.andmobile.gwtapp.server.RPCandmobileServiceImpl.RemoteAutoCreateWebProfile()
 

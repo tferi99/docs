@@ -8,6 +8,8 @@ SEE MORE:  doc\software\tools_and_languages\telephony\Apas\HOWTO\source_code_dis
 - Test call info
 - Steps of analysis
 - Structure of log files
+- Recording rules
+- LogExpert highlights
 
 -------------------------------------------------------------------------------------------------------------------------------------------
 Test call info
@@ -27,34 +29,31 @@ Use case:
 	
 Recorded call	
 -------------
-APAS:			192.168.5.245
-Call ID:		99720/1
-Time:			[2017-05-03 08:56:47,577] - [2017-05-03 08:57:25,025]	: ~38 secs
-Calling party:	9030			SEP100000009030
-Called party:	9000			SEP64A0E714F271
-RTP 1 (calling):	192.168.5.245:39575
-RTP 2 (called):		192.168.5.245:39923
-DB ID:			208		
-	
-	
-RECORDING[0][sip99720/1, SEP64A0E714F271] : 2017-05-03 08:56:56 - 2017-05-03 08:57:24, DB:308
+APAS:			10.51.51.122
+Call ID:		sip19329/1
+Time:			2019-12-19 15:52:57,007 - 2019-12-19 15:53:33,328  :  36 sec(s)
+Calling party:	+36110009098			SEP100000009030
+Called party:	+36110009020			SEPA45630BB1748
+RTP 1 (calling):	10.51.51.122:47793
+RTP 2 (called):		10.51.51.122:41899
+DB ID:			90		
+
+RECORDING[0][sip19329/1, SEPA45630BB1748] : 2019-12-19 15:53:02 - 2019-12-19 15:53:33, DB:90
    - callingPartyName=
-   - srcIP=192.168.5.245
-   - callID=sip99720/1
-   - calledPartyName=Cicamica
+   - srcIP=10.51.51.122
+   - callID=sip19329/1
+   - calledPartyName=
    - stopOut=1
-   - terminal=SEP64A0E714F271
-   - originalCalledParty=9000
-   - srcPort=39923
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=47793
    - initiated=false
-   - dstIP=192.168.5.245
+   - dstIP=10.51.51.122
    - lastRedirectingParty=
-   - callingParty=9030
-   - originalCallingParty=9030
-   - dstPort=39575
-   - calledParty=9000 	
-	
-	
+   - callingParty=+36110009098
+   - originalCallingParty=+36110009098
+   - dstPort=41899
+   - calledParty=+36110009020 
 	
 	
 -------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,26 +103,44 @@ TIP: call:
 	CallID can be retrieved from 'callID' field of NewCallEvent object.
 	
 	
-		1909: May 03 08:56:47.006 CEST %JTAPI-PROTOCOL-7-UNK:(P1-192.168.5.18) received Event: com.cisco.cti.protocol.NewCallEvent {
-			  eventSequence                     = 68
-			  lineCallManagerID                 = 1
-			  lineID                            = 19256
-			  lineHandleSpecified               = true
-			  deviceName                        = SEP64A0E714F271					<<< called party device
-			  callCallManagerID                 = 1
-			  callLegID                         = 31117820
-			  globalCallManagerID               = 1
-			  callID                            = 99720
-			  callingParty                      = 9030
-			  calledParty                       = 9000
-			  originalCalledParty               = 9000 		
-			  ....
-			  callingPartyDeviceName            = SEP100000009030
-			  ....
+		1429: Dec 19 15:52:56.992 CET %JTAPI-PROTOCOL-7-UNK:(P1-10.51.51.34) received Event: com.cisco.cti.protocol.NewCallEvent {
+		  eventSequence                        = 13
+		  lineCallManagerID                    = 1
+		  lineID                               = 9504
+		  lineHandleSpecified                  = true
+		  deviceName                           = SEPA45630BB1748			<<< called party device
+		  callCallManagerID                    = 1
+		  callLegID                            = 25153617
+		  globalCallManagerID                  = 1
+		  callID                               = 19329
+		  callingParty                         = +36110009098
+		  calledParty                          = +36110009020
+		  originalCalledParty                  = +36110009020
+		  state                                = 2
+		  origin                               = 1
+		  userData                             = null
+		  auxiliaryData                        = 1
+		  farEndpointCallManagerID             = 1
+		  farEndpointType                      = 1
+		  reason                               = 1
+		  callingPartyName                     = 
+		  calledPartyName                      = 
+		  originalPartyName                    = 
+		  lastRedirectingParty                 = 
+		  lastRedirectingPartyName             = 
+		  callingPartyDeviceName               = SEP100000009098
+		  bRemoteInUse                         = false
+		  parentCallManagerID                  = 0
+		  parentCallID                         = 0
+		  bPrivacy                             = false
+		  mediaDeviceName                      = 
+		  mediaResourceId                      = 0
+		  unModifiedCallingParty               = +36110009098
+		  unModifiedCalledParty                = +36110009020
+		  unModifiedOriginalCalledParty        = +36110009020  	
+				....
 		
 - Get call from andphone.log.*
-
-
 
 	Pattern (regex):
 	
@@ -131,8 +148,7 @@ TIP: call:
 	
 	
 	
-		[2017-05-03 08:56:47,577] [DEBUG] [ObserverThread(com.andtek.andphone.ANDCallObserver@650c178e)] [ANDCallObserver.java:425] - ACO:Received (P1-TOTH_APAS) 99720/1 CallActiveEv [#109] Cause:106 CallCtlCause:0 CiscoCause:0 FeatReason:12 for  callID=101 Cause:CAUSE_NEW_CALL Reason:REASON_NORMAL | callChangedEvent() METHOD_STARTED
-
+		[2019-12-19 15:52:57,014] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@369f3e9e)] [PhoneCallObserver.java:479] - RCCO-CC - [(P1-FTOTH_APAS2) 19329/1 CallActiveEv [#26] Cause:106 CallCtlCause:0 CiscoCause:0 FeatReason:12, cgpn: [+36110009098], cdpn: [+36110009020], call: [(P1-FTOTH_APAS2) GCID=(1,19329)->ACTIVE]]
 
 		Log entry about CallActiveEv contains call ID.
 		
@@ -144,9 +160,10 @@ TIP: call:
 	
 		<TIME>.*->recordCall: <recordCall.*callID=
 
-			2017-May-03 08:56:57.094: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" callingParty="9030" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9030" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
-
-			
+			2019-12-19 15:53:02,421: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+			2019-12-19 15:53:02,657: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" srcIP="10.51.51.122" srcPort="47793"/>
+			2019-12-19 15:53:02,722: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" dstIP="10.51.51.122" dstPort="41899"/>
+			2019-12-19 15:53:33,110: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" stopOut="1" />
 
 3. Checking start of recording in APAS side			
 -------------------------------------------
@@ -174,20 +191,21 @@ Pattern:
 		[\<]recordCall.*<CALL_ID>
 	
 	--- start ---
-	1982	2017-May-03 08:56:57.094: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" callingParty="9030" calledParty="9000" callingPartyName="" calledPartyName="Cicamica" originalCallingParty="9030" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
-	2059	2017-May-03 08:56:58.123: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip99720/1" dbID="308" state="1"/>
-	2061	2017-May-03 08:56:58.123: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" dstIP="192.168.5.245" dstPort="39575"/>
-	2078	2017-May-03 08:56:58.135: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip99720/1" dbID="308" state="1"/>
-	2080	2017-May-03 08:56:58.135: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" srcIP="192.168.5.245" srcPort="39923"/>
-	2093	2017-May-03 08:56:58.138: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip99720/1" dbID="308" state="1"/>
+	2019-12-19 15:53:02,421: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+	2019-12-19 15:53:02,424: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
+	2019-12-19 15:53:02,657: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" srcIP="10.51.51.122" srcPort="47793"/>
+	2019-12-19 15:53:02,659: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
+	2019-12-19 15:53:02,722: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" dstIP="10.51.51.122" dstPort="41899"/>
+	2019-12-19 15:53:02,724: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
 	--- end ---
-	4127	2017-May-03 08:57:24.487: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="csip31117820" stopOut="1" />
-	4130	2017-May-03 08:57:24.487: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
-	4132	2017-May-03 08:57:24.557: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="sip99720/1" stopOut="1" />
-	4143	2017-May-03 08:57:24.557: 1: worker::send(<recordCallResponse code="100" string="Call removed"/>
-	4169	2017-May-03 08:57:24.559: 1: ->recordCall: <recordCall terminal="SEP64A0E714F271" callID="csip31117820" stopOut="1" />
-	4174	2017-May-03 08:57:24.561: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>		
-
+	2019-12-19 15:53:33,110: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" stopOut="1" />
+	2019-12-19 15:53:33,110: 1: worker::send(<recordCallResponse code="100" string="Call removed"/>
+	2019-12-19 15:53:33,170: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="csip25153617" stopOut="1" />
+	2019-12-19 15:53:33,170: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+	2019-12-19 15:53:33,170: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="csip25153617" stopOut="1" />
+	2019-12-19 15:53:33,170: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+	
+	
 
 	- APAS sends calling information, RTP IPs and ports
 	- sniffer returns database ID of recording
@@ -213,11 +231,13 @@ Pattern:
 		FAREND sip trunk connection.*<CALL_ID>
 		NEAREND sip trunk connection.*<CALL_ID>
 
-[2017-05-03 08:56:57,417] [DEBUG] [APAS-defaultWorker-13] [RecorderSipTrunk.java:375] - FAREND sip trunk connection from SEP64A0E714F271, callID=99720/1, ip=192.168.5.245, port=39575
-[2017-05-03 08:56:57,417] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" dstIP="192.168.5.245" dstPort="39575"/>]
+[2019-12-19 15:53:02,722] [DEBUG] [APAS-defaultWorker-1] [RecorderSipTrunk.java:385] - FAREND sip trunk connection from SEPA45630BB1748, callID=19329/1, ip=10.51.51.122, port=41899
+[2019-12-19 15:53:02,722] [DEBUG] [APAS-defaultWorker-1] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip19329/1" dstIP="10.51.51.122" dstPort="41899"/>]
+[2019-12-19 15:53:02,724] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
 ...
-[2017-05-03 08:56:57,418] [DEBUG] [APAS-defaultWorker-11] [RecorderSipTrunk.java:395] - NEAREND sip trunk connection from SEP64A0E714F271, callID=99720/1, ip=192.168.5.245, port=39923
-[2017-05-03 08:56:57,418] [DEBUG] [APAS-defaultWorker-11] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP64A0E714F271" callID="sip99720/1" srcIP="192.168.5.245" srcPort="39923"/>]
+[2019-12-19 15:53:02,656] [DEBUG] [APAS-defaultWorker-31] [RecorderSipTrunk.java:419] - NEAREND sip trunk connection from SEPA45630BB1748, callID=19329/1, ip=10.51.51.122, port=47793
+[2019-12-19 15:53:02,656] [DEBUG] [APAS-defaultWorker-31] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip19329/1" srcIP="10.51.51.122" srcPort="47793"/>]
+[2019-12-19 15:53:02,659] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
 
 - FAREND connection sends dstIP and dstPort to sniffer
 - NEAREND connection sends srcIP and srcPort to sniffer
@@ -231,12 +251,12 @@ Pattern:
 - sniffer responses a recordCallResponse XML with callID and associated DB entry ID
 
 
-	select * from rec_call where id = 308
+	select * from rec_call where id = 90
 
 
-	 id     start                          end                            lastaction                     callingparty     calledparty     phoneip                   remoteip                  status     initiated     initiator     filename     filesize     signaling     codec     keep     custom     recorder     callingpartyname     calledpartyname     duplicate     gcid        origcallingparty     origcalledparty     admin     rec_password                      lrp                       lrp_name                 
-	 -----  -----------------------------  -----------------------------  -----------------------------  ---------------  --------------  ------------------------  ------------------------  ---------  ------------  ------------  -----------  -----------  ------------  --------  -------  ---------  -----------  -------------------  ------------------  ------------  ----------  -------------------  ------------------  --------  --------------------------------  ------------------------  ------------------------ 
-	 308    2017-05-03 08:56:57.897747+02  2017-05-03 08:57:24.559072+02  2017-05-03 08:57:28.618583+02  9030             9000            192.168.5.245             192.168.5.245             4          0                           308.rec      56480        16            2         10       (null)                                       Cicamica            0             sip99720/1  9030                 9000                (null)    853AE90F0351324BD73EA615E6487517                                                     
+	id     start                          end                            lastaction                     callingparty     calledparty     phoneip                   remoteip                  status     initiated     initiator     filename     filesize     signaling     codec     keep     custom     recorder     callingpartyname     calledpartyname     duplicate     gcid        origcallingparty     origcalledparty     admin     rec_password                      lrp     lrp_name                 
+	-----  -----------------------------  -----------------------------  -----------------------------  ---------------  --------------  ------------------------  ------------------------  ---------  ------------  ------------  -----------  -----------  ------------  --------  -------  ---------  -----------  -------------------  ------------------  ------------  ----------  -------------------  ------------------  --------  --------------------------------  ------  ------------------------ 
+	90     2019-12-19 15:53:02.422896+01  2019-12-19 15:53:33.128134+01  2019-12-19 15:53:38.370084+01  +36110009098     +36110009020    10.51.51.122              10.51.51.122              4          0                           90.rec       63600        16            2         10       (null)                                                           0             sip19329/1  +36110009098         +36110009020        (null)    853AE90F0351324BD73EA615E6487517                                   
 
 
 
@@ -260,7 +280,7 @@ andphone_record.log
 -------------------
 - Every log entry begins with date-time and level:
 
-	2017-May-03 08:47:58.215: 2:
+	2019-12-19 15:53:02,758: 3:
 
 - Found UDP packet, without call:
 
@@ -270,18 +290,50 @@ andphone_record.log
 	
 - Found UDP(RTP) packet, associated to a call:
 
-	Patterns:	[|]source:.*len:.*seq:.*[|]found Call_
+	Patterns:	[|]found Call_.*db:
 
-	2017-May-03 08:56:58.168: 3: |source: 192.168.5.206 len: 200 port source: 26258  dest: 39575 seq: 4851 ts: 4172826698 flags: 0880|found Call_0 0,db:308 880 (9030,9000) [21]
+	2019-12-19 15:53:02,758: 3: |found Call_1 0,db:90 980 (+36110009098,+36110009020) [56]
 	
 - Found UDP(RTP) packet, FIRST packet which is associated to a call:
 
-	Patterns:	[|]source:.*len:.*seq:.*[|]found Call_.*Resyncing RTP
+	Patterns:	[|]found Call_.*db:.*Resyncing RTP
 
-	2017-May-03 08:56:58.134: 3: |source: 192.168.5.206 len: 200 port source: 26258  dest: 39575 seq: 4850 ts: 4172826538 flags: 0880|phoneIPnotfound ce05a8c0,f505a8c0!=00000000|found Call_0 0,db:308 880 (9030,9000) [0]Resyncing RTP because new stream detected [call-id=308/sip99720/1, dir=0, ssrc=615472046]
+	2019-12-19 15:53:02,772: 3: |found Call_0 0,db:90 980 (+36110009098,+36110009020) [70]Resyncing RTP because new stream detected [call-id=90/sip19329/1, dir=0, ssrc=1902142631]
 	
 	
 	
+-------------------------------------------------------------------------------------------------------------------------------------------
+Recording rules
+===============
+Log:		andphone_record.log
+
+Pattern:	PhoneCallObserver.*Checking recording rules
+
+
+	[2019-12-19 15:53:02,397] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@369f3e9e)] [RuleSet.java:349] - Checking recording rules 
+	   given: (oid = 19329/1 CGPN = +36110009098 CDPN = +36110009020 OCGPN = +36110009098 OCDPN = +36110009020)
+	   rules [1]: 
+		 1. *MATCH* (action = [ RECORD], storage = 10) <- (unknown[3] == '+36110009020')   '9020                                           ...'
+		  ! evaluation stopped on rule match 
+	   result: 
+		 (action = [ RECORD], storage = 10)
+
+
 	
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+LogExpert highlights
+====================
+PhoneCallObserver.*Checking recording rules		(regex)
+<recordCall
+recorder.PhoneCallObserver						(regex, line)
 	
+
 	

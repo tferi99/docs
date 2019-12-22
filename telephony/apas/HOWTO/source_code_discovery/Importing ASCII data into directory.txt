@@ -1,0 +1,33 @@
+===================================
+Importing ASCII data into directory
+===================================
+
+APAS/Directory/Duirectories/<choose and edit>/(Import ASCII Data)
+
+Rendering form:	buildEditFormPanel
+
+Click button:
+--> dirlist_gwtappMain.RemoteGetASCIIFileImportPropertiesBean(dirId)
+	--> record = RPCdirectoryServiceImpl.RemoteGetASCIIFileImportPropertiesBean(dirId)
+		- loading form attributes from session["connection"] attributes 
+		-  populating values to DirASCIIFileImportPropertiesBean object
+		- default values: 
+			- escape:		\
+			- separator:	;
+			- quote:		"
+		
+	--> buildASCIIFileImportFirstScreen(record)
+	
+	On form there is a 'Next' button again which submits the form with POST method 
+	and handled by:
+
+		--> com.andtek.andphone.directory.Admin.dirlist_gwtasciiupload(ConnectionBean connection)
+			- File uploaded to 'tmp' directory of APAS Web content (e.g in dev from apas_trunk\WebContent\tmp\import_ascii.txt)
+			--> dir = (ASCIIDirectory) Directory.getDirectory(Connection dbcon, int id)
+				--> getting directory type from DB:	SELECT type FROM directories WHERE id=?
+				--> createDirectory)(type)
+					- creating directory object with 'new'
+				--> connection.setAttribute("...",request.getAttribute("..."))			// getting characters from request
+				--> firstline = buf.readLine()											// reading 1st line from uploaded file
+				--> columns = firstline.split(separator)								// splitting 1st line to columns by separator
+				--------------------------- loop on columns ---------------------------

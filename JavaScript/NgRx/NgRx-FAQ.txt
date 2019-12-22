@@ -23,6 +23,7 @@ Reducers
 Selectors
 ---------
 - How to call a selector from a reducer?
+- How to re-use a selector?
 
 Tips
 ----
@@ -456,7 +457,55 @@ You can call selector method directly where the parameter itself the 'state':
 		}
 	}
 
+---------------------------------------------------------------------------------------------------------------
+How to re-use a selector?
+=========================
+If you want to re-use a selector and you want to utilize memoization efficiently then use a little bit different method.
 
+Default way:
 
+	Selector:
+	
+		export const getCount = createSelector(
+		  getCounterValue,
+		  (counter, props) => counter * props.multiply
+		);
 
+	Usage:
+	
+		ngOnInit() {
+		  this.counter2 = this.store.pipe(select(fromRoot.getCount(), { id: 'counter2', multiply: 2 }))
+		  this.counter4 = this.store.pipe(select(fromRoot.getCount(), { id: 'counter4', multiply: 4 }))
+		  this.counter6 = this.store.pipe(select(fromRoot.getCount(), { id: 'counter6', multiply: 6 }))
+		}
+		
+	Keep in mind that a selector only keeps the previous input arguments in its cache. 
+	If you re-use this selector with another multiply factor, the selector would always have to re-evaluate its value. 
+	This is because it's receiving both of the multiply factors (e.g. one time 2, the other time 4). In order to correctly 
+	memoize the selector, wrap the selector inside a factory function to create different instances of the selector.
 
+	The following is an example of using multiple counters differentiated by id. It does not return a selector but a 
+	factory function:
+	
+		export const getCount = () => createSelector(
+			(state, props) => state.counter[props.id],
+			(counter, props) => counter * props.multiply
+		  );	
+			
+			
+	Usage:
+	
+		ngOnInit() {
+		  this.counter2 = this.store.pipe(select(fromRoot.getCount(), { id: 'counter2', multiply: 2 }))
+		  this.counter4 = this.store.pipe(select(fromRoot.getCount(), { id: 'counter4', multiply: 4 }))
+		  this.counter6 = this.store.pipe(select(fromRoot.getCount(), { id: 'counter6', multiply: 6 }))
+		}
+		
+	The select() operator gives you an observable that calls distinctUntilChanged() internally, 
+	meaning it will only fire when the state actually changes. ( a reference check ).
+	
+	Here we created 3 independent selectors, memoization works more efficiently.
+	
+	
+	
+	

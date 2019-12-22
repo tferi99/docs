@@ -4,6 +4,7 @@ Trading FAQ
 
 - What is a pip? 
 - What is arbitrage?
+- Taker vs maker
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
 What is a pip?
@@ -49,3 +50,33 @@ hogy valamilyen okból (jellemzően bizonytalanság miatt) még egy ideig fenná
 	arbitrázs-lehetőséget kínál. A határidős árnak az azonnali ár jövőértékének kell, hogy megfeleljen (lásd jövőérték-számítás a lexikonban). Ha a határidős ár ettől eltér, akkor érdemes az egyik eszközt adni, és a másikat venni, majd lejáratig megtartani, vagy addig, ameddig a két ár közötti különbség nem éri el az elméleti szintet. Pl. ha a BUX index határidős árfolyama az azonnali ár alatt tartózkodik, ami néha előfordult már, érdemes a határidős BUX-ot venni, és az azonnali BUX-ot, azaz a részvényeket shortolni. Ez azonban nehezen megoldható a valóságban, így az ilyen arbitrázs-lehetőségek sokszor kihasználatlanul maradnak.
 
 SEE ALSO:	http://abszoluthozam.hu/tudastar/lexikon/arbitrazs.php
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Taker vs maker
+==============
+Binance and some other exchanges operate on a maker-taker fee structure, providing different trading fees to makers and takers.
+
+MAKER FEES ON BINANCE ARE GENERALLY LOWER THAN TAKER FEES. 
+
+- That’s because a “maker” provides liquidity for the order book (by placing an order that may be matched in the future, this “makes” the marketplace; like products on a store shelf) 
+	whereas, a “taker” consumes the book liquidity by ‘taking’ an order from the order book (taking away inventory from the store).
+
+You become a “maker” when you place an order, and it does not trade immediately, so your order stays in the order book and waits for someone else to fill/match with it later.
+
+The "taker" is someone who decides to place an order that is instantly matched with an existing order on the order book.
+
+Trades from Market orders are always Takers, as Market orders can never go on the order book.
+
+- TAKER:
+	When you place an order that TRADES IMMEDIATELY, by filling partially or fully, before going on the order book, those trades will be "taker" trades.
+
+	- Trades from Market orders are always Takers, as Market orders can never go on the order book. 
+	- These trades are "TAKING" VOLUME OFF OF THE ORDER BOOK, and therefore called the "taker."
+
+- MAKER:
+	When you place an order that GOES ON THE ORDER BOOK partially or fully  (such as a  limit order placed via the trading screen on binance.com), 
+	any subsequent trades coming from that order will be as a “maker.”
+
+
+	These orders add volume to the order book, helping to "make the market," and are therefore termed the "maker" for any subsequent trades.	

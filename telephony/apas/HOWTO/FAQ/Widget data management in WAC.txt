@@ -27,7 +27,7 @@ Feature data
 	In this case widget specific data stored into NgRx store under feature state 
 	into 'widgets' note, which is an entity collection (managed by EntityAdapter).
 
-- Feature specific data stored in the backend side in DB/attendant_widget/feature_data 
+- Feature specific data stored in the backend side in DB/attendant_widget/widget_data_json 
 	(varchar) field as JSON string.
 	
 - If any feature data which should be persisted changed in widget the whole widget data 
@@ -36,9 +36,25 @@ Feature data
 Saving widget data into database
 --------------------------------
 For ecample selected queue changed in CallCenter widget.
-- widget data saved by gridApiService.changeWidgetFeatureData()
+- widget data saved by GridApiService.updateWidgetData()
+
+For example selected queue has been changed in CallCenter widget:
 
 --> CallCenterComponent.selectQueue(widgetId, queueId)
+	ACTION[UpdateWidgetDataAction] ==>
+		--> GridApiService.updateWidgetData(widgetId: number, widgetData: object)
+			==> REST: PUT /widget/widgetdata/<widgetId>	body: widgetData object
+				--> com.andtek.andphone.webmvc.webattendant.controllers.GridsterController.updateWidgetFeatureData(...)
+					--> com.andtek.andphone.web.webattendant.services.GridsterService.updateWidgetFeatureData(widgetId, data, settings)
+						--> com.andtek.andphone.web.webattendant.services.GridsterService.updateWidgetFeatureData(widgetId, data, settings)
+							--> com.andtek.andphone.web.webattendant.dao.WebAttendantWidgetDao.updateWidgetFeatureData(widgetId, featureData, settingsId)
+								- UPDATE attendant_widget SET widget_data_json WHERE attendant_user_settings_id AND widget_id
+				
+			--> ACTION[UpdateWidgetDataOkAction] payload is the same input widget data.
+				- payload contains only changes as Partial<Widget>
+				--> widget reducer:		adapterWidgets.updateOne({id, changes}, state)
+				
+			
 	ACTION[CallCenterSelectQueueAction] ==>
 		--> CallCenterEffects.queueChanged$
 			--> gridApiService.changeWidgetFeatureData(action.payload.widgetId, {id: action.payload.widgetId, selectedQueueId: action.payload.queueId, ...}
@@ -47,7 +63,7 @@ For ecample selected queue changed in CallCenter widget.
 					REST ===> com.andtek.andphone.webmvc.webattendant.controllers.GridsterController.updateWidgetFeatureData
 						--> com.andtek.andphone.web.webattendant.services.GridsterService.updateWidgetFeatureData(widgetId, data, settings)
 							--> com.andtek.andphone.web.webattendant.dao.WebAttendantWidgetDao.updateWidgetFeatureData(widgetId, featureData, settingsId)
-								- UPDATE attendant_widget SET feature_data WHERE attendant_user_settings_id AND widget_id
+								- UPDATE attendant_widget SET widget_data_json WHERE attendant_user_settings_id AND widget_id
 				---> ACTION[CallCenterSelectQueueAppliedAction(same payload)]
 
 
@@ -56,9 +72,10 @@ Fetching widget feature data and loading into store:
 ACTION[AppDataLoadRequestedAction] ==>
 	--> InitEffects.appDataLoadRequested
 		--> initService.appReload()
-			ACTIONS ==>
-			...
-			- GridsterLoadedAction
-			
-			--> CallCenterEffects.widgetsLoaded$
-				- collection widget type specific data 
+			ACTION[WidgetsLoadedAction] ==>
+				- this action processed by GridsterContainerComponent ehich subscribed to actions$ (like an effect) and makes a deep copy from action payload
+					and it sends grid data to Gridster component.
+				AND
+				- action processed by widget reducer which gets widgets from payload (WacGridsterItem items) and casts and stores them into Widget[].
+					JSON data parsed by Widget object during creation and it's stored into Widget.widgetData property as object.
+					

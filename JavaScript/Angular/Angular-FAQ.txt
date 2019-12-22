@@ -81,6 +81,7 @@ Services
 HTTP, Rest
 ----------
 - How to prototype test Rest services?
+- How to test HTTPS(SSL) in development environment?
 
 Development
 -----------
@@ -1566,18 +1567,6 @@ Rules
 
 		
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Why called change detection 2x in developer mode?
-=================================================
-In prod mode the change detection should happen just ONCE per trigger (ApplicationRef#tick). 
-In dev mode it should happen TWICE.
-
-Angular utilizes Zones.js to know when an event is fully processed by patching some async APIs like (addEventHandler, setTimeout, ...) 
-and then runs change detection AFTER EACH EVENT.
-
-In dev mode Angular does AN ADDITIONAL CHANGE DETECTION RUN, just after the first one. 
-
-
---------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR: Uncaught Error: Can't resolve all parameters for ...
 ===========================================================
 Can be generated when:
@@ -1617,13 +1606,13 @@ So it has to be conservative and will checks EVERY TIME SOMETHING MAY HAVE CHANG
 In a more concrete way, it will perform checks for:
 	- each browser events
 	- timers
-	- XHRs
+	- XHRs (HTTP responses)
 	- promises
 	- pushed data
 	
 2. onPush
 ---------
-It will rely only on the change of the:
+It will rely ONLY on the change of the:
 	- input reference changes
 	- some events triggered by itself (the component) or one of its children
 	- or the use of the async pipe in the template
@@ -1637,6 +1626,9 @@ It will rely only on the change of the:
 		- when any of its input properties changes, 
 		- when it fires an event, 
 		- or when an Observable fires an event
+		
+		BUT NOT:
+		- HTTP (xhr)
 		
 		
 Who triggers change detection?
@@ -1698,4 +1690,22 @@ How to use environment variables?
 		</div>
 
 
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Why called change detection 2x in developer mode?
+=================================================
+In prod mode the change detection should happen just ONCE per trigger (ApplicationRef#tick). 
+In dev mode it should happen TWICE.
+
+Angular utilizes Zones.js to know when an event is fully processed by patching some async APIs like (addEventHandler, setTimeout, ...) 
+and then runs change detection AFTER EACH EVENT.
+
+In dev mode Angular does AN ADDITIONAL CHANGE DETECTION RUN, just after the first one. 
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to test HTTPS(SSL) in development environment?
+==================================================
+
+	ng serve -ssl
+	
 	
