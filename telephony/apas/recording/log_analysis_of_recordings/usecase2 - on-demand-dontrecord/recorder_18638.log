@@ -1,0 +1,7 @@
+[2019-10-11 09:56:04,712] [INFO] [131 ] [18638/1] [SIPTRUNK       ]  - SipTrunkRTPInEv [from: +36110009020, device: SEPA45630BB1748, call-id: 25151462]
+[2019-10-11 09:56:04,712] [INFO] [131 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id SEPA45630BB1748#18638/1
+[2019-10-11 09:56:04,712] [INFO] [131 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id does not exist in repository
+[2019-10-11 09:56:04,786] [INFO] [133 ] [18638/1] [SIPTRUNK       ]  - SipTrunkRTPOutEv [from: +36110009020, device: SEPA45630BB1748, call-id: 25151462]
+[2019-10-11 09:56:04,786] [INFO] [133 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id SEPA45630BB1748#18638/1
+[2019-10-11 09:56:04,787] [INFO] [133 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id does not exist in repository
+[2019-10-11 09:57:02,131] [INFO] [92  ] [sip18638/1] [RULES          ] ----- - onDemandStarted: did not find any sessions for 18638/1

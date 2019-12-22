@@ -1,0 +1,45 @@
+====================================================================
+SIP x-refci: 25151453
+====================================================================
+
+[1] - [2019-10-11 09:54:13,339] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009090@10.51.51.122:5060]
+    INVITE sip:+36110009090@10.51.51.122:5060 SIP/2.0
+
+[2] - [2019-10-11 09:54:13,353] [SENT>] [SIPServer-3] [100 Trying]
+    SIP/2.0 100 Trying
+
+[3] - [2019-10-11 09:54:13,363] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+
+[4] - [2019-10-11 09:54:13,416] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009090@10.51.51.122:5060]
+    INVITE sip:+36110009090@10.51.51.122:5060 SIP/2.0
+
+[5] - [2019-10-11 09:54:13,425] [SENT>] [SIPServer-3] [100 Trying]
+    SIP/2.0 100 Trying
+
+[6] - [2019-10-11 09:54:13,437] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+
+[7] - [2019-10-11 09:54:13,458] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+    ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+
+[8] - [2019-10-11 09:54:13,516] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+    ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+
+[9] - [2019-10-11 09:54:29,799] [>RECEIVED] [SIPServer-3] [BYE sip:APAS@10.51.51.122:5060;transport=udp]
+    BYE sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+
+[10] - [2019-10-11 09:54:29,814] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+
+[11] - [2019-10-11 09:54:29,814] [>RECEIVED] [SIPServer-3] [BYE sip:APAS@10.51.51.122:5060;transport=udp]
+    BYE sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+
+[12] - [2019-10-11 09:54:29,815] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+
+[13] - [2019-10-11 09:54:29,834] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK
+
+[14] - [2019-10-11 09:54:29,837] [SENT>] [SIPServer-3] [200 OK]
+    SIP/2.0 200 OK

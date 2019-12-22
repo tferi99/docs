@@ -6,7 +6,7 @@ APAS/Client/Active Clients/(Force Logout)
 
 This function force logout clients in 2 steps:
 - it deletes connection
-- it sends a ForceLogout push event to client appication
+- it sends a ForceLogout Atmosphere event to client appication
 
 --> activeclient_gwtappMain.RemoteDoClientRemoteControl("forceLogout", getKeys())
 	-- RPC --> RPCandmobileServiceImpl.RemoteDoClientRemoteControl()
@@ -19,3 +19,5 @@ This function force logout clients in 2 steps:
 			--> service.removeConnection(username)
 	
 
+- It does not make a logout in SpringSescurity. It will be peformed by client itself after receiving Atmosphere event.
+- So if browser is closed during ForceLogout event, server side still keeps session. In this case session will be cleaned up by keepalive mechanism or server session timeout.

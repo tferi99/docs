@@ -181,7 +181,10 @@ APAS again:
 ---------------------------------------------------------------------------------------------------------------------------------		
 Secured SIP Trunk Recording Configuration		
 =========================================
-SEE MORE: 	telephony\Apas\doc\01_ADMIN-REC_5.2.2_enA4.pdf/4.2 Secure SIP Trunk Recording Configuration
+SEE MORE: 	telephony\Apas\doc\recorder\AND_Phone_Recorder_Configuration_Guide_612.pdf
+
+This configuration is necessary to encrypt SIP communication between CUCM and APAS in order to allow the recording of encrypted calls (sRTP). 
+The central task to enable secure SIP is to exchange valid certificates between CUCM and APAS.
 
 Configure a non-secure configuration, except:
 
