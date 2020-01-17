@@ -10,6 +10,7 @@ Troubleshooting
 - Spring MVC - HTTP status code 405 (Method Not Allowed)
 - Spring MVC not returning JSON content - Error 406
 - Spring MVC not returning XML content - Error 406
+- Controller called but result code is Error 404
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 How to ignore null fields during mapping into json?
@@ -164,4 +165,18 @@ E.g. in Maven:
 		</dependency>
 
 
-				
+-----------------------------------------------------------------------------------------------------------------------------------------
+Controller called but result code is Error 404
+==============================================
+You call the good REST URL, controller called properly (checked by log/debugger) still you have 
+404 responce code on the client side.
+
+Possible reason:
+	You have almost proper configuration (web.xml, component-scan, @RequestMapping)
+	but you forgot to add @ResponseBody annotation for return type of controller method.
+	
+	
+		public @ResponseBody String init() 
+		{
+			...
+		}

@@ -6,7 +6,7 @@ Playback recording
 - Playback by GWT recording search
 - Playback by Webclient
 - Structure of REC file
-
+- Playback by phone
 
 -------------------------------------------------------------------------------------------------------------------------------------
 Configuration of encryption
@@ -277,3 +277,44 @@ File contains only audio data.
 - record will be read from rec_call table
 
 
+-------------------------------------------------------------------------------------------------------------------------------------
+Playback by phone
+=================
+XML services of recording managed by RecorderPhoneServicesServlet:
+
+web.xml:
+
+	<servlet>
+		<servlet-name>Recorder</servlet-name>
+		<servlet-class>com.andtek.andphone.recorder.web.RecorderPhoneServicesServlet</servlet-class>
+	</servlet>	
+	...
+	<servlet-mapping>
+		<servlet-name>Recorder</servlet-name>
+		<url-pattern>/Recorder</url-pattern>
+	</servlet-mapping>
+
+Playback service URL:
+		http://APAS:8080/andphone/Recorder?dev=#DEVICENAME#
+	e.g:
+		http://10.255.248.40:8080/andphone/Recorder?dev=#DEVICENAME#
+
+		
+		
+--> com.andtek.andphone.recorder.web.RecorderPhoneServicesServlet.doRequest(...)
+	page=main	(default)
+	func=none	(default)
+	
+	--> deviceName = connection.getAttribute("deviceName")
+		--> doListRecordingsForPlayback(...)
+			--> term = jtapi.getProvider().getTerminal(deviceName)
+			--> addresses[] = term.getAddresses()
+			---------------------------- loop on addresses ----------------------
+			- building WHERE for SQL, e.g:
+			
+				callingparty='+36110009098' OR calledparty='+36110009098' OR origcallingparty='+36110009098' OR calledpartyname LIKE 'Conference(+36110009098,%' OR calledpartyname LIKE 'Conference(%,+36110009098,%' OR calledpartyname LIKE 'Conference(%,+36110009098)'
+				
+			--> SELECT * FROM rec_call WHERE ...
+			
+			
+		
