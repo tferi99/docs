@@ -69,7 +69,7 @@ Example controller:
 	{
 		...
 		
-		@RequestMapping(value="/featuredata/{widgetId:[\\d]}", method = RequestMethod.PUT)
+		@RequestMapping(value="/featuredata/{widgetId:[\\d]+}", method = RequestMethod.PUT)
 		public @ResponseBody void updateWidgetFeatureData(@PathVariable("widgetId") int widgetId, @RequestBody String data, HttpServletRequest request, HttpServletResponse response)
 		{
 			...

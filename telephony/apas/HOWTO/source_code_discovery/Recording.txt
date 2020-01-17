@@ -16,6 +16,8 @@ You need a configured recording environment (see more: APAS-FAQ.txt/Howto config
 - Recording start time information
 - KEEP values
 - Search
+- Registering observers by rules
+- Recorder rule matching during registering observers
 
 - ERROR - in APAS event log: The recording of call ... has been locked because a new call has reserved licenses in the ruleset
 
@@ -624,3 +626,91 @@ com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain  (Search button) ==
 			com.andtek.andphone.recorder.gwtapp.client.RecordingListPanel
 			
 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Registering observers by rules
+==============================
+- com.andtek.andphone.recorder.PhoneCallObserver listens call events
+- PhoneCallObserver is a singleton and associated only phones which has a line wich matches with recorder rule entry
+- PhoneCallObserver registered as terminal observer [3]:
+	- during startup in com.andtek.andphone.recorder.Module.initJTAPI(...) [1]
+		OR
+	- during adding a ruleset in Admin UI [2]
+
+- Rule configuration stored into DB:
+	
+	rec_rulesets --1-------------------*-- rec_rules
+	
+- Call frow of AdminUI rule page:
+	
+	[1] --> com.andtek.andphone.recorder.Module.initJTAPI(...)
+		--> [4] recordedTerminalsRepository.observeTerminals(allTerminals, [3], recorderObserverFactory.createOrGetCallObserver())
+	
+	[2] APAS/Recorder/Rules/<add/choose>
+	--> rules_gwtappMain
+		--> onFormPanelSubmitEvent(formPanel, true)
+			--> RemoteSaveRecorderRule(APAS_MODULE, record, func, closeWindow)			
+				RPC --> com.andtek.andphone.recordermgmt.gwtapp.server.RPCrecorderServiceImpl.RemoteSaveRecorderRule()
+					--> checkEnvironment(...)
+					--> RulesAdminHelper.internalSaveRule(...)							
+						- It saves/update ruleset/run entries in DB
+					--> RulesAdminHelper.sendHUPToSniffer(warningMessage, jtapi)
+						--> com.andtek.andphone.recorder.Module.monitorLines(jtapi)
+							--> [4] recordedTerminalsRepository.observeTerminals(allTerminals, [3], recorderObserverFactory.createOrGetCallObserver())
+						
+	[3] --> recorderObserverFactory.createOrGetTerminalObserver()
+			--> PhoneCallObserver.getObserver()												<<<<<<<<<<<<<<<<<<<<<<<<< it creates singleton PhoneCallObserver on-demand
+
+						
+	[4] - registering observers for terminals matching with recorder rules
+		--> com.andtek.andphone.recorder.repositories.impl.RecordedTerminalsRepositoryImpl.observeTerminals(allTerminals, terminalObserver,  callObserver)
+			--> observeRecordedTerminals(allTerminals)
+				--> RuleSet.loadRules()
+				-------------------------- loop on terminals ------------------------------
+					-------------------------- loop on addresses of a terminal ------------------------------
+						--> RecordedTerminalsRepositoryImpl.observeAddressOnTerminalIfNecessary(terminal, address))			<<<<<<<<<<<< register observer if rule matches
+							--> matches = if ruleMatchesAddress() 
+								--> RuleSet.checkRules()					// internally it calculates an action and returns true if action > RuleAction.ACTION_NONE
+							---------------------- if matches -----------------------------
+								--> observeTerminal(terminal)
+								- if registerd then break from addresses loop
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Recorder rule matching during registering observers
+===================================================
+- PhoneCallObserver is a singleton and associated only phones which has a line wich matches with recorder rule entry
+- RuleSet initiated with all rules from DB
+
+		--> RecordedTerminalsRepositoryImpl.observeAddressOnTerminalIfNecessary(terminal, address))			<<<<<<<<<<<< register observer if rule matches
+			--> matches = ruleMatchesAddress()
+				--> RuleSet.checkRules(address, CALLER | CALLED | LASTREDIREDTED | ORIGINALCALLER | ORIGINALCALLED, checkArchive = false, forceMatchAny = true)
+					--> action = checkAllRules(MatchRecord, checkArchive = false, forceMatchAny = true
+						------------------------------- loop on rulesets --------------------------------------
+						--> match = ruleSet.matches(rec, forceMatchAny)
+			
+			matches = found action
+			---------------------- if matches -----------------------------
+				--> observeTerminal(terminal)
+
+How rule match does work during observer registration?
+------------------------------------------------------
+- All addresses of all terminals (assigned to application user) participated in matching as: 
+	- calling party
+	- called party
+	- original calling party
+	- original called party
+	- last redirected party
+
+- During registering observers rules are always used in OR (any match) logical operation ('Match if' value of ruleset ignored)
+
+- During processing all rulesets enumerated until a matching ruleset found where 'continue rulecheck on match' not specified
+	(That means: if a ruleset is NOT matching the next ruleset ALWAYS processed)
+	
+- Actions are collected from enumerated matching rulesets (added to action flags with binary OR)
+
+- If the result action flags contain BLOCK (RuleAction.ACTION_NEVER) then actions will be deleted (will be set to RuleAction.ACTION_NONE)
+
+- If result action flags contain ANY action then observer will be registered to terminal 				
+				

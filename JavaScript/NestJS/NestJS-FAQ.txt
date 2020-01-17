@@ -2,15 +2,73 @@
 NestJS-FAQ
 ==========
 
-Depenency injection
--------------------
-- How to resolve circular dependencies?
+- Howto build-up a NestJS development environment?
+
+Dependency injection
+--------------------
+- How to resolve circular dependency between services?
 
 Validations
 -----------
 - How to validate a DTO member agains enum?
+- How to specify optional searh criteria?
 
+Error handling
+--------------
+- Error handling
+- How to create and register custom exception filters?
 
+--------------------------------------------------------------------------------------------------------------------------------------
+Howto build-up a NestJS development environment?
+================================================
+- Base app:
+
+	nest new <project>
+
+- Dependencies:
+
+	Class validator:			npm i class-validator class-transformer
+	TypeORM with PostgreSQL:	npm i @nestjs/typeorm typeorm pg
+	
+- Create a module:
+
+		nest g module <module>
+
+- Create a controller:
+		
+		  nest g controller <controller> --no-spec
+
+- Create a service:
+		
+		  nest g service <service> --no-spec
+		  
+- Database:
+	- Create config/typeorm.config.ts:
+
+		export const typeOrmConfig: TypeOrmModuleOptions = {
+		  type: 'postgres',
+		  host: 'localhost',
+		  port: 5432,
+		  username: 'postgres',
+		  password: 'postgres',
+		  database: 'my-nestjs-demo',
+		  entities: [Cat, User],					<<<<<<<< entities
+		  synchronize: true,
+		  logging: true,
+		};
+
+	- put config into AppModule imports:
+	
+		@Module({
+			imports: [
+				TypeOrmModule.forRoot(typeOrmConfig),
+				...
+			]
+			...
+		})
+		export class AppModule {}
+		
+		
 
 Troubleshooting
 ---------------
@@ -53,29 +111,234 @@ How to validate a DTO member agains enum?
 		return this.catsService.create(dto);
 	}
 
+--------------------------------------------------------------------------------------------------------------------------------------
+How to specify optional searh criteria?
+=========================================
+export class CatFilterDto {
+  name: string;
+
+  @IsIn(ColorValues)
+  @IsOptional()
+  color: Color;
+}
+
 
 --------------------------------------------------------------------------------------------------------------------------------------
-How to resolve circular dependencies?
-=====================================
-Nest enables resolving circular dependencies using a technique called forward referencing.
+Error handling
+==============
+SEE ALSO:	https://docs.nestjs.com/exception-filters
 
-A forward reference allows Nest to reference classes which aren't yet defined using the forwardRef() utility function. 
-For example, if ConfigService and ConnectionService depend on each other, both sides of the relationship can use @Inject() and the forwardRef() utility 
-to resolve the circular dependency. Otherwise Nest won't instantiate them because all of the essential metadata won't be available.
+- Default global exception filter handles HttpException, other error mapped into 500.
+- Throw HttpException or an inherited class to use default exception filter
+- Use custom exception filter to achieve the full control. You can assig exception filters on:
+	- method level
+	- controller level
+	- global level
 
-	export class ConfigService {
-		constructor(
-			@Inject(forwardRef(() => ConnectionService))
-			private connectionService: ConnectionService,
-		) {}
-		...
+
+Explanation
+-----------
+Out of the box, this action is performed by a built-in global exception filter, which handles exceptions of type HttpException (and subclasses of it). 
+When an exception is unrecognized (is neither HttpException nor a class that inherits from HttpException), 
+the built-in exception filter generates the following default JSON response:
+
+	{
+	  "statusCode": 500,
+	  "message": "Internal server error"
+	}
+
+Nest provides a built-in HttpException class, exposed from the @nestjs/common package. 
+It's best practice to send standard HTTP response objects when certain error conditions occur.
+
+
+For example, in the CatsController, we have a findAll() method (a GET route handler). Let's assume that this route handler throws an exception for some reason. 
+To demonstrate this, we'll hard-code it as follows:
+
+	cats.controller.ts:
+
+		@Get()
+		async findAll() {
+		  throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+		}
+		
+	HINT
+	We used the HttpStatus here. This is a helper enum imported from the @nestjs/common package.
+	When the client calls this endpoint, the response looks like this:
+
+
+	{
+	  "statusCode": 403,
+	  "message": "Forbidden"
+	}
+
+	The HttpException constructor takes two required arguments which determine the response:
+
+By default, the JSON response body contains two properties:
+
+	- statusCode: defaults to the HTTP status code provided in the status argument
+	- message: a short description of the HTTP error based on the status
+	
+- To override just the message portion of the JSON response body, supply a string in the response argument.
+- To override the entire JSON response body, pass an object in the response argument.
+
+	Here's an example overriding the entire response body:
+
+	cats.controller.ts:
+
+	@Get()
+	async findAll() {
+	  throw new HttpException({
+		status: HttpStatus.FORBIDDEN,
+		error: 'This is a custom message',
+	  }, 403);
+	}
+
+	{
+	  "status": 403,
+	  "error": "This is a custom message"
 	}
 	
+- Custom exceptions
+
+	In many cases, you will not need to write custom exceptions, and can use the built-in Nest HTTP exception, as described in the next section. 
+	If you do need to create customized exceptions, it's good practice to create your own exceptions hierarchy, where your custom exceptions inherit from the base HttpException class. 
+	With this approach, Nest will recognize your exceptions, and automatically take care of the error responses. Let's implement such a custom exception:
+
+	forbidden.exception.ts
+
+		export class ForbiddenException extends HttpException {
+		  constructor() {
+			super('Forbidden', HttpStatus.FORBIDDEN);
+		  }
+		}
+		
+	Since ForbiddenException extends the base HttpException, it will work seamlessly with the built-in exception handler, and therefore we can use it inside the findAll() method.
+
+	cats.controller.tsJS
+
+		@Get()
+		async findAll() {
+		  throw new ForbiddenException();
+		}
+
+- Built-in HTTP exceptions that inherit from the base HttpException:
+
+		BadRequestException
+		UnauthorizedException
+		NotFoundException
+		ForbiddenException
+		NotAcceptableException
+		RequestTimeoutException
+		ConflictException
+		GoneException
+		PayloadTooLargeException
+		UnsupportedMediaTypeException
+		UnprocessableEntityException
+		InternalServerErrorException
+		NotImplementedException
+		BadGatewayException
+		ServiceUnavailableException
+		GatewayTimeoutException
+
+		
+--------------------------------------------------------------------------------------------------------------------------------------
+How to create and register custom exception filters?
+====================================================
+- Custom filter:
+
+		@Catch(HttpException)
+		export class HttpExceptionFilter implements ExceptionFilter {
+		  catch(exception: HttpException, host: ArgumentsHost) {
+			const ctx = host.switchToHttp();
+			const response = ctx.getResponse<Response>();
+			const request = ctx.getRequest<Request>();
+			const status = exception.getStatus();
+
+			response
+			  .status(status)
+			  .json({
+				statusCode: status,
+				timestamp: new Date().toISOString(),
+				path: request.url,
+			  });
+		  }
+		}
+
+	- @Catch() decorator may take a single parameter, or a comma-separated list.
+	- In order to catch EVERY UNHANDLED EXCEPTION (regardless of the exception type), leave the @Catch() decorator's parameter list empty, e.g., @Catch().
+	
+	
+- Registerng filters:
+
+	Use custom exception filter to achieve the full control. You can assig exception filters on:
+		- method level
+		- controller level
+		- global level
+	 
+	- Method level:
+
+		@Post()
+		@UseFilters(new HttpExceptionFilter())
+		async create(@Body() createCatDto: CreateCatDto) {
+			throw new ForbiddenException();
+		}
+
+	- Controller level:
+
+		@UseFilters(new HttpExceptionFilter())
+		export class CatsController {}
+		
+	- Global level:
+
+		app.module.ts
+
+			import { Module } from '@nestjs/common';
+			import { APP_FILTER } from '@nestjs/core';
+
+			@Module({
+			  providers: [
+				{
+				  provide: APP_FILTER,
+				  useClass: HttpExceptionFilter,
+				},
+			  ],
+			})
+			export class AppModule {}
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------
+How to resolve circular dependency between services?
+====================================================
+Use forwardRef().
+
+- Between providers:
+
 	export class ConnectionService {
 		constructor(
 			@Inject(forwardRef(() => ConfigService))
 			private configService: ConfigService,
 		) {}
 	}
+
+
+	export class ConfigService {
+		constructor(
+			@Inject(forwardRef(() => ConnectionService))
+			private connectionService: ConnectionService,
+		) {}
+	}
+	
+- Between modules:
+
+	In order to resolve circular dependencies between modules, use the same forwardRef() utility on both sides of the modules association. For example:
 	
 	
+	@Module({
+	  imports: [forwardRef(() => CatsModule)],
+	})
+	export class CommonModule {}
+
+		@Module({
+			imports: [forwardRef(() => CommonModule)],
+		})
+		export class CatsModule {}
