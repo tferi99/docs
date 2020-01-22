@@ -3,7 +3,7 @@ SSH FAQ
 =======
 
 - SSH without password using Putty
-
+- How to assign a reverse SSH tunneled server to a public interface?
 
 ---------------------------------------------------------------------------------------------------------------------------------
 SSH without password using Putty
@@ -37,4 +37,26 @@ SSH without password using Putty
 		Connection/Data/[Login details]/Auto=login username
 	
 	- Save profile
+	
+---------------------------------------------------------------------------------------------------------------------------------
+How to assign a reverse SSH tunneled server to a public interface?
+==================================================================
+If you forward a port to a remote host via SSH tunneling it opened on 127.0.0.1 by default,
+so it's not accessible from external host.
+
+To make accessible it should be assigned to 0.0.0.0, but how?
+
+If remote host is a Linux then add the following entry to /etc/ssh/sshd_config:
+
+	GatewayPorts    yes
+	
+and restart sshd.
+
+Then validate target port:
+
+	root@andapps: ~ # netstat -an | grep 8080
+	tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN
+	tcp6       0      0 :::8080                 :::*                    LISTEN
+
+	
 	

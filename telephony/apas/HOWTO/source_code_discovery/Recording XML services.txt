@@ -45,7 +45,7 @@ Commands are:
 Usage
 =====
 XML services are simple HTTP GET requests which call a JAVA servlet and the result is XML.
-GEneral form of a request:
+General form of a request:
 
 	http://APAS_HOST:8080/andphone/Recorder?page=COMMAND&func=FUNCTION&dev=PHONE_DEVICE
 

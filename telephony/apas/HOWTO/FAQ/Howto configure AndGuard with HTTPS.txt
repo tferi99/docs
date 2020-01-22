@@ -1,0 +1,41 @@
+====================================
+Howto configure AndGuard with HTTPS?
+====================================
+Here only written what you have to do additionally after HTTP:
+
+- Use https and FQDN in service URL specified in External Call Control Profile.
+- Import APAS certificate to CUCM as 'CallManager-trust'
+
+Troubleshooting
+---------------
+- Check andguard.log with DEBUG level, if you have a call to a guarded phone new entries added to log.
+
+- If no new entries then CUCM was not able to call APAS. Possible reason can be TLS handshaking issue.
+
+- Check TLS handshaking with Wireshark:
+
+	ssh user@host "tcpdump -s0 -w -" | wireshark -k -i -
+
+- Error:	Handshake Failure (40)
+
+	If CUCM sends a 'Client Hello' but server responses with 'Handshake Failure (40)' then try to change TLS and Cypher configuration in server.xml of Tomcat.
+	Maybe CUCM does not support the expected TLS version or cyphers.
+	
+	In /etc/tc-andguard/server.xml look for connector with port 8444:
+	
+	
+		<Connector port="8444" useBodyEncodingForURI="true" maxHttpHeaderSize="20480"
+			protocol="org.apache.coyote.http11.Http11NioProtocol" SSLEnabled="true"
+			enableLookups="false" disableUploadTimeout="true"
+			acceptCount="100" scheme="https" secure="true"
+			clientAuth="false" sslProtocol="TLS" sslEnabledProtocols="TLSv1.1,TLSv1.2"
+			ciphers="TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA"
+			keystoreFile="/var/lib/tomcat/.keystore.jks" keystorePass="changeit" keystoreType="JKS" keyAlias="andphone"
+			truststoreFile="/var/lib/tc-andguard/.trust_keystore.jks" truststorePass="and99tcag" truststoreType="JKS" />
+		 
+		 
+
+		 
+	- try to add old, deprecated TLS versions, e.g.:  TLSv1
+	
+	

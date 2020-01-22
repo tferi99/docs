@@ -24,7 +24,8 @@ Troubleshooting
 - Error: "Field or property ... cannot be found on object of type 'org.springframework.security.web.access.expression.WebSecurityExpressionRoot"
 - 404 during login processing
 - How to get info about SpringSecurity filter chain?
-
+- ERROR: No Bean Named ‘springSecurityFilterChain’ is Defined
+- ERROR: java.lang.NullPointerException at org.springframework.security.web.FilterChainProxy.getFilters(...)
 
 -------------------------------------------------------------------------------------------------------------
 Default processing of authentication
@@ -326,5 +327,66 @@ Logout:
 	UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getName(), "");		
 	rememberMeServices.logout(request, response, auth);
 
+-------------------------------------------------------------------------------------------------------------
+ERROR: No Bean Named ‘springSecurityFilterChain’ is Defined
+===========================================================
+- Error:
+	SEVERE: Exception starting filter springSecurityFilterChain
+	org.springframework.beans.factory.NoSuchBeanDefinitionException: 
+	No bean named 'springSecurityFilterChain' is defined
 
+- The Cause:
+	The cause of this exception is straightforward – Spring Security looks for a bean named springSecurityFilterChain (BY DEFAULT), 
+	and cannot find it. This bean is required by the main Spring Security Filter – the DelegatingFilterProxy – defined in the web.xml:
+	
+- This is just a proxy that delegates all its logic to the springSecurityFilterChain bean:
+
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>		
+	
+- The Solution:
+	The most common reason this bean is missing from the context is that the security XML CONFIGURATION HAS NO <http> element defined.
+	If the XML configuration  declaring a simple <http> element will ensure that the filter bean is created and everything starts up correctly:
+
+		<http auto-config='true'>
+			<intercept-url pattern="/**" access="ROLE_USER" />
+		</http>
+		
+- Another possible reason is that the security configuration is not imported at all into the overall context of the web application.
+	Make sure the resource is imported:
+	
+	@ImportResource({"classpath:springSecurityConfig.xml"})
+		Or in XML:
+	<import resource="classpath:springSecurityConfig.xml" />
+	
+	
+- Another possible problem in MVC context:
+
+	The security config must be loaded by the ContextLoaderListener. 
+	Move the security related stuff to the root-context.xml (don't include into dispatcher XML config).
+
+		
+- Conclusion:
+
+		web.xml[springSecurityFilterChain] ---------------> spring-condig.xml[<http>]
+	
+	
+-------------------------------------------------------------------------------------------------------------
+ERROR: java.lang.NullPointerException at org.springframework.security.web.FilterChainProxy.getFilters(...)
+==========================================================================================================
+In log:
+	SEVERE: Servlet.service() for servlet [springWebattendantAPI] in context with path [/andphone] threw exception
+	java.lang.NullPointerException
+		at org.springframework.security.web.FilterChainProxy.getFilters(FilterChainProxy.java:202)	
+		
+Maybe you are creating a FilterChainProxy bean with an null filter list in your XML configuration 
+and this bean is than used in the web.xml by DelegatingFilterProxy. 
+
+FilterChainProxy#getFilters tries to iterate over the null list and naturally fails with a NullPointerException.
 
