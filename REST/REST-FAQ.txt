@@ -1,0 +1,93 @@
+========
+REST FAQ
+========
+- REST design rules
+
+---------------------------------------------------------------------------------------------------------------------------
+REST design rules
+=================
+- The URL is a SENTENCE, where resources are NOUNS and HTTP methods are VERBS.
+
+- The paths should contain the PLURAL FORM OF RESOURCES and the HTTP method should define the KIND OF ACTION to be performed on the resource.
+
+- GET method requests data from the resource and SHOULD NOT PRODUCE ANY SIDE EFFECT.
+
+- POST method requests the server to create a resource in the database.
+
+- POST is NON-IDEMPOTENT which means multiple requests will have different effects.
+
+- PUT method requests the server to update resource or create the resource, if it doesn’t exist.
+
+- PUT is IDEMPOTENT which means MULTIPLE requests will have the SAME EFFECTS.
+
+- DELETE method requests that the resources, or its instance, should be removed from the database.
+
+
+Examples:
+
+	GET /companies						: should get the list of all companies
+	GET /companies/34 					: should get the detail of company 34
+	DELETE /companies/34 				: should delete company 34
+	GET /companies/3/employees 			: should get the list of all employees from company 3
+	GET /companies/3/employees/45 		: should get the details of employee 45, which belongs to company 3
+	DELETE /companies/3/employees/45 	: should delete employee 45, which belongs to company 3
+	POST /companies 					: should create a new company and return the details of the new company created	
+
+
+- Field name casing convention:
+	
+	You can follow any casing convention, but make sure it is consistent across the application. 
+	If the request body or response type is JSON then please follow camelCase to maintain the consistency.
+	
+- Searching, sorting, filtering and pagination
+	All of these actions are SIMPLY THE QUERY ON ONE DATASET. 
+	There will BE NO NEW SET of APIs to handle these actions. We need to append the QUERY PARAMS with the GET method API.
+	
+		GET /companies?sort=rank_asc
+		GET /companies?category=banking&location=india
+		GET /companies?search=Digital Mckinsey
+		GET /companies?page=23
+	
+- Versioning
+	When your APIs are being consumed by the world, upgrading the APIs with some breaking change would also lead 
+	to breaking the existing products or services using your APIs.
+	
+	
+	GET /v1/companies/34/employees
+
+	
+Other rules:
+	- Rule #1: A trailing forward slash (/) should not be included in URIs
+	
+		The following two URIs equally:
+			http://api.canvas.com/shapes/
+			http://api.canvas.com/shapes
+			
+		However, every character within a URI counts toward a resource’s UNIQUE IDENTITY.
+		
+	
+	- Rule #2: Forward slash separator (/) must be used to indicate a hierarchical relationship
+	
+		http://api.canvas.com/shapes/polygons/quadrilaterals/squares
+		
+	- Rule #3: Hyphens (-) should be used to improve the readability of URIs
+	
+		http://api.example.com/blogs/guy-levin/posts/this-is-my-first-post
+		
+	- Rule #4: Underscores (_) should NOT be used in URIs
+	
+	- Rule #5: Lowercase letters should be preferred in URI paths
+	
+	- Rule #6: File extensions should not be included in URIs
+	
+	- Rule #7: Should the endpoint name be singular or plural?
+	
+		The pragmatic answer is to keep the URI format consistent and always use a PLURAL.
+		
+	
+SEE ALSO:	
+	https://hackernoon.com/restful-api-designing-guidelines-the-best-practices-60e1d954e7c9
+	https://blog.restcase.com/7-rules-for-rest-api-uri-design/
+	https://dzone.com/articles/5-basic-rest-api-design-guidelines
+	
+	

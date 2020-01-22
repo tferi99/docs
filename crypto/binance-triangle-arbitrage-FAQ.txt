@@ -1,0 +1,48 @@
+==============================
+binance-triangle-arbitrage-FAQ
+==============================
+
+- ERROR: ETIMEDOUT during initializing websockets
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+ERROR: ETIMEDOUT during initializing websockets
+===============================================
+Problem:
+
+	D:\opt\crypto\binance-triangle-arbitrage>npm start
+
+	> binance-triangle-arbitrage@5.2.3 start D:\opt\crypto\binance-triangle-arbitrage
+	> node src/main/Main.js
+
+	Successfully pinged the Binance api in 433 ms
+	Found 598/711 currently trading tickers
+	Found 279 triangular relationships
+	Checking configuration ...
+	Opening 598 depth websockets ...
+	D:\opt\crypto\binance-triangle-arbitrage\node_modules\node-binance-api\node-binance-api.js:2158
+								if (err) throw err;
+										 ^
+
+	Error: ETIMEDOUT
+		at Timeout._onTimeout (D:\opt\crypto\binance-triangle-arbitrage\node_modules\←[4mrequest←[24m\request.js:849:19)
+	←[90m    at listOnTimeout (internal/timers.js:531:17)←[39m
+	←[90m    at processTimers (internal/timers.js:475:7)←[39m {
+	  code: ←[32m'ETIMEDOUT'←[39m,
+	  connect: ←[33mtrue←[39m
+	}
+	...
+
+Fix:
+	Maybe there are too many websocket connections so the solution would be limiting the number of currencies.
+	Add entries to TRADING/WHITELIST, e.g:
+	
+		"WHITELIST": ["BTC", "BAT", "ETH", "MATIC", "BNB", "LTC", "LINK", "EOS", "BCH", "USDT", "DASH", "XRP", "ZEC", "EOS", "NEO", "XLM", "ADA"]
+		
+		
+		
+	
+
+
+
+

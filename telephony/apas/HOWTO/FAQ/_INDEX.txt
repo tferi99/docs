@@ -44,6 +44,7 @@ Configuration
 - How to configure Exchange Calendar Presence?
 - How to configure broadcast?
 - Howto add contacts to Exchange 2016 public folder?
+- How to configure XML service?
 
 ACD
 ---
