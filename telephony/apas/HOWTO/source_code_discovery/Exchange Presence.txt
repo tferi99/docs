@@ -267,7 +267,7 @@ Use Cases
 
 
 
-- You click directory entry in Directory widgeet of DC:
+- You click directory entry in Directory widget of DC:
 
 	[DEBUG] [APAS-DesktopMsgQueueWorker-11] [PresenceProtocolHelper.java:86] - Client Message received: <Presence><ExchangeCalendarPresenceRequest end="2018-12-07T05:55" start="2018-12-06T05:55"><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz"/></ExchangeCalendarPresenceRequest></Presence>
 	[DEBUG] [APAS-DesktopMsgQueueWorker-11] [ClientConnectionMina.java:2869] - CMINA_XML:ClientConnection[Client[1, support@, , 6.0.3, Windows 10, 1, hashCode=487047b8], hashCode=78f36c8c]: sendXml(<Presence><ExchangeCalendarPresenceResponse start="2018-12-06T05:55" end="2018-12-07T05:55"><ExchangeCalendarIdentification email="ssotest1@andtek.cee.cs.eilab.biz" status="Free"></ExchangeCalendarIdentification></ExchangeCalendarPresenceResponse></Presence>)
@@ -288,7 +288,7 @@ Use Cases
 			</ExchangeCalendarPresenceResponse>
 		</Presence>			
 				
-- Presence enry unregistered - APAS sends message per entry:
+- Presence entry unregistered - APAS sends message per entry:
 
 	APAS -> DC:
 		<Presence>
