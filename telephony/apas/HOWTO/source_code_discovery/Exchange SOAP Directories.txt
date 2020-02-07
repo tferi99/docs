@@ -1,0 +1,22 @@
+=========================
+Exchange SOAP Directories
+=========================
+
+- Configuration
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+APAS/Directory/Directories/
+	- (Add)
+	- Exchange SOAP Contacts
+	
+	
+- SOAP Service URL - format: 	https://<EXCHANGE_SERVER>/EWS/Exchange.asmx
+- Login: User account is used for Exchange SOAP authentication. Format: user@domain. We
+
+
+
+
+SEE ALSO:	02_ADMIN-DIR_5.6_enA4.pdf

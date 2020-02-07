@@ -12,6 +12,10 @@ SEE ALSO: 01_AND-Phone-Exchange-Calander-Presence-5.2.2_enA4.pdf
 Configuration
 =============
 
+    Exchange Server <----- Exchange Presence Source
+
+
+
 
 - Configure Exchange Server (2010, 2013, 2016)
 
@@ -21,7 +25,7 @@ Configuration
 	
 - APAS/Global/Servers
 	
-	SEE ALSO:	apas-exchange-config.jpg
+	SEE ALSO:	images/apas-exchange-config.jpg
 
 	- Type: 				Exchange Calendar
 	- IP:					https://EXCHANGE-IP/EWS/Exchange.asmx
@@ -57,8 +61,8 @@ Configuration
 					- Base-DN:			CN=Users,DC=andtek,DC=cee,DC=cs,DC=eilab,DC=biz 
 					
 				SEE ALSO:
-				exchange_presence_ldap_dir_1.jpg
-				exchange_presence_ldap_dir_2.jpg
+				images/exchange_presence_ldap_dir_1.jpg
+				images/exchange_presence_ldap_dir_2.jpg
 					
 				
 			- enable Web Access

@@ -3,8 +3,7 @@ Recording XML services
 ======================
 
 - Basics
-- Usage
-
+- Playback
 
 -------------------------------------------------------------------------------------------------------------
 Basics
@@ -42,8 +41,8 @@ Commands are:
 
 
 -------------------------------------------------------------------------------------------------------------
-Usage
-=====
+Playback
+========
 XML services are simple HTTP GET requests which call a JAVA servlet and the result is XML.
 General form of a request:
 
@@ -100,4 +99,19 @@ It renders a list of recordings of a phone which can be used to call further fun
 			<Position>5</Position>
 		</SoftKeyItem>
 	</CiscoIPPhoneMenu>
+	
+	
+--> com.andtek.andphone.recorder.web.doRequest(...)
+	- page = PARAM_PAGE_MAIN by default
+	--> doListRecordingsForPlayback(...)
+		============================== creating SQL to get matching rec_call records ==============================
+		- getting terminal and lines and add entries to WHERE condition (loop on lines)
+		- getting supervised lines and add entries to WHERE condition (loop on lines)
+		--> SQL 
+			- filter: from now to timestamp
+			- filter: match (build before)
+			- filter: state = Recording.STATE_ARCHIVED (4)
+			- LIMIT: CallListService.MAX_CALLS (99)
+			
+		
 

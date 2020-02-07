@@ -7,7 +7,8 @@ Database
 - generic_profiles
 	- desktop_profiles	(Desktop Client)
 	- webuser_profiles	(WebClient)
-	- webattendant_profiles	(WebAttendant)
+	- attendant_profiles	(WebAttendant)
+	
 
 
 

@@ -2,5 +2,10 @@
 Howto add contacts to Exchange 2016 public folder?
 ==================================================
 
+
+- start Exchange Admin Center
+
+	Admin access: 	https://10.51.51.175/ecp	andtekcee\administrator / And33dbadmin
+
 See steps in images/ES2016-public-folder-*.jpg
 
