@@ -1,0 +1,14 @@
+==============================
+Howto configure CUPS presence?
+==============================
+SEE ALSO: 02_ADMIN-DIR_5.6_enA4.pdf
+
+
+- APAS/Severs/(Add - CUPS)
+
+	- Hostname/IP:  CIMP/CUPS server
+	- Username:		Application user with privilege:	Admin 3-rd Party API
+	- 
+	
+	
+	
