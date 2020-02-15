@@ -8,6 +8,65 @@ Exchange SOAP Directories
 ---------------------------------------------------------------------------------------------------------------------------
 Configuration
 =============
+- Pre-requisities:
+	- Create a domain user and add to Domain Admins group in Active Directory.
+
+		- AD/Active Directory Users and Computers
+			- choose a folder
+			- right-mouse/New/User
+			- In user properties 'Member of...'
+
+		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		Don't use Administrator for development purposes. It has a lot of permissions by default but sometimes it has limitations for security reasons
+		(e.g. it cannot use for mailing and that's the reasonif you want to use it for accessing Public Folders).
+		-------------------------------------------------------------------------------
+		
+	- Create a mailbox for new user in Exchange.
+
+		- Exchange admin center/recipients/mailboxes
+			- +/User mailbox
+			- browse users
+		
+
+- Exchange
+	- Create Public folder mailbox
+	
+		- Exchange admin center/public folders/public folder mailboxes
+			- +
+			- select OU
+			- select mailbox database
+		
+		
+	- Create Public Folders. Add multiple folders if you need it.
+		
+		- Exchange admin center/public folders/public folders
+	
+		
+		
+	- Add permission.
+	
+		EITHER add for all folders in a single step:
+		
+			- Exchange admin center/public folders/public folders
+	
+		
+		
+		TIP:
+		
+			Check permissions with cmdlet. Call 'Exchange Management Shell' on Exchange server (it's a special PowerShell) and run:
+			
+				Get-PublicFolder -Recurse | Get-PublicFolderClientPermission | Select-Object Identity,User,AccessRights,IsValid
+				
+					Identity User       AccessRights IsValid
+					-------- ----       ------------ -------
+					\        Default    {Author}        True
+					\        Anonymous  {None}          True
+					\        Apas Admin {Owner}         True
+					\users   Default    {Author}        True
+					\users   Anonymous  {None}          True
+					\users   Apas Admin {Owner}         True				
+
+
 APAS/Directory/Directories/
 	- (Add)
 	- Exchange SOAP Contacts
