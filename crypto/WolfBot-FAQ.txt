@@ -2,14 +2,51 @@
 WolfBot-FAQ
 ===========
 
-
+- Build/PreRequisities
+- Configure
 - ERROR: Error: ENOENT: no such file or directory, scandir 'C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework'
 
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Build/PreRequisities
+=====
+- Checkout from GitHub
+
+- Build:
+
+	yarn install
+	
+- Install MongoDB
+
+- Create database:
+
+	- go to 			<MONGO>/bin
+	- start:			mongo
+	- create database:	use <DB>
+	- create user:
+	
+		db.createUser(
+		   {
+			 user: "wolf",
+			 pwd: "123",
+			 roles: [ "readWrite", "dbAdmin" ]
+		   }
+		)	
+	
+	
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR: Error: ENOENT: no such file or directory, scandir 'C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework'
 ========================================================================================================================================
+Make a soft link:
+
+	- goto C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework
+	- run:
+	
+		mklink /D .NETFramework v3.5
+
+
+****************************** from forums ******************************
 ANSWER-1: 
 	I have sucessfully installed TA-LIB on Windows...
 	You just need to install the windows-build-tools package globally. At least on my Win10 system, this works without problems.
@@ -43,3 +80,4 @@ ANSWER-2:
 	(As H256 suggested, do items like
 	"Open Admin prompt, install the tools via npm install -g windows-build-tools" so that windows can allow node-gyp to make the .node file for talib
 	)
+************************************************************************************************************************
