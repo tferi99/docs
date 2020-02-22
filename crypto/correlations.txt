@@ -1,0 +1,20 @@
+Group 1
+-------
+- btc
+
+Group 2
+-------
+- ada
+- bnb
+- eth
+
+
+Group 3
+-------
+- etc
+- link
+
+Group 4
+-------
+- wan
+- matic

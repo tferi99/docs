@@ -2,12 +2,12 @@
 Exchange SOAP Directories
 =========================
 
-- Configuration
+- Configuration of public folders
 
 
 ---------------------------------------------------------------------------------------------------------------------------
-Configuration
-=============
+Configuration of public folders
+================================
 - Pre-requisities:
 	- Create a domain user and add to Domain Admins group in Active Directory.
 
@@ -49,6 +49,7 @@ Configuration
 		
 			- Exchange admin center/public folders/public folders
 	
+		OR set permissions on folder one-by-one
 		
 		
 		TIP:
@@ -64,17 +65,28 @@ Configuration
 					\        Apas Admin {Owner}         True
 					\users   Default    {Author}        True
 					\users   Anonymous  {None}          True
-					\users   Apas Admin {Owner}         True				
+					\users   Apas Admin {Owner}         True
+					
+	- Enable mailing for folders
+	
+		Select a folder and set mailing on the right panel (Mail settings - Enabled/Disabled)
+		
+		
+	
 
-
-APAS/Directory/Directories/
+- APAS/Directory/Directories/
 	- (Add)
 	- Exchange SOAP Contacts
 	
 	
-- SOAP Service URL - format: 	https://<EXCHANGE_SERVER>/EWS/Exchange.asmx
-- Login: User account is used for Exchange SOAP authentication. Format: user@domain. We
+	- SOAP Service URL - format: 	https://<EXCHANGE_SERVER>/EWS/Exchange.asmx
+	- Login: User account is used for Exchange SOAP authentication. Format: user@domain
+	- Folder name:
+		- contactsroot: with this name APAS will get content of all public folders under root public folder recursively
 
+SEEA ALSO:
+
+	images/exchange-soap-dir1.jpg
 
 
 

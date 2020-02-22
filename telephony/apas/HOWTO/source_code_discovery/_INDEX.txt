@@ -39,10 +39,6 @@ Group
 - Generating group display images
 - Group pickup
 
-Directory
----------
-- Exchange SOAP Directories
-
 Desktop client
 --------------
 - Desktop client - APAS communication

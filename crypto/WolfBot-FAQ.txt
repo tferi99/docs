@@ -10,7 +10,7 @@ WolfBot-FAQ
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 Build/PreRequisities
-=====
+====================
 - Checkout from GitHub
 
 - Build:
@@ -23,7 +23,7 @@ Build/PreRequisities
 
 	- go to 			<MONGO>/bin
 	- start:			mongo
-	- create database:	use <DB>
+	- create database:	use wolfbot
 	- create user:
 	
 		db.createUser(
