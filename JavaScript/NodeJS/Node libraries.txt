@@ -1,0 +1,34 @@
+==============
+Node libraries
+==============
+- Config
+- Terminal
+- Date formatting
+
+
+
+-------------------------------------------------------------------------
+Config
+======
+configstore			: Easily load and persist config without having to think about where and how
+
+
+-------------------------------------------------------------------------
+Terminal
+========
+chalk				: Terminal string styling done right
+clear				: Clear the terminal screen if possible
+ora					: Elegant terminal spinner	(https://github.com/sindresorhus/ora)
+inquirer			: A collection of common interactive command line user interfaces (reading input with validation and filtering)
+
+-------------------------------------------------------------------------
+Date formatting
+===============
+moment				: Parse, validate, manipulate, and display dates
+numeral				: A javascript library for formatting and manipulating numbers.
+
+
+
+Crypto
+======
+binance-api-node: 	: A complete API wrapper for the Binance API. (https://github.com/binance-exchange/binance-api-node)
