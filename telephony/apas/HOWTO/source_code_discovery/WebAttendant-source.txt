@@ -1,0 +1,12 @@
+===================
+WebAttendant source
+===================
+
+- Module dependencies
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+Module dependencies
+===================
+
+AppModule --- WacGridModule --- WidgetsModule --- <...>WidgetModule

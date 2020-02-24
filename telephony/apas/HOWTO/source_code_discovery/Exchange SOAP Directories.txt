@@ -3,7 +3,7 @@ Exchange SOAP Directories
 =========================
 
 - Configuration
-
+- Search contact
 
 ---------------------------------------------------------------------------------------------------------------------------
 Configuration
@@ -14,9 +14,33 @@ APAS/Directory/Directories/
 	
 	
 - SOAP Service URL - format: 	https://<EXCHANGE_SERVER>/EWS/Exchange.asmx
-- Login: User account is used for Exchange SOAP authentication. Format: user@domain. We
-
+- Login: User account is used for Exchange SOAP authentication. Format: user@domain. 
+	- We recommend that you use an administrator account. 
+	- If you intend to configure PRIVATE CONTACTS then be sure that the administrator account has “Exchange Impersonation” 
+		privilege in order to read other user's private contacts.
 
 
 
 SEE ALSO:	02_ADMIN-DIR_5.6_enA4.pdf
+
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Search contact
+==============
+--> com.andtek.andphone.directory.ExchangeSoapServer.search(...)
+	--> ExchangeSoapServer.getEntries(...)
+		--> ExchangeSoapProxy.FindContactItemByFolderName()
+			--> com.andtek.andphone.msews.ExchangeSoapServiceImpl.FindContactItemByFolderName(...)
+			- getting folderId OR contactFolderIds
+				- IF !publicFolder && folderName == 'contacts'	==> folderId = 'contacts'
+				- ELSE IF publicFolder && folderName == 'publicfoldersroot' ==> [1]
+				- ELSE 
+					- IF publicFolder ==> it is a path and public folder then use recursive search ==> getPathFolderId(...)	==> SOAP request
+					- ELSE ==> getContactFolderId(...)
+						--> getFolderId(ENTRY_TYPE_CONTACT, ...) ==> SOAP request
+
+						
+						
+						
+[1] --> getAllPublicFolderIds() ==> SOAP request
