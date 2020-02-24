@@ -1,0 +1,78 @@
+=============================
+cinnapple-node-binance-trader
+=============================
+
+- Description
+- Call flow
+
+
+--------------------------------------------------------------------------------------------------------------------------
+Call flow
+=========
+
+An efficient cryptocurrency trading bot command line framework for Binance using Node.js
+
+Source:		https://github.com/cinnapple/node-binance-trader
+
+
+Features:
+- only Binance
+- one pair one position
+- manual creation of position
+- buying method: 
+	- market price
+	- bid price
+	- fixed buy price
+- selling method: 
+	- trailing stop loss
+	- maximum loss n profit percentages
+- stop the trade and sell everything at the current market price if the user pressed q or Ctrl+C
+
+--------------------------------------------------------------------------------------------------------------------------
+Call flow
+=========
+- Only a single index.js
+
+
+--> run()
+	--> ask_pair_budget()
+		--> inquirer buy_info_request
+			--> ask_buy_sell_options()
+				--> inquirer buy_sell_options
+					- IF buy == Market
+						- IF sell Trailing
+							--> [1]
+						- ELSE
+							--> [2]
+					- IF buy == Bid
+						- IF sell Trailing
+							--> [1]
+						- ELSE
+							--> [2]
+					- IF buy == Fix
+						--> ask_fixed_buy_price()
+
+
+[1] --> ask_trailing_percent()
+	--> inquirer trailing_loss_input
+		--> [4]
+
+
+[2] --> ask_loss_profit_percents()
+	--> inquirer loss_profit_inputs
+		--> [4]
+
+[3] --> ask_fixed_buy_price()
+	--> inquirer fixed_buy_price_input
+		--> [1]
+		OR
+		--> [2]
+		
+[4] --> start_trading()
+	- IF buy == Fix
+		--> client.order(...)
+			--> [5]
+
+
+[5] --> auto_trade()
+			

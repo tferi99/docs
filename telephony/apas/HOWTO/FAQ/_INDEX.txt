@@ -47,6 +47,10 @@ Configuration
 - Howto configure CUPS presence?
 - How to configure XML service?
 
+Directory
+---------
+- Exchange SOAP Directories
+
 ACD
 ---
 - Howto configure ACD?

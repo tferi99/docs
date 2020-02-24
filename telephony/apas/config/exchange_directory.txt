@@ -1,6 +1,0 @@
-Exchange 2013
-https://192.168.150.85/EWS/Exchange.asmx
-airb@exchange2013.local
-And33phone
-
-

@@ -1,0 +1,13 @@
+======================
+My Trading Environment
+======================
+
+- TradingView chart layout for BTC/USDT and all traded pairs with 2 panels
+	- panel LEFT: 1m  (Candles OR Heikin-Ashi)
+	- panel RIGTH: 30m-1h (Candles)
+	
+- Trading view chart with 4-6 panel for comparing traded pairs with 1h candles
+
+
+	
+	
