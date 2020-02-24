@@ -1,10 +1,18 @@
 ==============
 Node libraries
 ==============
+- Developer
 - Config
 - Terminal
 - Date formatting
 
+
+
+-------------------------------------------------------------------------
+Developer
+=========
+npm-check			: Check for outdated, incorrect, and unused dependencies.
+npm-check-updates
 
 
 -------------------------------------------------------------------------

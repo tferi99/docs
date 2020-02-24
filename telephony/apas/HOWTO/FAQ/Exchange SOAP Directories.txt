@@ -3,7 +3,7 @@ Exchange SOAP Directories
 =========================
 
 - Configuration of public folders
-
+- Add contacts to public folders
 
 ---------------------------------------------------------------------------------------------------------------------------
 Configuration of public folders
@@ -87,7 +87,20 @@ Configuration of public folders
 SEEA ALSO:
 
 	images/exchange-soap-dir1.jpg
+	02_ADMIN-DIR_5.6_enA4.pdf
 
 
+---------------------------------------------------------------------------------------------------------------------------
+Add contacts to public folders
+==============================
+Pre-requisities:	configured Outlook configured with user who is an Owner of public folders.
 
-SEE ALSO:	02_ADMIN-DIR_5.6_enA4.pdf
+
+- Create new public folder in root public folder or in existig one. 
+
+	Folder contains: Contact Items
+
+- Go to this folder and add new contacts into it.
+
+
+	

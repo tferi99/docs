@@ -13,8 +13,8 @@ Group 3
 -------
 - etc
 - link
+- wan
 
 Group 4
 -------
-- wan
 - matic

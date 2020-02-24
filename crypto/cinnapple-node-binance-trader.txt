@@ -72,7 +72,13 @@ Call flow
 	- IF buy == Fix
 		--> client.order(...)
 			--> [5]
-
+	- IF buy == Bid
 
 [5] --> auto_trade()
-			
+
+
+STEPS:
+		0:	initial
+		1:	
+		5:
+		99:
