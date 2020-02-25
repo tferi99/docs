@@ -6,6 +6,7 @@ NodeJS FAQ
 - How to debug NodeJS?
 - How to refresh resources of a running NodeJS application?
 - How to update NodeJS?
+- How to remote debug NodeJS application from WebStorm?
 
 --------------------------------------------------------------------------------------------------------------
 NodeJS quick start
@@ -100,4 +101,23 @@ Windows:
 	
 
 	
+--------------------------------------------------------------------------------------------------------------
+How to remote debug NodeJS application from WebStorm?
+=====================================================
+- NodeJS < 8 use --debug
+- NodeJS >= 8 use --inspect
+
+For example:
+
+	node --inspect index.js
 	
+- WEBSTORM/Run/Edit configurations/+/Attach to NodeJS-Chrome
+
+	- optional: Set 'Reconnect automatically'
+	
+	
+
+
+
+
+

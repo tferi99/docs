@@ -4,6 +4,7 @@ Exchange SOAP Directories
 
 - Configuration of public folders
 - Add contacts to public folders
+- Private folders
 
 ---------------------------------------------------------------------------------------------------------------------------
 Configuration of public folders
@@ -84,17 +85,55 @@ Configuration of public folders
 	- Folder name:
 		- contactsroot: with this name APAS will get content of all public folders under root public folder recursively
 
-SEEA ALSO:
+		
+- Command line solution		
+	You can do the same actions in CLI.
+	
+	Don't use simple PowerShell but Exchange Management Shell (special PowerShell).
+	Here are some usable commmands:
+	
+		New-Mailbox –PublicFolder –Name 'TestPFMB' –Database 'Mailbox Database 0917630365'
+
+		Get-OrganizationConfig | Select *public*
+		Get-Mailbox –PublicFolder | FL Name, ExchangeGuid
+
+		Get-OrganizationConfig | Format-List RootPublicFolderMailbox
+
+		Get-mailbox –PublicFolder 'DevPFMB' | fl Name, SamAccountName, IsShared, ExchangeUserAccountControl, RecipientTypeDetails
+
+		<manually created 'Exchange Team' before
+		New-PublicFolder "Migration" –path '\Exchange Team'
+		New-PublicFolder "Network Team" –Mailbox 'TestPFMB'
+
+		Get-PublicFolder -Recurse
+		Get-Mailbox –PublicFolder | Get-MailboxStatics | Select DisplayName, TotalItemSize
+
+		$Perms = Get-ManagementRole -Cmdlet Get-MailboxStatics 
+		$Perms | foreach {Get-ManagementRoleAssignment -Role $_.Name -Delegating $false | Format-Table -Auto Role,RoleAssigneeType,RoleAssigneeName}
+
+		Get-PublicFolder -Identity "\Exchange Team" | FL
+		Get-PublicFolder -Identity "\Exchange Team\Migration" | FL
+
+		Get-OrganizationConfig  | fl *public*
+		Get-PublicFolder -Recurse | Get-PublicFolderClientPermission | Select-Object Identity,User,AccessRights,IsValid
+		Get-PublicFolderStatistics
+
+		
+SEE ALSO:
 
 	images/exchange-soap-dir1.jpg
-	02_ADMIN-DIR_5.6_enA4.pdf
+	tools_and_languages\telephony\apas\doc\02_ADMIN-DIR_5.6_enA4.pdf 
+	tools_and_languages\telephony\apas\config\Public Folders in Exchange 2016 – Everything you need to know!.pdf
 
 
 ---------------------------------------------------------------------------------------------------------------------------
 Add contacts to public folders
 ==============================
-Pre-requisities:	configured Outlook configured with user who is an Owner of public folders.
+Pre-requisities:	configured Outlook desktop application configured with user who is an Owner of public folders.
 
+NOTE:	
+You need a domain user for Outlook and it important to login with the same user into Windows (with the same domain).
+That means you Windows also should be this domain.
 
 - Create new public folder in root public folder or in existig one. 
 
@@ -103,4 +142,12 @@ Pre-requisities:	configured Outlook configured with user who is an Owner of publ
 - Go to this folder and add new contacts into it.
 
 
-	
+---------------------------------------------------------------------------------------------------------------------------
+Private folders	
+===============
+- You can create also private folders in Outlook (folders not under Public Folders Root).
+- Limitation in APAS: folders only can be siblings of contacts, sub-irectories and recursive fetch not supported.
+
+
+
+
