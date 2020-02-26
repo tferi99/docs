@@ -36,33 +36,36 @@ Call flow
 
 --> run()
 	--> ask_pair_budget()
-		--> inquirer buy_info_request
+		--> inquirer buy_info_request																		// asking base and ... currencies			
 			- What base currency would you use for the trade? (USDT, BTC, BNB or ETH) => base_currency
 			- What is your budget for this trade? (in base currency)(total value. > 15 USD.) => budget
 			- What currency would you like to buy? => currency_to_buy
 			- pair = currency_to_buy + answers.base_currency
-			--> reult = client.exchangeInfo()
+			--> result = client.exchangeInfo()
 			- IF found pair
-				- calculate tickSize from : indexOf(1) - 1
+				- calculate tickSize from : indexOf('1') - 1
 					0.00001 ==> 5
 				- getting  stepSize				
+				--> client.book(...)																	// getting initial bid and ask from book
+				
+				--> ask_buy_sell_options()
+					--> inquirer buy_sell_options
+						- IF buy == Market
+							- IF sell Trailing
+								--> [1]
+							- ELSE
+								--> [2]
+						- IF buy == Bid
+							- IF sell Trailing
+								--> [1]
+							- ELSE
+								--> [2]
+						- IF buy == Fix
+							--> ask_fixed_buy_price()				
 			- ELSE
 				--> ask_pair_budget()
 			
-			--> ask_buy_sell_options()
-				--> inquirer buy_sell_options
-					- IF buy == Market
-						- IF sell Trailing
-							--> [1]
-						- ELSE
-							--> [2]
-					- IF buy == Bid
-						- IF sell Trailing
-							--> [1]
-						- ELSE
-							--> [2]
-					- IF buy == Fix
-						--> ask_fixed_buy_price()
+
 
 
 [1] --> ask_trailing_percent()
