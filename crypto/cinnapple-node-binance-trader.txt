@@ -37,6 +37,18 @@ Call flow
 --> run()
 	--> ask_pair_budget()
 		--> inquirer buy_info_request
+			- What base currency would you use for the trade? (USDT, BTC, BNB or ETH) => base_currency
+			- What is your budget for this trade? (in base currency)(total value. > 15 USD.) => budget
+			- What currency would you like to buy? => currency_to_buy
+			- pair = currency_to_buy + answers.base_currency
+			--> reult = client.exchangeInfo()
+			- IF found pair
+				- calculate tickSize from : indexOf(1) - 1
+					0.00001 ==> 5
+				- getting  stepSize				
+			- ELSE
+				--> ask_pair_budget()
+			
 			--> ask_buy_sell_options()
 				--> inquirer buy_sell_options
 					- IF buy == Market
