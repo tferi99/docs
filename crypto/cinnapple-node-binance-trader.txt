@@ -36,7 +36,7 @@ Call flow
 
 --> run()
 	[0] --> ask_pair_budget()
-		--> inquirer buy_info_request
+		--> inquirer buy_info_request																		// asking base and ... currencies			
 			- What base currency would you use for the trade? (USDT, BTC, BNB or ETH) => base_currency
 			- What is your budget for this trade? (in base currency)(total value. > 15 USD.) => budget
 			- What currency would you like to buy? => currency_to_buy
