@@ -63,6 +63,7 @@ Recording
 - Howto build recorder?
 - Howto configure recorder announcement?
 - Howto test recorder with tcpreplay?
+- How to map calls with SIP trunc information?
 
 Network/Security
 ----------------

@@ -2,7 +2,6 @@
 Crypto FAQ
 ==========
 
-
 ERC-20
 ------
 - How to monitor tranfer of an ERC-20 wallet?

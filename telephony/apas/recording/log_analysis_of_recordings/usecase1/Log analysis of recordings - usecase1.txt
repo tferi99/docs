@@ -30,29 +30,29 @@ Use case:
 Recorded call	
 -------------
 APAS:			10.51.51.122
-Call ID:		sip19329/1
-Time:			2019-12-19 15:52:57,007 - 2019-12-19 15:53:33,328  :  36 sec(s)
-Calling party:	+36110009098			SEP100000009030
+Call ID:		sip21172/1
+Time:			2020-02-28 07:47:09 - 2020-02-28 07:47:21  :  12 sec(s)
+Calling party:	+36110009100			SEP100000009030
 Called party:	+36110009020			SEPA45630BB1748
 RTP 1 (calling):	10.51.51.122:47793
 RTP 2 (called):		10.51.51.122:41899
 DB ID:			90		
 
-RECORDING[0][sip19329/1, SEPA45630BB1748] : 2019-12-19 15:53:02 - 2019-12-19 15:53:33, DB:90
+RECORDING[0][sip21172/1, SEPA45630BB1748] : 2020-02-28 07:47:09 - 2020-02-28 07:47:21, DB:104
    - callingPartyName=
    - srcIP=10.51.51.122
-   - callID=sip19329/1
+   - callID=sip21172/1
    - calledPartyName=
    - stopOut=1
    - terminal=SEPA45630BB1748
    - originalCalledParty=+36110009020
-   - srcPort=47793
+   - srcPort=40895
    - initiated=false
    - dstIP=10.51.51.122
    - lastRedirectingParty=
-   - callingParty=+36110009098
-   - originalCallingParty=+36110009098
-   - dstPort=41899
+   - callingParty=+36110009100
+   - originalCallingParty=+36110009100
+   - dstPort=46610
    - calledParty=+36110009020 
 	
 	
@@ -97,24 +97,23 @@ TIP: call:
 
 	Pattern (regex):
 	
-		<TIME>.*received Event: com.cisco.cti.protocol.NewCallEvent
+		<TIME>.*received Event: com.cisco.cti.protocol.		
 	
 	
 	CallID can be retrieved from 'callID' field of NewCallEvent object.
 	
-	
-		1429: Dec 19 15:52:56.992 CET %JTAPI-PROTOCOL-7-UNK:(P1-10.51.51.34) received Event: com.cisco.cti.protocol.NewCallEvent {
+		539: 2020-02-28 07:47:00 CET %JTAPI-PROTOCOL-7-UNK:(P1-10.51.51.34) received Event: com.cisco.cti.protocol.NewCallEvent {
 		  eventSequence                        = 13
 		  lineCallManagerID                    = 1
-		  lineID                               = 9504
+		  lineID                               = 1590
 		  lineHandleSpecified                  = true
-		  deviceName                           = SEPA45630BB1748			<<< called party device
+		  deviceName                           = SEPA45630BB1748
 		  callCallManagerID                    = 1
-		  callLegID                            = 25153617
+		  callLegID                            = 25252351																<<<<<<<<<<<<<<
 		  globalCallManagerID                  = 1
-		  callID                               = 19329
-		  callingParty                         = +36110009098
-		  calledParty                          = +36110009020
+		  callID                               = 21172																	<<<<<<<<<<<<<<
+		  callingParty                         = +36110009100															<<<<<<<<<<<<<<
+		  calledParty                          = +36110009020															<<<<<<<<<<<<<<
 		  originalCalledParty                  = +36110009020
 		  state                                = 2
 		  origin                               = 1
@@ -128,17 +127,157 @@ TIP: call:
 		  originalPartyName                    = 
 		  lastRedirectingParty                 = 
 		  lastRedirectingPartyName             = 
-		  callingPartyDeviceName               = SEP100000009098
+		  callingPartyDeviceName               = SEP100000009100
 		  bRemoteInUse                         = false
 		  parentCallManagerID                  = 0
 		  parentCallID                         = 0
 		  bPrivacy                             = false
 		  mediaDeviceName                      = 
 		  mediaResourceId                      = 0
-		  unModifiedCallingParty               = +36110009098
+		  unModifiedCallingParty               = +36110009100
 		  unModifiedCalledParty                = +36110009020
-		  unModifiedOriginalCalledParty        = +36110009020  	
-				....
+		  unModifiedOriginalCalledParty        = +36110009020
+		  unModifiedLastRedirectingParty       = 
+		  callingPartyPi                       = true
+		  callingPartyNamePi                   = true
+		  calledPartyPi                        = true
+		  calledPartyNamePi                    = true
+		  originalCalledPartyPi                = true
+		  originalCalledPartyNamePi            = true
+		  lastRedirectingPartyPi               = true
+		  lastRedirectingPartyNamePi           = true
+		  unicodeCallingPartyName              = com.cisco.cti.protocol.UnicodeString {
+		  unicodedisplayName = 
+		  count              = 0
+		  sizeofElement      = 2
+		  }
+		  unicodeCalledPartyName               = com.cisco.cti.protocol.UnicodeString {
+		  unicodedisplayName = 
+		  count              = 0
+		  sizeofElement      = 2
+		  }
+		  unicodeOriginalCalledPartyName       = com.cisco.cti.protocol.UnicodeString {
+		  unicodedisplayName = 
+		  count              = 0
+		  sizeofElement      = 2
+		  }
+		  unicodelastRedirectingPartyName      = com.cisco.cti.protocol.UnicodeString {
+		  unicodedisplayName = 
+		  count              = 0
+		  sizeofElement      = 2
+		  }
+		  unicodeCallingPartyLocale            = 1
+		  unicodeCalledPartyLocale             = 1
+		  unicodeOriginalCalledPartyLocale     = 1
+		  unicodeLastRedirectingPartyLocale    = 1
+		  callingPartyDNInfo                   = com.cisco.cti.protocol.PartyDNInfo {
+		  sipUrl           = com.cisco.cti.protocol.SIPUrl {
+		  user         = 
+		  host         = 
+		  port         = 0
+		  transportTye = 0
+		  urlType      = 0
+		  }
+		  unModifiedsipUrl = com.cisco.cti.protocol.SIPUrl {
+		  user         = 
+		  host         = 
+		  port         = 0
+		  transportTye = 0
+		  urlType      = 0
+		  }
+		  partition        = FTOTH_Phones
+		  voiceMailbox     = 
+		  numberType       = 0
+		  }
+		  calledPartyDNInfo                    = com.cisco.cti.protocol.PartyDNInfo {
+		  sipUrl           = com.cisco.cti.protocol.SIPUrl {
+		  user         = 
+		  host         = 
+		  port         = 0
+		  transportTye = 0
+		  urlType      = 0
+		  }
+		  unModifiedsipUrl = com.cisco.cti.protocol.SIPUrl {
+		  user         = 
+		  host         = 
+		  port         = 0
+		  transportTye = 0
+		  urlType      = 0
+		  }
+		  partition        = FTOTH_Phones
+		  voiceMailbox     = 
+		  numberType       = 0
+		  }
+		  originalCalledPartyDNInfo            = com.cisco.cti.protocol.PartyDNInfo {
+		  sipUrl           = com.cisco.cti.protocol.SIPUrl {
+		  user         = 
+		  host         = 
+		  port         = 0
+		  transportTye = 0
+		  urlType      = 0
+		  }
+		  unModifiedsipUrl = com.cisco.cti.protocol.SIPUrl {
+		  user         = 
+		  host         = 
+		  port         = 0
+		  transportTye = 0
+		  urlType      = 0
+		  }
+		  partition        = FTOTH_Phones
+		  voiceMailbox     = 
+		  numberType       = 0
+		  }
+		  lastRedirectingPartyDNInfo           = com.cisco.cti.protocol.PartyDNInfo {
+		  sipUrl           = com.cisco.cti.protocol.SIPUrl {
+		  user         = 
+		  host         = 
+		  port         = 0
+		  transportTye = 0
+		  urlType      = 0
+		  }
+		  unModifiedsipUrl = com.cisco.cti.protocol.SIPUrl {
+		  user         = 
+		  host         = 
+		  port         = 0
+		  transportTye = 0
+		  urlType      = 0
+		  }
+		  partition        = 
+		  voiceMailbox     = 
+		  numberType       = 0
+		  }
+		  ctiCallType                          = 0
+		  callingPartyIpAddr                   = -1963393270
+		  farEndLineIdDN                       = +36110009100
+		  farEndLineIdPartition                = FTOTH_Phones
+		  callPresentable                      = true
+		  featurePriority                      = 1
+		  globalizedCallingParty               = +36110009100
+		  callingPartyIpAddr_v6                = null
+		  callingPartyIpAddressingMode         = 0
+		  bIsRolloverCall                      = false
+		  uniqueProtocolCallReference          = 00000000000052B4018151FF00000000
+		  cgpnHuntMemberDN                     = 
+		  cgpnHuntMemberPartition              = 
+		  cgpnPatternUsage                     = 2
+		  cdpnPatternUsage                     = 2
+		  callingPartyMultiMediaCapBitMask     = 3
+		  calledPartyMultiMediaCapBitMask      = 3
+		  callingPartyMultiMediaCapabilityInfo = com.cisco.cti.protocol.DeviceMultiMediaCapability {
+		  videoCapability  = 0
+		  telepresenceInfo = 0
+		  screenCount      = 0
+		  }
+		  calledPartyMultiMediaCapabilityInfo  = com.cisco.cti.protocol.DeviceMultiMediaCapability {
+		  videoCapability  = 0
+		  telepresenceInfo = 0
+		  screenCount      = 0
+		  }
+		  deviceUUID                           = 
+		  peerUUID                             = 7649a3e4eb036c89418a63fbaa497811
+		} 		
+		
+		
 		
 - Get call from andphone.log.*
 

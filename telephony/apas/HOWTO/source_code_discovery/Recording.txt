@@ -18,6 +18,7 @@ You need a configured recording environment (see more: APAS-FAQ.txt/Howto config
 - Search
 - Registering observers by rules
 - Recorder rule matching during registering observers
+- RuleSet without rule
 
 - ERROR - in APAS event log: The recording of call ... has been locked because a new call has reserved licenses in the ruleset
 
@@ -65,18 +66,21 @@ JTAPI:
 	- PhoneCallObserver catches CiscoRTPOutputStartedEv event and calls sendStartCallToRecorder(...)
 		- it sends 'sip' XML message to recorder process
 
-	CiscoRTPOutputStartedEv ==>
 	--> com.andtek.andphone.recorder.PhoneCallObserver.terminalChangedEvent(TermEv[] eventList)
-		--> sendStartCallToRecorder(...)
-			--> isConfiguredSIPTrunkRecording()
-				--> xml = callInfo.getXML("sip", "");
-				--> LOG(Sending XML to recorder (sip))
-				--> recorderClientFactory.getRecorderClient().sendXml(xml)
-					--> LOG(XML_SOCKET:sending XML [<recordCall)
-					
-		<recordCall terminal="SEP64A0E714F271" callID="sip41789/1" callingParty="9002" calledParty="9000" callingPartyName="" calledPartyName="" 
-			originalCallingParty="9002" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
-
+		- ON CiscoRTPOutputStartedEv
+			--> action = RuleSet.checkRules(call, false).getActionFlags()
+			- IF action IS ACTION_RECORD OR ACTION_MONITOR
+				- callInfo = new RecordingCallInfo(initiatorTerminal, callID)
+				- setting callInfo properties from call (callingParty, calledParty, ...)
+				--> sendStartCallToRecorder(...)
+					--> isConfiguredSIPTrunkRecording()
+						--> xml = callInfo.getXML("sip", "");
+						--> LOG(Sending XML to recorder (sip))
+						--> recorderClientFactory.getRecorderClient().sendXml(xml)
+							--> LOG(XML_SOCKET:sending XML [<recordCall)
+							
+				<recordCall terminal="SEP64A0E714F271" callID="sip41789/1" callingParty="9002" calledParty="9000" callingPartyName="" calledPartyName="" 
+					originalCallingParty="9002" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
 
 SIP:
 
@@ -630,8 +634,48 @@ com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain  (Search button) ==
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Registering observers by rules
 ==============================
+Ruleset
+-------
+Actions:
+
+	ACTION_NONE=0
+	ACTION_RECORD_CALLER=1
+	ACTION_RECORD_CALLED=2
+	ACTION_RECORD=3
+	ACTION_MONITOR_CALLER=4
+	ACTION_MONITOR_CALLED=8
+	ACTION_MONITOR=12
+	ACTION_NEVER=16
+	ACTION_CONTINUE=32
+	ACTION_KEEP=64
+	ACTION_ANNOUNCEMENT=128
+	ACTION_DONOTDELETE=256 + ACTION_KEEP = 320
+	ACTION_NOTIFICATION=512
+	ACTION_ONDEMAND_NOREC=1024
+	ACTION_ONDEMAND_REC=2048
+
+	
+Rule	
+----
+Source:
+	SOURCE_TYPE_CALLER=1
+	SOURCE_TYPE_CALLED=2
+	SOURCE_TYPE_LASTREDIREDTED=4
+	SOURCE_TYPE_ORIGINALCALLER=8
+	SOURCE_TYPE_ORIGINALCALLED=16
+
+Match type:
+
+	MATCH_TYPE_EQUALS=1
+	MATCH_TYPE_NOTEQUALS=2
+	MATCH_TYPE_REGEX=3
+	MATCH_TYPE_NOTREGEX=4
+
+	
 - com.andtek.andphone.recorder.PhoneCallObserver listens call events
+
 - PhoneCallObserver is a singleton and associated only phones which has a line wich matches with recorder rule entry
+
 - PhoneCallObserver registered as terminal observer [3]:
 	- during startup in com.andtek.andphone.recorder.Module.initJTAPI(...) [1]
 		OR
@@ -670,7 +714,15 @@ Registering observers by rules
 					-------------------------- loop on addresses of a terminal ------------------------------
 						--> RecordedTerminalsRepositoryImpl.observeAddressOnTerminalIfNecessary(terminal, address))			<<<<<<<<<<<< register observer if rule matches
 							--> matches = if ruleMatchesAddress() 
-								--> RuleSet.checkRules()					// internally it calculates an action and returns true if action > RuleAction.ACTION_NONE
+								--> RuleSet.checkRules(address, CALLER | CALLED | LASTREDIREDTED | ORIGINALCALLER | ORIGINALCALLED, checkArchive = false, forceMatchAny = true)
+									- internally it calculates an action and returns true if action > RuleAction.ACTION_NONE
+									--> action = checkAllRules(MatchRecord, checkArchive = false, forceMatchAny = true)
+										------------------------------- loop on rulesets --------------------------------------
+										--> match = ruleSet.matches(rec, forceMatchAny)
+								
+								
+								
+								
 							---------------------- if matches -----------------------------
 								--> observeTerminal(terminal)
 								- if registerd then break from addresses loop
@@ -682,35 +734,60 @@ Recorder rule matching during registering observers
 ===================================================
 - PhoneCallObserver is a singleton and associated only phones which has a line wich matches with recorder rule entry
 - RuleSet initiated with all rules from DB
-
-		--> RecordedTerminalsRepositoryImpl.observeAddressOnTerminalIfNecessary(terminal, address))			<<<<<<<<<<<< register observer if rule matches
-			--> matches = ruleMatchesAddress()
-				--> RuleSet.checkRules(address, CALLER | CALLED | LASTREDIREDTED | ORIGINALCALLER | ORIGINALCALLED, checkArchive = false, forceMatchAny = true)
-					--> action = checkAllRules(MatchRecord, checkArchive = false, forceMatchAny = true
-						------------------------------- loop on rulesets --------------------------------------
-						--> match = ruleSet.matches(rec, forceMatchAny)
-			
-			matches = found action
-			---------------------- if matches -----------------------------
-				--> observeTerminal(terminal)
-
-How rule match does work during observer registration?
-------------------------------------------------------
-- All addresses of all terminals (assigned to application user) participated in matching as: 
+- At startup all addresses of all terminals (assigned to application user) participated as 
 	- calling party
 	- called party
 	- original calling party
 	- original called party
 	- last redirected party
 
+		--> RecordedTerminalsRepositoryImpl.observeAddressOnTerminalIfNecessary(terminal, address))			<<<<<<<<<<<< register observer if rule matches
+			--> matches = ruleMatchesAddress()
+				--> RuleSet.checkRules(address, CALLER | CALLED | LASTREDIREDTED | ORIGINALCALLER | ORIGINALCALLED, checkArchive = false, forceMatchAny = true)
+					--> action = checkAllRules(MatchRecord, checkArchive = false, forceMatchAny = true
+						- it accumulates actions from matcing rulesets
+						- if any ruleset provides ACTION_NEVER (deny/block) then result action will be ACTION_NONE
+						------------------------------- loop on rulesets --------------------------------------
+							--> match = ruleSet.matches(rec, forceMatchAny)
+							IF match																			// only log
+								BUT actions == ACTION_CONTINUE (only continue has been set but no other)
+									--> LOG: *MATCH_BUT_DID_YOU_FORGET_TO_SPECIFY_ACTIONS*
+								ELSE
+									--> LOG: *MATCH*
+							IF match																			// business logic
+								- accumulate action from current ruleset
+								IF accumulated_actions NOT CONTAINS ACTION_NEVER | ACTION_KEEP
+									--> continue
+								IF accumulated_actions NOT CONTAINS ACTION_CONTINUE
+									--> break from loop															// evaluation stopped on rule match
+							
+									
+							matches = found action (boolean)
+							---------------------- if matches -----------------------------
+								--> observeTerminal(terminal)
+
+
 - During registering observers rules are always used in OR (any match) logical operation ('Match if' value of ruleset ignored)
 
 - During processing all rulesets enumerated until a matching ruleset found where 'continue rulecheck on match' not specified
-	(That means: if a ruleset is NOT matching the next ruleset ALWAYS processed)
+	That means: if a ruleset is NOT matching the next ruleset ALWAYS processed.
 	
-- Actions are collected from enumerated matching rulesets (added to action flags with binary OR)
+- Actions are accumulated from enumerated matching rulesets (added to action flags with binary OR)
 
 - If the result action flags contain BLOCK (RuleAction.ACTION_NEVER) then actions will be deleted (will be set to RuleAction.ACTION_NONE)
 
 - If result action flags contain ANY action then observer will be registered to terminal 				
+				
+- Observers ara NEVER removed, even if you delete matching rules. These (orphan) observers can be deleted only with SOFT RESTART.
+
+				
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+RuleSet without rule
+====================
+A ruleset is matching if evaluation of ruleset provides an action. That means:
+- if you have a ruleset without rules and this ruleset is at the final position IT DOES NOT HAVE ANT AFFECT
+- if you have a ruleset without rules and this ruleset is NOT at the final position the ALL NEXT RULESETS ARE SKIPPED 
+
+
+
 				

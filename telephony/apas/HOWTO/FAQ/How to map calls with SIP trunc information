@@ -1,0 +1,66 @@
+=======================================================================
+How to map SIP information to Cisco Call information of recorded calls?
+=======================================================================
+1. Get lines from log with the following RegEx pattern:
+
+	RecorderSipTrunk[.]java.*Extracted header info: fromNumber=[^ ]+, device=[^ ]+, callID=[^ ]+, stream=[^ ]+
+	
+	
+	For example:
+	
+		[2019-10-11 09:54:13,462] [DEBUG] [APAS-defaultWorker-11] [RecorderSipTrunk.java:271] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=25151453, stream=nearend
+		[2019-10-11 09:54:13,518] [DEBUG] [APAS-defaultWorker-13] [RecorderSipTrunk.java:271] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=25151453, stream=farend
+		[2019-10-11 09:56:04,710] [DEBUG] [APAS-defaultWorker-23] [RecorderSipTrunk.java:271] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=25151462, stream=nearend
+		[2019-10-11 09:56:04,785] [DEBUG] [APAS-defaultWorker-25] [RecorderSipTrunk.java:271] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=25151462, stream=farend
+		[2019-10-11 09:59:03,556] [DEBUG] [APAS-defaultWorker-3] [RecorderSipTrunk.java:271] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=25151471, stream=nearend
+		[2019-10-11 09:59:03,636] [DEBUG] [APAS-defaultWorker-5] [RecorderSipTrunk.java:271] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=25151471, stream=farend
+	
+	
+	Get call info from this line:
+		Thread:		APAS-defaultWorker-11
+		callID:		25151453
+	
+2. Get lines from log with the following RegEx pattern:
+	
+	(NEAREND|FAREND) sip trunk connection from
+	
+	For example:
+	
+		[2019-10-11 09:54:13,498] [DEBUG] [APAS-defaultWorker-11] [RecorderSipTrunk.java:419] - NEAREND sip trunk connection from SEPA45630BB1748, callID=18635/1, ip=10.51.51.122, port=39187
+		[2019-10-11 09:54:13,519] [DEBUG] [APAS-defaultWorker-13] [RecorderSipTrunk.java:385] - FAREND sip trunk connection from SEPA45630BB1748, callID=18635/1, ip=10.51.51.122, port=36006
+		[2019-10-11 09:56:04,711] [DEBUG] [APAS-defaultWorker-23] [RecorderSipTrunk.java:419] - NEAREND sip trunk connection from SEPA45630BB1748, callID=18638/1, ip=10.51.51.122, port=56589
+		[2019-10-11 09:56:04,786] [DEBUG] [APAS-defaultWorker-25] [RecorderSipTrunk.java:385] - FAREND sip trunk connection from SEPA45630BB1748, callID=18638/1, ip=10.51.51.122, port=34349
+		[2019-10-11 09:59:03,558] [DEBUG] [APAS-defaultWorker-3] [RecorderSipTrunk.java:419] - NEAREND sip trunk connection from SEPA45630BB1748, callID=18641/1, ip=10.51.51.122, port=33168
+		[2019-10-11 09:59:03,637] [DEBUG] [APAS-defaultWorker-5] [RecorderSipTrunk.java:385] - FAREND sip trunk connection from SEPA45630BB1748, callID=18641/1, ip=10.51.51.122, port=46295
+			
+	
+3. 
+
+
+Explanation
+-----------
+- 'callID' in first lines are not the Cisco call ID, it's the x-refci (call reference IG) from SIP packets (sip_protocol.log):
+
+	From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25151453;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25151452;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009098;x-farendaddr=+36110009098>;tag=500719~0397bdeb-e9fe-44a2-8560-60f291557ddb-25151457
+
+	
+	These SIP packets are extracted by APAS and pushed into andhone.log (2nd lines).
+	
+- My solution fo mapping SIP (1st lines) to Cisco calls (2nd lines):
+
+	Get the next line from 2nd lines where the thread is the same as in 1st line.
+	
+	
+For example:
+
+	1st:
+	
+		[2019-10-11 09:54:13,462] [DEBUG] [APAS-defaultWorker-11] [RecorderSipTrunk.java:271] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=25151453, stream=nearend	
+		
+	2nd:
+	
+		[2019-10-11 09:54:13,498] [DEBUG] [APAS-defaultWorker-11] [RecorderSipTrunk.java:419] - NEAREND sip trunk connection from SEPA45630BB1748, callID=18635/1, ip=10.51.51.122, port=39187
+		
+		
+		25151453 <-------------> 18635/1
+		

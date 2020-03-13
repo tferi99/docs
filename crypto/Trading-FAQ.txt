@@ -5,6 +5,10 @@ Trading FAQ
 - What is a pip? 
 - What is arbitrage?
 - Taker vs maker
+- Bid vs ask
+- What is CME gap?
+
+
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
 What is a pip?
@@ -80,3 +84,29 @@ Trades from Market orders are always Takers, as Market orders can never go on th
 
 
 	These orders add volume to the order book, helping to "make the market," and are therefore termed the "maker" for any subsequent trades.	
+	
+-------------------------------------------------------------------------------------------------------------------------------------------------
+Bid vs ask
+==========
+Bid (offer):
+	The bid price represents the MAXIMUM price that a buyer is willing to pay.
+	
+Ask:
+	The ask price represents the MINIMUM price that a seller is willing to take for that same security.
+	
+	
+	
+	bid <= ask
+	
+	
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+What is CME gap?
+================
+The talk of the crypto community in the past few months has been the gaps on the Bitcoin (BTC) CME (Chicago Mercantile Exchange) futures chart. 
+Bitcoin trades 24/7 on major exchanges but DOES NOT TRADE ON WEEKENDS on the CME. 
+This often creates a gap, or empty space on the chart when trading resumes on the CME.
+
+SEE ALSO:	https://cointelegraph.com/news/mind-the-gap-identifying-and-trading-4-different-bitcoin-charts-gaps
+
+

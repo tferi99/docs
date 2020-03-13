@@ -1,0 +1,12 @@
+[2020-02-28 07:47:10,038] [INFO] [116 ] [21172/1] [SIPTRUNK       ]  - SipTrunkRTPInEv [from: +36110009020, device: SEPA45630BB1748, call-id: 25252351]
+
+[2020-02-28 07:47:10,040] [INFO] [116 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id SEPA45630BB1748#21172/1
+
+[2020-02-28 07:47:10,040] [INFO] [116 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id does not exist in repository
+
+[2020-02-28 07:47:10,065] [INFO] [118 ] [21172/1] [SIPTRUNK       ]  - SipTrunkRTPOutEv [from: +36110009020, device: SEPA45630BB1748, call-id: 25252351]
+
+[2020-02-28 07:47:10,066] [INFO] [118 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id SEPA45630BB1748#21172/1
+
+[2020-02-28 07:47:10,066] [INFO] [118 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id does not exist in repository
+

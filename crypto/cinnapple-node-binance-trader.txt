@@ -35,29 +35,38 @@ Call flow
 
 
 --> run()
-	--> ask_pair_budget()
+	[0] --> ask_pair_budget()
 		--> inquirer buy_info_request
 			- What base currency would you use for the trade? (USDT, BTC, BNB or ETH) => base_currency
 			- What is your budget for this trade? (in base currency)(total value. > 15 USD.) => budget
 			- What currency would you like to buy? => currency_to_buy
 			- pair = currency_to_buy + answers.base_currency
-			--> reult = client.exchangeInfo()
+			--> result = client.exchangeInfo()
 			- IF found pair
-				- calculate tickSize from : indexOf(1) - 1
+				- calculate tickSize from : indexOf(1) - 1									// tickSize
 					0.00001 ==> 5
-				- getting  stepSize				
+				- getting  stepSize															// stepSize
 			- ELSE
 				--> ask_pair_budget()
 			
 			--> ask_buy_sell_options()
-				--> inquirer buy_sell_options
+				--> inquirer buy_sell_options												==> selling_method, buying_method
+					- OPTIONS:
+						- Buy at Market Price
+						- Set a Buy Order just above Bid Price
+						- Set a Buy Order at a Fixed Buy Price
+						==> buy_option
+					- OPTIONS:
+						- Set a Trailing Stop Loss
+						- Set Stop Loss and Profit Percentages
+						==> sell_option					
 					- IF buy == Market
-						- IF sell Trailing
+						- IF sell trailing
 							--> [1]
 						- ELSE
 							--> [2]
 					- IF buy == Bid
-						- IF sell Trailing
+						- IF sell trailing
 							--> [1]
 						- ELSE
 							--> [2]
@@ -65,27 +74,58 @@ Call flow
 						--> ask_fixed_buy_price()
 
 
-[1] --> ask_trailing_percent()
-	--> inquirer trailing_loss_input
-		--> [4]
+[1] --> ask_trailing_percent()																==> trailing_pourcent
+	--> inquirer trailing_loss_input 
+		=> trailing_pourcent
+		=> confirm
+		- IF confirm
+			--> [4]
+		- ELSE
+			--> [0]
 
+[2] --> ask_loss_profit_percents()															==> profit_pourcent, loss_pourcent
+	--> inquirer loss_profit_inputs 
+		=> loss_pourcent
+		=> profit_pourcent
+		=> confirm
+		- IF confirm
+			--> [4]
+		- ELSE
+			--> [0]
 
-[2] --> ask_loss_profit_percents()
-	--> inquirer loss_profit_inputs
-		--> [4]
-
-[3] --> ask_fixed_buy_price()
-	--> inquirer fixed_buy_price_input
-		--> [1]
-		OR
-		--> [2]
+[3] --> ask_fixed_buy_price()																==> fixed_buy_price
+	--> inquirer fixed_buy_price_input => fixed_buy_price
+		- IF sell trailing
+			--> [1]
+		- ELSE
+			--> [2]
 		
 [4] --> start_trading()
 	- IF buy == Fix
-		--> client.order(...)
+		buy_amount = budget / fixed_buy_price
+		buy_price = fixed_buy_price
+		--> client.order(...)																==> order_id
 			--> [5]
+		- ERR:
+			--> [0]
+			
 	- IF buy == Bid
-
+		buy_amount = budget / bid_price * 1.0002
+		buy_price = bid_price * 1.0002
+		--> client.order(...)																==> order_id
+			--> [5]
+		- ERR:
+			--> [0]
+			
+	- IF buy == Market
+		buy_amount = budget / bid_price * 1.0002
+		buy_price = ask_price
+		--> client.order(...)																==> order_id
+			--> [5]
+		- ERR:
+			--> [0]
+	
+			
 [5] --> auto_trade()
 
 

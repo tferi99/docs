@@ -5,6 +5,7 @@ Exchange SOAP Directories
 - Configuration of public folders
 - Add contacts to public folders
 - Private folders
+- Howto enable basic authentication in Exchange Server?
 
 ---------------------------------------------------------------------------------------------------------------------------
 Configuration of public folders
@@ -149,5 +150,24 @@ Private folders
 - Limitation in APAS: folders only can be siblings of contacts, sub-irectories and recursive fetch not supported.
 
 
+---------------------------------------------------------------------------------------------------------------------------
+Howto enable basic authentication in Exchange Server?
+=====================================================
+- Go to 'Exchange admin center'
+- servers/virtual directories
+- choose 'Autodiscover'/(Edit)/authentication
+	- set 'Basic authentication'
+	- remove 'Integrated Windows authentication'
+	- Save
+- choose 'EWS'/(Edit)/authentication
+	- set 'Basic authentication'
+	- remove 'Integrated Windows authentication'
+	- Save
+
+	
+NOTE: If 'Integrated Windows authentication' is enabled it will be applied even if 'Basic authentication' is enabled.
+
+SEE ALSO:
+	images/exchange-enable-basic-auth1.jpg
 
 

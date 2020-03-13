@@ -1,12 +1,13 @@
-===============
-TradingView FAQ
-===============
+==========================
+TradingView PineScript FAQ
+==========================
 
 Basics
 ------
 - What is name of the symbol 
 - More important variables
 - Resolution
+- Comments
 
 Draw/paint
 ----------
@@ -63,6 +64,14 @@ Resolution
 - Bigger units: D, W, M  (and can be multiplied: 2D, 5W, 2M)
 
 
+----------------------------------------------------------------------------------------------------------------------------------------
+Comments
+========
+Pine Script has single-line comments only. Any text from the symbol // until the end of the line is considered as comment.
+
+TIP:
+
+	Script Editor has hotkeys for commenting/uncommenting block of code: Ctrl + / 
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------

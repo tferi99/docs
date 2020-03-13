@@ -1,0 +1,66 @@
+2019-10-11 09:48:34,361 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version:        Apache Tomcat/8.0.35
+2019-10-11 09:48:34,363 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          2016-05-11 21:57:34,363 UTC
+2019-10-11 09:48:34,363 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server number:         8.0.35.0
+2019-10-11 09:48:34,363 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+2019-10-11 09:48:34,364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            3.10.0-514.21.1.el7.x86_64
+2019-10-11 09:48:34,364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          amd64
+2019-10-11 09:48:34,364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /usr/java/jdk1.8.0_144/jre
+2019-10-11 09:48:34,364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           1.8.0_144-b01
+2019-10-11 09:48:34,364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Oracle Corporation
+2019-10-11 09:48:34,364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /usr/share/tomcat
+2019-10-11 09:48:34,364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /usr/share/tomcat
+2019-10-11 09:48:34,364 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Xmx1895M
+2019-10-11 09:48:34,365 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -XX:NewSize=256m
+2019-10-11 09:48:34,365 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -XX:MaxNewSize=256m
+2019-10-11 09:48:34,365 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -XX:PermSize=256m
+2019-10-11 09:48:34,365 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -XX:MaxPermSize=256m
+2019-10-11 09:48:34,365 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -XX:+DisableExplicitGC
+2019-10-11 09:48:34,365 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dname=tomcat
+2019-10-11 09:48:34,365 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcom.sun.management.jmxremote
+2019-10-11 09:48:34,365 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcom.sun.management.jmxremote.port=9004
+2019-10-11 09:48:34,366 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcom.sun.management.jmxremote.ssl=false
+2019-10-11 09:48:34,366 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcom.sun.management.jmxremote.authenticate=true
+2019-10-11 09:48:34,366 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcom.sun.management.jmxremote.password.file=/usr/share/tomcat/conf/jmxremote.password
+2019-10-11 09:48:34,366 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcom.sun.management.jmxremote.access.file=/usr/share/tomcat/conf/jmxremote.access
+2019-10-11 09:48:34,366 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/usr/share/tomcat
+2019-10-11 09:48:34,366 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/usr/share/tomcat
+2019-10-11 09:48:34,366 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.endorsed.dirs=
+2019-10-11 09:48:34,366 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/var/cache/tomcat/temp
+2019-10-11 09:48:34,367 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/usr/share/tomcat/conf/logging.properties
+2019-10-11 09:48:34,367 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+2019-10-11 09:48:34,367 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: /usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+2019-10-11 09:48:34,531 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+2019-10-11 09:48:34,544 INFO [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+2019-10-11 09:48:34,547 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8443"]
+2019-10-11 09:48:34,734 INFO [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+2019-10-11 09:48:34,735 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["ajp-nio-8009"]
+2019-10-11 09:48:34,743 INFO [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+2019-10-11 09:48:34,745 INFO [main] org.apache.catalina.startup.Catalina.load Initialization processed in 749 ms
+2019-10-11 09:48:34,787 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service Catalina
+2019-10-11 09:48:34,787 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet Engine: Apache Tomcat/8.0.35
+2019-10-11 09:48:34,840 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory /var/lib/tomcat/webapps/ROOT
+2019-10-11 09:48:36,420 INFO [localhost-startStop-1] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2019-10-11 09:49:46,142 INFO [localhost-startStop-1] org.apache.catalina.util.SessionIdGeneratorBase.createSecureRandom Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [69,684] milliseconds.
+2019-10-11 09:49:46,165 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory /var/lib/tomcat/webapps/ROOT has finished in 71,326 ms
+2019-10-11 09:49:46,165 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory /var/lib/tomcat/webapps/andguard
+2019-10-11 09:49:46,916 INFO [localhost-startStop-1] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2019-10-11 09:49:46,918 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory /var/lib/tomcat/webapps/andguard has finished in 753 ms
+2019-10-11 09:49:46,919 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory /var/lib/tomcat/webapps/andphone
+2019-10-11 09:49:59,817 INFO [localhost-startStop-1] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2019-10-11 09:50:05,942 SEVERE [localhost-startStop-1] com.avaje.ebean.config.PropertyMapLoader.load ebean.properties not found
+2019-10-11 09:50:06,000 WARNING [localhost-startStop-1] com.avaje.ebeaninternal.server.core.DefaultServerFactory.checkDataSource DataSource [apas_db] has autoCommit defaulting to true!
+2019-10-11 09:50:06,014 INFO [localhost-startStop-1] com.avaje.ebeaninternal.server.core.DefaultServerFactory.setDatabasePlatform DatabasePlatform name:apas_db platform:postgres
+2019-10-11 09:50:06,036 INFO [localhost-startStop-1] com.avaje.ebeaninternal.server.subclass.SubClassManager$1.run SubClassFactory parent ClassLoader [org.apache.catalina.loader.WebappClassLoader]
+2019-10-11 09:50:06,088 INFO [localhost-startStop-1] com.avaje.ebeaninternal.server.resource.ResourceManagerFactory.createFileSource ResourceManager initialised: type[file] [/usr/share/tomcat/webapps/ROOT/WEB-INF]
+2019-10-11 09:50:06,343 WARNING [localhost-startStop-1] com.avaje.ebeaninternal.server.deploy.BeanDescriptorManager.setIdGeneration Bean [com.andtek.andphone.mcast2.impl.BroadcastParameter] has no unique id set
+2019-10-11 09:50:06,399 INFO [localhost-startStop-1] com.avaje.ebeaninternal.server.deploy.BeanDescriptorManager.logStatus Entities enhanced[0] subclassed[7]
+2019-10-11 09:50:10,212 WARNING [localhost-startStop-1] com.avaje.ebeaninternal.server.core.DefaultServerFactory.checkDataSource DataSource [db_apas] has autoCommit defaulting to true!
+2019-10-11 09:50:10,213 INFO [localhost-startStop-1] com.avaje.ebeaninternal.server.core.DefaultServerFactory.setDatabasePlatform DatabasePlatform name:db_apas platform:postgres
+2019-10-11 09:50:10,213 INFO [localhost-startStop-1] com.avaje.ebeaninternal.server.subclass.SubClassManager$1.run SubClassFactory parent ClassLoader [org.apache.catalina.loader.WebappClassLoader]
+2019-10-11 09:50:10,215 INFO [localhost-startStop-1] com.avaje.ebeaninternal.server.resource.ResourceManagerFactory.createFileSource ResourceManager initialised: type[file] [/usr/share/tomcat/webapps/ROOT/WEB-INF]
+2019-10-11 09:50:10,228 INFO [localhost-startStop-1] com.avaje.ebeaninternal.server.deploy.BeanDescriptorManager.logStatus Entities enhanced[0] subclassed[1]
+2019-10-11 09:50:17,190 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory /var/lib/tomcat/webapps/andphone has finished in 30,270 ms
+2019-10-11 09:50:17,199 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+2019-10-11 09:50:17,206 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8443"]
+2019-10-11 09:50:17,209 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["ajp-nio-8009"]
+2019-10-11 09:50:17,209 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in 102464 ms
