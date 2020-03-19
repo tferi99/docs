@@ -179,25 +179,28 @@ Configuration:
 Starting call recording
 =======================
 andphone_record (c++ process) records calls. It start calling if it gets "recordCall" XML commands.
-Here is a log of a recording start:
+Here are messages between APAS and recorder APAS:
 
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" callingParty="9031" calledParty="9033" callingPartyName="" calledPartyName="" originalCallingParty="9031" originalCalledParty="9033" lastRedirectingParty="" initiated="false"/>
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" srcIP="192.168.5.36" srcPort="57364"/>
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" keyOut="40a8108e22508ca127fe0d1add34dad759e124ace9b563ad0dea3a2bf274" />
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" srcIP="192.168.5.36" srcPort="57364"/>
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" keyOut="40a8108e22508ca127fe0d1add34dad759e124ace9b563ad0dea3a2bf274" />
-	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" srcIP="192.168.5.36" srcPort="33105"/>
-	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" keyOut="e5d8f8187d0e8570b793f2da37b00f2dbd5491ae96ff2705542c3ea39e5c" />
-	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" srcIP="192.168.5.36" srcPort="33105"/>
-	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" keyOut="e5d8f8187d0e8570b793f2da37b00f2dbd5491ae96ff2705542c3ea39e5c" />
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" dstIP="192.168.5.36" dstPort="58884"/>
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" keyIn="3594b1286d63870762f78e231ba3ce03ad7949fe8147b6c229d2176e3170" />
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" dstIP="192.168.5.36" dstPort="58884"/>
-	<recordCall terminal="SEPEC44761F83FC" callID="sip9687/1" keyIn="3594b1286d63870762f78e231ba3ce03ad7949fe8147b6c229d2176e3170" />
-	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" dstIP="192.168.5.36" dstPort="54105"/>
-	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" keyIn="ed121f8dad7dd417d85a9a2981a38a9fc25f03c104d700e3120de0ab634b" />
-	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" dstIP="192.168.5.36" dstPort="54105"/>
-	<recordCall terminal="SEPA45630BB1748" callID="sip9687/1" keyIn="ed121f8dad7dd417d85a9a2981a38a9fc25f03c104d700e3120de0ab634b" />
+	[ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6cc178d7)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+		<--[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
+	[APAS-defaultWorker-11] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" srcIP="10.51.51.122" srcPort="40895"/>]
+		<--[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
+	[APAS-defaultWorker-13] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" dstIP="10.51.51.122" dstPort="46610"/>]
+		<--[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
+		<--[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <call callID="sip21172/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" origCallingParty="+36110009100" origCalledParty="+36110009020" lastRedirectingParty="" rtpRecorded="0" duplicate="0" keep="0" onDemand="0" record="1" keyIn="000000000000000000000000000000000000000000000000000000000000" keyOut="000000000000000000000000000000000000000000000000000000000000"/>
+	[http-nio-8080-exec-10] [XMLSocket.java:426] - XML_SOCKET:sending XML [<getStatus seq="10" />]
+		<--[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <getStatusResponse code="0" string="OK" version="6.2.2-462" mode="sip" srtp="true" signalingProtocols="256"   seq="10"><capture received="3124" dropped="78" tcp="2848" sccp="0" udp="52" rtp="19" rtprec="19" bufmax="2" iomax="0"/></getStatusResponse>
+	[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:Got XML message [getStatusResponse: null] with seq=10
+	[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:Found SeqWaiter for seq=10
+	...
+	[ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6cc178d7)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" stopOut="1" />]
+	[APAS-defaultWorker-15] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="csip25252351" stopOut="1" />]
+		<--[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="100" string="Call removed"/>
+		<--[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+	[APAS-defaultWorker-17] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="csip25252351" stopOut="1" />]
+		<--[APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+	[http-nio-8080-exec-2] [XMLSocket.java:426] - XML_SOCKET:sending XML [<getStatus seq="18" />]
+
 
 - XML commands are handled by sniffer process with Server object which calls registered handler methods:
 
@@ -217,6 +220,7 @@ Here is a log of a recording start:
 			
 	<recordCall .../> 
 		--> recordCall()
+		
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Handling encryption keys in recorder 
@@ -791,3 +795,4 @@ A ruleset is matching if evaluation of ruleset provides an action. That means:
 
 
 				
+

@@ -77,31 +77,58 @@ npm install --save-dev
 ---------------------------------------------------------------------------------------------------------------------------------------------
 How to update packages?	
 =======================
-- Check version of NPM:
+- Method 1:
+	- Check version of NPM:
+		
+		npm -version
+
+	- Update NPM itself:
+
+		npm install npm@latest -g
+
+	Update all global packages:
+
+		npm update -g	
+		
+	Update a global packages:
+
+		npm update -g <package_name>
+		
+	Check outdated global packages:	
+		
+		
+	Project level:
+		- go into project directory
+		- npm update
+		
+		
+- Method 2: npm-check
+
+	Check for outdated, incorrect, and unused dependencies.
 	
-	npm -version
+	- Install:
 
-- Update NPM itself:
-
-	npm install npm@latest -g
-
-Update all global packages:
-
-	npm update -g	
+		npm install -g npm-check
+		
+	- Use:
 	
-Update a global packages:
+		npm-check	
+	
+		
+- Method 3: npm-check-updates
 
-	npm update -g <package_name>
+	'npm-check-updates' upgrades your package.json dependencies to the latest versions, ignoring specified versions.
 	
-Check outdated global packages:	
+	- Installation:
+
+		npm install -g npm-check-updates
+		
+	- Usage:
 	
-	
-Project level:
-	- go into project directory
-	- npm update
-	
+		ncu
 
 
+	
 ---------------------------------------------------------------------------------------------------------------------------------------------
 How to create package.json?
 ===========================

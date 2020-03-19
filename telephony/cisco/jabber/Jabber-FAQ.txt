@@ -23,7 +23,21 @@ How to setup Jabber for an end user?
 	In end user config set flag:
 		
 		[Service Settings]/Enable User for Unified CM IM and Presence (Configure IM and Presence in the associated UC Service Profile)
+	
+- Create UC Service and Service Profile and link them together (optional):
+
+	- UC service (e.g Directory service):
 		
+		CUCM/User Management/User Settings/UC Service/(Add New)/(Directory)
+		
+	- Service Profile:
+		
+		CUCM/User Management/User Settings/Service Profile/(Add New)
+		
+		
+	- link
+
+		End-user ---> Service Profile ---> UC service
 	
 - Create a Cisco Unified Client Services Framework (CSF) device.	
 	
@@ -34,6 +48,9 @@ How to setup Jabber for an end user?
 
 	IMPORTANT NOTE: If you want to use Jabber with multiple users you have to create multiple CSF devices.
 
+	
+SEE ALSO:	zbal-jabber1 on CUCM-12
+	
 ------------------------------------------------------------------------------------------------------------------------------------------
 How to change user in Jabber with SSO?
 ======================================

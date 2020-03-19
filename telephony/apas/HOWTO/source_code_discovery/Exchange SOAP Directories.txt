@@ -4,6 +4,7 @@ Exchange SOAP Directories
 
 - Configuration
 - Search contact
+- SOAP Protocol
 
 ---------------------------------------------------------------------------------------------------------------------------
 Configuration
@@ -33,7 +34,11 @@ Search contact
 		--> ExchangeSoapProxy.FindContactItemByFolderName()
 			--> com.andtek.andphone.msews.ExchangeSoapServiceImpl.FindContactItemByFolderName(...)
 			- getting folderId OR contactFolderIds
-				- IF !publicFolder && folderName == 'contacts'	==> folderId = 'contacts'
+				- IF !publicFolder && folderName == 'contacts'
+					- folderId = 'contacts'																					// if folder == 'ontactsroot', then hardcoded folder is: 'contacts'
+					--> getAllPublicFolderIds(ENTRY_TYPE_CONTACT, contactFolderIds, folderName, impersonation);
+						SOAP cmd = 'FindFolder'
+						
 				- ELSE IF publicFolder && folderName == 'publicfoldersroot' ==> [1]
 				- ELSE 
 					- IF publicFolder ==> it is a path and public folder then use recursive search ==> getPathFolderId(...)	==> SOAP request
@@ -41,6 +46,21 @@ Search contact
 						--> getFolderId(ENTRY_TYPE_CONTACT, ...) ==> SOAP request
 
 						
-						
-						
-[1] --> getAllPublicFolderIds() ==> SOAP request
+			- IF contactFolderIds NOT EMPTY							// folder IDs collected
+				--------------------------- LOOP ON contact folder IDs --------------------------------------
+				- collecting contacts into allContactList (ArrayList<ExchangeContactBean>)
+				--> findContactItemByFolderId(...);
+					--> inner_findItemByFolderId(...)
+					
+					
+			- ordering result list
+			
+			
+			
+			
+---------------------------------------------------------------------------------------------------------------------------
+SOAP Protocol
+=============
+SEE: Directory SOAP XML protocol.txt
+
+

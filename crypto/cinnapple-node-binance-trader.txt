@@ -34,6 +34,14 @@ Call flow
 - Only a single index.js
 
 
+--> line 723 - initialization
+	--> listening to keyboard Ctrl-C or Q
+		- IF order_id THEN --> client.cancelOrder()
+		- client.getOrder({...})
+		--> sell_at_market_price()											// there is a BUY orderm but sell it at market price
+		
+
+
 --> run()
 	[0] --> ask_pair_budget()
 		--> inquirer buy_info_request																		// asking base and ... currencies			
@@ -127,7 +135,9 @@ Call flow
 	
 			
 [5] --> auto_trade()
-
+	---------------------------------- WeSocket loop about trades ----------------------------------
+	
+		
 
 STEPS:
 		0:	initial

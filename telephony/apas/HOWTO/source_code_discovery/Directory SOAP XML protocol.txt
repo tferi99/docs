@@ -1,0 +1,471 @@
+Directory SOAP XML protocol
+===========================
+- Getting CCM version
+- Public folders
+- Private folders
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Getting CCM version
+===================
+- Request:
+
+	<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+		<SOAP-ENV:Body>
+			<axl:getCCMVersion xmlns:axl="http://www.cisco.com/AXL/API/10.0" sequence="1"></axl:getCCMVersion>
+		</SOAP-ENV:Body>
+	</SOAP-ENV:Envelope>
+
+- Response:
+	
+	<?xml version='1.0' encoding='UTF-8'?>
+	<soapenv:Envelope
+		xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+		<soapenv:Body>
+			<ns:getCCMVersionResponse
+				xmlns:ns="http://www.cisco.com/AXL/API/10.0">
+				<return>
+					<componentVersion>
+						<version>11.5.1.11900(27)</version>
+					</componentVersion>
+				</return>
+			</ns:getCCMVersionResponse>
+		</soapenv:Body>
+	</soapenv:Envelope>	
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Public folders
+==============
+TEST DATA:
+	- root
+		- other
+			-- PF2
+				[Cica Mica]
+		- PF1
+				[Lófasz Jozsef]
+		- users
+			-- PF3
+				[Lapos Elemer]
+				[Customer Johann]
+				[Segg Elek]
+
+Public folder query gets entries from the target folder and from ALL subfolders recursively.
+Result:
+
+		[Cica Mica]
+		[Customer Johann]
+		[Lapos Elemer]
+		[Lófasz Jozsef]		
+		[Segg Elek]
+
+Some example reques and response SOAP message:				
+
+Getting subfolders from root target folder
+------------------------------------------
+- SOAPAction:		FindFolder
+- target folder:	publicfoldersroot
+- result: 			found 3 subfolders
+
+	- Request: 
+
+		<soapenv:Envelope
+			xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+			xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types"
+			xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+			<soapenv:Header>
+				<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+			</soapenv:Header>
+			<soapenv:Body>
+				<mes:FindFolder Traversal="Shallow">
+					<mes:FolderShape>
+						<typ:BaseShape>Default</typ:BaseShape>
+					</mes:FolderShape>
+					<mes:ParentFolderIds>
+						<typ:DistinguishedFolderId Id="publicfoldersroot" />
+					</mes:ParentFolderIds>
+				</mes:FindFolder>
+			</soapenv:Body>
+		</soapenv:Envelope>
+
+
+	- Response:
+		
+		<?xml version="1.0" encoding="utf-8"?>
+		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+			<s:Header>
+				<h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11"
+					xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+			</s:Header>
+			<s:Body
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<m:FindFolderResponse
+					xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+					xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">
+					<m:ResponseMessages>
+						<m:FindFolderResponseMessage ResponseClass="Success">
+							<m:ResponseCode>NoError</m:ResponseCode>
+							<m:RootFolder TotalItemsInView="3" IncludesLastItemInRange="true">
+								<t:Folders>
+									<t:Folder>
+										<t:FolderId Id="AQEuAAADGkRzkKpmEc2byACqAC/EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxgAAAA=" ChangeKey="AQAAABYAAABYxRtIcRtxRIKMII431URwAAAAAATL"/>
+										<t:DisplayName>other</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>1</t:ChildFolderCount>
+										<t:UnreadCount>0</t:UnreadCount>
+									</t:Folder>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQEuAAADGkRzkKpmEc2byACqAC/EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxoAAAA=" ChangeKey="AwAAABYAAABYxRtIcRtxRIKMII431URwAAAAABDy"/>
+										<t:DisplayName>PF1</t:DisplayName>
+										<t:TotalCount>1</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+									<t:Folder>
+										<t:FolderId Id="AQEuAAADGkRzkKpmEc2byACqAC/EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxQAAAA=" ChangeKey="AQAAABYAAABYxRtIcRtxRIKMII431URwAAAAAAUS"/>
+										<t:DisplayName>users</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>1</t:ChildFolderCount>
+										<t:UnreadCount>0</t:UnreadCount>
+									</t:Folder>
+								</t:Folders>
+							</m:RootFolder>
+						</m:FindFolderResponseMessage>
+					</m:ResponseMessages>
+				</m:FindFolderResponse>
+			</s:Body>
+		</s:Envelope>
+
+		
+Getting subfolders from retrieved subfolders (recursively)
+----------------------------------------------------------
+- SOAPAction:			FindFolder
+- target folder ID:		EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxgAAAA=
+- target folder:		other
+- result: 				found 1 subfolder
+		
+	- Request:
+ 
+			<soapenv:Envelope
+				xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+				xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types"
+				xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+				<soapenv:Header>
+					<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+				</soapenv:Header>
+				<soapenv:Body>
+					<mes:FindFolder Traversal="Shallow">
+						<mes:FolderShape>
+							<typ:BaseShape>Default</typ:BaseShape>
+						</mes:FolderShape>
+						<mes:ParentFolderIds>
+							<typ:FolderId Id="AQEuAAADGkRzkKpmEc2byACqAC/EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxgAAAA=" />
+						</mes:ParentFolderIds>
+					</mes:FindFolder>
+				</soapenv:Body>
+			</soapenv:Envelope>
+
+
+	- Response:
+	
+		<?xml version="1.0" encoding="utf-8"?>
+		<s:Envelope
+			xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+			<s:Header>
+				<h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11"
+					xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+			</s:Header>
+			<s:Body
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<m:FindFolderResponse
+					xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+					xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">
+					<m:ResponseMessages>
+						<m:FindFolderResponseMessage ResponseClass="Success">
+							<m:ResponseCode>NoError</m:ResponseCode>
+							<m:RootFolder TotalItemsInView="1" IncludesLastItemInRange="true">
+								<t:Folders>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQEuAAADGkRzkKpmEc2byACqAC/EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxwAAAA=" ChangeKey="AwAAABYAAABYxRtIcRtxRIKMII431URwAAAAABDz"/>
+										<t:DisplayName>PF2</t:DisplayName>
+										<t:TotalCount>1</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+								</t:Folders>
+							</m:RootFolder>
+						</m:FindFolderResponseMessage>
+					</m:ResponseMessages>
+				</m:FindFolderResponse>
+			</s:Body>
+		</s:Envelope>
+	
+			
+			
+
+Getting items from a (sub)folder
+--------------------------------
+- SOAPAction:			FindItem
+- target folder ID:		EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxoAAAA=
+- target folder:		PF1
+- result: 				found 0 subfolder
+
+
+	<soapenv:Envelope
+		xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+		xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types"
+		xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+		<soapenv:Header>
+			<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+		</soapenv:Header>
+		<soapenv:Body>
+			<mes:FindItem Traversal="Shallow">
+				<mes:ItemShape>
+					<typ:BaseShape>AllProperties</typ:BaseShape>
+				</mes:ItemShape>
+				<mes:IndexedPageItemView MaxEntriesReturned="99" Offset="0" BasePoint="Beginning"/>
+				<mes:SortOrder>
+					<typ:FieldOrder Order="Ascending">
+						<typ:FieldURI FieldURI="contacts:DisplayName" />
+					</typ:FieldOrder>
+				</mes:SortOrder>
+				<mes:ParentFolderIds>
+					<typ:FolderId Id="AQEuAAADGkRzkKpmEc2byACqAC/EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxoAAAA=" />
+				</mes:ParentFolderIds>
+			</mes:FindItem>
+		</soapenv:Body>
+	</soapenv:Envelope>
+
+
+	- Response:
+	
+		<?xml version="1.0" encoding="utf-8"?>
+		<s:Envelope
+			xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+			<s:Header>
+				<h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11"
+					xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+			</s:Header>
+			<s:Body
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<m:FindItemResponse
+					xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+					xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">
+					<m:ResponseMessages>
+						<m:FindItemResponseMessage ResponseClass="Success">
+							<m:ResponseCode>NoError</m:ResponseCode>
+							<m:RootFolder IndexedPagingOffset="1" TotalItemsInView="1" IncludesLastItemInRange="true">
+								<t:Items>
+									<t:Contact>
+										<t:ItemId Id="AQIARgAAAxpEc5CqZhHNm8gAqgAvxFoJAFjFG0hxG3FEgowgjjfVRHAAAAMaAAAAWMUbSHEbcUSCjCCON9VEcAAAAgweAAAALgAAAxpEc5CqZhHNm8gAqgAvxFoDAFjFG0hxG3FEgowgjjfVRHAAAAMaAAAA" ChangeKey="EQAAABYAAABYxRtIcRtxRIKMII431URwAAAAAA0I"/>
+										<t:ParentFolderId Id="AQEuAAADGkRzkKpmEc2byACqAC/EWgMAWMUbSHEbcUSCjCCON9VEcAAAAxoAAAA=" ChangeKey="AQAAAA=="/>
+										<t:ItemClass>IPM.Contact</t:ItemClass>
+										<t:Subject>Lófasz József - Rekettye Zrt.</t:Subject>
+										<t:Sensitivity>Normal</t:Sensitivity>
+										<t:DateTimeReceived>2020-02-21T09:44:35Z</t:DateTimeReceived>
+										<t:Size>5722</t:Size>
+										<t:Importance>Normal</t:Importance>
+										<t:IsSubmitted>false</t:IsSubmitted>
+										<t:IsDraft>false</t:IsDraft>
+										<t:IsFromMe>false</t:IsFromMe>
+										<t:IsResend>false</t:IsResend>
+										<t:IsUnmodified>false</t:IsUnmodified>
+										<t:DateTimeSent>2020-02-21T09:44:35Z</t:DateTimeSent>
+										<t:DateTimeCreated>2020-02-21T09:42:39Z</t:DateTimeCreated>
+										<t:ReminderIsSet>false</t:ReminderIsSet>
+										<t:ReminderMinutesBeforeStart>0</t:ReminderMinutesBeforeStart>
+										<t:DisplayCc/>
+										<t:DisplayTo/>
+										<t:HasAttachments>false</t:HasAttachments>
+										<t:Culture>en-US</t:Culture>
+										<t:EffectiveRights>
+											<t:CreateAssociated>false</t:CreateAssociated>
+											<t:CreateContents>false</t:CreateContents>
+											<t:CreateHierarchy>false</t:CreateHierarchy>
+											<t:Delete>true</t:Delete>
+											<t:Modify>true</t:Modify>
+											<t:Read>true</t:Read>
+										</t:EffectiveRights>
+										<t:LastModifiedName>Apas Admin</t:LastModifiedName>
+										<t:LastModifiedTime>2020-02-21T09:44:35Z</t:LastModifiedTime>
+										<t:IsAssociated>false</t:IsAssociated>
+										<t:WebClientReadFormQueryString>?ItemID=AQIARgAAAxpEc5CqZhHNm8gAqgAvxFoJAFjFG0hxG3FEgowgjjfVRHAAAAMaAAAAWMUbSHEbcUSCjCCON9VEcAAAAgweAAAALgAAAxpEc5CqZhHNm8gAqgAvxFoDAFjFG0hxG3FEgowgjjfVRHAAAAMaAAAA&amp;exvsurl=1&amp;viewmodel=PersonaCardViewModelFactory</t:WebClientReadFormQueryString>
+										<t:ConversationId Id="AAQkADY1NDYwYjRmLTRhMGYtNDk2NC04NTFmLTg5NjA2YzhiNTZmYwAQAATdHDyo+E61lpqqkzV7CpA="/>
+										<t:Flag>
+											<t:FlagStatus>NotFlagged</t:FlagStatus>
+										</t:Flag>
+										<t:InstanceKey>AQAAAAAAABoBAAAAAAAMHgAAAAA=</t:InstanceKey>
+										<t:FileAs>József, Lófasz</t:FileAs>
+										<t:FileAsMapping>LastCommaFirst</t:FileAsMapping>
+										<t:DisplayName>Lófasz József</t:DisplayName>
+										<t:GivenName>Lófasz</t:GivenName>
+										<t:Initials>L.J.</t:Initials>
+										<t:MiddleName/>
+										<t:CompleteName>
+											<t:Title/>
+											<t:FirstName>Lófasz</t:FirstName>
+											<t:MiddleName/>
+											<t:LastName>József</t:LastName>
+											<t:Suffix/>
+											<t:Initials>L.J.</t:Initials>
+											<t:FullName>Lófasz József</t:FullName>
+										</t:CompleteName>
+										<t:CompanyName>Rekettye Zrt.</t:CompanyName>
+										<t:EmailAddresses>
+											<t:Entry Key="EmailAddress1">lj@rekettye.hu</t:Entry>
+										</t:EmailAddresses>
+										<t:PhoneNumbers>
+											<t:Entry Key="BusinessPhone">+36204562384 </t:Entry>
+											<t:Entry Key="HomePhone">+3688452856 </t:Entry>
+											<t:Entry Key="MobilePhone">+35703174528 </t:Entry>
+										</t:PhoneNumbers>
+										<t:Department/>
+										<t:Generation/>
+										<t:ImAddresses>
+											<t:Entry Key="ImAddress1"/>
+										</t:ImAddresses>
+										<t:JobTitle>F?kolompos</t:JobTitle>
+										<t:Surname>József</t:Surname>
+										<t:DisplayNamePrefix/>
+									</t:Contact>
+								</t:Items>
+							</m:RootFolder>
+						</m:FindItemResponseMessage>
+					</m:ResponseMessages>
+				</m:FindItemResponse>
+			</s:Body>
+		</s:Envelope>
+
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Private folders
+===============
+- SOAPAction:		FindFolder
+- target folder:	contacts
+- result: 			found a lot of subfolders (almost all of them are built-in)
+
+
+FindFolder request on 'contacts'
+-----------------------------------------
+
+	- Request:
+	
+		<soapenv:Envelope
+			xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+			xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types"
+			xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+			<soapenv:Header>
+				<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+				<typ:ExchangeImpersonation>
+					<typ:ConnectingSID>
+						<typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName>
+					</typ:ConnectingSID>
+				</typ:ExchangeImpersonation>
+			</soapenv:Header>
+			<soapenv:Body>
+				<mes:FindFolder Traversal="Shallow">
+					<mes:FolderShape>
+						<typ:BaseShape>Default</typ:BaseShape>
+					</mes:FolderShape>
+					<mes:ParentFolderIds>
+						<typ:DistinguishedFolderId Id="contacts" />
+					</mes:ParentFolderIds>
+				</mes:FindFolder>
+			</soapenv:Body>
+		</soapenv:Envelope>
+
+	
+	- Response:
+	
+		<?xml version="1.0" encoding="utf-8"?>
+		<s:Envelope
+			xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+			<s:Header>
+				<h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11"
+					xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+			</s:Header>
+			<s:Body
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<m:FindFolderResponse
+					xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+					xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">
+					<m:ResponseMessages>
+						<m:FindFolderResponseMessage ResponseClass="Success">
+							<m:ResponseCode>NoError</m:ResponseCode>
+							<m:RootFolder TotalItemsInView="8" IncludesLastItemInRange="true">
+								<t:Folders>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEgAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEKg=="/>
+										<t:DisplayName>{06967759-274D-40B2-A3EB-D7F9E73727D7}</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEhAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEKA=="/>
+										<t:DisplayName>{A9E2BC46-B3A0-4243-B315-60D991004455}</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFPAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEJA=="/>
+										<t:DisplayName>Companies</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAk+eAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEeQ=="/>
+										<t:DisplayName>customers</t:DisplayName>
+										<t:TotalCount>1</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgElAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEJw=="/>
+										<t:DisplayName>GAL Contacts</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFOAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEJQ=="/>
+										<t:DisplayName>Organizational Contacts</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFNAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEJg=="/>
+										<t:DisplayName>PeopleCentricConversation Buddies</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+									<t:ContactsFolder>
+										<t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEfAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEKQ=="/>
+										<t:DisplayName>Recipient Cache</t:DisplayName>
+										<t:TotalCount>0</t:TotalCount>
+										<t:ChildFolderCount>0</t:ChildFolderCount>
+									</t:ContactsFolder>
+								</t:Folders>
+							</m:RootFolder>
+						</m:FindFolderResponseMessage>
+					</m:ResponseMessages>
+				</m:FindFolderResponse>
+			</s:Body>
+		</s:Envelope>
+
+	
+		
+
+FindItem request on every folder
+--------------------------------
+

@@ -2,6 +2,10 @@
 How to config WebClient authentication?
 =======================================
 
+- Authentication process:
+- Configuration
+- Troubleshooting
+
 -------------------------------------------------------------------------------------------------------------------------------------
 Authentication process:
 =======================================
@@ -19,6 +23,32 @@ Authentication process:
 -------------------------------------------------------------------------------------------------------------------------------------
 Configuration
 =============
+CUCM
+----
+- If you authenticate from syncrhonized LDAP users
+	- Create LDAP Directory:
+	
+		CUCM/System/LDAP/LDAP Directory
+		
+	- Click button Perform Full Sync Now'
+	
+	
+- Configure LDAP authentication:
+
+	CUCM/System/LDAP/LDAP Authentication
+	
+NOTE:	
+	Secure LDAP authentication fails if LDAP authentication is configured to use Secure Sockets Layer (SSL) on CUCM and the LDAP server/servers were configured using IP address prior to the upgrade. 
+	In order to confirm the LDAP authentication settings navigate to the CUCM Admin page > System > LDAP > LDAP Authentication and verify that the LDAP servers are defined by IP address, not FQDN. 
+	If your LDAP server is defined by FQDN and the CUCM is configured to use FQDN (see command below for verification) it is unlikely that this is your issue.
+	
+	
+SEE ALSO:	https://www.cisco.com/c/en/us/support/docs/ip/lightweight-directory-access-protocol-ldap/200562-Secure-LDAP-Problems-After-an-Upgrade-to.html
+			Section: Toubleshooting
+
+
+APAS
+----
 1. Create a pool
 	APAS/Pools
 		- Type: Users
@@ -41,6 +71,7 @@ Configuration
 	- Type: Web
 	- Choose user pool created before
 	
+
 	
 -------------------------------------------------------------------------------------------------------------------------------------
 Troubleshooting
@@ -132,3 +163,18 @@ Troubleshooting
 			- if device has the proper device profile (non-secure/secure)
 			- is device controlled by enduser? 
 				
+- How to validate LDAP secure settings?
+
+	In order to verify if CUCM is configured to use IP address or FQDN use the utils ldap config status command from the CLI of the CUCM publisher.
+
+	admin:utils ldap config status
+	utils ldap config fqdn configured
+	
+	In order to verify that you are experiencing this problem you can check the CUCM DirSync logs for this error. 
+	This error indicates that the LDAP server is configured using an IP Address on the LDAP Authentication configuration page in CUCM 
+	and it does not match the CN field in the LDAP certificate. 
+
+		2016-02-09 14:08:32,718 DEBUG [http-bio-443-exec-1] impl.AuthenticationLDAP - 
+		URL contains IP Address	
+
+SEE ALSO:	https://www.cisco.com/c/en/us/support/docs/ip/lightweight-directory-access-protocol-ldap/200562-Secure-LDAP-Problems-After-an-Upgrade-to.html

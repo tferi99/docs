@@ -13,7 +13,7 @@ Developer
 =========
 npm-check			: Check for outdated, incorrect, and unused dependencies.
 npm-check-updates
-
+newman				: Newman is a command-line collection runner for Postman
 
 -------------------------------------------------------------------------
 Config

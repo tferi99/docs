@@ -1,0 +1,33 @@
+==================
+REST API in NodeJS
+==================
+
+- Howto test Postman collections?
+
+
+--------------------------------------------------------------------------------------------------------------
+- Howto test Postman collections?
+=================================
+- From Postman:
+	
+	In contrast to the Send button, the collection runner can execute an entire collection. To launch the collection runner, we hover the cursor over our foo API test collection 
+	and click the PULL-RIGHT ARROW. In the pull-right panel we can see a Run button.
+
+
+- From comand line:
+
+	- install:
+	
+		npm install -g newman
+		
+
+	- prepare: Export Postman collection JSON
+	
+	- run 
+	
+		newman run XXX.json
+		
+SEE ALSO:
+
+	https://www.npmjs.com/package/newman#using-newman-as-a-library
+	
