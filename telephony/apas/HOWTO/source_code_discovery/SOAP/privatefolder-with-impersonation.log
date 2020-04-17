@@ -1,0 +1,971 @@
+[2020-03-19 15:12:47,723] [DEBUG] [http-nio-8080-exec-6] [Directory.java:1722] - Exchange SOAP - private directory is editable by checkbox: false user: 
+[2020-03-19 15:12:47,724] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:455] - DIRSEARCH: executing DirectoryServer.search() method. DirId=4
+[2020-03-19 15:12:47,724] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:328] - no cache
+[2020-03-19 15:12:47,724] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_FirstName==ldap.Display_UserID
+[2020-03-19 15:12:47,724] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_LastName==ldap.Display_UserID
+[2020-03-19 15:12:47,724] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr EmailAddress1==ldap.Display_UserID
+[2020-03-19 15:12:47,724] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_Tel==ldap.Display_UserID
+[2020-03-19 15:12:47,725] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr BusinessPhone==ldap.Display_UserID
+[2020-03-19 15:12:47,725] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_FirstName==ldap.Display_FirstName
+[2020-03-19 15:12:47,725] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:430] - found inputitem: ldap.Display_FirstName= | match=5
+[2020-03-19 15:12:47,725] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:860] - EXCHANGE_SOAP_SERVER: translated FirstName to GivenName
+[2020-03-19 15:12:47,725] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_FirstName==ldap.Display_LastName
+[2020-03-19 15:12:47,725] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_LastName==ldap.Display_LastName
+[2020-03-19 15:12:47,725] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:430] - found inputitem: ldap.Display_LastName= | match=5
+[2020-03-19 15:12:47,726] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:863] - EXCHANGE_SOAP_SERVER: translated LastName to Surname
+[2020-03-19 15:12:47,726] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_FirstName==EmailAddress1
+[2020-03-19 15:12:47,726] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_LastName==EmailAddress1
+[2020-03-19 15:12:47,726] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr EmailAddress1==EmailAddress1
+[2020-03-19 15:12:47,726] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:430] - found inputitem: EmailAddress1= | match=5
+[2020-03-19 15:12:47,726] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_FirstName==ldap.Display_Tel
+[2020-03-19 15:12:47,727] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_LastName==ldap.Display_Tel
+[2020-03-19 15:12:47,727] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr EmailAddress1==ldap.Display_Tel
+[2020-03-19 15:12:47,727] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_Tel==ldap.Display_Tel
+[2020-03-19 15:12:47,727] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:430] - found inputitem: ldap.Display_Tel= | match=5
+[2020-03-19 15:12:47,727] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_FirstName==BusinessPhone
+[2020-03-19 15:12:47,727] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_LastName==BusinessPhone
+[2020-03-19 15:12:47,728] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr EmailAddress1==BusinessPhone
+[2020-03-19 15:12:47,728] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr ldap.Display_Tel==BusinessPhone
+[2020-03-19 15:12:47,728] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:424] - search: attr BusinessPhone==BusinessPhone
+[2020-03-19 15:12:47,728] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:430] - found inputitem: BusinessPhone= | match=5
+[2020-03-19 15:12:47,728] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:896] - EXCHANGE_SOAP_SERVER: using username (apasadmin) that is specified in the directory admin page.
+[2020-03-19 15:12:47,728] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:902] - EXCHANGE_SOAP_SERVER: user=apasadmin, isPublic=false
+[2020-03-19 15:12:47,729] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:928] - EXCHANGE_SOAP_SERVER: user parameter does NOT contains '@' character. [apasadmin]
+[2020-03-19 15:12:47,729] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:973] - EXCHANGE_SOAP_SERVER: using %U wildcard.
+[2020-03-19 15:12:47,729] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:978] - EXCHANGE_SOAP_SERVER: impersonated user principalName: apasadmin@andtek.cee.cs.eilab.biz
+[2020-03-19 15:12:47,729] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:47,730] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindFolder"
+[2020-03-19 15:12:47,730] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:47,730] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:48,543] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindFolder Traversal="Shallow">
+<mes:FolderShape>
+<typ:BaseShape>Default</typ:BaseShape>
+</mes:FolderShape>
+<mes:ParentFolderIds>
+<typ:DistinguishedFolderId Id="contacts" />
+</mes:ParentFolderIds>
+</mes:FindFolder>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:48,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:48,758] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:48,760] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindFolderResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindFolderResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder TotalItemsInView="9" IncludesLastItemInRange="true"><t:Folders><t:ContactsFolder><t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEgAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEKg=="/><t:DisplayName>{06967759-274D-40B2-A3EB-D7F9E73727D7}</t:DisplayName>
+<t:TotalCount>0</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+<t:ContactsFolder><t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEhAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEKA=="/><t:DisplayName>{A9E2BC46-B3A0-4243-B315-60D991004455}</t:DisplayName>
+<t:TotalCount>0</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+<t:ContactsFolder><t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFPAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEJA=="/><t:DisplayName>Companies</t:DisplayName>
+<t:TotalCount>0</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+<t:ContactsFolder><t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAk+eAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEeQ=="/><t:DisplayName>customers</t:DisplayName>
+<t:TotalCount>1</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+<t:ContactsFolder><t:FolderId Id="AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAAAAABO6QGFCaLpSJqSxVNRCNryAQActIS59NlLT7LwhKtliWGsAAAGs8zLAAA=" ChangeKey="AwAAABYAAAActIS59NlLT7LwhKtliWGsAAAGsu58"/><t:DisplayName>experts</t:DisplayName>
+<t:TotalCount>2</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+<t:ContactsFolder><t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgElAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEJw=="/><t:DisplayName>GAL Contacts</t:DisplayName>
+<t:TotalCount>0</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+<t:ContactsFolder><t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFOAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEJQ=="/><t:DisplayName>Organizational Contacts</t:DisplayName>
+<t:TotalCount>0</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+<t:ContactsFolder><t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFNAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEJg=="/><t:DisplayName>PeopleCentricConversation Buddies</t:DisplayName>
+<t:TotalCount>0</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+<t:ContactsFolder><t:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEfAAAA" ChangeKey="AwAAABQAAADYgTXohqJjSJgNDsj3E9qfAAAEKQ=="/><t:DisplayName>Recipient Cache</t:DisplayName>
+<t:TotalCount>0</t:TotalCount>
+<t:ChildFolderCount>0</t:ChildFolderCount>
+</t:ContactsFolder>
+</t:Folders>
+</m:RootFolder>
+</m:FindFolderResponseMessage>
+</m:ResponseMessages>
+</m:FindFolderResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:48,762] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:48,764] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:520] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindFolder].
+[2020-03-19 15:12:48,764] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:527] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:48,765] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:48,765] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:48,765] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:48,765] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:532] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:48,765] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:48,766] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:48,766] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:48,766] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:48,766] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:48,766] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:48,766] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEgAAAA [ContactsFolder]
+[2020-03-19 15:12:48,766] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName={06967759-274D-40B2-A3EB-D7F9E73727D7} [ContactsFolder]
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder ({06967759-274D-40B2-A3EB-D7F9E73727D7}). folderId: AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEgAAAA
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEhAAAA [ContactsFolder]
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName={A9E2BC46-B3A0-4243-B315-60D991004455} [ContactsFolder]
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder ({A9E2BC46-B3A0-4243-B315-60D991004455}). folderId: AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEhAAAA
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFPAAAA [ContactsFolder]
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName=Companies [ContactsFolder]
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder (Companies). folderId: AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFPAAAA
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAk+eAAAA [ContactsFolder]
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName=customers [ContactsFolder]
+[2020-03-19 15:12:48,767] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder (customers). folderId: AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAk+eAAAA
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAAAAABO6QGFCaLpSJqSxVNRCNryAQActIS59NlLT7LwhKtliWGsAAAGs8zLAAA= [ContactsFolder]
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName=experts [ContactsFolder]
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder (experts). folderId: AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAAAAABO6QGFCaLpSJqSxVNRCNryAQActIS59NlLT7LwhKtliWGsAAAGs8zLAAA=
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgElAAAA [ContactsFolder]
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName=GAL Contacts [ContactsFolder]
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder (GAL Contacts). folderId: AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgElAAAA
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFOAAAA [ContactsFolder]
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName=Organizational Contacts [ContactsFolder]
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder (Organizational Contacts). folderId: AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFOAAAA
+[2020-03-19 15:12:48,768] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFNAAAA [ContactsFolder]
+[2020-03-19 15:12:48,769] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName=PeopleCentricConversation Buddies [ContactsFolder]
+[2020-03-19 15:12:48,769] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder (PeopleCentricConversation Buddies). folderId: AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFNAAAA
+[2020-03-19 15:12:48,769] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:574] - EXCHANGE_SOAP: FolderId=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEfAAAA [ContactsFolder]
+[2020-03-19 15:12:48,769] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:568] - EXCHANGE_SOAP: DisplayName=Recipient Cache [ContactsFolder]
+[2020-03-19 15:12:48,769] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:588] - EXCHANGE_SOAP: added public ContactsFolder (Recipient Cache). folderId: AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEfAAAA
+[2020-03-19 15:12:48,769] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=contacts
+[2020-03-19 15:12:48,770] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:48,770] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:48,770] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:48,770] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:49,175] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="99" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:DistinguishedFolderId Id="contacts" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:49,366] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:49,366] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:49,367] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="2" TotalItemsInView="2" IncludesLastItemInRange="true"><t:Items><t:Contact><t:ItemId Id="AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAAAAABO6QGFCaLpSJqSxVNRCNryBwActIS59NlLT7LwhKtliWGsAAAAAAEOAAActIS59NlLT7LwhKtliWGsAAAGs8jjAAA=" ChangeKey="EQAAABYAAAActIS59NlLT7LwhKtliWGsAAAGssrJ"/><t:ParentFolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEOAAAA" ChangeKey="AQAAAA=="/><t:ItemClass>IPM.Contact</t:ItemClass>
+<t:Subject>Basz Tamás - Abc Inc</t:Subject>
+<t:Sensitivity>Normal</t:Sensitivity>
+<t:DateTimeReceived>2020-03-19T13:54:03Z</t:DateTimeReceived>
+<t:Size>5643</t:Size>
+<t:Importance>Normal</t:Importance>
+<t:IsSubmitted>false</t:IsSubmitted>
+<t:IsDraft>false</t:IsDraft>
+<t:IsFromMe>false</t:IsFromMe>
+<t:IsResend>false</t:IsResend>
+<t:IsUnmodified>false</t:IsUnmodified>
+<t:DateTimeSent>2020-03-19T13:54:03Z</t:DateTimeSent>
+<t:DateTimeCreated>2020-03-19T13:53:27Z</t:DateTimeCreated>
+<t:ReminderIsSet>false</t:ReminderIsSet>
+<t:ReminderMinutesBeforeStart>0</t:ReminderMinutesBeforeStart>
+<t:DisplayCc/><t:DisplayTo/><t:HasAttachments>false</t:HasAttachments>
+<t:Culture>en-US</t:Culture>
+<t:EffectiveRights><t:CreateAssociated>false</t:CreateAssociated>
+<t:CreateContents>false</t:CreateContents>
+<t:CreateHierarchy>false</t:CreateHierarchy>
+<t:Delete>true</t:Delete>
+<t:Modify>true</t:Modify>
+<t:Read>true</t:Read>
+<t:ViewPrivateItems>true</t:ViewPrivateItems>
+</t:EffectiveRights>
+<t:LastModifiedName>Apas Admin</t:LastModifiedName>
+<t:LastModifiedTime>2020-03-19T13:54:04Z</t:LastModifiedTime>
+<t:IsAssociated>false</t:IsAssociated>
+<t:WebClientReadFormQueryString>?ItemID=AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAAAAABO6QGFCaLpSJqSxVNRCNryBwActIS59NlLT7LwhKtliWGsAAAAAAEOAAActIS59NlLT7LwhKtliWGsAAAGs8jjAAA%3D&amp;exvsurl=1&amp;viewmodel=PersonaCardViewModelFactory</t:WebClientReadFormQueryString>
+<t:ConversationId Id="AAQkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAQAEJ3xQPoFEKVo5u5DTb/aYU="/><t:Flag><t:FlagStatus>NotFlagged</t:FlagStatus>
+</t:Flag>
+<t:InstanceKey>AQAAAAAAAQ4BAAAABrPI4wAAAAA=</t:InstanceKey>
+<t:FileAs>Tamás, Basz</t:FileAs>
+<t:FileAsMapping>LastCommaFirst</t:FileAsMapping>
+<t:DisplayName>Basz Tamás</t:DisplayName>
+<t:GivenName>Basz</t:GivenName>
+<t:Initials>B.T.</t:Initials>
+<t:MiddleName/><t:CompleteName><t:Title/><t:FirstName>Basz</t:FirstName>
+<t:MiddleName/><t:LastName>Tamás</t:LastName>
+<t:Suffix/><t:Initials>B.T.</t:Initials>
+<t:FullName>Basz Tamás</t:FullName>
+</t:CompleteName>
+<t:CompanyName>Abc Inc</t:CompanyName>
+<t:EmailAddresses><t:Entry Key="EmailAddress1">bt@abc.com</t:Entry>
+</t:EmailAddresses>
+<t:PhoneNumbers><t:Entry Key="BusinessPhone">+363483643 </t:Entry>
+</t:PhoneNumbers>
+<t:Department/><t:Generation/><t:ImAddresses><t:Entry Key="ImAddress1"/></t:ImAddresses>
+<t:JobTitle/><t:Surname>Tamás</t:Surname>
+<t:DisplayNamePrefix/></t:Contact>
+<t:Contact><t:ItemId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAADTukBhQmi6UiaksVTUQja8gcAHLSEufTZS0+y8ISrZYlhrAAAAgEOAAAAHLSEufTZS0+y8ISrZYlhrAAAAleWAAAA" ChangeKey="EQAAABYAAAActIS59NlLT7LwhKtliWGsAAAGssrN"/><t:ParentFolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEOAAAA" ChangeKey="AQAAAA=="/><t:ItemClass>IPM.Contact</t:ItemClass>
+<t:Subject>Hát Izsák - Outdoor Kft.</t:Subject>
+<t:Sensitivity>Normal</t:Sensitivity>
+<t:DateTimeReceived>2020-02-21T14:11:23Z</t:DateTimeReceived>
+<t:Size>5287</t:Size>
+<t:Importance>Normal</t:Importance>
+<t:IsSubmitted>false</t:IsSubmitted>
+<t:IsDraft>false</t:IsDraft>
+<t:IsFromMe>false</t:IsFromMe>
+<t:IsResend>false</t:IsResend>
+<t:IsUnmodified>false</t:IsUnmodified>
+<t:DateTimeSent>2020-02-21T14:11:23Z</t:DateTimeSent>
+<t:DateTimeCreated>2020-02-21T14:11:25Z</t:DateTimeCreated>
+<t:ReminderIsSet>false</t:ReminderIsSet>
+<t:ReminderMinutesBeforeStart>0</t:ReminderMinutesBeforeStart>
+<t:DisplayCc/><t:DisplayTo/><t:HasAttachments>false</t:HasAttachments>
+<t:Culture>en-US</t:Culture>
+<t:EffectiveRights><t:CreateAssociated>false</t:CreateAssociated>
+<t:CreateContents>false</t:CreateContents>
+<t:CreateHierarchy>false</t:CreateHierarchy>
+<t:Delete>true</t:Delete>
+<t:Modify>true</t:Modify>
+<t:Read>true</t:Read>
+<t:ViewPrivateItems>true</t:ViewPrivateItems>
+</t:EffectiveRights>
+<t:LastModifiedName>Apas Admin</t:LastModifiedName>
+<t:LastModifiedTime>2020-03-19T14:11:51Z</t:LastModifiedTime>
+<t:IsAssociated>false</t:IsAssociated>
+<t:WebClientReadFormQueryString>?ItemID=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAADTukBhQmi6UiaksVTUQja8gcAHLSEufTZS0%2By8ISrZYlhrAAAAgEOAAAAHLSEufTZS0%2By8ISrZYlhrAAAAleWAAAA&amp;exvsurl=1&amp;viewmodel=PersonaCardViewModelFactory</t:WebClientReadFormQueryString>
+<t:ConversationId Id="AAQkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAQAOayCgUkxEmgp+B/JTSfXt8="/><t:Flag><t:FlagStatus>NotFlagged</t:FlagStatus>
+</t:Flag>
+<t:InstanceKey>AQAAAAAAAQ4BAAAAAABXlgAAAAA=</t:InstanceKey>
+<t:FileAs>Izsák, Hát</t:FileAs>
+<t:FileAsMapping>LastCommaFirst</t:FileAsMapping>
+<t:DisplayName>Hát Izsák</t:DisplayName>
+<t:GivenName>Hát</t:GivenName>
+<t:Initials>H.I.</t:Initials>
+<t:MiddleName/><t:CompleteName><t:Title/><t:FirstName>Hát</t:FirstName>
+<t:MiddleName/><t:LastName>Izsák</t:LastName>
+<t:Suffix/><t:Initials>H.I.</t:Initials>
+<t:FullName>Hát Izsák</t:FullName>
+</t:CompleteName>
+<t:CompanyName>Outdoor Kft.</t:CompanyName>
+<t:EmailAddresses><t:Entry Key="EmailAddress1">hi@outdoor.com</t:Entry>
+</t:EmailAddresses>
+<t:PhoneNumbers><t:Entry Key="BusinessPhone">+493456346445 </t:Entry>
+<t:Entry Key="MobilePhone">+3690234536 </t:Entry>
+</t:PhoneNumbers>
+<t:Department/><t:Generation/><t:ImAddresses><t:Entry Key="ImAddress1"/></t:ImAddresses>
+<t:JobTitle/><t:Surname>Izsák</t:Surname>
+<t:DisplayNamePrefix/></t:Contact>
+</t:Items>
+</m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:49,368] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:49,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:49,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:49,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:49,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:49,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:49,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:49,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:49,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:49,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:49,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:49,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:49,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:49,371] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 2
+[2020-03-19 15:12:49,371] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=2, TotalItemsInView=2, IncludesLastItemInRange=true
+[2020-03-19 15:12:49,371] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEgAAAA
+[2020-03-19 15:12:49,371] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:49,372] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:49,372] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:49,372] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:49,763] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="97" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEgAAAA" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:49,859] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:49,859] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:49,860] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="0" TotalItemsInView="0" IncludesLastItemInRange="true"><t:Items/></m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:49,892] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:49,893] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:49,894] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:49,894] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:49,894] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:49,894] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:49,894] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:49,894] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:49,894] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:49,895] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:49,895] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:49,895] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:49,895] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:49,896] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 0
+[2020-03-19 15:12:49,896] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=0, TotalItemsInView=0, IncludesLastItemInRange=true
+[2020-03-19 15:12:49,896] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEhAAAA
+[2020-03-19 15:12:49,896] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:49,896] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:49,896] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:49,897] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:50,274] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="97" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEhAAAA" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:50,490] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:50,490] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:50,491] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="0" TotalItemsInView="0" IncludesLastItemInRange="true"><t:Items/></m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:50,492] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:50,493] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:50,493] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:50,493] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:50,493] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:50,493] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:50,494] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:50,494] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:50,494] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:50,494] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:50,494] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:50,494] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:50,494] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:50,495] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 0
+[2020-03-19 15:12:50,495] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=0, TotalItemsInView=0, IncludesLastItemInRange=true
+[2020-03-19 15:12:50,495] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFPAAAA
+[2020-03-19 15:12:50,495] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:50,496] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:50,496] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:50,496] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:50,935] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="97" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFPAAAA" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:51,090] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:51,090] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:51,091] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="0" TotalItemsInView="0" IncludesLastItemInRange="true"><t:Items/></m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:51,093] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:51,094] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:51,094] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:51,094] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:51,095] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:51,095] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:51,095] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:51,095] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:51,095] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:51,096] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:51,096] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:51,096] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:51,096] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:51,096] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 0
+[2020-03-19 15:12:51,097] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=0, TotalItemsInView=0, IncludesLastItemInRange=true
+[2020-03-19 15:12:51,097] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAk+eAAAA
+[2020-03-19 15:12:51,097] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:51,097] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:51,097] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:51,097] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:51,583] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="97" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAk+eAAAA" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:51,752] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:51,752] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:51,753] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="1" TotalItemsInView="1" IncludesLastItemInRange="true"><t:Items><t:Contact><t:ItemId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAADTukBhQmi6UiaksVTUQja8gcAHLSEufTZS0+y8ISrZYlhrAAAAk+eAAAAHLSEufTZS0+y8ISrZYlhrAAAAluVAAAA" ChangeKey="EQAAABYAAAActIS59NlLT7LwhKtliWGsAAAGsvJ7"/><t:ParentFolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAk+eAAAA" ChangeKey="AQAAAA=="/><t:ItemClass>IPM.Contact</t:ItemClass>
+<t:Subject>Vev? Jen?</t:Subject>
+<t:Sensitivity>Normal</t:Sensitivity>
+<t:DateTimeReceived>2020-02-21T14:13:17Z</t:DateTimeReceived>
+<t:Size>5190</t:Size>
+<t:Importance>Normal</t:Importance>
+<t:IsSubmitted>false</t:IsSubmitted>
+<t:IsDraft>false</t:IsDraft>
+<t:IsFromMe>false</t:IsFromMe>
+<t:IsResend>false</t:IsResend>
+<t:IsUnmodified>false</t:IsUnmodified>
+<t:DateTimeSent>2020-02-21T14:13:17Z</t:DateTimeSent>
+<t:DateTimeCreated>2020-02-21T14:13:34Z</t:DateTimeCreated>
+<t:ReminderIsSet>false</t:ReminderIsSet>
+<t:ReminderMinutesBeforeStart>0</t:ReminderMinutesBeforeStart>
+<t:DisplayCc/><t:DisplayTo/><t:HasAttachments>false</t:HasAttachments>
+<t:Culture>en-US</t:Culture>
+<t:EffectiveRights><t:CreateAssociated>false</t:CreateAssociated>
+<t:CreateContents>false</t:CreateContents>
+<t:CreateHierarchy>false</t:CreateHierarchy>
+<t:Delete>true</t:Delete>
+<t:Modify>true</t:Modify>
+<t:Read>true</t:Read>
+<t:ViewPrivateItems>true</t:ViewPrivateItems>
+</t:EffectiveRights>
+<t:LastModifiedName>Apas Admin</t:LastModifiedName>
+<t:LastModifiedTime>2020-03-19T14:07:33Z</t:LastModifiedTime>
+<t:IsAssociated>false</t:IsAssociated>
+<t:WebClientReadFormQueryString>?ItemID=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAADTukBhQmi6UiaksVTUQja8gcAHLSEufTZS0%2By8ISrZYlhrAAAAk%2BeAAAAHLSEufTZS0%2By8ISrZYlhrAAAAluVAAAA&amp;exvsurl=1&amp;viewmodel=PersonaCardViewModelFactory</t:WebClientReadFormQueryString>
+<t:ConversationId Id="AAQkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAQAIDb0R6J2kT2puwHkYp2B/s="/><t:Flag><t:FlagStatus>NotFlagged</t:FlagStatus>
+</t:Flag>
+<t:InstanceKey>AQAAAAAAT54BAAAAAABblQAAAAA=</t:InstanceKey>
+<t:FileAs>Jen?, Vev?</t:FileAs>
+<t:FileAsMapping>LastCommaFirst</t:FileAsMapping>
+<t:DisplayName>Vev? Jen?</t:DisplayName>
+<t:GivenName>Vev?</t:GivenName>
+<t:Initials>V.J.</t:Initials>
+<t:MiddleName/><t:CompleteName><t:Title/><t:FirstName>Vev?</t:FirstName>
+<t:MiddleName/><t:LastName>Jen?</t:LastName>
+<t:Suffix/><t:Initials>V.J.</t:Initials>
+<t:FullName>Vev? Jen?</t:FullName>
+</t:CompleteName>
+<t:CompanyName/><t:EmailAddresses><t:Entry Key="EmailAddress1">vj@sajat.org</t:Entry>
+</t:EmailAddresses>
+<t:PhoneNumbers><t:Entry Key="BusinessPhone">+42345345636 </t:Entry>
+</t:PhoneNumbers>
+<t:Department/><t:Generation/><t:ImAddresses><t:Entry Key="ImAddress1"/></t:ImAddresses>
+<t:JobTitle/><t:Surname>Jen?</t:Surname>
+<t:DisplayNamePrefix/></t:Contact>
+</t:Items>
+</m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:51,755] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:51,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:51,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:51,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:51,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:51,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:51,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:51,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:51,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:51,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:51,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:51,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:51,758] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:51,758] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 1
+[2020-03-19 15:12:51,759] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=1, TotalItemsInView=1, IncludesLastItemInRange=true
+[2020-03-19 15:12:51,759] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAAAAABO6QGFCaLpSJqSxVNRCNryAQActIS59NlLT7LwhKtliWGsAAAGs8zLAAA=
+[2020-03-19 15:12:51,759] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:51,759] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:51,760] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:51,760] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:52,184] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="96" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAAAAABO6QGFCaLpSJqSxVNRCNryAQActIS59NlLT7LwhKtliWGsAAAGs8zLAAA=" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:52,362] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:52,363] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:52,363] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="2" TotalItemsInView="2" IncludesLastItemInRange="true"><t:Items><t:Contact><t:ItemId Id="AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAAAAABO6QGFCaLpSJqSxVNRCNryBwActIS59NlLT7LwhKtliWGsAAAGs8zLAAActIS59NlLT7LwhKtliWGsAAAGs9SbAAA=" ChangeKey="EQAAABYAAAActIS59NlLT7LwhKtliWGsAAAGsu6A"/><t:ParentFolderId Id="AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAAAAABO6QGFCaLpSJqSxVNRCNryAQActIS59NlLT7LwhKtliWGsAAAGs8zLAAA=" ChangeKey="AQAAAA=="/><t:ItemClass>IPM.Contact</t:ItemClass>
+<t:Subject>Csecs Em?ke - Cicoma Kft.</t:Subject>
+<t:Sensitivity>Normal</t:Sensitivity>
+<t:DateTimeReceived>2020-03-19T13:57:35Z</t:DateTimeReceived>
+<t:Size>5692</t:Size>
+<t:Importance>Normal</t:Importance>
+<t:IsSubmitted>false</t:IsSubmitted>
+<t:IsDraft>false</t:IsDraft>
+<t:IsFromMe>false</t:IsFromMe>
+<t:IsResend>false</t:IsResend>
+<t:IsUnmodified>false</t:IsUnmodified>
+<t:DateTimeSent>2020-03-19T13:57:35Z</t:DateTimeSent>
+<t:DateTimeCreated>2020-03-19T13:56:47Z</t:DateTimeCreated>
+<t:ReminderIsSet>false</t:ReminderIsSet>
+<t:ReminderMinutesBeforeStart>0</t:ReminderMinutesBeforeStart>
+<t:DisplayCc/><t:DisplayTo/><t:HasAttachments>false</t:HasAttachments>
+<t:Culture>en-US</t:Culture>
+<t:EffectiveRights><t:CreateAssociated>false</t:CreateAssociated>
+<t:CreateContents>false</t:CreateContents>
+<t:CreateHierarchy>false</t:CreateHierarchy>
+<t:Delete>true</t:Delete>
+<t:Modify>true</t:Modify>
+<t:Read>true</t:Read>
+<t:ViewPrivateItems>true</t:ViewPrivateItems>
+</t:EffectiveRights>
+<t:LastModifiedName>Apas Admin</t:LastModifiedName>
+<t:LastModifiedTime>2020-03-19T13:57:35Z</t:LastModifiedTime>
+<t:IsAssociated>false</t:IsAssociated>
+<t:WebClientReadFormQueryString>?ItemID=AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAAAAABO6QGFCaLpSJqSxVNRCNryBwActIS59NlLT7LwhKtliWGsAAAGs8zLAAActIS59NlLT7LwhKtliWGsAAAGs9SbAAA%3D&amp;exvsurl=1&amp;viewmodel=PersonaCardViewModelFactory</t:WebClientReadFormQueryString>
+<t:ConversationId Id="AAQkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAQAO1usJohgU4RmG1XBpNXlyU="/><t:Flag><t:FlagStatus>NotFlagged</t:FlagStatus>
+</t:Flag>
+<t:InstanceKey>AQAAAAazzMsBAAAABrPUmwAAAAA=</t:InstanceKey>
+<t:FileAs>Em?ke, Csecs</t:FileAs>
+<t:FileAsMapping>LastCommaFirst</t:FileAsMapping>
+<t:DisplayName>Csecs Em?ke</t:DisplayName>
+<t:GivenName>Csecs</t:GivenName>
+<t:Initials>C.E.</t:Initials>
+<t:MiddleName/><t:CompleteName><t:Title/><t:FirstName>Csecs</t:FirstName>
+<t:MiddleName/><t:LastName>Em?ke</t:LastName>
+<t:Suffix/><t:Initials>C.E.</t:Initials>
+<t:FullName>Csecs Em?ke</t:FullName>
+</t:CompleteName>
+<t:CompanyName>Cicoma Kft.</t:CompanyName>
+<t:EmailAddresses><t:Entry Key="EmailAddress1">cse@cic.com</t:Entry>
+</t:EmailAddresses>
+<t:PhoneNumbers><t:Entry Key="BusinessPhone">+36258457575 </t:Entry>
+</t:PhoneNumbers>
+<t:Department/><t:Generation/><t:ImAddresses><t:Entry Key="ImAddress1"/></t:ImAddresses>
+<t:JobTitle/><t:Surname>Em?ke</t:Surname>
+<t:DisplayNamePrefix/></t:Contact>
+<t:Contact><t:ItemId Id="AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAAAAABO6QGFCaLpSJqSxVNRCNryBwActIS59NlLT7LwhKtliWGsAAAGs8zLAAActIS59NlLT7LwhKtliWGsAAAGs9ScAAA=" ChangeKey="EQAAABYAAAActIS59NlLT7LwhKtliWGsAAAGsu6B"/><t:ParentFolderId Id="AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAAAAABO6QGFCaLpSJqSxVNRCNryAQActIS59NlLT7LwhKtliWGsAAAGs8zLAAA=" ChangeKey="AQAAAA=="/><t:ItemClass>IPM.Contact</t:ItemClass>
+<t:Subject>Hoki Zoltán - Abc Inc.</t:Subject>
+<t:Sensitivity>Normal</t:Sensitivity>
+<t:DateTimeReceived>2020-03-19T14:00:29Z</t:DateTimeReceived>
+<t:Size>5671</t:Size>
+<t:Importance>Normal</t:Importance>
+<t:IsSubmitted>false</t:IsSubmitted>
+<t:IsDraft>false</t:IsDraft>
+<t:IsFromMe>false</t:IsFromMe>
+<t:IsResend>false</t:IsResend>
+<t:IsUnmodified>false</t:IsUnmodified>
+<t:DateTimeSent>2020-03-19T14:00:29Z</t:DateTimeSent>
+<t:DateTimeCreated>2020-03-19T13:59:48Z</t:DateTimeCreated>
+<t:ReminderIsSet>false</t:ReminderIsSet>
+<t:ReminderMinutesBeforeStart>0</t:ReminderMinutesBeforeStart>
+<t:DisplayCc/><t:DisplayTo/><t:HasAttachments>false</t:HasAttachments>
+<t:Culture>en-US</t:Culture>
+<t:EffectiveRights><t:CreateAssociated>false</t:CreateAssociated>
+<t:CreateContents>false</t:CreateContents>
+<t:CreateHierarchy>false</t:CreateHierarchy>
+<t:Delete>true</t:Delete>
+<t:Modify>true</t:Modify>
+<t:Read>true</t:Read>
+<t:ViewPrivateItems>true</t:ViewPrivateItems>
+</t:EffectiveRights>
+<t:LastModifiedName>Apas Admin</t:LastModifiedName>
+<t:LastModifiedTime>2020-03-19T14:00:30Z</t:LastModifiedTime>
+<t:IsAssociated>false</t:IsAssociated>
+<t:WebClientReadFormQueryString>?ItemID=AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAAAAABO6QGFCaLpSJqSxVNRCNryBwActIS59NlLT7LwhKtliWGsAAAGs8zLAAActIS59NlLT7LwhKtliWGsAAAGs9ScAAA%3D&amp;exvsurl=1&amp;viewmodel=PersonaCardViewModelFactory</t:WebClientReadFormQueryString>
+<t:ConversationId Id="AAQkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAQAPg3zrh7dUjpth5dOBSQnEM="/><t:Flag><t:FlagStatus>NotFlagged</t:FlagStatus>
+</t:Flag>
+<t:InstanceKey>AQAAAAazzMsBAAAABrPUnAAAAAA=</t:InstanceKey>
+<t:FileAs>Zoltán, Hoki</t:FileAs>
+<t:FileAsMapping>LastCommaFirst</t:FileAsMapping>
+<t:DisplayName>Hoki Zoltán</t:DisplayName>
+<t:GivenName>Hoki</t:GivenName>
+<t:Initials>H.Z.</t:Initials>
+<t:MiddleName/><t:CompleteName><t:Title/><t:FirstName>Hoki</t:FirstName>
+<t:MiddleName/><t:LastName>Zoltán</t:LastName>
+<t:Suffix/><t:Initials>H.Z.</t:Initials>
+<t:FullName>Hoki Zoltán</t:FullName>
+</t:CompleteName>
+<t:CompanyName>Abc Inc.</t:CompanyName>
+<t:EmailAddresses><t:Entry Key="EmailAddress1">hz@abc.com</t:Entry>
+</t:EmailAddresses>
+<t:PhoneNumbers><t:Entry Key="BusinessPhone">+3620345364546 </t:Entry>
+</t:PhoneNumbers>
+<t:Department/><t:Generation/><t:ImAddresses><t:Entry Key="ImAddress1"/></t:ImAddresses>
+<t:JobTitle/><t:Surname>Zoltán</t:Surname>
+<t:DisplayNamePrefix/></t:Contact>
+</t:Items>
+</m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:52,366] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:52,367] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:52,367] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:52,367] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:52,367] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:52,367] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:52,368] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:52,368] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:52,368] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:52,368] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:52,368] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:52,368] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:52,368] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:52,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 2
+[2020-03-19 15:12:52,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=2, TotalItemsInView=2, IncludesLastItemInRange=true
+[2020-03-19 15:12:52,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgElAAAA
+[2020-03-19 15:12:52,369] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:52,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:52,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:52,370] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:52,765] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="94" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgElAAAA" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:52,942] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:52,942] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:52,943] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="0" TotalItemsInView="0" IncludesLastItemInRange="true"><t:Items/></m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:52,944] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:52,945] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:52,945] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:52,945] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:52,945] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:52,945] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:52,946] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:52,946] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:52,946] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:52,946] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:52,946] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:52,946] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:52,946] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:52,947] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 0
+[2020-03-19 15:12:52,947] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=0, TotalItemsInView=0, IncludesLastItemInRange=true
+[2020-03-19 15:12:52,947] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFOAAAA
+[2020-03-19 15:12:52,947] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:52,947] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:52,947] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:52,948] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:53,336] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="94" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFOAAAA" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:53,500] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:53,500] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:53,501] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="0" TotalItemsInView="0" IncludesLastItemInRange="true"><t:Items/></m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:53,503] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:53,504] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:53,505] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:53,505] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:53,505] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:53,505] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:53,506] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:53,506] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:53,506] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:53,506] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:53,506] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:53,507] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:53,507] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:53,508] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 0
+[2020-03-19 15:12:53,508] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=0, TotalItemsInView=0, IncludesLastItemInRange=true
+[2020-03-19 15:12:53,508] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFNAAAA
+[2020-03-19 15:12:53,508] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:53,509] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:53,509] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:53,509] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:53,995] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="94" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgFNAAAA" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:54,168] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:54,168] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:54,172] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="0" TotalItemsInView="0" IncludesLastItemInRange="true"><t:Items/></m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:54,173] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:54,174] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:54,174] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:54,175] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:54,175] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:54,175] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:54,175] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:54,175] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:54,175] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:54,175] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:54,176] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:54,176] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:54,176] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:54,176] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 0
+[2020-03-19 15:12:54,176] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=0, TotalItemsInView=0, IncludesLastItemInRange=true
+[2020-03-19 15:12:54,176] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1795] - EXCHANGE_SOAP: Public Contact Folder Id=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEfAAAA
+[2020-03-19 15:12:54,177] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:187] - EXCHANGE_SOAP: port number: 443
+[2020-03-19 15:12:54,177] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: SOAPAction="http://schemas.microsoft.com/exchange/services/2006/messages/FindItem"
+[2020-03-19 15:12:54,177] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: User-Agent=Jakarta Commons-HttpClient/3.1
+[2020-03-19 15:12:54,177] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:265] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: Header: Content-Type=text/xml; charset=utf-8
+[2020-03-19 15:12:54,574] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:275] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: send xml: 
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+<soapenv:Header>
+<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+<typ:ExchangeImpersonation><typ:ConnectingSID><typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName></typ:ConnectingSID></typ:ExchangeImpersonation></soapenv:Header>
+<soapenv:Body>
+<mes:FindItem Traversal="Shallow">
+<mes:ItemShape>
+<typ:BaseShape>AllProperties</typ:BaseShape>
+</mes:ItemShape>
+<mes:IndexedPageItemView MaxEntriesReturned="94" Offset="0" BasePoint="Beginning"/>
+<mes:SortOrder>
+<typ:FieldOrder Order="Ascending">
+<typ:FieldURI FieldURI="contacts:DisplayName" />
+</typ:FieldOrder>
+</mes:SortOrder>
+<mes:ParentFolderIds>
+<typ:FolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEfAAAA" />
+</mes:ParentFolderIds>
+</mes:FindItem>
+</soapenv:Body>
+</soapenv:Envelope>
+
+
+[2020-03-19 15:12:54,752] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:287] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: encoded=utf-8
+[2020-03-19 15:12:54,752] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:288] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: HTTP response code: 200, response message: OK
+[2020-03-19 15:12:54,752] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:330] - EXCHANGE_SOAP: com.andtek.andphone.msews.ExchangeSoapProxy@45608152: response XML message: 
+<?xml version="1.0" encoding="utf-8"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Header><h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11" xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types" xmlns="http://schemas.microsoft.com/exchange/services/2006/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/></s:Header>
+<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><m:FindItemResponse xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages" xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types"><m:ResponseMessages><m:FindItemResponseMessage ResponseClass="Success"><m:ResponseCode>NoError</m:ResponseCode>
+<m:RootFolder IndexedPagingOffset="0" TotalItemsInView="0" IncludesLastItemInRange="true"><t:Items/></m:RootFolder>
+</m:FindItemResponseMessage>
+</m:ResponseMessages>
+</m:FindItemResponse>
+</s:Body>
+</s:Envelope>
+
+[2020-03-19 15:12:54,754] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:353] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:54,755] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1309] - EXCHANGE_SOAP: Starting to parse response XML message [command=FindItem].
+[2020-03-19 15:12:54,755] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1316] - EXCHANGE_SOAP: RootNode: Envelope,s:Envelope
+[2020-03-19 15:12:54,755] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:683] - EXCHANGE_SOAP: Node: Envelope, s:Envelope
+[2020-03-19 15:12:54,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:688] - EXCHANGE_SOAP: xmlns:s=http://schemas.xmlsoap.org/soap/envelope/, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:54,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapProxy.java:703] - EXCHANGE_SOAP: ENVELOPE namespace=s:
+[2020-03-19 15:12:54,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1321] - EXCHANGE_SOAP: Body node: Body,s:Body
+[2020-03-19 15:12:54,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:m=http://schemas.microsoft.com/exchange/services/2006/messages, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:54,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=m
+[2020-03-19 15:12:54,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:117] - EXCHANGE_SOAP: msgPrefix=m:
+[2020-03-19 15:12:54,756] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:100] - xmlns:t=http://schemas.microsoft.com/exchange/services/2006/types, http://www.w3.org/2000/xmlns/
+[2020-03-19 15:12:54,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:111] - EXCHANGE_SOAP: prefix=t
+[2020-03-19 15:12:54,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:113] - EXCHANGE_SOAP: typePrefix=t:
+[2020-03-19 15:12:54,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1375] - EXCHANGE_SOAP: number of result entries: 0
+[2020-03-19 15:12:54,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1821] - EXCHANGE_SOAP: IndexedPagingOffset=0, TotalItemsInView=0, IncludesLastItemInRange=true
+[2020-03-19 15:12:54,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServiceImpl.java:1858] - EXCHANGE_SOAP: ordering the search result list by DisplayName
+[2020-03-19 15:12:54,757] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:673] - EXCHANGE_SOAP: IndexedPagingOffset=0, TotalItemsInView=5, IncludesLastItemInRange=true
+[2020-03-19 15:12:54,758] [DEBUG] [http-nio-8080-exec-6] [ExchangeSoapServer.java:739] - EXCHANGE_SOAP: got 5 elements.
+[2020-03-19 15:12:54,758] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:457] - DIRSEARCH: finished DirectoryServer.search() method. DirId=4
+[2020-03-19 15:12:54,758] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:478] - DIRSEARCH: doSearch directory result Enumeration converted to a list of SearchResult, size: 5
+[2020-03-19 15:12:54,758] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:720] - prepareResultDisplayHash() : Preparing display result hash...
+[2020-03-19 15:12:54,758] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:734] - prepareResultDisplayHash() : HashMap <resolvedTemplate, trimmedDisplay> prepared, size: 5
+[2020-03-19 15:12:54,758] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:735] - prepareResultDisplayHash() : Preparing reverseHashMap, distinguising duplications...
+[2020-03-19 15:12:54,758] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:763] - prepareResultDisplayHash() : Finished. Result size: 5, duplication(s) eliminated: 0
+[2020-03-19 15:12:54,759] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:530] - DIRSEARCH: ended processing for-loop of directory result. DirId=4
+[2020-03-19 15:12:54,760] [DEBUG] [http-nio-8080-exec-6] [KirkDirectorySearchSession.java:548] - DIRSEARCH: ended KirkDirectorySearchSession.doSearch() method.
+[2020-03-19 15:12:54,760] [DEBUG] [http-nio-8080-exec-6] [WebDir.java:803] - Got 5 results

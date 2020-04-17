@@ -18,6 +18,11 @@ Error handling
 - Error handling
 - How to create and register custom exception filters?
 
+
+Logging
+-------
+- Logging architecture
+
 --------------------------------------------------------------------------------------------------------------------------------------
 Howto build-up a NestJS development environment?
 ================================================
@@ -78,7 +83,7 @@ Troubleshooting
 --------------------------------------------------------------------------------------------------------------------------------------
 ERROR: Nest can't resolve dependencies of the XXX. Please make sure that the argument at index [0] is available in the current context
 ======================================================================================================================================
-This error generated when componenet XXX cannot inject element specified in constructor.
+This error generated when component XXX cannot inject element specified in constructor.
 
 Fix:	maybe expected component did not added to 'providers' of current module.
 
@@ -342,3 +347,150 @@ Use forwardRef().
 			imports: [forwardRef(() => CommonModule)],
 		})
 		export class CatsModule {}
+
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------
+Logging architecture
+====================
+There are 2 methods:
+
+	1. Built-in logger 
+		- no DI (dependency injection)
+		- can be used during application bootsrtapping (before DI)
+		- simple usage with limitations
+		
+	2. Logger with DI (extended from built-in Logger or external) 
+
+
+
+1. Built-in logger
+------------------
+	Nest comes with a built-in text-based logger which is used during application BOOTSTRAPPING and several other circumstances 
+	such as displaying CAUGHT EXCEPTIONS (i.e., system logging).
+	
+	- To disable built-in logger:
+	
+	
+		const app = await NestFactory.create(ApplicationModule, {
+			logger: false,
+		});
+	
+	
+	- To enable specific logging levels, set the logger property to an array of strings specifying the log levels to display, as follows:
+	
+		const app = await NestFactory.create(ApplicationModule, {
+			logger: ['error', 'warn'],
+		});
+	
+	- console:
+	
+		You can provide a custom logger implementation to be used by Nest for system logging by setting the value of the logger property to 
+		an object that fulfills the LoggerService interface. For example, you can tell Nest to use the built-in global JavaScript console 
+		object (which implements the LoggerService interface), as follows:
+
+		
+		const app = await NestFactory.create(ApplicationModule, {
+			logger: console,
+		});		
+		
+		
+	- you own custom by implementing from scratch (without DI):
+
+		Implementing your own custom logger is straightforward. 
+		Simply implement each of the methods of the LoggerService interface as shown below.
+		
+		IMPL:
+			import { LoggerService } from '@nestjs/common';
+
+			export class MyLogger implements LoggerService {
+				...
+			}
+		
+		USAGE:
+			const app = await NestFactory.create(ApplicationModule, {
+				logger: new MyLogger(),
+			});
+		
+		
+		NOTE: This technique, while simple, doesn't utilize dependency injection for the MyLogger class.
+		
+		
+	- you own custom by extending built-in logger:
+	
+		import { Logger } from '@nestjs/common';
+
+		export class MyLogger extends Logger {
+		  error(message: string, trace: string) {
+			// add your tailored logic here
+			super.error(message, trace);
+		  }
+		}
+
+
+2. Logger with DI
+
+	2 modes:
+		1. using a singleton overall the application
+		2. instantiating logger for every unit (where you inject) with different context information
+	
+	Common tasks:
+		- Create your custom logger (MyLogger)
+		- create a logger module and export+provide MyLogger
+		
+		
+		1. Singleton
+		
+			- Logger: default @Injectable
+			
+			- usage: inject in constuctor
+		
+			- system logger:
+			
+				Because application instantiation (NestFactory.create()) happens OUTSIDE THE CONTEXT OF ANY MODULE, it doesn't participate
+				in the normal Dependency Injection phase of initialization.
+				But we can instruct Nest to use THE SAME SINGLETON instance of MyLogger with the following construction:
+				
+				const app = await NestFactory.create(ApplicationModule, {
+					logger: false,											// disabling built-in logger
+				});
+				app.useLogger(app.get(MyLogger));							// get logger singleton
+
+			
+		2. Logger per unit
+		
+			- Logger: special @Injectable with TRANSIENT scope
+			
+				import { Injectable, Scope, Logger } from '@nestjs/common';
+
+				@Injectable({ scope: Scope.TRANSIENT })
+				export class MyLogger extends Logger {}
+	
+			- usage: inject in constuctor and set CONTEXT
+			
+				import { Injectable } from '@nestjs/common';
+				import { MyLogger } from './my-logger.service';
+
+				@Injectable()
+				export class CatsService {
+				  private readonly cats: Cat[] = [];
+
+				  constructor(private myLogger: MyLogger) {
+					this.myLogger.setContext('CatsService');				<<<< context
+				  }
+				  
+				  ....
+				}				
+	
+			- system logger:
+			
+				const app = await NestFactory.create(ApplicationModule, {
+					logger: false,
+				});
+				const syslog = new MyLogger();
+				syslog.setContext('SYSTEM');
+				app.useLogger(syslog);								<<<< just create a quite new instance
+			
+				
+		
+SEE ALSO:	https://docs.nestjs.com/techniques/logger		

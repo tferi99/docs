@@ -717,7 +717,7 @@ Match type:
 				-------------------------- loop on terminals ------------------------------
 					-------------------------- loop on addresses of a terminal ------------------------------
 						--> RecordedTerminalsRepositoryImpl.observeAddressOnTerminalIfNecessary(terminal, address))			<<<<<<<<<<<< register observer if rule matches
-							--> matches = if ruleMatchesAddress() 
+							--> matches = if ruleMatchesAddressForObserverRegistration() 
 								--> RuleSet.checkRules(address, CALLER | CALLED | LASTREDIREDTED | ORIGINALCALLER | ORIGINALCALLED, checkArchive = false, forceMatchAny = true)
 									- internally it calculates an action and returns true if action > RuleAction.ACTION_NONE
 									--> action = checkAllRules(MatchRecord, checkArchive = false, forceMatchAny = true)

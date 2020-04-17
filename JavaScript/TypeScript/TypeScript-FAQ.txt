@@ -24,6 +24,8 @@ Language elements
 - Loops
 - How to pass callback function to class method with generics type?
 - Initialize arrays
+- Function interfaces
+- Indexable Types
 
 Config, build
 -------------
@@ -575,11 +577,16 @@ TS interfaces
 
 	
 Typescript interface provides this features:
-- optional properties
-- readonly properties
-- functions can be described with interfaces
-- you can describe indexable types with interfaces
-- class types: implementing an interface
+
+	- optional properties
+
+	- readonly properties
+
+	- functions can be described with interfaces (SEE ALSO: Function interfaces)
+
+	- you can describe indexable types with interfaces
+	
+	- class types: implementing an interface
 
 	
 - readonly properties:	you can specify values only during creation
@@ -1119,5 +1126,91 @@ Fix:
 		  "check-format",
 		  "allow-leading-underscore"
 		]
+	
+	
+------------------------------------------------------------------------------------------------------------------------	
+Function interfaces
+===================
+Other names:
+	- interface functions
+	- function types
+
+Interfaces are capable of describing the wide range of shapes that JavaScript objects can take. 
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------	
+Indexable Types
+===============
+An interface can also define the type of an array where you can define the type of index as well as values.
+You can define type of  indexable objects:
+
+
+	interface indexable-type {
+		[key: indexer-type]: return-type;
+		
+		// optional
+		other-prop1: other-prop-type1;
+		other-prop2: other-prop-type2;
+		...
+		other-propN: other-prop-typeN;
+	}
+
+
+There are two types of supported index signatures (indexer type):
+	- number
+	- string
+
+	- Number indexer:	no restriction on member types
+	
+	- String indexer: type of other members SHOULD BE THE SAME as type of indexed return type.
+	
+Example:
+
+	interface SomeObject {
+	  name: string;
+	  age: number;
+	}
+
+	interface ArrayWithNumIndexerAndStrRet {
+	  [index: number]: string;
+	  
+	  // other members
+	  length: number;
+	  height: number;
+	  o?: SomeObject;
+	  name: string;
+	}
+
+
+	const numIdxArr: ArrayWithNumIndexerAndStrRet = {height: 10, length: 5, name: 'brick'};
+	numIdxArr[3] = 'something3';
+	numIdxArr.o = {name: 'Cili cica', age: 4};
+	numIdxArr['custom'] = 12;														// even this is valid (string index)
+	numIdxArr.name = 'other brick';
+	console.log('##### ArrayWithNumIndexerAndStrRet: ', numIdxArr);
+
+	interface ArrayWithStrIndexerAndNumRet {
+	  [index: string]: number;
+	  
+	  // other members	  
+	  length: number;							// VALID: same as return tpe of indexer
+	  height: number;							// VALID: same as return tpe of indexer
+	  // name: string;							// NOT VALID: type should be number (string indexer!)
+	  // o?: SomeObject							// NOT VALID: type should be number (string indexer!)
+	}
+	
+	OUTPUT: 
+			
+		##### ArrayWithNumIndexerAndStrRet: {
+		  '3': 'something3',
+		  height: 10,
+		  length: 5,
+		  name: 'other brick',
+		  o: { name: 'Cili cica', age: 4 },
+		  custom: 12
+		}
 	
 	

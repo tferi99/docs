@@ -1,0 +1,137 @@
+=====================
+NodeBinanceTrader FAQ
+=====================
+
+- Introduction
+- server.js
+- WebSocket data samples
+- server.js
+
+SEE ALSO: 
+
+	https://github.com/jsappme/node-binance-trader
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Introduction
+============
+
+NBT includes 3 main JS scripts:
+
+	- the server:
+		- to track a selection of asset pairs and record all binance api data (candles, depths, trades) into a Postgres database.
+		- to detect buy or sell signals
+		- (optional) to send trading signals to the NBT Hub / Bitcoin vs. Altcoins to monitor performances and auto trade those signals (virtually or for real).
+
+			npm run start
+		
+	- the trader: 
+		- this script allows you to auto trade the signals received from the NBT hub or your own server.
+		
+			npm run trader
+
+	- the backtest :
+		- to backtest your strategies on the historical tick data (Postgres database) recorded by the server.
+		
+			npm run bt
+
+-------------------------------------------------------------------------------------------------------------------------------------
+server.js
+=========
+params:
+	tracked_max = 200
+	wait_time = 800
+
+
+--> run()
+	--> get_pairs()
+		- getting assets which quote asset is USDT or BTC and status is TRADING
+		- getting intersection of 2 arrays
+		- creating pairs of assets and BTC
+			
+			returned ['ETHBTC', 'BNBBTC', ...]
+			
+	- pairs = 'BTCUSDT' + pairs
+	
+	--> trackData()														// initialization of WS tracking () for every pairs
+		------------------------- loop on pairs -------------------------
+		--> trackPairData(pair)
+			--> binance_client.candles(pair, 15m) --> candle_...[]		// getting last 500 15m candle
+			--> binance_client.ws.candles(pair, 15m) 					// initialization of WS to collect next candles + STOCHRSI calculation
+				WS --> candle_...[]										// add new item if candle is final otherwise overwrite the last one
+				WS --> process candle_closes with STOCHRSI tulind indicator --> srsi[]
+			--> binance_client.ws.partialDepth(pair, 10)					// initialization of WS to collect next partial depths (Top levels bids and asks, pushed every second. Valid levels are 5, 10, or 20.)
+				WS  --> sum_bids[], sum_asks[], first_bid_qty[], first_ask_qty[], first_bid_price[], first_ask_price[]
+			--> binance_client.ws.trades(pair)							// initialization of WS to collect next trades
+				WS  --> prices[], volumes[]
+			
+			
+			Data collected with WS:
+				- ws.candles:
+					candle_opens[pair]
+					candle_closes[pair]
+					candle_lowes[pair]
+					candle_highs[pair]
+					candle_volumes[pair]
+					candle_prices[pair]
+					srsi[pair]
+				
+				- ws.partialDepth:		10 bids and asks from current book 
+					sum_bids[pair]					: sum of quantity of bids
+					sum_asks[pair]					: sum of quantity of asks
+					first_bid_qty[pair]				: values from 1st bid and ask
+					first_ask_qty[pair]
+					first_bid_price[pair]
+					first_ask_price[pair]
+					
+				- ws.trades:
+					prices[pair]
+					volumes[pair]
+					makers[pair]
+				
+				
+			-------------------------------- main processing loop, timeout 1000 ms ----------------------------------------
+			- calculating changing % of sum of asks/bids
+			- inserting current values into DB, table: nbt_<pair>
+			- sending buy/sell signal
+			- shrink arrays
+				
+		--> sleep(wait_time)
+			
+		
+		
+		
+-------------------------------------------------------------------------------------------------------------------------------------
+WebSocket data samples
+======================
+- binance_client.ws.partialDepth(pair, 10):
+
+	{
+	  symbol: 'ADAUSDT',
+	  level: 10,
+	  lastUpdateId: 317401919,
+	  bids: [
+		{ price: '0.02813000', quantity: '18898.90000000' },
+		{ price: '0.02812000', quantity: '38788.00000000' },
+		{ price: '0.02811000', quantity: '189080.90000000' },
+		{ price: '0.02810000', quantity: '24000.00000000' },
+		{ price: '0.02809000', quantity: '2878.00000000' },
+		{ price: '0.02808000', quantity: '30052.50000000' },
+		{ price: '0.02807000', quantity: '197223.50000000' },
+		{ price: '0.02806000', quantity: '40000.00000000' },
+		{ price: '0.02805000', quantity: '83150.00000000' },
+		{ price: '0.02804000', quantity: '123267.30000000' }
+	  ],
+	  asks: [
+		{ price: '0.02815000', quantity: '847.10000000' },
+		{ price: '0.02816000', quantity: '112102.30000000' },
+		{ price: '0.02817000', quantity: '108000.00000000' },
+		{ price: '0.02818000', quantity: '73174.60000000' },
+		{ price: '0.02819000', quantity: '57439.10000000' },
+		{ price: '0.02820000', quantity: '161096.70000000' },
+		{ price: '0.02821000', quantity: '48010.90000000' },
+		{ price: '0.02822000', quantity: '105261.60000000' },
+		{ price: '0.02823000', quantity: '49851.60000000' },
+		{ price: '0.02824000', quantity: '243506.30000000' }
+	  ]
+	}
+

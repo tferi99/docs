@@ -4,9 +4,11 @@ Node libraries
 - Developer
 - Config
 - Terminal
-- Date formatting
-
-
+- Math/numbers
+- Date/time
+- Database
+- Crypto
+- Logging
 
 -------------------------------------------------------------------------
 Developer
@@ -28,15 +30,42 @@ chalk				: Terminal string styling done right
 clear				: Clear the terminal screen if possible
 ora					: Elegant terminal spinner	(https://github.com/sindresorhus/ora)
 inquirer			: A collection of common interactive command line user interfaces (reading input with validation and filtering)
+colors				: colors for node.js terminals
+
 
 -------------------------------------------------------------------------
-Date formatting
-===============
-moment				: Parse, validate, manipulate, and display dates
+Math/numbers
+============
 numeral				: A javascript library for formatting and manipulating numbers.
+BigNumber.js		: BigNumber.js is a light javascript library for node.js and the browser. It supports arithmetic operations on Big Integers.
 
+-------------------------------------------------------------------------
+Date/time
+=========
+moment				: Parse, validate, manipulate, and display dates
 
+-------------------------------------------------------------------------
+Database
+========
+pg					: Non-blocking PostgreSQL client for Node.js
 
+-------------------------------------------------------------------------
+Network
+=======
+axios				: Promise based HTTP client for the browser and node.js
+socket.io			: it enables real-time bidirectional event-based communication
+socket.io-client	: client for socket.io
+
+-------------------------------------------------------------------------
 Crypto
 ======
 binance-api-node: 	: A complete API wrapper for the Binance API. (https://github.com/binance-exchange/binance-api-node)
+tulind				: Tulip Node is the official node.js wrapper for Tulip Indicators. It provides 100+ technical analysis indicator functions.
+
+-------------------------------------------------------------------------
+Logging
+=======
+winston				: A logger for just about everything	(https://github.com/winstonjs/winston)
+nest-winston		: A Nest module wrapper for winston logger.
+logform				: A mutable object-based log format designed for chaining & objectMode streams (https://github.com/winstonjs/logform#readme)
+

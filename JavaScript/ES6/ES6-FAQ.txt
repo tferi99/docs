@@ -13,6 +13,7 @@ New features
 Tips
 ----
 - How to copy data with spread operator?
+- How to filter a dictionary by value?
 
 
 ---------------------------------------------------------------------------------------------------------------------------------
@@ -100,5 +101,33 @@ Array:
 	
 	
 	
+---------------------------------------------------------------------------------------------------------------------------------
+How to filter a dictionary by value?
+====================================
+- Method 1: reduce
+
+	You could use reduce again to achieve that in plain JavaScript:
+
+	var filtered = Object.keys(dict).reduce(function (filtered, key) {
+		if (dict[key] > 1) filtered[key] = dict[key];
+		return filtered;
+	}, {});
+	
+- Method 2: Object.entries
+
+	With some ES6 features, such as arrow functions, spread syntax, Object.entries, ... it can look like this:
+
+	var filtered = Object.assign({}, ...
+		Object.entries(dict).filter(([k,v]) => v>1).map(([k,v]) => ({[k]:v}))
+	);
+	
+- Method 3:	Object.fromEntries
+	
+	Or using the newer Object.fromEntries:
+
+	var filtered = Object.fromEntries(Object.entries(dict).filter(([k,v]) => v>1));
+
+
+
 
 

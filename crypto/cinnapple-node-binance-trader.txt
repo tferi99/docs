@@ -135,10 +135,25 @@ Call flow
 	
 			
 [5] --> auto_trade()
-	---------------------------------- WeSocket loop about trades ----------------------------------
-	
+	WebSocket callback for trades ===> trade
+		
+		{
+			eventType: 'trade',
+			eventTime: 1508614495052,
+			tradeTime: 1508614495050,
+			symbol: 'ETHBTC',
+			price: '0.04923600',
+			quantity: '3.43500000',
+			isBuyerMaker: true,
+			maker: true,
+			tradeId: 2148226,
+			buyerOrderId: 390876,
+			sellerOrderId: 390752
+		}
 		
 
+		
+		
 STEPS:
 		0:	initial
 		1:	

@@ -1,0 +1,29 @@
+=========
+Directory
+=========
+
+- Directory types
+- Adding new directory
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Directory types
+===============
+There are multiple list of types :(
+- com.andtek.andphone.directory.Directory:								constants TYPE_...
+- com.andtek.andphone.ldap.gwtapp.client.DirectoryDataRecordBean: 		constants TYPE_...
+
+2nd list is for GWT. They should be consistent.
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Adding new directory
+====================
+APAS/Directory/Directories/(Add) -> Add New Directory/(Directory Type) 
+
+--> com.andtek.andphone.ldap.gwtapp.server.RPCdirectoryServiceImpl.RemoteGetInitializedNEWBean(...)
+	--> preConfiguredDirectoryBean(...)						// default directory properties and attributes
+	
+	
+	--> com.andtek.andphone.ldap.gwtapp.client.dirlist_editpanel
+		

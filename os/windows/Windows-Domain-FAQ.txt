@@ -1,0 +1,28 @@
+==================
+Windows-Domain-FAQ
+==================
+- How you can unlock a domain user?
+- I cannot login into Windoes with domain user
+
+---------------------------------------------------------------------------------------------------------------
+How you can unlock a domain user?
+=================================
+You can unlock user in AD.
+Check user properties in AD Users.
+
+
+---------------------------------------------------------------------------------------------------------------
+I cannot login into Windoes with domain user
+============================================
+Possible reason can be that trust information of target computer missing/broken in AD.
+Check computer entry in:
+
+	AD/Active Directory Users and Computers/<domain>/Computers
+	
+
+Re-create entry or add target machine to domain again (remove it before).
+	
+
+SEE ALSO: images/win10-login-problem-domainuser.jpg
+
+

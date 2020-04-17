@@ -6,6 +6,7 @@ Exchange SOAP Directories
 - Add contacts to public folders
 - Private folders
 - Howto enable basic authentication in Exchange Server?
+- Troubleshooting
 
 ---------------------------------------------------------------------------------------------------------------------------
 Configuration of public folders
@@ -146,28 +147,74 @@ That means you Windows also should be this domain.
 ---------------------------------------------------------------------------------------------------------------------------
 Private folders	
 ===============
-- You can create also private folders in Outlook (folders not under Public Folders Root).
-- Limitation in APAS: folders only can be siblings of contacts, sub-irectories and recursive fetch not supported.
+- configure impersonation for account user
 
+	SEE: Exchange - How to set impersonation rights manually.pdf
+	
+- You can create also private folders in Outlook (folders not 'contacts').
+- type of folder should be: 'Contact items'
+
+- 2 modes:
+
+	- contacts only:								folder name is 'contacts'
+	- contacts and subdirectories recursively:		folder name is 'contactsroot'
 
 ---------------------------------------------------------------------------------------------------------------------------
 Howto enable basic authentication in Exchange Server?
 =====================================================
 - Go to 'Exchange admin center'
 - servers/virtual directories
-- choose 'Autodiscover'/(Edit)/authentication
-	- set 'Basic authentication'
-	- remove 'Integrated Windows authentication'
+
+- choose Autodiscover/(Edit)/authentication
+	- SET 'Integrated Windows authentication'
+	- SET 'Digest...'
+	- REMOVE 'Basic authentication'
 	- Save
 - choose 'EWS'/(Edit)/authentication
-	- set 'Basic authentication'
-	- remove 'Integrated Windows authentication'
+	- SET 'Integrated Windows authentication'
+	- SET 'Digest...'
+	- SET 'Basic authentication'
 	- Save
 
+
+- If it's cannot work remove 'Integrated' and 'Digest' but use this settings ONLY temporarily,
+	other services maybe cannot work (e.g. Outlook clients, server connections)
 	
-NOTE: If 'Integrated Windows authentication' is enabled it will be applied even if 'Basic authentication' is enabled.
+	Sometimes I found that 'Integrated Windows authentication' can be priority over 'Basic authentication' is enabled.
+	
+	IMPORTANT: Use this setting is ONLY FOR developer test of this feature. It maybe can harm other functions (Outlook, other server connections).
 
 SEE ALSO:
 	images/exchange-enable-basic-auth1.jpg
 
 
+---------------------------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+Error 401:
+
+	If you have the following error during connecting to Exchange Server:
+
+	[2020-04-16 15:38:13,017] [WARN] [APAS-TimerDaemon] [Modules.java:807] - Modules: Slow background dispatch time of 1034ms for recorder
+	[2020-04-16 15:38:18,235] [ERROR] [http-nio-8080-exec-8] [ExchangeSoapServiceImpl.java:514] - EXCHANGE_SOAP: Exception
+	java.io.IOException: Server returned HTTP response code: 401 for URL: https://10.51.51.48/EWS/Exchange.asmx
+		at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[?:1.8.0_191-1-ojdkbuild]
+		at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62) ~[?:1.8.0_191-1-ojdkbuild]
+		at sun.reflect.DelegatingConstructorAccessorImpl.__newInstance(DelegatingConstructorAccessorImpl.java:45) ~[?:1.8.0_191-1-ojdkbuild]
+
+
+	Current implementation only supports Basic Authentication, maybe Basic Authentication not enabled on Exchange Server.
+
+	SEE ALSO: 	Howto enable basic authentication in Exchange Server?
+
+	
+Outlook cannot login:	which connected before - a login dialog displayed
+
+	In the same page where you configure Basic Auhtntication check if these options are set:
+	- Integrated Windows uthentication 
+	- (and maybe) Digest Authentication for Windows domain server
+	
+	SEE ALSO: 	Howto enable basic authentication in Exchange Server?
+
+
+	

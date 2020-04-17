@@ -35,8 +35,13 @@ Non-global libraries:
 ---------------------------------------------------------------------------------------------------------------------------------------------
 Useful comands
 =====================
-npm -l					: full list of commands
-npm ls [-g]				: list of installed packages, it draws a dependency tree
+npm -l							: full list of commands
+
+npm ls/ll/la [-g] [--<options>] : list of installed packages, it draws a dependency tree. ll and la shows detailed info
+
+	npm ls -g --depth=0			: list only the top-level global packages
+
+SEE ALSO:	https://docs.npmjs.com/cli-documentation/cli
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 How to install packages?

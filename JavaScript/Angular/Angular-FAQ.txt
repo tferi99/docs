@@ -39,6 +39,8 @@ Directives, Components
 - How to set component input with a literal value?
 - How to prevent adding NgForm to forms automatically?
 - Parent-child component interaction
+- How to project content from parent to child component?
+
 
 RxJS
 ----
@@ -111,29 +113,91 @@ Troubleshooting
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to add Bootstrap to an Angular project?
 ===========================================
-SEE ALSO:	https://ng-bootstrap.github.io/#/getting-started
+There are 3 ways:
+	- Using original Bootstrap 4 assets from npm,
+	- Using the ng-bootstrap library,
+	- And finally using the ngx-bootstrap
 
-NOTE:	Should I add bootstrap.js or bootstrap.min.js to my project?
+Method 1: bootstrap with angular.json
+-------------------------------------
+- npm install --save bootstrap
+- npm install --save jquery
+- open the angular.json file of your project and include:
 
-			No, the goal of ng-bootstrap is to completely replace JavaScript implementation for components. 
-			Nor should you include other dependencies like jQuery or popper.js. 
-			It is not necessary and might interfere with ng-bootstrap code.
+		node_modules/bootstrap/dist/css/bootstrap.css -> architect/build/styles array,
+		node_modules/bootstrap/dist/js/bootstrap.js -> architect/build/scripts array,
+		node_modules/bootstrap/dist/js/bootstrap.js -> architect/build/scripts array,
+
+Method 1: bootstrap with index.html
+-----------------------------------
+- open the src/index.html file and add the following:
+
+	- A <link> tag for adding the bootstrap.css file IN THE <head> section,
+	
+		<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+		
+	- A <script> tag for adding the jquery.js file BEFORE the closing </body> tag,
+	
+		<script src="../node_modules/jquery/dist/jquery.js"></script>	
+  
+	- A <script> tag for adding the bootstrap.js file BEFORE the </body> tag.
+		
+		<script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script> 
+		
+
+NOTE: 
+	Bootstrap depends on jQuery and Popper.js libraries, and if you don't include them in your project, 
+	any Bootstrap components that rely on JavaScript will not work.
+
+	Why not include those libs? For Angular it's better to avoid using libraries that make direct manipulation 
+	of the DOM (like jQuery) and let Angular handle that.		
+		
+		
+Method 2: ng-bootstrap
+
+	"Should I add bootstrap.js or bootstrap.min.js to my project? 
+	No, the goal of ng-bootstrap is to completely replace JavaScript implementation for components. 
+	Nor should you include other dependencies like jQuery or popper.js. 
+	It is not necessary and might interfere with ng-bootstrap code Source"
+
+	- npm install --save @ng-bootstrap/ng-bootstrap
+	- import the main module:
+	
+		import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+	
+	- Next you'll need to add the module you imported in your app root module:
+	
+		@NgModule({
+			declarations: [/*...*/],
+			imports: [..., NgbModule.forRoot()],
+			...
+		})
+		export class AppModule {}
+		
+		
+Method 3: ngx-bootstrap
+	
+	Angular CLI ng add command will update your Angular project with the necessary ngx-bootstrap dependencies, 
+	make changes to package.json, angular.json and will execute initialization code:
+	
+		ng add ngx-bootstrap 
+		
+	To add additional dependencies (e.g. styles):
+	
+		ng add ngx-bootstrap  --component componentName
+		
+		e.g:
+		
+			ng add ngx-bootstrap  --component accordion
+			ng add ngx-bootstrap  --component modals
+			ng add ngx-bootstrap  --component timepicker
+			ng add ngx-bootstrap  --component tooltip
 			
-- Installation:			
+			
+SEE ALSO:	https://valor-software.com/ngx-bootstrap/#/documentation#installation-instructions
+			https://www.techiediaries.com/angular-bootstrap/
+			https://ng-bootstrap.github.io/#/getting-started
 
-	npm install --save @ng-bootstrap/ng-bootstrap
-
-- Usage:
-
-	import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-
-	@NgModule({
-	  ...
-	  imports: [NgbModule, ...],
-	  ...
-	})
-	export class YourAppModule {
-	}	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Build architecture
 ==================
@@ -409,6 +473,10 @@ How to debug Angular?
 - Install Augury Chrome extension 	
 	- you can show component hierarchy
 	- you can view/change component properties
+
+!!! RECOMMENDED !!!
+- In Chrome/Sources you can find webpack:// folder which contains a '.' subfolder 
+	which contains all TS files. Here you can place debugger breakpoints.
 	
 
 --------------------------------------------------------------------------------------------------------------------------------------------------

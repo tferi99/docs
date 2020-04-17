@@ -10,20 +10,26 @@ Basics
 
 General
 -------
+- Concept
 - FUC (Frequently Used Commands)
 - Steps - How to use it?
 - How to setup Store Development Tools?
-- Concept
 - How we can specify initial state of store?
-- What is a side-effect?
 
 Reducers
 --------
+- What is a metareducer?
 
 Selectors
 ---------
+- Evolution of selectors
 - How to call a selector from a reducer?
 - How to re-use a selector?
+
+Effects
+-------
+- What is a side-effect?
+- How to create an effect?
 
 Tips
 ----
@@ -365,6 +371,30 @@ This node will be specified during registering StoreModule into module:
 ---------------------------------------------------------------------------------------------------------------
 How to protect immutable state from writing?
 ============================================
+Why state mutating is a problem?
+- it breaks time traveling (we cannot go back)
+- it breaks on-push change detection
+
+New method (Angular)
+--------------------
+	@NgModule({
+		...
+		StoreModule.forRoot(reducers, {
+			metaReducers,
+			runtimeChecks : {
+				strictStateImmutability: true,
+				strictActionImmutability: true,
+				strictActionSerializability: true,
+				strictStateSerializability:true
+			}
+		}),
+		...
+	})
+	export class AppModule {}
+
+
+Old method - with ngrx-store-freeze
+-----------------------------------
 In development time use 'storeFreeze'. 
 If you change incoming state in this case an error will be thrown:
 
@@ -423,6 +453,80 @@ That means if you retrieve an object from store you cannot change members of it.
 			longDescription: [course.longDescription, Validators.required],
 			promo: [course.promo, []]
 		}
+
+
+---------------------------------------------------------------------------------------------------------------
+Evolution of selectors
+======================
+Example store data:
+
+{
+	auth: {
+		user : {
+			id: 1,
+			email: "test@a.b"
+		}
+	}
+}
+
+
+1. How you get 'authenticated' flag from state?
+	- Inject store (State) into component.
+	- Store is itself an observable which always returns the whole state object.
+	- Select user with rx-js operators:
+	
+		this.isLoggedIn$ = this.store.pipe(
+			map(state => !!state['auth'].user)
+		);
+
+2. Elminate duplications:
+
+		this.isLoggedIn$ = this.store.pipe(
+			map(state => !!state['auth'].user),
+			distinctUntilChanged()
+		);
+
+3. 'select' is an NgRx operation which maps value and eliminates duplications:
+
+		this.isLoggedIn$ = this.store.pipe(
+			select(state => !!state['auth'].user)
+		);
+	 
+4. The calculation (a pure mapping function) in select() can be make reusable.
+	Collect selecton mappings which gets information from the same feature data node into a separate file
+	and add memory optimization.
+
+		export const isLoggedIn = createSelector(
+			state => state['auth'],				// mapping(s): here we select one or multiple parts of state
+			(auth) => !!auth.user				// projector: here we project them into arguments and process them
+		);
+	
+	and use it:
+	
+		this.isLoggedIn$ = this.store.pipe(
+			select(isLoggedIn)
+		);
+	
+	
+5. You can use a selector to create other selectors, too:
+
+		export const isLoggedOut = createSelector(
+			isLoggedOut,
+			(loggedIn) => !loggedIn				
+		);
+
+6. Put selection of feature nodes into type-safe feature selectors:
+
+		export const selectAuthState = createFeatureSelector<AuthState>('auth');
+		
+	and use it:
+	
+		export const isLoggedIn = createSelector(
+			selectAuthState,
+			(auth) => !!auth.user				// projector: here we project them into arguments and process them
+		);
+	
+	
 	
 ---------------------------------------------------------------------------------------------------------------
 How to call a selector from a reducer?
@@ -462,7 +566,7 @@ How to re-use a selector?
 =========================
 If you want to re-use a selector and you want to utilize memoization efficiently then use a little bit different method.
 
-Default way:
+- DEFAULT WAY (SHARED):
 
 	Selector:
 	
@@ -484,6 +588,8 @@ Default way:
 	This is because it's receiving both of the multiply factors (e.g. one time 2, the other time 4). In order to correctly 
 	memoize the selector, wrap the selector inside a factory function to create different instances of the selector.
 
+- FACTORY CREATION:
+	
 	The following is an example of using multiple counters differentiated by id. It does not return a selector but a 
 	factory function:
 	
@@ -508,4 +614,57 @@ Default way:
 	
 	
 	
+---------------------------------------------------------------------------------------------------------------
+How to create an effect?
+========================
+New style:
+----------
+
+	@Injectable()
+	export class AuthEffects {
+
+		login$ = createEffect(() =>
+			this.actions$
+				.pipe(
+					ofType(AuthActions.login),
+					tap(action => localStorage.setItem('user',
+							JSON.stringify(action.user))
+					)
+				)
+		,
+		{dispatch: false});																<<< disable dispatch
+
+		
+		constructor(private actions$: Actions, ...) {}
+	}
+
+Old style:
+----------
+
+	@Injectable()
+	export class AuthEffects {
+		constructor(private actions$: Actions<AuthActions>, ...) {}
+		
+		@Effect({dispatch: false})														<<< disable dispatch
+		login$ = this.actions$.pipe(
+		  ofType<LoginAction>(AuthActionTypes.LoginAction),
+		  map((action: LoginAction) => action.payload),
+		  ))
+		);
+		...
+	}
 	
+	
+---------------------------------------------------------------------------------------------------------------
+What is a metareducer?	
+======================
+Metareducers follow the same concept as reducers. 
+A metareducer takes the current state and action and produces a new version of a state but the difference is that
+a metareducer is going to be processsed BEFORE the normal reducer.
+
+Developers can think of meta-reducers as hooks into the action->reducer pipeline. Meta-reducers allow developers 
+to pre-process actions before normal reducers are invoked.
+
+Possible use-cases of a metareducer:
+- logging store before changes
+

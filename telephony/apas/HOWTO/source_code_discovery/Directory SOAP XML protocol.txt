@@ -349,13 +349,35 @@ Getting items from a (sub)folder
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 Private folders
 ===============
-- SOAPAction:		FindFolder
-- target folder:	contacts
-- result: 			found a lot of subfolders (almost all of them are built-in)
+
+TEST DATA:
+
+	- contacts
+			[Hát Izsák] 
+			[Basz Tamás]
+		-- customers
+			[Vevő Jenő]
+		-- experst
+			[Csecs Emőke]
+			[Hoki Zoltán]
+
+			
+RESULT:
+
+			[Basz Tamás]
+			[Csecs Emőke]
+			[Hoki Zoltán]
+			[Hát Izsák] 
+			[Vevő Jenő]
+			
+
 
 
 FindFolder request on 'contacts'
 -----------------------------------------
+- SOAPAction:		FindFolder
+- target folder:	contacts
+- result: 			found a lot of subfolders (almost all of them are built-in)
 
 	- Request:
 	
@@ -462,10 +484,219 @@ FindFolder request on 'contacts'
 				</m:FindFolderResponse>
 			</s:Body>
 		</s:Envelope>
-
 	
 		
 
 FindItem request on every folder
 --------------------------------
+- SOAPAction:		FindItem
+- impersonation:	apasadmin@andtek.cee.cs.eilab.biz
+- target folder:	contacts
+- result: 			found a lot of subfolders (almost all of them are built-in)
 
+	- Request:
+	
+		<soapenv:Envelope
+			xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+			xmlns:typ="http://schemas.microsoft.com/exchange/services/2006/types"
+			xmlns:mes="http://schemas.microsoft.com/exchange/services/2006/messages">
+			<soapenv:Header>
+				<typ:RequestServerVersion Version="Exchange2013_SP1"/>
+				<typ:ExchangeImpersonation>
+					<typ:ConnectingSID>
+						<typ:PrincipalName>apasadmin@andtek.cee.cs.eilab.biz</typ:PrincipalName>
+					</typ:ConnectingSID>
+				</typ:ExchangeImpersonation>
+			</soapenv:Header>
+			<soapenv:Body>
+				<mes:FindItem Traversal="Shallow">
+					<mes:ItemShape>
+						<typ:BaseShape>AllProperties</typ:BaseShape>
+					</mes:ItemShape>
+					<mes:IndexedPageItemView MaxEntriesReturned="99" Offset="0" BasePoint="Beginning"/>
+					<mes:SortOrder>
+						<typ:FieldOrder Order="Ascending">
+							<typ:FieldURI FieldURI="contacts:DisplayName" />
+						</typ:FieldOrder>
+					</mes:SortOrder>
+					<mes:ParentFolderIds>
+						<typ:DistinguishedFolderId Id="contacts" />
+					</mes:ParentFolderIds>
+				</mes:FindItem>
+			</soapenv:Body>
+		</soapenv:Envelope>
+	
+
+	- Response:
+		
+		<?xml version="1.0" encoding="utf-8"?>
+		<s:Envelope
+			xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+			<s:Header>
+				<h:ServerVersionInfo MajorVersion="15" MinorVersion="1" MajorBuildNumber="1466" MinorBuildNumber="3" Version="V2017_07_11"
+					xmlns:h="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns="http://schemas.microsoft.com/exchange/services/2006/types"
+					xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+			</s:Header>
+			<s:Body
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+				<m:FindItemResponse
+					xmlns:m="http://schemas.microsoft.com/exchange/services/2006/messages"
+					xmlns:t="http://schemas.microsoft.com/exchange/services/2006/types">
+					<m:ResponseMessages>
+						<m:FindItemResponseMessage ResponseClass="Success">
+							<m:ResponseCode>NoError</m:ResponseCode>
+							<m:RootFolder IndexedPagingOffset="2" TotalItemsInView="2" IncludesLastItemInRange="true">
+								<t:Items>
+									<t:Contact>
+										<t:ItemId Id="AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAAAAABO6QGFCaLpSJqSxVNRCNryBwActIS59NlLT7LwhKtliWGsAAAAAAEOAAActIS59NlLT7LwhKtliWGsAAAGs8jjAAA=" ChangeKey="EQAAABYAAAActIS59NlLT7LwhKtliWGsAAAGssrJ"/>
+										<t:ParentFolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEOAAAA" ChangeKey="AQAAAA=="/>
+										<t:ItemClass>IPM.Contact</t:ItemClass>
+										<t:Subject>Basz Tamás - Abc Inc</t:Subject>
+										<t:Sensitivity>Normal</t:Sensitivity>
+										<t:DateTimeReceived>2020-03-19T13:54:03Z</t:DateTimeReceived>
+										<t:Size>5643</t:Size>
+										<t:Importance>Normal</t:Importance>
+										<t:IsSubmitted>false</t:IsSubmitted>
+										<t:IsDraft>false</t:IsDraft>
+										<t:IsFromMe>false</t:IsFromMe>
+										<t:IsResend>false</t:IsResend>
+										<t:IsUnmodified>false</t:IsUnmodified>
+										<t:DateTimeSent>2020-03-19T13:54:03Z</t:DateTimeSent>
+										<t:DateTimeCreated>2020-03-19T13:53:27Z</t:DateTimeCreated>
+										<t:ReminderIsSet>false</t:ReminderIsSet>
+										<t:ReminderMinutesBeforeStart>0</t:ReminderMinutesBeforeStart>
+										<t:DisplayCc/>
+										<t:DisplayTo/>
+										<t:HasAttachments>false</t:HasAttachments>
+										<t:Culture>en-US</t:Culture>
+										<t:EffectiveRights>
+											<t:CreateAssociated>false</t:CreateAssociated>
+											<t:CreateContents>false</t:CreateContents>
+											<t:CreateHierarchy>false</t:CreateHierarchy>
+											<t:Delete>true</t:Delete>
+											<t:Modify>true</t:Modify>
+											<t:Read>true</t:Read>
+											<t:ViewPrivateItems>true</t:ViewPrivateItems>
+										</t:EffectiveRights>
+										<t:LastModifiedName>Apas Admin</t:LastModifiedName>
+										<t:LastModifiedTime>2020-03-19T13:54:04Z</t:LastModifiedTime>
+										<t:IsAssociated>false</t:IsAssociated>
+										<t:WebClientReadFormQueryString>?ItemID=AAMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAAAAABO6QGFCaLpSJqSxVNRCNryBwActIS59NlLT7LwhKtliWGsAAAAAAEOAAActIS59NlLT7LwhKtliWGsAAAGs8jjAAA%3D&amp;exvsurl=1&amp;viewmodel=PersonaCardViewModelFactory</t:WebClientReadFormQueryString>
+										<t:ConversationId Id="AAQkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAQAEJ3xQPoFEKVo5u5DTb/aYU="/>
+										<t:Flag>
+											<t:FlagStatus>NotFlagged</t:FlagStatus>
+										</t:Flag>
+										<t:InstanceKey>AQAAAAAAAQ4BAAAABrPI4wAAAAA=</t:InstanceKey>
+										<t:FileAs>Tamás, Basz</t:FileAs>
+										<t:FileAsMapping>LastCommaFirst</t:FileAsMapping>
+										<t:DisplayName>Basz Tamás</t:DisplayName>
+										<t:GivenName>Basz</t:GivenName>
+										<t:Initials>B.T.</t:Initials>
+										<t:MiddleName/>
+										<t:CompleteName>
+											<t:Title/>
+											<t:FirstName>Basz</t:FirstName>
+											<t:MiddleName/>
+											<t:LastName>Tamás</t:LastName>
+											<t:Suffix/>
+											<t:Initials>B.T.</t:Initials>
+											<t:FullName>Basz Tamás</t:FullName>
+										</t:CompleteName>
+										<t:CompanyName>Abc Inc</t:CompanyName>
+										<t:EmailAddresses>
+											<t:Entry Key="EmailAddress1">bt@abc.com</t:Entry>
+										</t:EmailAddresses>
+										<t:PhoneNumbers>
+											<t:Entry Key="BusinessPhone">+363483643 </t:Entry>
+										</t:PhoneNumbers>
+										<t:Department/>
+										<t:Generation/>
+										<t:ImAddresses>
+											<t:Entry Key="ImAddress1"/>
+										</t:ImAddresses>
+										<t:JobTitle/>
+										<t:Surname>Tamás</t:Surname>
+										<t:DisplayNamePrefix/>
+									</t:Contact>
+									<t:Contact>
+										<t:ItemId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAADTukBhQmi6UiaksVTUQja8gcAHLSEufTZS0+y8ISrZYlhrAAAAgEOAAAAHLSEufTZS0+y8ISrZYlhrAAAAleWAAAA" ChangeKey="EQAAABYAAAActIS59NlLT7LwhKtliWGsAAAGssrN"/>
+										<t:ParentFolderId Id="AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAuAAADTukBhQmi6UiaksVTUQja8gEAHLSEufTZS0+y8ISrZYlhrAAAAgEOAAAA" ChangeKey="AQAAAA=="/>
+										<t:ItemClass>IPM.Contact</t:ItemClass>
+										<t:Subject>Hát Izsák - Outdoor Kft.</t:Subject>
+										<t:Sensitivity>Normal</t:Sensitivity>
+										<t:DateTimeReceived>2020-02-21T14:11:23Z</t:DateTimeReceived>
+										<t:Size>5287</t:Size>
+										<t:Importance>Normal</t:Importance>
+										<t:IsSubmitted>false</t:IsSubmitted>
+										<t:IsDraft>false</t:IsDraft>
+										<t:IsFromMe>false</t:IsFromMe>
+										<t:IsResend>false</t:IsResend>
+										<t:IsUnmodified>false</t:IsUnmodified>
+										<t:DateTimeSent>2020-02-21T14:11:23Z</t:DateTimeSent>
+										<t:DateTimeCreated>2020-02-21T14:11:25Z</t:DateTimeCreated>
+										<t:ReminderIsSet>false</t:ReminderIsSet>
+										<t:ReminderMinutesBeforeStart>0</t:ReminderMinutesBeforeStart>
+										<t:DisplayCc/>
+										<t:DisplayTo/>
+										<t:HasAttachments>false</t:HasAttachments>
+										<t:Culture>en-US</t:Culture>
+										<t:EffectiveRights>
+											<t:CreateAssociated>false</t:CreateAssociated>
+											<t:CreateContents>false</t:CreateContents>
+											<t:CreateHierarchy>false</t:CreateHierarchy>
+											<t:Delete>true</t:Delete>
+											<t:Modify>true</t:Modify>
+											<t:Read>true</t:Read>
+											<t:ViewPrivateItems>true</t:ViewPrivateItems>
+										</t:EffectiveRights>
+										<t:LastModifiedName>Apas Admin</t:LastModifiedName>
+										<t:LastModifiedTime>2020-03-19T14:11:51Z</t:LastModifiedTime>
+										<t:IsAssociated>false</t:IsAssociated>
+										<t:WebClientReadFormQueryString>?ItemID=AQMkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgBGAAADTukBhQmi6UiaksVTUQja8gcAHLSEufTZS0%2By8ISrZYlhrAAAAgEOAAAAHLSEufTZS0%2By8ISrZYlhrAAAAleWAAAA&amp;exvsurl=1&amp;viewmodel=PersonaCardViewModelFactory</t:WebClientReadFormQueryString>
+										<t:ConversationId Id="AAQkADdlMTY4MmNlLWVmYTEtNGUzMi1hOWUzLWM1ZTcyOGU3NWQ3MgAQAOayCgUkxEmgp+B/JTSfXt8="/>
+										<t:Flag>
+											<t:FlagStatus>NotFlagged</t:FlagStatus>
+										</t:Flag>
+										<t:InstanceKey>AQAAAAAAAQ4BAAAAAABXlgAAAAA=</t:InstanceKey>
+										<t:FileAs>Izsák, Hát</t:FileAs>
+										<t:FileAsMapping>LastCommaFirst</t:FileAsMapping>
+										<t:DisplayName>Hát Izsák</t:DisplayName>
+										<t:GivenName>Hát</t:GivenName>
+										<t:Initials>H.I.</t:Initials>
+										<t:MiddleName/>
+										<t:CompleteName>
+											<t:Title/>
+											<t:FirstName>Hát</t:FirstName>
+											<t:MiddleName/>
+											<t:LastName>Izsák</t:LastName>
+											<t:Suffix/>
+											<t:Initials>H.I.</t:Initials>
+											<t:FullName>Hát Izsák</t:FullName>
+										</t:CompleteName>
+										<t:CompanyName>Outdoor Kft.</t:CompanyName>
+										<t:EmailAddresses>
+											<t:Entry Key="EmailAddress1">hi@outdoor.com</t:Entry>
+										</t:EmailAddresses>
+										<t:PhoneNumbers>
+											<t:Entry Key="BusinessPhone">+493456346445 </t:Entry>
+											<t:Entry Key="MobilePhone">+3690234536 </t:Entry>
+										</t:PhoneNumbers>
+										<t:Department/>
+										<t:Generation/>
+										<t:ImAddresses>
+											<t:Entry Key="ImAddress1"/>
+										</t:ImAddresses>
+										<t:JobTitle/>
+										<t:Surname>Izsák</t:Surname>
+										<t:DisplayNamePrefix/>
+									</t:Contact>
+								</t:Items>
+							</m:RootFolder>
+						</m:FindItemResponseMessage>
+					</m:ResponseMessages>
+				</m:FindItemResponse>
+			</s:Body>
+		</s:Envelope>
