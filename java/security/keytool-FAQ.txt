@@ -13,7 +13,7 @@ keytool FAQ
 - Howto export the Public Key Certificate
 - Howto export/print a private key?
 - How to delete a certificate?
-- How to rename a certificate?
+- How to rename a certificate in keystore?
 - How to verify private public keys?
 
 SSL
@@ -110,15 +110,37 @@ Certificate Chains
 Howto generate keypair and self-signed certificate?
 ===================================================
 
-keytool -genkey -alias <alias> -keyalg <algorythm> [-keystore <keystore file>] [-dname <distinguish name>] [-storepass <keystore password>] [-keypass <key password>]
+keytool -genkeypair -alias <alias> -keyalg <algorythm> [-keystore <keystore file>] [-dname <distinguish name>] [-storepass <keystore password>] [-keypass <key password>]
 
 e.g.
-	keytool -genkey -alias myalias -keyalg RSA -validity 365 -keystore keystore.jks -dname "cn=Ferenc Toth, ou=Development, o=Abc Inc., c=HU" -storepass 123456 -keypass 123456
+	
+	KEYSTORE=/var/lib/tomcat/.keystore.jks  
+	ALIAS=andphone
+	PWD=changeit
+	DN='CN=ml-sv-vfandha.stmelf.bybn.de,OU=StMELF,O=Freistaat Bayern,L=Muenchen,C=DE'
+	EXT1="SubjectAlternativeName=dns:ml-sv-vfandha.stmelf.bybn.de,ip:10.3.59.30"
+	EXT2="KeyUsage=digitalSignature,nonRepudiation,keyEncipherment"
+	EXT3="ExtendedkeyUsage=clientAuth,serverAuth"
+	KEYSIZE=2024
+	KEYALG=RSA
+	SIGALG=SHA256withRSA
+	VALIDITY=730
+
+	# move to backup
+	keytool -changealias -alias $ALIAS -destalias ${ALIAS}_OLD -keystore ${KEYSTORE} -storepass $PWD
+
+	# create new
+	keytool -genkeypair -alias $ALIAS -keysize $KEYSIZE -keyalg $KEYALG -sigalg $SIGALG -validity $VALIDITY -keystore $KEYSTORE -dname "$DN" -storepass $PWD -ext $EXT1 -ext $EXT2 -ext $EXT3
+			
+		
 	
 	
 - Generates a key pair (a public key and associated private key). 
 - Wraps the public key into an X.509 v3 self-signed certificate, which is stored as a single-element certificate chain. 
 - This certificate chain and the private key are stored in a new keystore entry identified by alias.	
+
+
+SEE ALSO:	https://docs.oracle.com/javase/7/docs/technotes/tools/solaris/keytool.html
 
 ------------------------------------------------------------------------------------------------
 Howto print a certificate?
@@ -152,13 +174,26 @@ Steps of creating a signed certificate
 
 1. Create key
 
-	keytool -genkey -alias tomcat -keyalg RSA
+	keytool -genkeypair -alias tomcat -keyalg RSA
+	
+	SEE ALSO:	Howto generate keypair and self-signed certificate?
 
 2. Create certificate request (CSR) for CA:
 
 	keytool -certreq -keyalg RSA -alias tomcat -file certreq.csr
-
 	
+	
+	For example:
+	
+		KEYSTORE=/var/lib/tomcat/.keystore.jks  
+		ALIAS=andphone
+		PWD=changeit
+		EXT1="SubjectAlternativeName=dns:ml-sv-vfandha.stmelf.bybn.de,email:info@andtek.com,ip:10.3.59.30"
+		EXT2="KeyUsage=digitalSignature"
+		EXT3="ExtendedkeyUsage=clientAuth,serverAuth"
+
+		keytool -certreq -keystore $KEYSTORE -alias $ALIAS -storepass $PWD -keyalg rsa -sigalg SHA256withRSA -keysize 2048 -validity 730 -ext $EXT1 -ext $EXT2 -ext $EXT3
+
 3. Get the Chain Certificate (also called the Root Certificate) from the CA.
 	For example from here:
 		
@@ -236,8 +271,8 @@ keytool -delete -alias keyAlias -keystore keystore-name -storepass password
 					
 					
 ------------------------------------------------------------------------------------------------
-How to rename a certificate?
-============================
+How to rename a certificate in keystore?
+========================================
 keytool -changealias -alias "your-very-very-long-alias" -destalias "new-alias" -keypass keypass -keystore /path/to/keystore -storepass storepass
 
 	

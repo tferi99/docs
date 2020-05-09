@@ -16,6 +16,7 @@ JTAPI
 -----
 - Observers in APAS
 - How to configure secure JTAPI?
+- Howto enable-disable observers?
 
 Configuration
 -------------
@@ -46,6 +47,7 @@ Configuration
 - Howto add contacts to Exchange 2016 public folder?
 - Howto configure CUPS presence?
 - How to configure XML service?
+- Admin CLI
 
 Directory
 ---------
@@ -72,6 +74,7 @@ Network/Security
 - How to access database remotely?
 - How to setup secure JTAPI?
 - How to trace PassThroughRequest messages sent by APAS to phones?
+- Phone authentication URL
 
 Troubleshooting
 ---------------
@@ -137,3 +140,5 @@ WebAttendant
 AndGuard
 --------
 - Howto configure AndGuard with HTTPS?
+
+

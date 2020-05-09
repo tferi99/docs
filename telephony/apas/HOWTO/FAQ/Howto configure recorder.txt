@@ -295,12 +295,60 @@ NOTE:
 ---------------------------------------------------------------------------------------------------------------------------------		
 Troubleshooting
 ===============
+- Troubleshooting with logs
 - Validating recorder mode
 - Troubleshooting checklist
 - Tracing standalone recorder process 
 - Monitoring with Wireshark
 - Tracing network traffic between RecorderSniffer and APAS
 - Problem: There is no data on SIP trunk
+
+
+Troubleshooting with logs
+-------------------------
+If you call a recorded device but it's not recorded:
+
+- check recordCall XML messages. Here are log entries of a good recording:
+	
+	[2020-05-07 11:56:04,696] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6e2fe466)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP100000009100" callID="sip23052/1" callingParty="+36110009101" calledParty="+36110009100" callingPartyName="" calledPartyName="" originalCallingParty="+36110009101" originalCalledParty="+36110009100" lastRedirectingParty="" initiated="false"/>]
+	[2020-05-07 11:56:04,701] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip23052/1" dbID="141" state="1"/>
+	[2020-05-07 11:56:04,703] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip23052/1 dbID=141 OK
+	[2020-05-07 11:56:05,071] [DEBUG] [APAS-defaultWorker-12] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP100000009100" callID="sip23052/1" srcIP="10.51.51.122" srcPort="35075"/>]
+	[2020-05-07 11:56:05,077] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip23052/1" dbID="141" state="1"/>
+	[2020-05-07 11:56:05,079] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip23052/1 dbID=141 OK
+	[2020-05-07 11:56:05,219] [DEBUG] [APAS-defaultWorker-14] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP100000009100" callID="sip23052/1" dstIP="10.51.51.122" dstPort="39251"/>]
+	[2020-05-07 11:56:05,222] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip23052/1" dbID="141" state="1"/>
+	[2020-05-07 11:56:05,223] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip23052/1 dbID=141 OK
+	[2020-05-07 11:56:19,495] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6e2fe466)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP100000009100" callID="sip23052/1" stopOut="1" />]
+	[2020-05-07 11:56:19,501] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="100" string="Call removed"/>
+	[2020-05-07 11:56:19,502] [INFO] [APAS-SnifferConnection] [SnifferConnection.java:549] - recorder error reponse (100): recordCallResponse - Call removed
+	[2020-05-07 11:56:19,503] [DEBUG] [APAS-defaultWorker-16] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP100000009100" callID="csip27968766" stopOut="1" />]
+	[2020-05-07 11:56:19,504] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+	[2020-05-07 11:56:19,512] [DEBUG] [APAS-defaultWorker-18] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP100000009100" callID="csip27968766" stopOut="1" />]
+	[2020-05-07 11:56:19,513] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+
+
+	- If ONLY the 1st message - which sent by PhoneCallObserver - is missing then the CUCM recording is configured well but there is a problem with JTAPI or recording rules.
+		- Check callID: prefix should be 'sip'. If prefix is 'csip' then this device is not controlled by JTAPI but only by SIP.
+			- Check if device is assigned to application user.
+		- If call ID is 'sip' then check rules in configuration or in log. Run show_recrule_match.sh. There should be a *MATCH* on rule matching with your device DN and
+			the action finally shouild contain RECORD. For example:
+		
+			[2020-05-07 12:41:32,033] [DEBUG] [http-nio-8080-exec-8] [RuleSet.java:362] - Checking recording rules
+			   given: (oid = sip23090/1 CGPN = +36110009101 CDPN = +36110009100 OCGPN = +36110009101 OCDPN = +36110009100)
+				 1. (action = [ RECORD CONTINUE], storage = 10) <- (unknown[3] == '+36110009020')   '9020                                           ...'
+				 2. (action = [ RECORD CONTINUE], storage = 10) <- (unknown[3] == '+36110009032')   '9032                                           ...'
+				 3. *MATCH* (action = [ RECORD CONTINUE], storage = 10) <- (unknown[3] ~= '.*9100')   'ends with 9100                                 ...'					<<<<<<<<< matches
+				 4. (action = [ NEVER], storage = 10) <- (CGPN ~= '.*36110009020') & (CDPN ~= '.*36110009100')   'deny                                           ...'
+				 5. (action = [ NEVER], storage = 10) <- (CGPN ~= '\+4158850.*') & (CDPN ~= '\+4158850.*')   'Block else                                     ...'
+				 6. *MATCH* (action = [], storage = 10) <- (unknown[3] ~= '.*')   'DENY_AFTER_ME                                  ...'
+				 (action = [ RECORD CONTINUE], storage = 10)																												<<<<<<<<< it contains RECORD
+		
+	
+	- If only XML messages with IP and port information are missing then CUCM configuration is insufficient. Check:
+		- Built-in-Bridge on device
+		- Check if recording is enabled on line and the proper recording profile is selected
+		- Check if recording propfile contains the proper Route pattern DN in 'Recording Destination Address'
 
 
 Validating recorder mode
@@ -327,6 +375,15 @@ Recorder sends a status response message to APAS which contains 'mode' property
 		
 		RECORD_MODE_SPAN_H323 : "h323"
 
+	record.h:
+	
+		#define RECORD_MODE_SPAN_SCCP	1
+		#define RECORD_MODE_SPAN_H323	2
+		#define RECORD_MODE_SPAN_SIP	4
+		#define RECORD_MODE_SPAN_MGCP	8
+		#define RECORD_MODE_SPAN_JTAPI	16
+		#define RECORD_MODE_SIPTRUNK	256 		
+		
 		
 Troubleshooting checklist
 -------------------------
@@ -339,9 +396,12 @@ Check the followings:
 
 		com.andtek.andphone.recorder.PhoneCallObserver should have of recorded terminals
 
-
 		NOTE:	You can list observed terminals on 'Recorder Status' debug page, too.
 		
+		If you dont have observer:
+			- maybe terminal not assigned to application user
+			- or there is no recording role which matches with your DN
+	
 	
 	2. Check recorder process 
 	
@@ -514,7 +574,7 @@ Check the followings:
 
 			/apas/andphone/archive/<YEAR>/<MONTH>/<DAY>/<ID from rec_call>.rec
 	
-		
+
 Tracing standalone recorder process 
 -----------------------------------
 In APAS command line:

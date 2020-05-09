@@ -57,10 +57,3 @@ far-end call information. The only difference in the two From headers is the fir
 whether the call is for the near-end voice stream or for the far-end voice stream.	
 
 
-----------------------------------------------------------------------------------------------------------------
-How dows it work in detail?
-===========================
-SEE:	telephony/apas/HOWTO/source_code_discovery/Recording.txt
-
-In short:
-- 

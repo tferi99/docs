@@ -2,6 +2,10 @@
 Linux FAQ
 =========
 
+General
+-------
+- Howto get linux version?
+
 Development
 -----------
 - Howto fix missing shared library problem?
@@ -11,6 +15,22 @@ Network
 -------
 - How to list network interfaces?
 - How to replace ethernet adapter?
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto get linux version?
+========================
+- general system info:
+
+	uname -a
+	
+- /proc/version
+
+	cat /proc/version
+	
+- /etc/*-release file.
+
+	Search and view /etc/*-release
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Howto fix missing shared library problem?

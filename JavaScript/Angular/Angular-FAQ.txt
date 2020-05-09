@@ -25,7 +25,6 @@ Configuration
 - How to specify default port (4200) of angular-cli server?
 - How to analyze/update package versions?
 
-
 Scaffolding
 -----------
 - Schematics
@@ -37,10 +36,35 @@ Directives, Components
 - How to set CSS class of host element from component code?
 - How to change the default prefix of component to stop tslint warnings
 - How to set component input with a literal value?
-- How to prevent adding NgForm to forms automatically?
 - Parent-child component interaction
 - How to project content from parent to child component?
 
+Templating
+----------
+- How to use interpolation (template expression)?
+- Templating - structural directives
+- Templating expressions
+- ng-template directive
+- ERROR: Can't have multiple template bindings on one element
+- ng-container directive
+- ngTemplateOutlet
+- Template reference
+
+Data input, Forms
+-----------------
+- How to use forms
+- How to use ngModel?
+- How to prevent adding NgForm to forms automatically?
+- How to control form UI by validation status?
+- Validation hints
+- How Angular store control state information to CSS class?
+- Form styling tips
+- How can you reference a FormControl behind an input field?
+- How to group input values in model?
+- Radio button
+- Howto set/patch/reset form values of forms?
+- Howto generate FormControls dynamically?
+- Howto display error-specific messages on validation errors?
 
 RxJS
 ----
@@ -56,8 +80,8 @@ Routing
 -------
 - How to navigate from a controller code?
 
-Tips
-----
+Other Tips
+----------
 - Bindings:
 	- Property binding or interpolation?
 	- Attribute binding
@@ -65,11 +89,8 @@ Tips
 	- Style binding
 	- Event binding
 	- Data binding
-		- Bindigs
-- How to use interpolation (template expression)?
+
 - Conditional or dynamic CSS Style/Class
-- User input with forms
-- How to control form UI by validation status?
 - How to check empty values in interpolations?
 - How to access DOM elements from a controller?
 - Null check on objects
@@ -79,6 +100,8 @@ Tips
 Services
 --------
 - How to use a service?
+- How service instances propagated?
+- Cross-component communication
 
 HTTP, Rest
 ----------
@@ -368,8 +391,8 @@ Easy installation of development environment
 	
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Bindigs
-=======
+Data binding
+============
 Method 1:
 
 	<div class="field">
@@ -404,7 +427,7 @@ DOM                             COMPONENT
 		 
 		 ------------------>                      (event)="handler"		: The (click) event binding calls the component's selectHero method when the user clicks a hero's name.
 		 
-        <------------------>                       [(ngModel)]="value"	: Two-way data binding is an important fourth form that combines property and event binding in a single notation, 
+        <------------------>                       [(ngModel)]="value"	: Two-way data binding is an important for form that combines property and event binding in a single notation, 
 																			using the ngModel directive.
 		
 		
@@ -782,53 +805,75 @@ How to specify default port (4200) of angular-cli server?
 	
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
-User input with forms
-=====================
-IN THE BACKGROUND:
+How to use forms
+================
+Under the hood form management needs FormGroup and FormControls object.
+- EITHER use it implicitely (template driven mode)
+- OR bind an existing one into template (model driven mode)
 
-	JavaScript objects:
+Form management based on a common ancestor class:
+	AbstractControl
+		- value
+		- valid / invalid
+		- touched
+		- errors
+		- pristine (true: not changed yet in UI)
+		- dirty (true: changed in UI)
+		- ...
+
+	Which has 2 inherited class:
+	- A FormControl represents a SINGLE INPUT FIELD - it is the smallest unit of an Angular form.
+			
+		// create a new FormControl with the value "Nate"
+		let nameControl = new FormControl("Nate");
+		let name = nameControl.value; // -> Nate
 		
-		- common ancestor:
-			AbstractControl
-				- value
-				- valid / invalid
-				- touched
-				- errors
-				- pristine (true: not changed yet in UI)
-				- dirty (true: changed in UI)
-				- ...
-	
-		- A FormControl represents a single input field - it is the smallest unit of an Angular form.
+		// now we can query this control for certain values:
+		nameControl.errors // -> StringMap<string, any> of errors
+		nameControl.dirty // -> false
+		nameControl.valid // -> true
+
+	- FormGroup: manages MULTIPLE FormControls
+
+		let personInfo = new FormGroup({
+			firstName: new FormControl("Nate"),
+			lastName: new FormControl("Murray"),
+			zip: new FormControl("90210")
+		})
+
+		// now we can query this control group for certain values, which have sensible
+		// values depending on the children FormControl's values:
+		personInfo.errors // -> StringMap<string, any> of errors
+		personInfo.dirty // -> false
+		personInfo.valid // -> true
 				
-			// create a new FormControl with the value "Nate"
-			let nameControl = new FormControl("Nate");
-			let name = nameControl.value; // -> Nate
-			
-			// now we can query this control for certain values:
-			nameControl.errors // -> StringMap<string, any> of errors
-			nameControl.dirty // -> false
-			nameControl.valid // -> true
-
-		- FormGroup: manages multiple FormControls
-
-			let personInfo = new FormGroup({
-				firstName: new FormControl("Nate"),
-				lastName: new FormControl("Murray"),
-				zip: new FormControl("90210")
-			})
-
-			// now we can query this control group for certain values, which have sensible
-			// values depending on the children FormControl's values:
-			personInfo.errors // -> StringMap<string, any> of errors
-			personInfo.dirty // -> false
-			personInfo.valid // -> true
-			
-			
 	
-2 approaches:
+- 2 approaches:
 	
-	- Template driven (FormsModule):
-
+	1. Template driven (FormControls are in template):
+	==================================================
+	You setup your form in the template (HTML) and Angular automatically infer the structure 
+	of your form.
+	
+	Ho to use it?
+	-------------
+	- import FormsModule
+	- add 'ngModel' to input tags to select input data
+	- add 'name' to input tags to specify input data name
+	- add a submit handler into controller e.g: onSubmit()
+	- add (ngSubmit)="onSubmit(...)" event to <form>
+	- add a local reference to ngForm directive of form, e.g: #f="ngForm"
+	- EITHER 
+		- pass this local reference to submit handler: (ngSubmit)="onSubmit(#f)"
+		- and add reference to submit handler: onSubmit(form: NgForm)
+	- OR
+		- refer local reference with @ViewChild
+		- don't pass it as argument
+	- submitted value is a JS object which contains a lot of information about input form (values, controls, dirty, disabled, errors, ...)
+	- add validator to template 
+		- 'required' : standard HTML attribute recognized by Angular
+		
+		
 		SEE ALSO:	https://angular.io/guide/forms
 	
 		The FormsModule gives us template driven directives such as:
@@ -847,13 +892,14 @@ IN THE BACKGROUND:
 						 id="skuInput"
 						 placeholder="SKU"
 						 name="sku" ngModel>					<<< ngModel: it builds a FormControl and associates this field to f.value.sku
+						 required						 		<<< validator is in the template
 				</div>
 				<button type="submit" class="ui button">Submit</button>
 			  </form>
 		
 			controller:
 			
-			  onSubmit(form: any): void {
+			  onSubmit(form: NgForm): void {
 				console.log('you submitted value:', form);
 			  }
 
@@ -874,71 +920,129 @@ IN THE BACKGROUND:
 			2. A (ngSubmit) output
 			
 			
-	- Model driven / Reactive (using FormBuilder with ReactiveFormsModule gives us directives like):
-		
+	How to set input values of fields?
+	----------------------------------
+	change ngModel to [ngModel]="..." (one way binding)
+			
+	2. Model driven / Reactive (FormControls are in controller):
+	============================================================
+	You actually define the structure of the form in TS code and then yo create HTML template and 
+	then you manually connect them.
+	
 		SEE ALSO:	https://angular.io/guide/reactive-forms
 	
 		• formGroup and
 		• formControl
-		
-		
-		template:
-		
-		  <form [formGroup]="myForm" (ngSubmit)="onSubmit(myForm.value)" class="ui form">
-			<div class="field">
-			  <label for="skuInput">SKU</label>
-			  <input type="text" id="skuInput" placeholder="SKU" [formControl]="myForm.controls['sku']">		<<< v1
-			</div>
-			
-			<div class="field">
-			  <label for="skuInput">SKU</label>
-			  <input type="text" id="skuInput" placeholder="Description" formControlName="desc">		<<< v2
-			</div>
-			
-			<button type="submit" class="ui button">Submit</button>
-		  </form>
-			
-		controller:
-		
-			export class DemoFormSkuWithBuilderComponent implements OnInit {
-			  myForm: FormGroup;													<<< form group
+	
 
-			  constructor(fb: FormBuilder) {
-				this.myForm = fb.group({
-				  'sku': ['ABC123'],
-				  'desc': ['']
-				});
-			  }
+	Ho to use it?
+	-------------
+		- create a FormGroup property in controller (a group of FormControllers)
+		- import  ReactiveFormsModule (and you DON'T need the FormsModule)
+		- create form controls in controller. FormGroup is an object where field names are the property keys.
+		- add validators to FormControl in the controller
+		
+		method 1 - manually:
+			controller:
+				signupForm: FormGroup;
+				
+				ngOnInit() {
+					this.signupForm = new FormGroup({							<<<< group of FormControls
+						'username': new FormControl('default username');			
+						'email': new FormControl(null);
+						'gender': new FormControl('male');
+					});
+				}
+				
+			template:
+				<form [formGroup]="signupForm">						<<<< bind template form and FormGroup
+					<input 
+						type="text" 
+						formControlName="username"				<<<< bind input to FormControllers
+					>
+					<input 
+						type="text" 
+						formControlName="email"				<<<< bind input to FormControllers
+					>
+				</form>
+			
+			
+		method 2 - using form builder:
+			template:
+			
+			  <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="ui form">				<<< don't send form to controller, since it's there
+				<div class="field">
+				  <label for="skuInput">SKU</label>
+				  <input type="text" id="skuInput" placeholder="SKU" [formControl]="myForm.controls['sku']">					<<< v1
+				  <span *ngIf="!myForm.get('sku').valid && !myForm.get('sku').touched">Please enter a valid SKU</span>			<<< FormControl.get('NAME | PATH')  : path for nested controls (into FormGroup)
+				</div>
+				
+				<div class="field">
+				  <label for="skuDesc">Description</label>
+				  <input type="text" id="skuDesc" placeholder="Description" formControlName="desc">		<<< v2
+				</div>
+				
+				<button type="submit" class="ui button">Submit</button>
+			  </form>
+				
+			controller:
+			
+				export class DemoFormSkuWithBuilderComponent implements OnInit {
+				  myForm: FormGroup;													<<< form group
 
-			  ngOnInit() {
-			  }
+				  constructor(fb: FormBuilder) {
+					this.myForm = fb.group({
+					  'sku': ['ABC123', [Validators.required]],					<<< validator is in the controller FormControl
+					  'desc': ['']
+					});
+				  }
 
-			  onSubmit(value: string): void {
-				console.log('you submitted values - SKU:', value.sku + ' description:' + value.desc);
-			  }
-			}
+				  ngOnInit() {
+				  }
+
+				  onSubmit(): void {
+					const value = this.myForm.value;
+					console.log('you submitted values - SKU:', value.sku + ' description:' + value.desc);
+				  }
+				}
 			
 		- During injection an instance of FormBuilder will be created and we assign it to the fb variable (in the constructor).
 		- There are two main functions we’ll use on FormBuilder:
 			• control - creates a new FormControl
 			• group - creates a new FormGroup
 	
-	REMEMBER:
 	
-		To create a new FormGroup and FormControls implicitly use:
+	==================================== TROUBLESHOOTING TIP =====================================
+	'class' attributes of input element managed by Angular. 'ng-...' classes contain state information of 
+		- ng-dirty
+		- ng-valid
+		- ng-touched
+		- ...
+		
+	- Angular sets these classes dynamically during navigating on form.
+	
+	================================== REMEMBER ==================================
+	
+		To create a new FormGroup and FormControls implicitly use (template driven):
 			• ngForm and
 			• ngModel
 			
-		But to bind to an existing FormGroup and FormControls use:
+		But to bind to an existing FormGroup and FormControls use (model driven):
 			• formGroup and
 			• formControl
 			
-			
+	==============================================================================
+	
+	SEE ALSO:
+		https://angular.io/guide/forms-overview
+		https://www.tektutorialshub.com/angular/angular-forms-fundamentals/
+		How Angular store Form and FormControl state information to CSS class?
+		
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to prevent adding NgForm to forms automatically?
 ====================================================
 SEE ALSO:
-	User input with forms
+	Using forms
 	
 Remember how earlier we said that when using FormsModule that NgForm will be AUTOMATICALLY
 applied to a <form> element? 
@@ -1450,7 +1554,9 @@ Lifecycle hooks are:
 	- ngOnDistroy
 	
 
-https://angular.io/guide/lifecycle-hooks
+SEE ALSO:
+	https://angular.io/guide/lifecycle-hooks
+	Angular-4-Lifecycle-Hooks-Overview.jpg
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1796,3 +1902,524 @@ Other rules:
 	- You can't declare a component twice. 
 	- You should declare and export your component in a new separate module. 
 	- Next you should import this new module in every module you want to use your component.
+
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Templating expressions
+======================
+Angular executes the expression and assigns it to a property of a binding target; the target could be 
+	- an HTML element
+	- a component
+	- a directive
+	
+Expression context (where it's evaluating) is typically the component instance.
+	
+- interpolation
+	A template expression produces a value and appears within the double curly braces, {{ }}.
+
+	{{ expression }}
+	
+
+- property binding
+	In the property binding, a template expression appears in quotes to the right of the = symbol.
+	
+	[property]="expression".
+
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Templating - structural directives
+==================================
+- Structural directives are easy to recognize. An asterisk (*) precedes the directive attribute name as in this example.
+- What is '*' prefix?
+
+	 Internally, Angular translates the *ngIf attribute into a <ng-template> element, wrapped around the host element, like this:
+	 
+	 
+For example *ngIf:
+	HTML:
+		
+		<div *ngIf="hero" class="name">{{hero.name}}</div>
+	
+	UNDER THE HOOD:
+		- The *ngIf directive moved to the <ng-template> element where it became a property binding, [ngIf].
+		- The rest of the <div>, including its class attribute, moved inside the <ng-template> element.		
+	
+		<ng-template [ngIf]="hero">
+			<div class="name">{{hero.name}}</div>
+		</ng-template>
+			
+			
+NgIf, NgFor, and NgSwitch use the same pattern under the hood.
+
+			
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ng-template directive
+=====================
+- The <ng-template> is an Angular element for rendering HTML. 
+- It is NEVER displayed directly. In fact, before rendering the view, Angular replaces the <ng-template> and its contents with a comment.
+- Without structural directive the wrapped elements disappear.
+
+Common use of ng-template:
+
+	- ngIf/else:
+	
+		<div class="lessons-list" *ngIf="lessons else loading">
+			... 
+		</div>
+
+		<ng-template #loading>
+			<div>Loading...</div>
+		</ng-template>
+
+	UNDER THE HOOD happens:
+	
+		<ng-template [ngIf]="lessons" [ngIfElse]="loading">
+		   <div class="lessons-list">
+			 ... 
+		   </div>
+		</ng-template>
+
+		<ng-template #loading>
+			<div>Loading...</div>
+		</ng-template>	
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Can't have multiple template bindings on one element		
+===========================================================
+It's not possible to apply two structural directives to the same element. 
+For example this:
+
+	<div class="lesson" *ngIf="lessons" *ngFor="let lesson of lessons">
+		<div class="lesson-detail">
+			{{lesson | json}}
+		</div>
+	</div>  
+
+To fix this:
+
+	<div *ngIf="lessons">
+		<div class="lesson" *ngFor="let lesson of lessons">
+			<div class="lesson-detail">
+				{{lesson | json}}
+			</div>
+		</div>
+	</div>		
+
+How to avoid extra element? 
+SEE: ng-container directive
+
+
+The same solution without using extra <div>:
+
+	<ng-container *ngIf="lessons">
+		<div class="lesson" *ngFor="let lesson of lessons">
+			<div class="lesson-detail">
+				{{lesson | json}}
+			</div>
+		</div>
+	</ng-container>
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ng-container directive	
+======================
+Is there a way to apply a structural directive to a section of the page 
+without having to create an extra element?
+
+- Yes and that is exactly what the ng-container structural directive allows us to do!
+
+	<ng-container *ngIf="lessons">
+		<div class="lesson" *ngFor="let lesson of lessons">
+			<div class="lesson-detail">
+				{{lesson | json}}
+			</div>
+		</div>
+	</ng-container>
+	
+- There is another major use case for the ng-container directive: 
+	it can also provide a placeholder for injecting a template dynamically into the page.
+	
+	<ng-container *ngTemplateOutlet="loading"></ng-container>
+	
+	
+- You can even inject a template into a componenent:
+
+	PARENT:
+		@Component({
+		  selector: 'app-root',
+		  template: `      
+		<ng-template #customTabButtons>														
+			<div class="custom-class">
+				<button class="tab-button" (click)="login()">
+				  {{loginText}}
+				</button>
+				<button class="tab-button" (click)="signUp()">
+				  {{signUpText}}
+				</button>
+			</div>
+		</ng-template>
+		<tab-container [headerTemplate]="customTabButtons"></tab-container>      		<<<<<<<<< inject
+		`})
+		export class AppComponent implements OnInit {
+
+		}
+
+
+	CHILD: 
+		@Component({
+			selector: 'tab-container',
+			template: `
+			
+		<ng-template #defaultTabButtons>
+			
+			<div class="default-tab-buttons">
+				...
+			</div>
+			
+		</ng-template>
+		<ng-container 
+		  *ngTemplateOutlet="headerTemplate ? headerTemplate: defaultTabButtons">
+			
+		</ng-container>
+		... rest of tab container component ...
+		`})
+		export class TabContainerComponent {
+			@Input()
+			headerTemplate: TemplateRef<any>;							<<<<<< inject
+		}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ngTemplateOutlet
+================
+If you have a template referene you can use it with ngTemplateOutlet <ng-template>
+
+
+	<ng-container *ngTemplateOutlet="loading"></ng-container>
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Template reference
+==================
+Similarly to a DOM element you can create a reference pointing to a template:
+
+	Template:
+	
+		<ng-template #defaultTabButtons>
+			...
+		</ng-template>
+
+	Class:
+	
+		@ViewChild('defaultTabButtons')
+		private defaultTabButtonsTpl: TemplateRef<any>;
+		
+
+A template reference can be inject into child component with input property:
+
+	@Input()
+	headerTemplate: TemplateRef<any>;
+
+How you can use a template reference?
+
+	 - ngIf/else:
+	 
+		<div class="lessons-list" *ngIf="lessons else loading">
+		  ... 
+		</div>
+
+		<ng-template #loading>
+			<div>Loading...</div>
+		</ng-template>	 
+		
+	- ng-containerng-container:
+	
+		<ng-container *ngTemplateOutlet="loading"></ng-container>
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to use ngModel?	
+===================
+- It creates a single FormControl instance from a domain model and binds it to a form control element.
+- 'FormsModule' should be imported to current module.
+
+Options:
+- ngModel: (no binding) to tell Angular that input is a form control
+
+- [ngModel] : (one-way binding) If you have a one-way binding to ngModel with [] syntax, changing the value of the domain model in the component class sets the value in the view.
+				For example to set default value of input field.
+	
+- [(ngModel)] : (two-way binding - also known as 'banana-box syntax'), the value in the UI always syncs back to the domain model in your class.
+		
+		
+- If you want to export the properties of the associated FormControl (like validity state), export the directive into a local template variable using ngModel 
+	as the key (ex: #myVar="ngModel"). 
+	
+	
+Example howto use ngModel on a standalone control:
+	
+		import {Component} from '@angular/core';
+
+		@Component({
+		  selector: 'example-app',
+		  template: `
+			<input [(ngModel)]="name" #ctrl="ngModel" required>						
+
+			<p>Value: {{ name }}</p>
+			<p>Valid: {{ ctrl.valid }}</p>											<<<<<<<<<<< accessing associated FormControl
+			
+			<button (click)="setValue()">Set value</button>
+		  `,
+		})
+		export class SimpleNgModelComp {
+		  name: string = '';
+
+		  setValue() {
+			this.name = 'Nancy';
+		  }
+		}	
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Validation hints
+================
+- Validation handled by Angular auyomatically
+- Validation flags generated by form and formControl level in NgForm
+- Validation flags are managed automatically by Angular during navigating on form. 
+- Built-in validators:  https://angular.io/api/forms/Validators
+
+SEE MORE: 
+	How Angular store Form and FormControl state information to CSS class
+	https://angular.io/api/forms/Validators
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How Angular store control state information to CSS class?
+=========================================================
+Control state flags are managed by Angular dynamically during navigating on form.
+Flags are provided for:
+- form
+- form controls
+- form control groups
+
+Flags are written into CSS class of forms and input fields (form controls) and wrapper divs (with ngModelGroup) as 'ng-..' values:
+
+	ng-valid		: The field content is valid
+	ng-invalid 		: The field content is not valid
+	ng-pending		: waitng for async validation (?)
+	ng-dirty		: The field has been modified
+	ng-dirty		: The field has been modified
+	ng-untouched	: The field has not been touched yet
+	ng-touched		: The field has been touched
+	
+For example after page load 
+	- form class is:		ng-untouched ng-pristine ng-invalid
+	- input class is:		form-control ng-untouched ng-pristine ng-invalid
+		
+When you move among fields:
+	- form class is:		ng-pristine ng-invalid ng-touched								ng-untouched >>> ng-touched
+	- input class is:		form-control ng-pristine ng-invalid ng-touched					ng-untouched >>> ng-touched
+		
+When you fill all fields properly:
+	- form class is:		ng-touched ng-dirty ng-valid
+	- input class is:		form-control ng-touched ng-dirty ng-valid
+
+
+SEE ALSO:
+	https://angular.io/api/forms/NgControlStatus
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Form styling tips	
+=================
+- To show touched invalid fields specify CSS class:
+
+	input.ng-invalid.ng-touched {
+		border: 1 px solid red;
+	}
+
+- How to display a validation warning?
+
+	<input type="email" class="form-control" ngModel name="email" required #email="ngModel">				<------- local reference to model
+	<span class="help-block" *ngIf="!email.valid && email.touched">Please enter a valid email!</span>
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How can you reference a FormControl behind an input field?
+==========================================================
+Create a local reference to the model behind the field.
+For example you want to show a warning if a field is not valid:
+
+	<input type="email" class="form-control" ngModel name="email" required #email="ngModel">				<------- local reference to model
+	<span class="help-block" *ngIf="!email.valid && email.touched">Please enter a valid email!</span>
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to group input values in model?	
+===================================
+You can group input values together in model. 
+Use a wrapper div with ngModelGroup="NAME" structure:
+
+	<div ngModelGroup="userData>
+		<input name="username" ngModel>
+		<input name="email" ngModel>
+	</div>
+	
+Form value will contain:
+	NGForm {
+		value:	{
+					userData: {
+						username: '...',
+						email: '...'
+					}
+				}
+	
+	
+Form controls also contains flags for this group:
+
+		controls:	{
+						userData: {
+							...
+						}
+					}
+					
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Radio button
+============
+- Controller has:
+	- 'genders' array (male, female) with possible values
+	- gender to store result and default value
+
+- Template:
+
+	<div class="radio" *ngFor="let gender of genders">
+		<label>
+			<input type="radio" name="gender" ngModel [value]="gender">{{gender}}
+		</label>
+	</div>
+	
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto generate FormControls dynamically?
+========================================
+In model driven method use FormArray:
+
+	this.form = new FormGroup({
+		'name': new FormControl(),
+		'email': new FormControl(),
+		'hobbies': new FormArray([
+			'defaultHobby': new FormControl(),
+		])
+	});
+
+	onAddHobby() {
+		const control = new FormControl(null, Validator.required);
+		(<FormArray>this.form.get('hobbies')).push(control);
+	}
+	
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto set/patch/reset form values of forms?
+===========================================
+If you have a local reference to NgForm then:
+
+
+	@ViewChild('f')signupForm: NgForm;
+	
+	suggestName() {
+	const suggestedName = 'Superuser';
+		//this.signupForm.setValue({						// writing the whole form
+		//	userData: {
+		//		userName: suggestedName,
+		//		email: ''
+		//	}
+		//	secret: 'pet'
+		});
+		
+		this.signupForm.patchValue(							// updating a part of form
+		{
+			userData: {
+				userName: suggestedName
+			}
+		});
+	}
+
+	onSubmit() {
+		// save data
+		...
+		
+		// reset after save
+		this.signupForm.reset();			// here you can pass an object to reset 
+	}
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto display error-specific messages on validation errors?
+===========================================================
+If a FormControl is invalid then error code is stored into control.errors array.
+Error is always a key-value pair, generally a error name and a 'true' value.
+
+For example if a field is validated with 'required' and it's empty you have this value in errors:
+	errors: {
+		required: true
+	}
+
+So you can simply write error message this way:
+
+	<span *ngIf="email.errors['required']">Empty!</span>
+	<span *ngIf="email.errors['email']">Bad email format!</span>
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How service instances propagated?
+=================================
+You can provide (generate) an instance of a service on any level of application:
+- modules
+- components
+
+Just put a service into 'providers' array of current element and itt will be instantiated there.
+
+If you provide a service it propagated to the CURRENT component and DOWN to 
+it's children (and children of children). The instances are never propagated up, ONLY DOWN.
+
+	UP ----> DOWN
+
+---> If you provide a a service in  the root module all components will use the SAME SINGLE instance of
+		this service.
+		
+---> If you prvide a serice in a child (leaf) component then all components have its own instance of service.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Cross-component communication
+=============================
+Method 1:	You can send events from a componnet to a parent component using @Output + EventEmitter
+
+	DRAWBACK: sometimes you need a chain of property binding 
+
+Method 2:	You can add EventEmitter also to services and somewhere in the application you can subscribe to this EventEmitter.
+
+	Why? 
+	Under the hood EventEmitter is an RxJs Subject.
+	
+	SomeService:
+	
+		statusUpdated = new EventEmitter<string>();
+		
+		
+	Component:
+		constructor(private someService: SomeService) {}
+		
+		onSomeEvent() {
+			this.someService.statusUpdated.emit(newStatus);
+		}
+	
+	Other component:
+		constructor(private someService: SomeService) {
+			this.someService.statusUpdated.subscribe(
+				(status: string) => do_something_with_status
+			);
+		}
+		
+		
+		

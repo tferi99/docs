@@ -12,6 +12,24 @@ Jabber-FAQ
 ------------------------------------------------------------------------------------------------------------------------------------------
 How to setup Jabber for an end user?
 =====================================
+Pre-requisities
+---------------
+- Top-level domain
+	Before you create TCT devices, BOT devices, or TAB devices for Cisco Jabber for mobile users, specify the organization top domain name 
+	to support registration between Cisco Jabber and the Cisco Unified Communications Manager. 
+	In Unified CM Administration interface, select 
+	
+		System > Enterprise Parameters/[Clusterwide Domain Configuration]
+		
+		- Organization Top Level Domain:			
+			This top domain name is used by Jabber as the DNS domain of the Cisco Unified Communications Manager servers for phone registration.
+			For example:	andtek.cee.cs.eilab.biz 
+			
+		- Cluster Fully Qualified Domain Name:
+			For example:	*.andtek.cee.cs.eilab.biz
+
+Setup/Configure
+---------------
 - Install Jabber (for Windows)
 
 - Configure end user in CUCM
@@ -43,8 +61,6 @@ How to setup Jabber for an end user?
 	
 
 - Associate the CSF device with the end user in CUCM
-
-	- set user as Owner User ID in device settings
 
 	IMPORTANT NOTE: If you want to use Jabber with multiple users you have to create multiple CSF devices.
 

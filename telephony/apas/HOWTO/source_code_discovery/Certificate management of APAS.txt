@@ -96,9 +96,9 @@ Call flows:
 					------------------------- if certificateType == recorder -------------------------
 						--> AndPhoneCA.createRecorderCertificate(...)
 					------------------------- else -------------------------
-						--> ApasCertificateHelper.generateV3Certificate(DN, validYear)
+						--> ApasCertificateHelper.generateV3Certificate(DN, year, subjectAlternativeNameExts, keyAlg)
 							- it keypair generated in constructor --> generateRSAKeyPair(keySize)								
-							--> generateV3Certificate(String DN, KeyPair pair, long year)								<<<<<<<<<<<< generating certificate from pre-generated key-pair
+							--> generateV3Certificate(dn, pair, year, subjectAlternativeNameExts, keyAlg)								<<<<<<<<<<<< generating certificate from pre-generated key-pair
 								- initialization of X509V3CertificateGenerator
 								- collecting SubjectAlternativeName items
 								- adding SubjectAlternativeName

@@ -3,25 +3,146 @@ Recording
 =========
 You need a configured recording environment (see more: APAS-FAQ.txt/Howto configure recorder?)
 
+Use-cases
+---------
+- Initiating a recording
 - On-demand recording
-- Automatic recording
 - Status page for recording
+- Search
+
+
+Protocol
+--------
 - Recording protocol between APAS and recorder
 - Handling XML messages in recorder 
-- Handling encryption keys in recorder 
-- Packet sniffing
-- Post-processing recorded media
+
+
+SIP
+---
 - SIP management
-- Writing/changing rec_call table
-- Recording start time information
-- KEEP values
-- Search
+- SIP and JTAPI association
+
+
+Rules
+-----
 - Registering observers by rules
 - Recorder rule matching during registering observers
 - RuleSet without rule
 
+
+Network/Security
+--------
+- Packet sniffing
+- Handling encryption keys in recorder 
+
+
+Database
+--------
+- Writing/changing rec_call table
+- Recording start time information
+
+
+Recording files
+---------------
+- Post-processing recorded media
+
+
+Storage profiles
+----------------
+- KEEP values
+
+
+Troubleshooting
+---------------
+- What is 'csip...' call ID?
+
 - ERROR - in APAS event log: The recording of call ... has been locked because a new call has reserved licenses in the ruleset
 
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Initiating a recording
+======================
+Recording started by sniffer if all required call information collected.
+Information comes from 2 sources:
+	- JTAPI 
+	- SIP
+	
+- When a new information collected by APAS it sends 'recordCall' XML message to recorder.
+- On the first time recorder creates recording entry in the database (rec_call)
+	'recordCallResponse' answers contain ID of this record (dbID)
+- When all necessary information collected by recorder (callId, terminal, source and destination IP/port) then recorder starts recording and captured packets will
+	be saved into file.
+	
+	
+1. JTAPI - general information about call (Cisco Call ID, terminal, calling/called party, ...):
+
+	- com.andtek.andphone.recorder.PhoneCallObserver listens call events
+
+	- PhoneCallObserver is a singleton and associated only phones which has a line with recorder ruleset entry
+		- PhoneCallObserver registered in com.andtek.andphone.recorder.Module.initJTAPI(...) as terminal observer
+		
+
+	--> com.andtek.andphone.recorder.PhoneCallObserver.terminalChangedEvent(TermEv[] eventList)
+		- ON CiscoRTPOutputStartedEv
+			--> action = RuleSet.checkRules(call, false).getActionFlags()
+			- IF action IS ACTION_RECORD OR ACTION_MONITOR
+				- callInfo = new RecordingCallInfo(initiatorTerminal, callID)
+				- setting callInfo properties from call (callingParty, calledParty, ...)
+				--> sendStartCallToRecorder(...)
+					--> isConfiguredSIPTrunkRecording()
+						--> xml = callInfo.getXML("sip", "");
+						--> LOG(Sending XML to recorder (sip))
+						--> recorderClientFactory.getRecorderClient().sendXml(xml)
+							--> LOG(XML_SOCKET:sending XML [<recordCall)
+				
+				XML ===> 
+				<recordCall terminal="SEPA45630BB1748" callID="sip19329/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+				
+				<=== XML
+				<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
+				
+2. SIP - media/stream information (source and destination IP/port):
+	
+	com.andtek.andphone.sip.trunk.SIPServer
+	--> handleEvent(EventQueueWorkerEntry entry)
+		--> handleEvents(APASEvent[] events, Object observer)
+			--> observer.sipServerEvent(events)
+				--> com.andtek.andphone.recorder.RecorderSipTrunk.sipServerEvent(APASEvent[] events)
+					--> processAck(...)
+
+
+				XML ===> 
+				2019-12-19 15:53:02,657: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" srcIP="10.51.51.122" srcPort="47793"/>
+				2019-12-19 15:53:02,659: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
+				2019-12-19 15:53:02,722: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" dstIP="10.51.51.122" dstPort="41899"/>
+				2019-12-19 15:53:02,724: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
+				
+
+
+				
+This is the XML traffic between APAS and recorder:
+
+	--- start ---
+	2019-12-19 15:53:02,421: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" callingParty="+36110009098" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009098" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+	2019-12-19 15:53:02,424: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
+	2019-12-19 15:53:02,657: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" srcIP="10.51.51.122" srcPort="47793"/>
+	2019-12-19 15:53:02,659: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
+	2019-12-19 15:53:02,722: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" dstIP="10.51.51.122" dstPort="41899"/>
+	2019-12-19 15:53:02,724: 1: worker::send(<recordCallResponse code="0" string="OK" callID="sip19329/1" dbID="90" state="1"/>
+	--- end ---
+	2019-12-19 15:53:33,110: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip19329/1" stopOut="1" />
+	2019-12-19 15:53:33,110: 1: worker::send(<recordCallResponse code="100" string="Call removed"/>
+	2019-12-19 15:53:33,170: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="csip25153617" stopOut="1" />
+	2019-12-19 15:53:33,170: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+	2019-12-19 15:53:33,170: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="csip25153617" stopOut="1" />
+	2019-12-19 15:53:33,170: 1: worker::send(<recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+					
+					
+SEE ALSO:
+	SIP and JTAPI association
+	What is 'csip...' call ID?
+	
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 On-demand recording
 ===================
@@ -48,49 +169,6 @@ On demand recording can be started with XML service served by recording servlet:
 						
 			
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Automatic recording
-===================
-Recording started by sniffer if all required call information collected.
-Information came from JTAPI and SIP messages.
-APAS sends 'recordCall' XML message to sniffer with new information which updates call information in sniffer.
-
-JTAPI:
-
-
-	- com.andtek.andphone.recorder.PhoneCallObserver listens call events
-
-	- PhoneCallObserver is a singleton and associated only phones which has a line with recorder ruleset entry
-		- PhoneCallObserver registered in com.andtek.andphone.recorder.Module.initJTAPI(...) as terminal observer
-		
-	- PhoneCallObserver catches CiscoRTPOutputStartedEv event and calls sendStartCallToRecorder(...)
-		- it sends 'sip' XML message to recorder process
-
-	--> com.andtek.andphone.recorder.PhoneCallObserver.terminalChangedEvent(TermEv[] eventList)
-		- ON CiscoRTPOutputStartedEv
-			--> action = RuleSet.checkRules(call, false).getActionFlags()
-			- IF action IS ACTION_RECORD OR ACTION_MONITOR
-				- callInfo = new RecordingCallInfo(initiatorTerminal, callID)
-				- setting callInfo properties from call (callingParty, calledParty, ...)
-				--> sendStartCallToRecorder(...)
-					--> isConfiguredSIPTrunkRecording()
-						--> xml = callInfo.getXML("sip", "");
-						--> LOG(Sending XML to recorder (sip))
-						--> recorderClientFactory.getRecorderClient().sendXml(xml)
-							--> LOG(XML_SOCKET:sending XML [<recordCall)
-							
-				<recordCall terminal="SEP64A0E714F271" callID="sip41789/1" callingParty="9002" calledParty="9000" callingPartyName="" calledPartyName="" 
-					originalCallingParty="9002" originalCalledParty="9000" lastRedirectingParty="" initiated="false"/>
-
-SIP:
-
-		
-	com.andtek.andphone.sip.trunk.SIPServer
-	--> handleEvent(EventQueueWorkerEntry entry)
-		--> handleEvents(APASEvent[] events, Object observer)
-			--> observer.sipServerEvent(events)
-				--> com.andtek.andphone.recorder.RecorderSipTrunk.sipServerEvent(APASEvent[] events)
-					--> processAck(...)
 		
 		
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -559,7 +637,7 @@ INSERTED:
 
 	Initial value of 'start' will be NOW() in CPP recorder. That means when recorder staring recording (not the start of call).
 	
-UPDATEED:
+UPDATED:
 	calls.cpp
 		--> call_set_onDemand(...)
 			------------- if(call->ondemand == 1) ---------------
@@ -597,6 +675,24 @@ keep < 10	: built-in values
 			So file encrypted with aes-128-cbc and password is: 	soascheenadog
 	
 keep >= 10	: ID of storage profile 
+
+
+- inserted by recorder with 0
+- updated by APAS in Admin.updateStorageProfileOnRecord() by background processing:
+
+	In every 10 seconds	
+
+	--> com.andtek.andphone.recorder.background.BackgroundThrd.run()
+		--> com.andtek.andphone.recorder.Admin.recorderBackgroundProcessing()
+			--> recorderBackgroundProcessing(false)
+				--> postProcessRecording(...)
+					--> updateStorageProfileOnRecord(int id)
+		
+						------ if keep < 1 -----------
+						- keepAction = RuleSet.checkAllRules(...)
+						- update rec_call:
+						
+							UPDATE rec_call SET keep=?,lastaction=NOW() WHERE id=?
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -638,6 +734,12 @@ com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain  (Search button) ==
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Registering observers by rules
 ==============================
+select *
+from rec_rulesets rs, rec_rules r
+where rs.id = r.rulesetid
+
+
+
 Ruleset
 -------
 Actions:
@@ -658,6 +760,10 @@ Actions:
 	ACTION_ONDEMAND_NOREC=1024
 	ACTION_ONDEMAND_REC=2048
 
+RuleOp:	
+
+	RULEOP_ANY=1			// OR
+	RULEOP_ALL=2			// AND
 	
 Rule	
 ----
@@ -680,7 +786,7 @@ Match type:
 
 - PhoneCallObserver is a singleton and associated only phones which has a line wich matches with recorder rule entry
 
-- PhoneCallObserver registered as terminal observer [3]:
+- PhoneCallObserver registered as terminal observer [4a/b]:
 	- during startup in com.andtek.andphone.recorder.Module.initJTAPI(...) [1]
 		OR
 	- during adding a ruleset in Admin UI [2]
@@ -689,10 +795,23 @@ Match type:
 	
 	rec_rulesets --1-------------------*-- rec_rules
 	
-- Call frow of AdminUI rule page:
+
+- Observer registration scenarios:	
+	- [1] APAS start
+	- [2] Adding rule in AdminUI rule page:
+	- [3] Adding terminal to application user
+	- [4] Device logged in with EM 
 	
-	[1] --> com.andtek.andphone.recorder.Module.initJTAPI(...)
-		--> [4] recordedTerminalsRepository.observeTerminals(allTerminals, [3], recorderObserverFactory.createOrGetCallObserver())
+	
+	[1] --> com.andtek.andphone.JTAPIThread.run()
+			--> initJtapi(...)
+				--> doInitJtapi(primaryCapf)
+					--> com.andtek.andphone.utils.Modules.initJTAPI(this)
+						--> initJTAPI(...)
+							--> com.andtek.andphone.recorder.Module.initJTAPI(...)
+								--> RecordedTerminalsRepositoryImpl.observeTerminals(...)
+									--> RecordedTerminalsRepositoryImpl.observeRecordedTerminals(...)
+										--> [10] recordedTerminalsRepository.observeTerminals(allTerminals, [9a], [9b])
 	
 	[2] APAS/Recorder/Rules/<add/choose>
 	--> rules_gwtappMain
@@ -704,14 +823,27 @@ Match type:
 						- It saves/update ruleset/run entries in DB
 					--> RulesAdminHelper.sendHUPToSniffer(warningMessage, jtapi)
 						--> com.andtek.andphone.recorder.Module.monitorLines(jtapi)
-							--> [4] recordedTerminalsRepository.observeTerminals(allTerminals, [3], recorderObserverFactory.createOrGetCallObserver())
-						
-	[3] --> recorderObserverFactory.createOrGetTerminalObserver()
-			--> PhoneCallObserver.getObserver()												<<<<<<<<<<<<<<<<<<<<<<<<< it creates singleton PhoneCallObserver on-demand
+							--> [10] recordedTerminalsRepository.observeTerminals(allTerminals, [9a], [9b])
+			
+	[3] Adding terminal to application user 
+		-->	com.andtek.andphone.CiscoJtapiProviderObserver()
+			--> com.andtek.andphone.utils.Modules.providerEvent(jtapi, eventList[i])
+				--> com.andtek.andphone.recorder.Module.providerEvent(ProvEv provEv)
+					--> com.andtek.andphone.recorder.repositories.impl.RecordedTerminalsRepositoryImpl.observeTerminalOnAddressIfNecessary(address, [9a], [9b])
+						--> void observeTerminal(...)
 
+	[4] Device logged in with EM 					
+			SAME AS [3]
+			
+	[9a] --> com.andtek.andphone.recorder2.RecorderCallObserverFactory.createOrGetTerminalObserver()
+			--> PhoneCallObserver.getObserver()												<<<<<<<<<<<<<<<<<<<<<<<<< it creates singleton RecorderCallObserver on-demand
+
+	[9b] --> com.andtek.andphone.recorder2.RecorderCallObserverFactory.createOrGetCallObserver()
+			--> PhoneCallObserver.getObserver()												<<<<<<<<<<<<<<<<<<<<<<<<< it creates singleton RecorderCallObserver on-demand
 						
-	[4] - registering observers for terminals matching with recorder rules
-		--> com.andtek.andphone.recorder.repositories.impl.RecordedTerminalsRepositoryImpl.observeTerminals(allTerminals, terminalObserver,  callObserver)
+						
+	[10] --> com.andtek.andphone.recorder.repositories.impl.RecordedTerminalsRepositoryImpl.observeTerminals(allTerminals, terminalObserver,  callObserver)
+			- registering observers for terminals matching with recorder rules
 			--> observeRecordedTerminals(allTerminals)
 				--> RuleSet.loadRules()
 				-------------------------- loop on terminals ------------------------------
@@ -793,6 +925,73 @@ A ruleset is matching if evaluation of ruleset provides an action. That means:
 - if you have a ruleset without rules and this ruleset is NOT at the final position the ALL NEXT RULESETS ARE SKIPPED 
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SIP and JTAPI association
+=========================
+SIP information extracted on ACK signal:
 
-				
+
+	[2020-02-28 07:47:10,064] [DEBUG] [APAS-defaultWorker-13] [RecorderSipTrunk.java:248] - From=sip:+36110009020@10.51.51.34;x-farend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100
+
+	
+	Fields in ACK:
+		- From=sip:+36110009020@10.51.51.34;
+		- x-farend
+		- x-refci=25252351
+		- x-nearendclusterid=StandAloneCluster
+		- x-nearenddevice=SEPA45630BB1748
+		- x-nearendaddr=+36110009020
+		- x-farendrefci=25252350
+		- x-farendclusterid=StandAloneCluster
+		- x-farenddevice=SEP100000009100
+		- x-farendaddr=+36110009100
+	
+	
+	
+	'x-refci' contains the call leg ID which is the int representation (ID) of the call.
+	
+	You can find this leg ID in CiscoJtapi*.log
+	
+		539: 2020-02-28 07:47:00 CET %JTAPI-PROTOCOL-7-UNK:(P1-10.51.51.34) received Event: com.cisco.cti.protocol.NewCallEvent {
+		  eventSequence                        = 13
+		  lineCallManagerID                    = 1
+		  lineID                               = 1590
+		  lineHandleSpecified                  = true
+		  deviceName                           = SEPA45630BB1748
+		  callCallManagerID                    = 1
+		  callLegID                            = 25252351								<<<< leg ID
+		  globalCallManagerID                  = 1
+		  callID                               = 21172 									<<<<< Cisco call ID
+	
+	
+	Cisco call can be retrieved from provider by leg ID:
+	
+	
+	--> com.andtek.andphone.sip.SIPTrunk
+		--> jtapiProvider = JTAPIServlet.getAndtekProvider((CiscoProvider) phone.getTerminal().getProvider());
+			--> call = jtapiProvider.getCall(Integer.parseInt(callID))
+				------- if call not found --------
+					- try to get call from an active terminale connection (FALLBACK)
+						------- if call found --------
+							callID = 'sip' + call ID
+						------- if call STILL not found --------
+							callID = 'csip' + call leg ID
+			
+SEE ALSO:	What is 'csip...' call ID?
+			
+		
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+What is 'csip...' call ID?
+==========================
+During initiating a recording call information collected from 2 sources:
+1. JTAPI 
+2. SIP
+
+If call retrieved from SIP information cannot be find in existing calls that means this call not detected before by JTAPI
+(maybe terminal not observed by JTAPI).
+
+In this case APAS generates a call ID from leg ID:			csip + CALL_LEG_ID
+
+
+
 

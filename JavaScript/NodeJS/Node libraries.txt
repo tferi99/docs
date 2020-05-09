@@ -14,7 +14,7 @@ Node libraries
 Developer
 =========
 npm-check			: Check for outdated, incorrect, and unused dependencies.
-npm-check-updates
+npm-check-updates	: npm-check-updates upgrades your package.json dependencies to the latest versions, ignoring specified versions.
 newman				: Newman is a command-line collection runner for Postman
 
 -------------------------------------------------------------------------

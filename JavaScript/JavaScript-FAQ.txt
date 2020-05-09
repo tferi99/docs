@@ -21,6 +21,7 @@ Functions
 Arrays
 ------
 - How to iterate over array elements?
+- How to copy an array?
 	
 OO
 --
@@ -718,3 +719,84 @@ Three dots ( … ) in JavaScript
 GO TO: ES6/ES6-FAQ.txt
 
 		
+		
+------------------------------------------------------------------------------------------------
+How to copy an array?
+=====================
+SHALLOW copy
+------------
+	- slice():
+	
+		const newArr = array.slice();
+
+		var fruits = ["Banana", "Orange", "Lemon", "Apple", "Mango"];
+		var citrus = fruits.slice();
+		var fruits2 = fruits.slice();
+
+	- Spread Operators (...):
+	
+		var newArr = [...arr];
+	
+	- Object.assign()
+	
+		Object.assign(newArr, array);
+		
+		
+	- Array/from()
+	
+		const newArr = Array.from(array)	
+		
+DEEP copy
+---------
+
+	- copy with hack:
+	
+		const newArr = JSON.parse(JSON.stringify(array));
+		
+		
+		NOTE:
+			“If you do not use Dates, functions, undefined, Infinity, [NaN], RegExps, Maps, Sets, Blobs, 
+			FileLists, ImageDatas, sparse Arrays, Typed Arrays or other complex types within your object, 
+			a very simple one liner to deep clone an object is: JSON.parse(JSON.stringify(object))”
+		
+	- lodash:
+	
+		const newArr = _.cloneDeep(array);
+		
+	- Ramda:
+	
+		const newArr = R.clone(array);
+		
+	- Really fast deep copy? ---> rfdc:
+	
+		const clone = require('rfdc')() 	// Returns the deep copy function
+		clone({a: 37, b: {c: 3700}});
+	
+	- your own function:
+	
+		const deepCopyFunction = (inObject) => {
+		  let outObject, value, key
+
+		  if (typeof inObject !== "object" || inObject === null) {
+			return inObject // Return the value if inObject is not an object
+		  }
+
+		  // Create an array or object to hold the values
+		  outObject = Array.isArray(inObject) ? [] : {}
+
+		  for (key in inObject) {
+			value = inObject[key]
+
+			// Recursively (deep) copy for nested objects, including arrays
+			outObject[key] = deepCopyFunction(value)
+		  }
+
+		  return outObject
+		}
+
+
+		let newArr = deepCopyFunction(array);
+
+
+SEE ALSO:	
+	https://medium.com/javascript-in-plain-english/how-to-deep-copy-objects-and-arrays-in-javascript-7c911359b089		

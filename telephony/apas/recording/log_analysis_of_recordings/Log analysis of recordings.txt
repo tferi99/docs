@@ -1,10 +1,11 @@
-================================
-Log analysis of recordings - FAQ
-================================
+==========================
+Log analysis of recordings
+==========================
 
 SEE MORE:  doc\software\tools_and_languages\telephony\Apas\HOWTO\source_code_discovery\Recording.txt 
 
-
+- Goals of analysis
+- Where can you find call ID in logs?	
 - Test call info
 - Steps of analysis
 - Structure of log files
@@ -12,8 +13,29 @@ SEE MORE:  doc\software\tools_and_languages\telephony\Apas\HOWTO\source_code_dis
 - LogExpert highlights
 
 -------------------------------------------------------------------------------------------------------------------------------------------
+Goals of analysis
+=================
+- To get recorded calls from logs with call information
+- To get recording protocol messages between APAS and recorder
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Where can you find call ID in logs?	
+===================================
+- andphone.log
+- andphone_record.log
+- CiscoJtapi.log
+- recorder.log
+- sqltiming.log
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
 Test call info
 ==============
+We use logs from this call as sample here.
+Log files can be found under usecase1/logs.
+
 Use case:
 
 	- configuration:
@@ -29,6 +51,9 @@ Use case:
 	
 Recorded call	
 -------------
+
+	+36110009100 -----> +36110009020
+
 APAS:			10.51.51.122
 Call ID:		sip21172/1
 Time:			2020-02-28 07:47:09 - 2020-02-28 07:47:21  :  12 sec(s)
@@ -55,12 +80,19 @@ RECORDING[0][sip21172/1, SEPA45630BB1748] : 2020-02-28 07:47:09 - 2020-02-28 07:
    - dstPort=46610
    - calledParty=+36110009020 
 	
-	
 -------------------------------------------------------------------------------------------------------------------------------------------
 Steps of analysis
 =================
-NOTE: scripts (*.sh) are in APAS_SRC_SIR/development/log-analysis.
+NOTE: 
+	Scripts (*.sh) are in APAS_SRC_SIR/development/log-analysis.
+	You can run all scripts in a single step with:
+	
+		FULL_REPORT_FOR_RECORDING.sh
 
+	
+Steps are:
+	0. Initialization
+	
 	1. Get time range information from log files
 	
 	2. Locating a call in logs (getting call ID, time, calling/called party)
@@ -76,29 +108,32 @@ NOTE: scripts (*.sh) are in APAS_SRC_SIR/development/log-analysis.
 	7. Check start of recording a stream and starting disk thread on sniffer
 	
 
+0. Initialization
+-----------------
+To uncompress archives and convert datetime information call:
+
+	initLogFiles.sh <log-dir> -u
+	initLogFiles.sh <log-dir> -d 
+	
+
+	
 1. Get time range information from log files
 --------------------------------------------
-TIP:	call:
+Get time ranges from first and last lines which has time. 
 
 	createTimeRangeReport.sh <log-dir>
 
-Get time ranges from first and last lines which has time. Be aware of rotated logs.
 
 	
 	
 2. Locating a call in logs
 --------------------------
-TIP: call:
-
-		getCalls.sh <log-dir> detailed
-
-
-- Get call from CiscoJtapi*.log
-
-	Pattern (regex):
+- from Cisco JTAPI:
 	
-		<TIME>.*received Event: com.cisco.cti.protocol.		
-	
+		csript:				getCallsFromCiscoJtapi.sh
+		files:				CiscoJtapi*.log
+		Regex pattern:		<TIME>.*received Event: com.cisco.cti.protocol.NewCallEvent
+
 	
 	CallID can be retrieved from 'callID' field of NewCallEvent object.
 	
@@ -281,9 +316,8 @@ TIP: call:
 		
 - Get call from andphone.log.*
 
-	Pattern (regex):
-	
-		<TIME>.*recorder.PhoneCallObserver.*RCCO-CC.*CallActiveEv
+	files:				andphone.log.*
+	Regex pattern:		<TIME>.*recorder.PhoneCallObserver.*RCCO-CC.*CallActiveEv
 	
 	
 	
@@ -456,15 +490,6 @@ Pattern:	PhoneCallObserver.*Checking recording rules
 		  ! evaluation stopped on rule match 
 	   result: 
 		 (action = [ RECORD], storage = 10)
-
-
-	
-
-
-
-
-
-
 
 
 -------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,20 @@
+===============================
+Howto enable-disable observers?
+===============================
+Modules uses observers to catch JTAPI events. If you dont want to use a module you can disable observers 
+for example during development to make a clear environment.
+
+Howto enable/disable observers? It depends on feature. 
+- sometimes you have to set/remove Route point or rout epoint prefix
+- sometimes you have to add/remove phones to/from a phone pool (choosing All Phones/No phones)
+
+NOTE:	Generally you have to make a soft-restart to apply changes.
+
+- com.andtek.andphone.recorder.PhoneCallObserver
+	
+	Disable (unset) recording in APAS/Recorder/Configuration/[Recording Parameters]/(Recorder Mode).
+	
+	NOTE: Only >= 6.2.2 
+	
+	
+	

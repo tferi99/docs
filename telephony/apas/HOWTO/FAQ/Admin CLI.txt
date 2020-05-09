@@ -1,0 +1,34 @@
+=========
+Admin CLI
+=========
+
+- How to start?
+- Logging
+
+
+----------------------------------------------------------------------------------------------------------------------------
+How to start?
+=============
+Admin CLI is a Perl script:			/opt/apas/admin.pl
+
+It's configured as default shell of user 'admin', so you can start it with:
+
+	su - admin
+	
+	
+----------------------------------------------------------------------------------------------------------------------------
+Logging	
+=======
+Logging functions (ApasAdminUtils.pm):
+	- logError(msg)
+	- logWarning(msg)
+	- logInfo(msg)
+	- logDebug(msg)
+
+Loglevels :   
+	1:	ERROR
+	2:	WARNING
+	3:	INFO
+	4:	DEBUG 	
+
+Log file:		/var/log/apas/admin_cli.log	

@@ -1,33 +1,72 @@
 =====================
 Howto build recorder?
 =====================
+The most simple way to build recorder is using the Jenkins because all dependencies installed there.
 
-1. Checkout SVN (http://devel.andtek.com/svn/andphone_record/trunk/src/andphone_record) to your developer environment.
+Use case:
+	- Checkout source into you development environment (Windows).
+	- Edit source code in Eclipse CDT.
+	- Share source directory to Jenkins
+	- Build sources there
+	- Deploy recorder executable to ISO APAS.
 
-2. SSH to server Jenkins SLAVE server (192.168.150.14) and mount your source directory:
+	
+Step for build environment:
+	
+1. Checkout SVN (https://uk-svn-001.edge.local/svn/Andtek.andphone_record/trunk/src/andphone_record) to your developer environment.
 
-	To mount your local recorder source:
-		- add REMOTE tunneling:		R 50445:localhost:445
-		- add mount entry to /etc/fstab:
-		
-			//127.0.0.1/andphone_record_remote /mnt/ftoth/dev/andphone_record cifs user,uid=500,rw,suid,port=50445,username=ftoth,noauto 0 0
+2. Mount source directory to Jenkins:
+
+	Pre-requisities:
+	
+		- add your user:
+				
+			adduser ftoth
 			
-			where 500 is your UID
+		- crate mount point:
+		
+			mkdir -p /mnt/ftoth/andphone_record
+			chown ftoth:ftoth /mnt/ftoth/andphone_record
+			
+		- install CIFS if missing:
+		
+			- check if CIFS installed:		yum list installed | grep -i cifs
+			- if not installed:
+				- search CIFS:				yum search cifs
+				- install:					yum install cifs-utils.x86_64
+			
+	- share your recorder source directory from Windows with 'Full control' as 'andphone_record'
+	
+	- there are 2 ways to access windows shares:
+		1. open INCOMING ports 139 and 445
+		OR
+		2. SSH with REMOTE tunneling
 
-		- OR open INCOMING ports 139 and 445 
+		1. If Windows ports (139 and 445) are opened then you can access them direcly:
+	
+			mount -t cifs -o username=ftoth //WIN_IP/andphone_record /mnt/ftoth/andphone_record
 		
-			mount -t cifs -o ftoth //192.168.5.113/andphone_record andphone_record_remote
-			
-			
-		- create mount directory if missing 
-		- mount /mnt/ftoth/andphone_record
+		2. with remote tunneling:
 		
-		NOTE:
-			Pre-requisty here installed samba client package (samba-client).
+			- add REMOTE tunneling to you SSH config:		R 50445:localhost:445
+			- mount:
+			
+				mount -t cifs -o username=ftoth,port=50445 //127.0.0.1/andphone_record /mnt/ftoth/andphone_record
+				
+		NOTE: 
+			You can add permanent configuratin to /et/fstab:
+		
+				//127.0.0.1/andphone_record     /mnt/ftoth/andphone_record      cifs    user,uid=1000,rw,suid,port=50445,username=ftoth,noauto 0 0
+			
+			Where 1000 is your UID of you Linux user (from /etc/passwd).
+			This way you can simply mount your remote directory with:
+			
+				mount /mnt/ftoth/andphone_record 
 		
 2. Build project
+	- login:	su - ftoth
 
-	- go to project directory (/mnt/ftoth/andphone_record)
+	- go to project directory:	cd /mnt/ftoth/andphone_record
 
 	- ant
 
@@ -46,9 +85,8 @@ Howto build recorder?
 			
 3. Artifact generated into 'build' directory.
 
-			
 
-NOTE:
+TIPS:
 	If you move project into another directory delete PROJECT_DIR/build and call ant again. 
 	It will re-generate makefiles (cmake).
 	

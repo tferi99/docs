@@ -8,6 +8,8 @@ NOTE here: in some environment End users are replicated from extenal source (e.g
 2. Enable EM in device:
 
 	CUCM/Device/Phone/[Extension Information]/Enable Extension Mobility
+	
+	Logout profile: --- User current device settings ---
 
 3. Create a device profile
 	- CUCM/Device/Device Settings/Device profile/'Add new'
@@ -17,7 +19,7 @@ NOTE here: in some environment End users are replicated from extenal source (e.g
 			
 	- Add line(s) to that profile
 	
-	- Assign end user:
+	- Assign logged out end-user profile (device go back here after logout) or set <None> if you want device defaults:
 	
 		[Logged Out (Default) Profile Information]/Login User Id		
 	
@@ -27,7 +29,7 @@ NOTE here: in some environment End users are replicated from extenal source (e.g
 	
 5. Add XML service to phone menu where you want to log in using this profile.
 	
-	http://192.168.5.18:8080/emapp/EMAppServlet?device=#DEVICENAME#
+	http://CUCM:8080/emapp/EMAppServlet?device=#DEVICENAME#
 	
 6. Calling this service you have to specify:
 	
@@ -36,4 +38,22 @@ NOTE here: in some environment End users are replicated from extenal source (e.g
 		
 	After login assigned profile will be loaded into device and user settings/lines will overwrite default profile of device.
 
+7. Add XML service to phone menu of EM device where you want to logout:
+	
+	http://CUCM:8080/emapp/EMAppServlet?device=#DEVICENAME#
+ 
 
+ 
+TIP:
+	- check current profile:
+		- go to:	CUCM/Device/Phone/[Extension Information]
+		- state of device in:
+			- Current End User Profile
+			- Current Device Profile	
+			
+	- How to logout if you don't have logout service on EM device? 
+		- go to:	CUCM/Device/Phone/[Extension Information]
+		- if you are logged in then you have a 'Logout' button
+		- click
+	
+	

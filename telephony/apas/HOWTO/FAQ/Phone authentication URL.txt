@@ -1,0 +1,39 @@
+========================
+Phone authentication URL
+========================
+
+- What it is?
+- Configuration
+- How to use it?
+
+--------------------------------------------------------------------------------------------------------------------
+What it is?
+===========
+If you want access some protected resource in CUCM environment the resource owner can authenticate you.
+For example if you want to download screenshot from a phone. 
+In this case protected object is authenticated and you get a login dialog (possible Basic Authentication).
+
+For example here you want to download scrrenshot from a phone.
+Your IP:	10.255.249.145
+Phone IP:	10.255.249.150
+CUCM IP:	10.51.51.34
+
+- browser sends a HTTP request to device:
+
+	34	5.257439	10.255.249.145	10.255.249.150	HTTP	380	GET /CGI/Screenshot HTTP/1.1 
+
+- protected service (e.g. a phone device) responses with 401 (unathorized):
+
+	42	5.271146	10.255.249.150	10.255.249.145	HTTP	250	HTTP/1.1 401 Unauthorized  (text/html)
+
+- you get a login dialog and you submit credentials
+
+--------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+APAS/Global/configuration
+
+
+--------------------------------------------------------------------------------------------------------------------
+How to use it?
+==============

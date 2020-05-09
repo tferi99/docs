@@ -9,7 +9,6 @@ Phone
 Configuration
 -------------
 - How to add a phone to CM?
-- How to delete phones and lines from CM?
 - Howto call AXL SQL queries?
 - Howto capture packets from a Cisco IP phone?
 - How to add an XML service to a phone?
@@ -28,6 +27,7 @@ Maintenance
 - How to restart CUCM?
 - SSO-related CLI commands
 - How to configure SAML2 SSO federation with OpenAM?
+- How to delete unassigned lines from CM?
 
 Query
 -----

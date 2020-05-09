@@ -51,6 +51,6 @@ To create update package:
 - After build you can check modules of update package in 'Last Successful Artifacts', and you can also download package here (e.g. APAS-x86_64-572-9470-Update.pkg)
 
 !!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!
-AFTERE BUILDING SUBPROJECT RESET REPOSYTORY URL (remove revision number from the end of URL), OTHERWISE THIS REVISION WILL BE THE PART OF PACKAGES IN THE FUTURE
+AFTER BUILDING SUBPROJECT RESET REPOSITORY URL (remove revision number from the end of URL), OTHERWISE THIS REVISION WILL BE THE PART OF PACKAGES IN THE FUTURE
 !!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!
 

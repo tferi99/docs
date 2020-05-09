@@ -1,0 +1,10 @@
+=======
+Winston
+=======
+
+- Architecture
+
+------------------------------------------------------------------------------------------------------------
+Architecture
+============
+In winston, both Logger and Transport instances are treated as objectMode streams that accept an info object.
