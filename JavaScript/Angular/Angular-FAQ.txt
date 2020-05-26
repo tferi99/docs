@@ -36,6 +36,7 @@ Directives, Components
 - How to set CSS class of host element from component code?
 - How to change the default prefix of component to stop tslint warnings
 - How to set component input with a literal value?
+- How to set component input with a boolean value?
 - Parent-child component interaction
 - How to project content from parent to child component?
 
@@ -48,7 +49,7 @@ Templating
 - ERROR: Can't have multiple template bindings on one element
 - ng-container directive
 - ngTemplateOutlet
-- Template reference
+- Howto inject a template into a component (template reference)?
 
 Data input, Forms
 -----------------
@@ -58,13 +59,14 @@ Data input, Forms
 - How to control form UI by validation status?
 - Validation hints
 - How Angular store control state information to CSS class?
-- Form styling tips
+- Form styling tips for validation
 - How can you reference a FormControl behind an input field?
 - How to group input values in model?
 - Radio button
 - Howto set/patch/reset form values of forms?
 - Howto generate FormControls dynamically?
 - Howto display error-specific messages on validation errors?
+- Howto use datepicker?
 
 RxJS
 ----
@@ -76,9 +78,16 @@ Design, CSS
 - How works component level CSS?
 - How to set browser title?
 
-Routing
--------
+Routing, navigation
+-------------------
+- Order of routes
 - How to navigate from a controller code?
+- Nested routing with Multiple RouterOutlet RouterModule
+- How to go back to previous page?
+- Passing/retrieving parameter with routing							!!! UNDER CONSTRUCTION !!!
+- Howto preserve query parameters for the next navigation?
+- Passing static data to route
+- How to prevent user from accidentaly navigating away?
 
 Other Tips
 ----------
@@ -122,7 +131,7 @@ Troubleshooting
 ---------------
 - How to get versions?
 - TSLint: Type ... trivially inferred from a ... literal, remove type annotation (no-inferrable-types)
-- ERROR:	Can't bind to 'formControl' since it isn't a known property of 'input'  
+- ERROR: Can't bind to 'formControl' since it isn't a known property of 'input'
 - How to trace value of  Reactive form?
 - ERROR: Unexpected token } in JSON at position ...
 - Property 'map' does not exist on type 'Observable<...>'
@@ -251,6 +260,10 @@ Optional:
 		
 	FontAwesome:
 		Method 1 - npm:
+			
+			ng add @fortawesome/angular-fontawesome
+	
+		Method 2 - npm:
 			- install:
 				
 				npm install @fortawesome/fontawesome-free
@@ -270,45 +283,7 @@ Optional:
 
 
 			SEE ALSO:	https://fontawesome.com/how-to-use/on-the-web/setup/using-package-managers
-	
-		Method 2 - Angular-fontawesome:
-			- install:
-
-				npm i @fortawesome/fontawesome-svg-core
-				npm i @fortawesome/free-solid-svg-icons
-				npm i @fortawesome/angular-fontawesome
-	
-			- usage:
-
-				src/app/app.module.ts:
-
-					import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-					...
-					imports: [
-						...,
-						FontAwesomeModule
-					],
-					
-				src/app/app.component.ts:
-
-					import { Component } from '@angular/core';
-					import { faCoffee } from '@fortawesome/free-solid-svg-icons';
-					 
-					@Component({
-					  selector: 'app-root',
-					  templateUrl: './app.component.html',
-					  styleUrls: ['./app.component.css']
-					})
-					export class AppComponent {
-					  title = 'app';
-					  faCoffee = faCoffee;
-					}
-
-				src/app/app.component.html:
-
-					<fa-icon [icon]="faCoffee"></fa-icon>
-
-			SEE ALSO:	https://fontawesome.com/how-to-use/on-the-web/using-with/angular
+						https://fontawesome.com/how-to-use/on-the-web/using-with/angular
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Structure of an Angular application
@@ -493,15 +468,27 @@ How to debug Angular?
 	
 		in tsconfig.ts and browser will show source TS instead of generated JS in source panel.
 	
-- Install Augury Chrome extension 	
-	- you can show component hierarchy
-	- you can view/change component properties
-
-!!! RECOMMENDED !!!
 - In Chrome/Sources you can find webpack:// folder which contains a '.' subfolder 
 	which contains all TS files. Here you can place debugger breakpoints.
 	
 
+- WebStorm:
+
+		- Create 2 menu into WebStorm 'Edit Run/Debug Configuration'
+			- 'npm'
+				- pointing to 'start' package.json' script
+			- 'JavaScript Debug'
+				- URL: points to URL of Angular application 
+				
+				
+		- Start 'npm' configuration with 'Run' and wait for compilation and start to be completed.
+		- Start 'JavaScript Debug' with 'Debug'
+		
+		NOTE: 
+			 '--evalSourceMap=true' depracated option can hurt debugger. I had it and debugger was not stopped on breakpoints.
+			 Remove it.
+		
+	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to generate components?	
 ===========================
@@ -699,6 +686,41 @@ Caller template:
 	OR
 	<app-my-form title="literal" [size]="3.2"></app-my-form>
 	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to set component input with a boolean value?
+================================================
+If you have a component with a boolean and you try to specify property this way:
+
+	Component:
+		@Component({
+		  selector: 'app-test',
+		  ...
+		})
+		export class TestComponent implements OnInit {
+		  @Input() enabled: true;
+		}
+
+
+	Usage:
+	
+		<app-test enabled="false>																	// BAD !!!!!
+
+
+	...then value will be "false" string.
+	
+	
+	YOU SHOUL always use brackets if you want to get right data type:
+	
+		<app-test [enabled]="false>																	// GOOD
+	
+	
+
+
+
+
+
+
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Conditional or dynamic CSS Style/Class
 ======================================
@@ -970,7 +992,7 @@ Form management based on a common ancestor class:
 		method 2 - using form builder:
 			template:
 			
-			  <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="ui form">				<<< don't send form to controller, since it's there
+			  <form [formGroup]="myForm" (ngSubmit)="onSubmit()">				<<< don't send form to controller, since it's there
 				<div class="field">
 				  <label for="skuInput">SKU</label>
 				  <input type="text" id="skuInput" placeholder="SKU" [formControl]="myForm.controls['sku']">					<<< v1
@@ -982,7 +1004,7 @@ Form management based on a common ancestor class:
 				  <input type="text" id="skuDesc" placeholder="Description" formControlName="desc">		<<< v2
 				</div>
 				
-				<button type="submit" class="ui button">Submit</button>
+				<button type="submit" class="btn btn-primary">Submit</button>
 			  </form>
 				
 			controller:
@@ -1062,8 +1084,8 @@ This means you could have a form that doesn’t get NgForm applied by using the 
 	
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
-ERROR:	Can't bind to 'formControl' since it isn't a known property of 'input'
-==============================================================================
+ERROR: Can't bind to 'formControl' since it isn't a known property of 'input'
+=============================================================================
 You are using Reactive form but you forgot 
 	- to import ReactiveFormsModule into main module 
 	OR
@@ -1403,7 +1425,7 @@ Use Title service:
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR: Can't bind to 'formGroup' since it isn't a known property of 'form'
-=========================================================================
+==========================================================================
 EXPLANATION
 -----------
 	In order to use the new forms library we need to first make sure we import the forms library in our
@@ -2024,6 +2046,11 @@ The same solution without using extra <div>:
 --------------------------------------------------------------------------------------------------------------------------------------------------
 ng-container directive	
 ======================
+You cannot specify more than 1 structural directive (* prefix) in a DOM element.
+For example you cannot us *ngIf and *ngFor in the same element. 
+Solution: put *ngFor element into a parent element with *ngIf.
+But this way you need an extra element. Don't you?
+
 Is there a way to apply a structural directive to a section of the page 
 without having to create an extra element?
 
@@ -2092,14 +2119,14 @@ without having to create an extra element?
 --------------------------------------------------------------------------------------------------------------------------------------------------
 ngTemplateOutlet
 ================
-If you have a template referene you can use it with ngTemplateOutlet <ng-template>
+If you have a template reference you can use it with ngTemplateOutlet <ng-template>
 
 
 	<ng-container *ngTemplateOutlet="loading"></ng-container>
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Template reference
-==================
+Howto inject a template into a component (template reference)?
+==============================================================
 Similarly to a DOM element you can create a reference pointing to a template:
 
 	Template:
@@ -2123,17 +2150,17 @@ How you can use a template reference?
 
 	 - ngIf/else:
 	 
-		<div class="lessons-list" *ngIf="lessons else loading">
+		<div class="lessons-list" *ngIf="lessons else loading">				<<< using template reference
 		  ... 
 		</div>
 
-		<ng-template #loading>
+		<ng-template #loading>												<<< template reference
 			<div>Loading...</div>
 		</ng-template>	 
 		
-	- ng-containerng-container:
+	- ng-container:
 	
-		<ng-container *ngTemplateOutlet="loading"></ng-container>
+		<ng-container *ngTemplateOutlet="loading"></ng-container>			<<< using template reference
 
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2182,7 +2209,7 @@ Example howto use ngModel on a standalone control:
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Validation hints
 ================
-- Validation handled by Angular auyomatically
+- Validation handled by Angular automatically
 - Validation flags generated by form and formControl level in NgForm
 - Validation flags are managed automatically by Angular during navigating on form. 
 - Built-in validators:  https://angular.io/api/forms/Validators
@@ -2228,12 +2255,12 @@ SEE ALSO:
 	
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Form styling tips	
-=================
+Form styling tips for validation	
+================================
 - To show touched invalid fields specify CSS class:
 
 	input.ng-invalid.ng-touched {
-		border: 1 px solid red;
+		border: 1px solid red;
 	}
 
 - How to display a validation warning?
@@ -2369,6 +2396,11 @@ So you can simply write error message this way:
 	<span *ngIf="email.errors['email']">Bad email format!</span>
 
 	
+NOTE:
+	In current version it canot work becasue 'errors' property is null if you don't have an error.
+	Better way writing a component.
+	
+	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How service instances propagated?
 =================================
@@ -2422,4 +2454,301 @@ Method 2:	You can add EventEmitter also to services and somewhere in the applica
 		}
 		
 		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Nested routing with Multiple RouterOutlet RouterModule
+======================================================
+- add routing module to root module
+- create child modules with routing
+
+	ng g m RouterTest --routing
+
+	It creates 2 module files:
+		- module
+		- module routing
+
+
+- add route to child routing, import RouterModule with forChild:
+
+	const routes: Routes = [
+	  { path: '', component: RouterTestMain, children: [
+		  { path: 'a', component: AComponent},
+		  { path: 'b', component: BComponent},
+		  { path: '', redirectTo: 'a', pathMatch: 'full' },
+		  { path: '**', component: LazyPage404Component },
+		]}
+	];
+	
+	@NgModule({
+	  declarations: [],
+	  imports: [RouterModule.forChild(routes)],
+	  exports: [RouterModule]
+	})
+	export class RouterLazyRoutingModule { }
+
 		
+- add child module routing with lazy loading (loadChildren) to root routing module:
+
+	const routes: Routes = [
+		{ path: 'home', component: HomePageComponent },
+		...
+		{ path: 'router-lazy', loadChildren: () => import('./router-lazy/router-lazy.module').then(m => m.RouterLazyModule) },     // lazy loading
+		...
+		{ path: '',   redirectTo: '/home', pathMatch: 'full' },   // default
+		{ path: '**', component: Page404Component}
+	];
+
+	@NgModule({
+	  imports: [
+		RouterModule.forRoot(routes, { enableTracing: false })    // <-- debugging purposes only
+	  ],
+	  exports: [RouterModule]
+	})
+	export class AppRoutingModule { }
+	
+
+SEE ALSO:	project: my-ang-demo 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto use datepicker?
+=====================
+- import into AppModule:
+
+	import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+	import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
+	@NgModule({
+	  imports: [
+		BrowserAnimationsModule,
+		BsDatepickerModule.forRoot(),
+		...
+	  ]
+	})
+	export class AppModule(){}
+
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to go back to previous page?
+================================
+- Using built-in Location service:
+
+	@Component({
+	  // component's declarations here
+	})
+	class SomeComponent {
+
+	  constructor(private location: Location) 
+	  {}
+
+	  goBack() {
+		this.location.back();
+	  }
+	}
+
+	<button (click)="goBack()">Back</button>
+	OR
+	<a href="javascript:void(0)" (click)="goBack()">Back</a>
+	
+	
+- Passing current location to next page:
+
+	Current page:
+	
+		this.router.navigate(["user/edit"], { queryParams: { returnUrl: this.router.url }
+	
+	Next page:
+	
+		onInit() {
+			this.router.queryParams.subscribe((params) => {
+				this.returnUrl = params.returnUrl;
+			});
+		}
+		
+		back() {
+			this.router.navigateByUrl(this.returnUrl);
+		}
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Order of routes
+===============
+The order of routes is important because the Router uses a FIRST-MATCH WINS STRATEGY when matching routes, 
+so more specific routes should be placed above less specific routes. 
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Passing/retrieving parameter with routing
+=========================================
+
+Parameters:
+	- path
+	- query
+
+	Route contains path parameters:
+	
+		{ path: 'persons/:id/edit', component: PersonDetailComponent},
+	
+Passing
+-------		
+- in template:
+	- routerLink	: array of fragments
+	- queryParams	: map of parameters as a JS object
+	- fragment		: after #
+
+	<a [routerLink]="['/hero', hero.id, 'edit']" [queryParams]="{allowEdit: '1'}" fragment="loading">
+	
+		http://host:port/hero/100/edit?allowEdit=1#loading
+
+- in controller code:
+	
+	- Router.navigate(commands, extras)
+
+		this.router.navigate(['/hero/', hero.id, 'edit'], {queryParams: {allowEdit: '1'}, fragment: 'loading'});
+
+	- Router.navigateByUrl(url|UrlTree, extras)
+
+		- URL string:
+		
+			url = '/hero/' + id + '/edit?allowEdit=1#loading';
+			this.router.navigateByUrl(url);
+		
+		- URL tree:
+	
+			const urlTree = router.createUrlTree(['/hero', id, 'edit']);
+			this.router.navigateByUrl(urlTree, {queryParams: {allowEdit: '1'}, fragment: 'loading'});
+	
+		Tricks:
+			UrlTree -> string:		Router.serializeUrl(urlTree)
+			string -> UrlTree:		Router.parseUrl(str) 
+	
+		
+Retrieving
+----------
+constructor(private route: ActivatedRoute) { }
+
+ngOnInit(): void {
+	this.id = +this.route.snapshot.params['id'];
+	this.extra = this.route.snapshot.fragment;
+}
+
+
+- But this solution is proper ONLY AT THE 1ST TIME. It's not reactive, so after creation there is no chance to detect changes.
+If you navigate to the same component Angular won't instantiate it again.
+- to listen to parameter changes y ou need an observer. Route.params is an observable:
+
+
+this.route.params
+  .subscribe(
+	(params: Params) => {
+	  const id = +params['id'];
+	}
+  );
+
+this.route.fragment
+  .subscribe(
+	(fragment: string) => {
+	  const extra = fragment;
+	}
+  );
+  
+IMPORTANT NOTE: 
+	You don't have to unsubscribe from this observable - Angular do it automatically when component destroyed.
+
+
+Example navigations
+-------------------
+// create /team/33/user/11
+router.createUrlTree(['/team', 33, 'user', 11]);
+
+// create /team/33;expand=true/user/11
+router.createUrlTree(['/team', 33, {expand: true}, 'user', 11]);
+
+// you can collapse static segments like this (this works only with the first passed-in value):
+router.createUrlTree(['/team/33/user', userId]);
+
+// If the first segment can contain slashes, and you do not want the router to split it,
+// you can do the following:
+router.createUrlTree([{segmentPath: '/one/two'}]);
+
+// create /team/33/(user/11//right:chat)
+router.createUrlTree(['/team', 33, {outlets: {primary: 'user/11', right: 'chat'}}]);
+
+// remove the right secondary node
+router.createUrlTree(['/team', 33, {outlets: {primary: 'user/11', right: null}}]);
+
+// assuming the current url is `/team/33/user/11` and the route points to `user/11`
+
+// navigate to /team/33/user/11/details
+router.createUrlTree(['details'], {relativeTo: route});
+
+// navigate to /team/33/user/22
+router.createUrlTree(['../22'], {relativeTo: route});
+
+// navigate to /team/44/user/22
+router.createUrlTree(['../../team/44/user/22'], {relativeTo: route});
+
+
+SEE ALSO:
+	https://angular.io/api/router/Router#navigate
+	
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto preserve query parameters for the next navigation?
+========================================================
+constructor(private route: ActivatedRoute) { }
+
+this.router.navigate(['edit'], {relativeTo: route, queryParamHandling: 'preserve'});
+
+- preserve:		same as before
+- merge:		same as before + new params
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Passing data to route
+=====================
+Static (specifying data in route)
+---------------------------------
+- add static data to route:
+
+	{ path: 'not-found', component: ErrorPageComponent, data: {message: 'Page not found'}}
+	{ path: 'bad-value', component: ErrorPageComponent, data: {message: 'Bad value'}}
+	
+- retrieve this data in component:
+
+	ngOnInit() {
+		this.errorMessage = this.route.snapshot.data['message'];
+		this.route.data.subscribe(
+			(data: Data) => {
+				this.errorMessage = data['message'];
+			}
+		);
+	}
+	
+	
+Dynamic (fetching data during routing)
+--------------------------------------
+- create a resolver (ServerResolver)
+
+- add to route:
+
+	{ path: 'edit/%id', component: EditServerComponent, resolve: {server: ServerResolver}}
+	
+	
+- retrieve data in component:
+
+EditServerComponent:
+
+	ngOnInit() {
+		this.route.data.subscribe(
+			(data: Data) => {
+				this.server = data['server'];
+			}
+		);
+	}
+
+How to prevent user from accidentaly navigating away?
+-----------------------------------------------------
+Use canDeactivate guard.
+
+

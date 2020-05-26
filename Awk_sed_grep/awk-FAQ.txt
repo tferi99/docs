@@ -1,0 +1,102 @@
+========
+Awk FAQ
+========
+Functions
+---------
+- How to define functions?
+- How to define local variables in functions?
+
+Date/time
+---------
+- How to get current datetime?
+- How to convert UNIX timestamp values into human readable format?
+
+Arrays
+------
+- How to enumerate array elements?
+- How to check if an item contained by an array?
+
+
+********************************************************************************************************************************
+********************************************************************************************************************************
+********************************************************************************************************************************
+
+
+--------------------------------------------------------------------------------------------------
+How to define functions?
+========================
+
+	function name(parameter-list)
+	{
+	     body-of-function
+		 ...
+		 return ret;
+	}
+
+--------------------------------------------------------------------------------------------------
+How to define local variables in functions?
+===========================================
+Since  functions  were  not  originally  part  of  the   AWK
+     language,  the  provision  for  local  variables  is  rather
+     clumsy: They are declared as extra parameters in the parame-
+     ter list. The convention is to separate local variables from
+     real parameters by extra spaces in the parameter  list.  For
+     example:
+
+          function  f(p, q,     a, b) { # a & b are local
+                         ..... }
+
+See also:
+			UNIX man pages - gawk.mht
+--------------------------------------------------------------------------------------------------
+How to get current datetime?
+============================
+In gawk you can call systime().
+
+systime() 	returns the current time of day as the  number  of
+               seconds  since the Epoch (Midnight UTC, January 1,
+               1970 on POSIX systems).
+
+See also:
+			UNIX man pages - gawk.mht
+--------------------------------------------------------------------------------------------------
+How to convert UNIX timestamp values into human readable format?			
+================================================================			
+In gawk you can call strftime():
+
+	strftime(format, timestamp)
+
+For example:
+	
+	d = strftime("%Y-%m-%d", systime())	
+	
+See also:
+			UNIX man pages - gawk.mht
+	
+--------------------------------------------------------------------------------------------------
+How to enumerate array elements?	
+================================
+
+	for ( variable in array ) {
+		do something with array[variable]	
+	}
+		
+		
+--------------------------------------------------------------------------------------------------
+How to check if an item contained by an array?	
+==============================================
+To determine whether an element exists in an array at a certain index, use the following
+expression:
+
+	index in array
+	
+This expression tests whether the particular index exists, without the side effect of creating
+that element if it is not present. The expression has the value one (true) if array[index]
+exists and zero (false) if it does not exist. 
+
+To test whether a particular index sequence exists in a MULTIDIMENSIONAL ARRAY, use the
+same operator (‘in’) that is used for single dimensional arrays. Write the whole sequence
+of indices in parentheses, separated by commas, as the left operand:
+
+	(subscript1, subscript2, ...) in array
+	

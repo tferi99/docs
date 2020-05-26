@@ -3,6 +3,11 @@ Recording
 =========
 You need a configured recording environment (see more: APAS-FAQ.txt/Howto configure recorder?)
 
+Source code
+-----------
+- Constants, parameters
+
+
 Use-cases
 ---------
 - Initiating a recording
@@ -15,12 +20,12 @@ Protocol
 --------
 - Recording protocol between APAS and recorder
 - Handling XML messages in recorder 
-
+- XML messages											UNDER CONSTRUCTION
 
 SIP
 ---
 - SIP management
-- SIP and JTAPI association
+- SIP and JTAPI association (call ID mapping)
 
 
 Rules
@@ -44,21 +49,81 @@ Database
 
 Recording files
 ---------------
+- Structure of REC file
 - Post-processing recorded media
-
+- How recordings can be deleted?
 
 Storage profiles
 ----------------
 - KEEP values
 
-
+C++ Recorder
+------------
+- What does trigger recording start?								UNDER CONSTRUCTION
+- How calls are identified by independent <recordCall> messages?
+- Writing recording to file											UNDER CONSTRUCTION
+	
 Troubleshooting
 ---------------
 - What is 'csip...' call ID?
-
 - ERROR - in APAS event log: The recording of call ... has been locked because a new call has reserved licenses in the ruleset
+- dbID=0 on the 2nd recordCall
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Constants, parameters
+=====================
+- Post processing:
+
+	- Compression/codec:
+		COMPRESSION_NONE = 0
+		COMPRESSION_ULAW = 1
+		COMPRESSION_SPEEX = 2
+		COMPRESSION_MASK = 63
+		COMPRESSION_UNENCRYPTED = 64
+
+- Rule matchinng:
+
+	- Ruleset: 
+
+		Actions:
+
+			ACTION_NONE=0
+			ACTION_RECORD_CALLER=1
+			ACTION_RECORD_CALLED=2
+			ACTION_RECORD=3
+			ACTION_MONITOR_CALLER=4
+			ACTION_MONITOR_CALLED=8
+			ACTION_MONITOR=12
+			ACTION_NEVER=16
+			ACTION_CONTINUE=32
+			ACTION_KEEP=64
+			ACTION_ANNOUNCEMENT=128
+			ACTION_DONOTDELETE=256 + ACTION_KEEP = 320
+			ACTION_NOTIFICATION=512
+			ACTION_ONDEMAND_NOREC=1024
+			ACTION_ONDEMAND_REC=2048
+
+		RuleOp:	
+
+			RULEOP_ANY=1			// OR
+			RULEOP_ALL=2			// AND
+		
+	- Rule:
+
+		Source:
+			SOURCE_TYPE_CALLER=1
+			SOURCE_TYPE_CALLED=2
+			SOURCE_TYPE_LASTREDIREDTED=4
+			SOURCE_TYPE_ORIGINALCALLER=8
+			SOURCE_TYPE_ORIGINALCALLED=16
+
+		Match type:
+
+			MATCH_TYPE_EQUALS=1
+			MATCH_TYPE_NOTEQUALS=2
+			MATCH_TYPE_REGEX=3
+			MATCH_TYPE_NOTREGEX=4
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Initiating a recording
@@ -232,6 +297,192 @@ Handling XML messages in recorder
 				--> callbacks[c].callback(...)
 				
 	
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Status page for recording						
+=========================
+XML messages are:
+	- getStatus
+	- getCalls
+	- fetchConfig
+	- recordCall
+	- monitorCall
+	- setPcapCapture
+	- setLogConfig
+
+	
+recordCall	
+----------
+- RecordingOnDemandApiServiceImpl:
+	REST/recorder/active/{callId}/{extId}?action={action}
+		--> com.andtek.andphone.api.rest.controllers.recorder.RecorderController.startOrStopRecordingOnDemand(...)
+			- seq = callId/extId																									// re-constructing Cisco Call ID (Daena solution :((((( )
+			------------ if action == start ----------------
+			--> startRecordingOnDemand(sequence)
+				--> com.andtek.andphone.api.services.recorder.impl.RecordingOnDemandApiServiceImpl.startRecordingOnDemand(callId)
+					--> com.andtek.andphone.api.services.recorder.impl.startRecordingOnDemand(callId)
+						--> call = RecorderRealtimeMonitoringService.getCallStatus(callId)
+						-------------------- if call != null ------------------------
+						- some announcement-related
+						- xml = <recordCall terminal="rec" callID="<CALL_ID>" onDemand="<ON_DEMAND_DONT_RECORD>"			// ON_DEMAND_DONT_RECORD=1		!!!!! NO sip/csip, terminal=rec !!!!!
+						--> sendXMLCommand(xml)
+							--> [1]
+			
+			------------ if action == stop ----------------
+			--> stopRecordingOnDemand(sequence)
+				--> com.andtek.andphone.api.services.recorder.impl.RecordingOnDemandApiServiceImpl.stopRecordingOnDemand(callId)
+					--> call = RecorderRealtimeMonitoringService.getCallStatus(callId)
+						-------------------- if call != null ------------------------
+						--> RecordedCallRepositoryFactory.onDemandStopped(findCallWithCallStatusRecord(call)))
+							- xml = <recordCall terminal="rec" callID="<CALL_ID>" onDemand="<ON_DEMAND_OFF>"			// ON_DEMAND_OFF=0		!!!!! NO sip/csip, terminal=rec !!!!!
+								--> sendXMLCommand(xml)
+									--> [1]
+							
+	
+- PhoneCallObserver:
+	--> com.andtek.andphone.recorder.PhoneCallObserver.sendStopRecordingToRecorder(callID, module, terminalName)
+			
+		xml = <recordCall terminal="<TERMINAL>" callID="<sip+callID>" stopOut="1" />						
+
+	--> com.andtek.andphone.recorder.PhoneCallObserver.sendConferenceCallIDToRecorder(Module, CiscoConferenceStartEv, addXML)
+
+		xml = recordCall terminal="rec" callID="sip+finalCallID>" conference="true" transCallID="<sip"+conferencedCallID> +<addXML> />		!!!!! terminal=rec !!!!!
+			
+	--> com.andtek.andphone.recorder.PhoneCallObserver.sendTransferredCallIDToRecorder(Module, CiscoTransferStartEv, addXML)
+			
+		xml = <recordCall terminal="rec" callID="<sip+finalCallID>" transCallID="<sip+transferredCallID>" + <addXML> />			!!!!! terminal=rec !!!!!
+			
+	--> com.andtek.andphone.recorder.PhoneCallObserver.sendOutputKeyToRecorderIfEncrypted(Module, CiscoRTPOutputKeyEv)		
+
+		xml = <recordCall terminal="<TERMINAL>" callID="<CALL_ID>" keyOut="<KEY>" />
+
+	--> com.andtek.andphone.recorder.PhoneCallObserver.sendInputKeyToRecorderIfEncrypted(Module, CiscoRTPInputKeyEv)
+
+		xml = <recordCall terminal="<TERMINAL>" callID="<CALL_ID>" keyIn="<KEY>" />
+		
+- RecorderSipTrunk:
+	--> com.andtek.andphone.recorder.RecorderSipTrunk.sendStartRecordToRecorder(data, fromNumber, deviceName, callLegId, isFarendRTP, call)
+		------------------- if call != null ---------------
+			------------------- if isFarendRTP ---------------
+				xml = <recordCall terminal="<TERMINAL>" callID="<sip+callID> dstIP="<socket.LocalAddress.HostAddress>" dstPort="<socket.LocalPort>"/>
+
+				xml = <recordCall terminal="<TERMINAL>" callID="<sip+callID> keyIn="<data.EncryptionKeyIn>" />
+			--------------------- else -----------------------
+				xml = <recordCall terminal="<TERMINAL>" callID="<sip+callID> srcIP="<socket.LocalAddress.HostAddress>" srcPort="<socket.LocalPort>"/>
+
+				xml = <recordCall terminal="<TERMINAL>" callID="<sip+callID> keyOut="<data.EncryptionKeyIn>" />
+		------------------- else ---------------
+			------------------- if isFarendRTP ---------------
+				xml = <recordCall terminal="<TERMINAL>" callID="<csip+callLegId>" calledParty="<fromNumber>" dstIP="<socket.LocalAddress.HostAddress>" dstPort="<socket.LocalPort>"/>
+				--------------------- isSrtp -----------------------
+					xml = <recordCall terminal="<TERMINAL>" callID="<csip+callLegId>" keyIn="<data.EncryptionKeyIn>" />
+			--------------------- else -----------------------
+				xml = <recordCall terminal="<TERMINAL>" callID="<csip+callLegId>" calledParty="<fromNumber>" srcIP="<socket.LocalAddress.HostAddress>" srcPort="<socket.LocalPort>"/>
+				--------------------- isSrtp -----------------------
+					xml = <recordCall terminal="<TERMINAL>" callID="<csip+callLegId>" keyOut="<data.EncryptionKeyIn>" />
+
+	--> com.andtek.andphone.recorder.RecorderSipTrunk.processBye(SIPServer, RequestEvent, ServerTransaction)
+		
+		xml = <recordCall terminal="<TERMINAL>" callID="<csip+callLegID>" stopOut="1"/>
+
+- RecordingCallInfo:
+	
+	--> com.andtek.andphone.recorder.RecordingCallInfo.getXML(callIdPrefix, addon)
+
+		xml = <recordCall terminal="<initiator> callID="<callIdPrefix+callId>" <ADDON> callingParty="<CALLINGPARTY>" calledParty="<CALLEDPARTY>" callingPartyName="<CALLINGPARTYNAME>" calledPartyName="<CALLEDPARTYNAME>"
+			originalCallingParty="<ORIGINALCALLINGPARTY>" originalCalledParty="<ORIGINALCALLEDPARTY>" lastRedirectingParty="<LASTREDIRECTINGPARTY>" initiated="<TRUE/FALSE>" />
+	
+- RecorderPhoneServicesServlet:
+
+	--> com.andtek.andphone.recorder.web.RecorderPhoneServicesServlet.onDemandDeleteRecord(callID)
+		
+		xml = <recordCall terminal="rec" callID="<callID>" onDemand="<ON_DEMAND_RECORD> />			// ON_DEMAND_RECORD=2	!!!!! terminal=rec !!!!!
+	
+	--> com.andtek.andphone.recorder.web.RecorderPhoneServicesServlet.onDemandStopRecord(call)
+	
+		xml = <recordCall terminal="rec" callID="<callID>" onDemand="<ON_DEMAND_OFF> />			// ON_DEMAND_OFF=0		!!!!! terminal=rec !!!!!
+
+	--> com.andtek.andphone.recorder.web.RecorderPhoneServicesServlet.onDemandStartRecord(call)
+	
+		xml = <recordCall terminal="rec" callID="<callID>" onDemand="<ON_DEMAND_DONT_RECORD> />			// ON_DEMAND_DONT_RECORD=1		!!!!! terminal=rec !!!!!
+	
+	
+- RecorderClientImpl (RECORDER-2):
+	
+	--> com.andtek.andphone.recorder2.impl.RecorderClientImpl.start(RecordingSession)
+		--> callId = getShortId()
+			
+			- callId = terminal.toUpperCase.rigth(4) + typePrefix[0] + callId
+		
+		xml = <recordCall terminal="<TERMINAL>" callID="<getShortId>															// terminal UPPER-CASE
+			+ rtpInfoToXML 
+			+ callingParty + 	calledParty + callingPartyName + calledPartyName + originalCallingParty
+			+ originalCalledParty + lastRedirectingParty + initiated + onDemand
+		/>
+	
+	--> com.andtek.andphone.recorder2.impl.RecorderClientImpl.stop()
+	
+		xml = <recordCall terminal="<TERMINAL>" callID="<getShortId> stopIn="1" stopOut="1" 					// terminal UPPER-CASE
+			+ rtpInfoToXML
+		/>
+		
+	--> com.andtek.andphone.recorder2.impl.RecorderClientImpl.updateRTP(RecordingSession)
+		
+		xml = <recordCall terminal="<TERMINAL>" callID="<getShortId> stopIn="1" stopOut="1" 				// terminal UPPER-CASE
+			+ rtpInfoToXML
+		/>
+		
+		
+- Referer:
+	
+	--> com.andtek.andphone.sip.Referer.processInvite(...)
+	
+		xml = <recordCall terminal="<TERMINAL>" callID="<callID>" dstIP="<dstIP>" dstPort="<LocalPort>" />					// maybe dead code
+		
+		
+- SIPTrunk:
+
+	--> com.andtek.andphone.sip.SIPTrunk.processAck(...)
+		
+		xml = <recordCall terminal="<TERMINAL>" callID="<CALL_ID/Unknown>" dstIP="<sock.LocalAddress.HostAddress>" dstPort="<sock.LocalPort>" />
+		
+		-------------------- if SIGNALING_SIPTrunk ----------------------
+			---------------- if call != null ------------------
+				xml = <recordCall terminal="<TERMINAL>" callID="<sip+callId>" dstIP="<sock.LocalAddress.HostAddress>" dstPort="<sock.LocalPort>"/ >
+				OR
+				xml = <recordCall terminal="<TERMINAL>" callID="<sip+callId>" srcIP="<sock.LocalAddress.HostAddress>" srcPort="<sock.LocalPort>"/ >
+			---------------- else  ------------------
+				xml = <recordCall terminal="<TERMINAL>" callID="<csip+callId>" calledParty="<fromNumber>" dstIP="<sock.LocalAddress.HostAddress>" dstPort="<sock.LocalPort>"/ >					// !!!!! csip !!!!!!
+				OR
+				xml = <recordCall terminal="<TERMINAL>" callID="<csip+callId>" calledParty="<fromNumber>" srcIP="<sock.LocalAddress.HostAddress>" srcPort="<sock.LocalPort>"/ >					// !!!!! csip !!!!!!
+				
+		
+	--> com.andtek.andphone.sip.SIPTrunk.processInvite(...)
+		<recordCall terminal="<TERMINAL>" callID="<callId>" dstIP="<address>" dstPort="<sock.LocalPort>"/ >					// !!!!!!!! NO sip/csip !!!!!
+
+		
+	--> com.andtek.andphone.sip.SIPTrunk.processBye(...)
+		
+		xml = <recordCall terminal="<TERMINAL>" callID="<sip+callId>" stopOut="1"/ >
+
+	
+- SIPTrunkMA:
+
+	--> com.andtek.andphone.sip.SIPTrunkMA.processInvite(...)
+
+		xml = <recordCall terminal="<TERMINAL>" callID="<callID>" dstIP="<dstIP>" dstPort="<LocalPort>" />					// maybe dead code
+		
+- SoapRecorderAPI:
+
+	--> com.andtek.andphone.soap.SoapRecorderAPI.startStopVoiceRecording(callID, doDelete)
+		
+		xml = <recordCall terminal="rec" callID="<CALL_ID>"	onDemand="<0/1/2>" />						!!!!! terminal=rec !!!!!
+
+		
+[1] com.andtek.andphone.recordermgmt.XMLSocket.sendXml(xml)
+	
+
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Status page for recording						
 =========================
@@ -432,23 +683,126 @@ By default there is no PCAP filter so ALL PACKETS will be captured by sniffer.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Post-processing recorded media			
 ==============================
-Log: andphone-bg.log
-			
---> com.andtek.andphone.recorder.background.BackgroundThrd.run()
-	--> com.andtek.andphone.recorder.Admin.recorderBackgroundProcessing()
-		--> recorderBackgroundProcessing(false)
-			--> postProcessRecording(recmod, connForRead)
-				--> com.andtek.andphone.recorder.writeFile()
-					- mergewav
-						
-						/usr/bin/mergewav /var/lib/andphone_record/plugins /var/lib/andphone/tmp/4_in.wav /var/lib/andphone/tmp/4_out.wav /var/lib/andphone/tmp/4.wav
-						
-					- speex conversion
-					
-						/usr/bin/speexenc -n --quality 8 --comp 3 --nframes 1 --comment type=ANDPhoneRecording /var/lib/andphone/tmp/4.wav /var/lib/andphone/tmp/4.spx
-					
 
+- Call frow:
+			
+	--> com.andtek.andphone.recorder.background.BackgroundThrd.run()
+		-------------------------- in every 10 seconds -------------------------------
+		--> com.andtek.andphone.recorder.Admin.recorderBackgroundProcessing()
+			--> Admin.recorderBackgroundProcessing(false)
+				--------------- ONLY in maintenance hour ----------------------
+					--> Admin.maintenance();
+						- archiveSize = collecting recorded file size from filesystem ((from recording directory with 'du') and writing into config
+						- calculating deletesize (size to be deteted by maintanance)
+							deletesize = archiveSize - KB * config(recorder,DeleteThreshold)
+						- SELECT all recordings except which cannot be deleted ORDER BY end
+							------------------------- loop on recordings while deletesize > 0 --------------------------
+							- delete recording file from filesystem
+							- update recording status in DB to Recording.STATE_BACKEDUP
+							- deletesize -= size of deleted file
+							
+							LOG:	Deleted recording.*of size.*KB
+						
+						--> [1] storageProfileMaintenance(time=0) 
+						
+				--------------- always ----------------------
+					--> Admin.postProcessRecording(recmod, connForRead)
+						recPassword = Config(recorder, EncPassword) if specified
 					
+						- updating status to COMPLETE after 300 seconds? Why?
+							UPDATE rec_call SET status=STATE_RECORDING_COMPLETE,lastaction=NOW(), rec_password=PWD 
+							WHERE status<=STATE_RECORDING AND (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(lastaction)) > 300				
+						
+						--------------------------------- loop on all COMPLETED recording from database --------------------------------------
+							- rec = Recording from RecordSet
+							- recId = ID of recording 
+							
+									LOG:	PRocessing recording[recId]						// TYPO fixed to 'Processing recording ...' in 6.2.2
+							
+							- ID=ID from rec_call
+							- try to update record status to PROCESSING:
+								UPDATE rec_call SET rec_password=PWD, status=STATE_PROCESSING,lastaction=NOW() 
+								WHERE status=STATE_RECORDING_COMPLETE AND id=ID								
+							- if no record updated then get next recording (for...continue)
+							
+							--> updateStorageProfileOnRecord(recId)
+								- Update the storage profile of the recording by reading calling/called/lrp information and comparing to the configured rules								
+									UPDATE rec_call SET keep=?,lastaction=NOW() WHERE id=?
+
+							- error handling of profile setting
+							
+								LOG:		'Failed to update storage profile on recording record with id' + recId
+								or
+								LOG:		'Storage profile 0, not updating header'
+								else
+								LOG:		'Storage profile ' + profile ID + ', updating header'
+							
+							- setting calling/called party name from lookup
+							- setting compression from Config(recorder,Compression)		// generally 2 (COMPRESSION_SPEEX)
+							
+							--> com.andtek.andphone.recorder.Recording.writeFile()
+								
+									LOG:	'Converting file ' + recId
+									
+								---------------- if file does not exist ---------------------
+
+								- merging WAV file:
+								
+									LOG:	'merging recordings to stereo wav file: ' + command with filenames
+									
+										/usr/bin/mergewav /var/lib/andphone_record/plugins /var/lib/andphone/tmp/4_in.wav /var/lib/andphone/tmp/4_out.wav /var/lib/andphone/tmp/4.wav
+									
+									--> SCRIPT: mergewav
+									
+								- speex conversion:
+									
+									LOG:	'encoding recording to speex file:' + command
+									
+										encoding recording to speex file: /usr/bin/speexenc -n --quality 8 --comp 3 --nframes 1 --comment type=ANDPhoneRecording /var/lib/andphone/tmp/1636361.wav /var/lib/andphone/archive/2020/05/07/05074722522240_1636361.spx
+								
+									--> SCRIPT:	speexenc
+									
+								- checking size of result file:
+									------------------------- if size < 1024 ------------------------
+										- LOG:	'deleting temporary wavfile ' + filepath + ' because it is to small: ' + size							// !!!!!! TYPO foxrd in 6.2.2 to  'too small'
+										
+											deleting temporary wavfile /var/lib/andphone/archive/2020/05/07/05074722522240_1636361.spx because it is to small: 263
+											
+										- encfile = null					// for further steps
+										
+							----------------------- if NOT written -----------------------------------
+								- LOG:	'Deleting recording ' + recId + ' from DB because writeFile returned false'
+								- DB:	DELETE FROM rec_call WHERE id=" + recId
+							----------------------- if written -----------------------------------
+								- updating recording info into DB:
+								
+									UPDATE rec_call SET status=?,lastaction=NOW(),codec=?,filesize=?,callingpartyname=?,calledpartyname=?,filename=? WHERE id=?
+								-------------- if keep == 3 ----------------
+									--> AdminHelper.encryptLockedRecording(rec)
+								--> recEventManager.sendRecorderEvent(...)
+									
+					--> Admin.storageProfileMaintenance(limited to profiles shorter than 1 day)
+					--> Recording.numberOfUsedLicenseToday()
+									
+								
+[1] --> Admin.storageProfileMaintenance()
+		-------------------------- loop on storage profiles ----------------------------------
+		--> AdminHelper.dbSelectExpiredRecordingsByProfile(which not Recording.STATE_DONOTDELETE) max 5000 items
+			- delete recording file
+			- update recording status in DB to Recording.STATE_BACKEDUP
+			
+				LOG:	Deleted recording.*of size.*KB
+			------ if delete was not successful (file does not exist) ------
+				--> AdminHelper.dbDeleteRecording(id);
+
+			--------------- if profile doen not keep metadata ----------
+				--> AdminHelper.dbDeleteRecordingByStatusAndProfile(Recording.STATE_BACKEDUP, profileId)
+					DELETE FROM rec_call WHERE ....
+
+
+						
+
+- Log written into:		andphone-bg.log				
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 SIP management			
@@ -544,8 +898,8 @@ Writing/changing rec_call table
 	--> Admin.processAction(ConnectionBean connection)		DELETE
 		
 		
-	--> Admin.recorderBackgroundProcessing()			UPDATE status, lastaction
-														DELETE
+	--> Admin.recorderBackgroundProcessing()			
+		--> maintenance									DELETE, UPDATE status, lastaction
 		
 	
 	--> Admin.postProcessRecording(Module recmod, Connection connForRead) 			UPDATE status, lastaction, rec_password
@@ -734,54 +1088,17 @@ com.andtek.andphone.recorder.gwtapp.client.search_gwtappMain  (Search button) ==
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Registering observers by rules
 ==============================
-select *
-from rec_rulesets rs, rec_rules r
-where rs.id = r.rulesetid
+Getting rulesets with rules from the database:
+
+	select *
+	from rec_rulesets rs, rec_rules r
+	where rs.id = r.rulesetid
 
 
+SEE ALSO: Constants, parameters
 
-Ruleset
--------
-Actions:
-
-	ACTION_NONE=0
-	ACTION_RECORD_CALLER=1
-	ACTION_RECORD_CALLED=2
-	ACTION_RECORD=3
-	ACTION_MONITOR_CALLER=4
-	ACTION_MONITOR_CALLED=8
-	ACTION_MONITOR=12
-	ACTION_NEVER=16
-	ACTION_CONTINUE=32
-	ACTION_KEEP=64
-	ACTION_ANNOUNCEMENT=128
-	ACTION_DONOTDELETE=256 + ACTION_KEEP = 320
-	ACTION_NOTIFICATION=512
-	ACTION_ONDEMAND_NOREC=1024
-	ACTION_ONDEMAND_REC=2048
-
-RuleOp:	
-
-	RULEOP_ANY=1			// OR
-	RULEOP_ALL=2			// AND
-	
-Rule	
-----
-Source:
-	SOURCE_TYPE_CALLER=1
-	SOURCE_TYPE_CALLED=2
-	SOURCE_TYPE_LASTREDIREDTED=4
-	SOURCE_TYPE_ORIGINALCALLER=8
-	SOURCE_TYPE_ORIGINALCALLED=16
-
-Match type:
-
-	MATCH_TYPE_EQUALS=1
-	MATCH_TYPE_NOTEQUALS=2
-	MATCH_TYPE_REGEX=3
-	MATCH_TYPE_NOTREGEX=4
-
-	
+Callflow
+--------
 - com.andtek.andphone.recorder.PhoneCallObserver listens call events
 
 - PhoneCallObserver is a singleton and associated only phones which has a line wich matches with recorder rule entry
@@ -926,8 +1243,8 @@ A ruleset is matching if evaluation of ruleset provides an action. That means:
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
-SIP and JTAPI association
-=========================
+SIP and JTAPI association (call ID mapping)
+===========================================
 SIP information extracted on ACK signal:
 
 
@@ -967,7 +1284,7 @@ SIP information extracted on ACK signal:
 	Cisco call can be retrieved from provider by leg ID:
 	
 	
-	--> com.andtek.andphone.sip.SIPTrunk
+	--> com.andtek.andphone.sip.SIPTrunk.processAck(...)
 		--> jtapiProvider = JTAPIServlet.getAndtekProvider((CiscoProvider) phone.getTerminal().getProvider());
 			--> call = jtapiProvider.getCall(Integer.parseInt(callID))
 				------- if call not found --------
@@ -994,4 +1311,179 @@ In this case APAS generates a call ID from leg ID:			csip + CALL_LEG_ID
 
 
 
+-------------------------------------------------------------------------------------------------------------------------------------
+Structure of REC file
+=====================
+MOVED INTO:	source_code_discovery/Recording.txt
 
+From: com.andtek.andphone.recorder.Recording.java
+
+
+
+If filename ends with '.rec'
+----------------------------
+File contains header info and audio data.
+
+Endian:	little endian
+
+SUPER HEADER (at position 0)
+	- 'AREC' (4 bytes fixed string)
+	- version (int in 4 bytes)
+
+HEADER	(at position 288)
+	if version >= 3
+		- id (int in 4 bytes)
+	if version >= 2
+		- keep (int in 4 bytes)
+		- lastAction (int in 4 bytes)
+		- id (int in 4 bytes)
+	- start (int in 4 bytes)
+	- end (int in 4 bytes)
+	- originalLastAction (int in 4 bytes)
+	- callingParty (0 terminated string from 24 bytes)
+	- calledParty (0 terminated string from 24 bytes)
+	- phoneip (0 terminated string from 24 bytes)
+	- origCallingParty (0 terminated string from 24 bytes)
+		if origCallingParty contains '.' then it's a remote IP
+			- remoteip = origCallingParty
+			- origCallingParty = ""
+			- initiator (0 terminated string from 24 bytes)
+		else
+			- origCalledParty (0 terminated string from 24 bytes)
+	- status (int in 4 bytes)
+	- signaling (int in 4 bytes)
+	- codec (int in 4 bytes)
+	- originalKeep (int in 4 bytes)
+	- audiolength (int in 4 bytes)
+	- keySize (int in 4 bytes)
+		if keySize = 0
+			- keySize = ENCRYPTION_ALGORITHM_LENGTH_128 (128)
+
+AUDIO	(at position 512)
+
+If filename ends with '.spx'
+----------------------------
+File contains only audio data.
+
+- id = getIDFromFilename(filename)
+- record will be read from rec_call table
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How recordings can be deleted?
+==============================
+SEE ALSO:	Writing/changing rec_call table
+
+- deleted from database:
+	- GdprService
+		--> com.andtek.andphone.api.rest.controllers.gdpr.GdprController.erasure(...)
+			--> com.andtek.andphone.api.services.gdpr.GdprService.deleteGdprRecors(...)
+				--> GdprService.deleteRecordingEntry(...)
+		
+
+	- RecorderApiService 													// REST API
+		- deleteRecording(int recid)										// only setting storage profile to 'DeleteStorageProfileID'
+		- deleteRecording(int recid, String callTable)						// only setting storage profile to 'DeleteStorageProfileID'
+		
+	- com.andtek.andphone.recorder.Admin									// background processing
+		- processAction(ConnectionBean connection)							// FILE + DB
+		- recorderBackgroundProcessing()									// SEE ALSO: Post-processing recorded media
+																								
+																						
+	- AdminHelper
+		--> dbDeleteRecording(int recID)									// from background processing (see above)
+		--> dbDeleteRecordingByStatusAndKeep(int status,int profileId)		// from background processing (see above)
+		
+	- com.andtek.andphone.recorder.gwtapp.server.RPCrecorderServiceImpl		// From GWT UI
+		--> RemoteDeleteRecordingFiles
+			
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How calls are identified by independent <recordCall> messages?
+==============================================================
+- C++ recorder notified about call by APAS via recordCall messages.
+
+- If recorder gets information about a call it creates a new entry into 'calls' chain and into rec_call DB table.
+
+- During processig next messages it identifies incoming call information from 'calls' chain using 
+
+		find_jtapi_terminal_call(const char *terminal, const char *jtapi_callID, int doref)
+
+	which compares incoming callID and terminal with cached entries in the chain.
+	
+		THIS COMPARATION IS CASE-SENSITIVE! (till v 6.2.2)
+		
+	--> recordCall(...)
+		--> call = find_jtapi_terminal_call(terminal, callID, true)
+			- LOG:		->find_jtapi_terminal_call(...
+			
+				2020-05-07 08:03:52,190: 4: ->find_jtapi_terminal_call(CSFABOEHLKE,sip1963074/1)
+			
+			--> lock_calls();
+			----------------- enumeration of calls chain -------------------
+				- LOG:		find_jtapi_terminal_call check for call (
+			
+					2020-05-07 08:03:52,190: 4:   find_jtapi_terminal_call check for call (CSFSDrescher,sip1963066/1,0)
+				
+				---------------- if call->type == CALLTYPE_JTAPI and incoming terminal == call->terminal
+					-------------------- if incoming jtapi_callID == call->jtapi_callID ---------------------
+						--> exit from loop: FOUND
+					- 'csip' call check - LOG:	find_jtapi_terminal_call found csip call for same terminal (...
+					
+				- end of function - LOG:	<-find_jtapi_terminal_call(...
+				
+		------------- if call == NULL -----------------
+		--> call = call_new(CALLTYPE_JTAPI, callID, 0, 0, 0, 0, 0, 0)				// creating new call, id = 0
+		--> add_call(call)														 // adding to calls chain
+		
+						
+
+						
+-------------------------------------------------------------------------------------------------------------------------------------
+dbID=0 on the 2nd recordCall
+============================
+SEE ALSO:		How calls are identified by independent <recordCall> messages?
+
+If 2nd recordCall contains the same callID but different terminal then call cannot be identified by find_jtapi_terminal_call()
+
+	[2020-05-07 08:03:52,189] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@7dc97e76)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFABOEHLKE" callID="sip1963074/1" callingParty="6046024787" calledParty="96044432261" callingPartyName="Amanda Boehlke" calledPartyName="" originalCallingParty="2341" originalCalledParty="96044432261" lastRedirectingParty="" initiated="true"/>]
+	[2020-05-07 08:03:52,193] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip1963074/1" dbID="1636368" state="1"/>
+	[2020-05-07 08:03:54,137] [DEBUG] [APAS-defaultWorker-25] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFABoehlke" callID="sip1963074/1" srcIP="192.168.1.94" srcPort="34584"/>]
+	[2020-05-07 08:03:54,138] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip1963074/1" dbID="0" state="0"/>
+	...
+
+and in this case a new call created 	
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Writing recording to file
+=========================
+
+LOG about starting file write:
+
+	2020-02-28 07:47:10,069: 3: |found Call_1 0,db:104 980 (+36110009100,+36110009020) [0]Resyncing RTP because new stream detected [call-id=104/sip21172/1, dir=1, ssrc=-1058530648]
+	2020-02-28 07:47:10,069: 2: Starting to record a stream [call-id=104/sip21172/1, dir=1]
+	2020-02-28 07:47:10,069: 1: Setting up Disk_thread for call dbId: 104 (ref=1) direction 1 initializing 
+	
+SEE ALSO:	Packet sniffing	
+	
+Packets received and UPD packet recognized. And then...
+-------------------------------------------------------
+--> handle_udp()
+	- if packet is a duplicate to the last, ignore it
+	- Ignore RFC2833 (RTP Events, e.g. DTMF tones) packets
+	- finding call matches with packet
+	-------------- DIR_IN/DIR_OUT ---------------------
+		------------- DIR_IN ---------------
+		--> call=find_rtp_call(ip->daddr,udp->dest,ip->saddr,udp->source)
+		------------- DIR_OUT ---------------
+		--> call=find_rtp_call(ip->saddr,udp->source,ip->daddr,udp->dest)
+		
+		------------------ if call found and not duplicated -------------------
+		- getting who: ACTION_RECORD_CALLER or ACTION_RECORD_CALLED?
+		
+		- LOG: |found Call_...
+		
+			2020-02-28 07:47:10,069: 3: |found Call_1 0,db:104 980 (+36110009100,+36110009020) [0]Resyncing RTP because new stream detected [call-id=104/sip21172/1, dir=1, ssrc=-1058530648]
+	
+		

@@ -18,6 +18,7 @@ Exchange Presence
 -------------------------------------------------------------------------------------------------------------------
 Configuration
 =============
+
 - Event pulling period
 	set here: 	APAS/General/Servers/CHOOSE/(Event pulling period)
 	stored:		config(global/servers.exchange.EventPullingPeriod)

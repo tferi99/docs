@@ -77,14 +77,19 @@ Call flows:
 	UI rendering
 	------------
 	com.andtek.andphone.global.gwtapp.client.security_gwtappMain
-	--> RemoteGetCertificateList()
+	--> RemoteGetCertificateList()													// to collect certificate list + data for certificate generation -> GwtCertificateListInitBean
+		RPC --> com.andtek.andphone.global.gwtapp.server.RPCglobalServiceImpl.RemoteGetCertificateList()
+			- cn = ApasIPAddressHelper.getAndPhoneServerNameOrIPwithoutPort()				// getting CN from APAS host/IP for certificate creation (later)
+			- GwtCertSignRequestDataBean..setCommonName(cn)
+			
 		--> buildCertificateManagerPanel(GwtCertificateListInitBean record, ...)
-			- certificate entries in record.getDatarows() which rendered in a list
+			- CERTIFICATE_LIST_BEAN = record
+			- certificate entries in record.getDatarows() are rendered in the list
 			
 	Event handling
 	--------------
 	- Button [Create APAS Certificate] 
-		--> record = CERTIFICATE_LIST_BEAN.getSelfSignedCertificateData();
+		--> record = CERTIFICATE_LIST_BEAN.getSelfSignedCertificateData()					// created by RemoteGetCertificateList()
 		--> openSignRequestPanel(record, "add");
 			--> GwtCertSignRequestWindow.buildFormPanel(record, func)
 				- it renders certificate form with 'Create' button
@@ -96,11 +101,17 @@ Call flows:
 					------------------------- if certificateType == recorder -------------------------
 						--> AndPhoneCA.createRecorderCertificate(...)
 					------------------------- else -------------------------
+						-------------- if record.getDnsNameExt() -------------
+							- add it to SAN/DNSName
+						-------------- if record.getEmail() -------------
+							- add it to SAN/RFC822Name							
 						--> ApasCertificateHelper.generateV3Certificate(DN, year, subjectAlternativeNameExts, keyAlg)
 							- it keypair generated in constructor --> generateRSAKeyPair(keySize)								
 							--> generateV3Certificate(dn, pair, year, subjectAlternativeNameExts, keyAlg)								<<<<<<<<<<<< generating certificate from pre-generated key-pair
 								- initialization of X509V3CertificateGenerator
 								- collecting SubjectAlternativeName items
+									- adding GeneralName.rfc822Name if empty (hardcoded: info@andtek.com)
+									- adding GeneralName.iPAddress if empty from config(global, ApasIpAddress)
 								- adding SubjectAlternativeName
 						-->	com.andtek.andphone.global.Module.importAPASCertificate(cert, alias, CertHelper.getKeyPair());
 						--> ApasCertificateHelper.generateCSR(...)

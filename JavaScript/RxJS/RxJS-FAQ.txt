@@ -53,6 +53,8 @@ Concept
 	being called a stream is that you should think of the data as continuous and not
 	really having an end, unless you explicitly define an end.
 	
+	
+SEE ALSO:	tools_and_languages/JavaScript/Angular/ARCHITECTING_ANGULAR_APPLICATIONS_WITH_REDUX_RXJS_AND_NGRX.2018.pdf	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Observer vs. Observable
 =======================

@@ -7,6 +7,7 @@ NestJS-FAQ
 Dependency injection
 --------------------
 - How to resolve circular dependency between services?
+- Howto access injectables during the startup?
 
 Validations
 -----------
@@ -19,9 +20,15 @@ Error handling
 - How to create and register custom exception filters?
 
 
+Websocket
+---------
+- How to create WebSocket server?
+
 Logging
 -------
 - Logging architecture
+
+
 
 --------------------------------------------------------------------------------------------------------------------------------------
 Howto build-up a NestJS development environment?
@@ -494,3 +501,36 @@ There are 2 methods:
 				
 		
 SEE ALSO:	https://docs.nestjs.com/techniques/logger		
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Howto access injectables during the startup?
+============================================
+Because application instantiation (NestFactory.create()) happens OUTSIDE THE CONTEXT OF ANY MODULE, it doesn't participate
+in the normal Dependency Injection phase of initialization.
+But we can instruct Nest to use THE SAME SINGLETON instance of an injectable:
+
+Use:	app.get(...)
+
+				const app = await NestFactory.create(ApplicationModule, {
+					logger: false,											// disabling built-in logger
+				});
+				cont logger = app.get(MyLogger));
+
+It retrieves an instance of either injectable or controller, otherwise, throws exception.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to create WebSocket server?
+===============================
+- add WebSocket:
+
+	npm install --save @nestjs/websockets
+	npm install @nestjs/platform-socket.io
+	
+- create a gateway:
+
+	nest g gateway App
+	
+SEE ALSO:	https://www.educba.com/websocket-vs-socket-io/
+	

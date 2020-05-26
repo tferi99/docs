@@ -1,11 +1,16 @@
+=======
+Sed FAQ
+=======
+
 - How to replace Nth substring in source?
 - How to convert substituted string to uppercase?
+- How to print lines between start vand end pattern?
 
-***************************************************************************************************************
+--------------------------------------------------------------------------------------------------------
 How to replace Nth substring in source?
 =======================================
 
-\n		Matches the nth substring (n is a single digit) previously specified in the pattern using "\(" and "\)".
+\N		Matches the nth substring (N is a single digit) previously specified in the pattern using "\(" and "\)".
 
 For example:
 
@@ -13,7 +18,7 @@ For example:
 	123abc456
 	123[abc]456	
 	
-***************************************************************************************************************
+--------------------------------------------------------------------------------------------------------
 How to convert substituted string to uppercase?
 ===============================================
 - use \U to convert the whole string
@@ -28,4 +33,9 @@ For example:
 	$ sed -e 's/\(abc\)/[\u\1]/'
 	123abc456
 	123[Abc]456	
+	
+--------------------------------------------------------------------------------------------------------
+How to print lines between start vand end pattern?
+==================================================
+
 	

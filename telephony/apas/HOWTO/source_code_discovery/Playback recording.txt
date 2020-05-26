@@ -4,7 +4,6 @@ Playback recording
 
 - Configuration of encryption
 - Playback by GWT recording search
-- Playback by Webclient
 - Structure of REC file
 - Playback by phone
 
@@ -217,65 +216,13 @@ Playing recording by pressing rendered button:
 																					--> com.andtek.andphone.media.datasink.audio.speex.getSteams()
 																						...
 																						--> com.andtek.andphone.media.datasink.audio.speex.Speex2PcmAudioInputStream.initialize()
--------------------------------------------------------------------------------------------------------------------------------------
-Playback by Webclient
-=====================
 
 
-						
 -------------------------------------------------------------------------------------------------------------------------------------
 Structure of REC file
 =====================
-(from com.andtek.andphone.recorder.Recording.)
-
-If filename ends with '.rec'
-----------------------------
-File contains header info and audio data.
-
-Endian:	little endian
-
-SUPER HEADER (at position 0)
-	- 'AREC' (4 bytes fixed string)
-	- version (int in 4 bytes)
-
-HEADER	(at position 288)
-	if version >= 3
-		- id (int in 4 bytes)
-	if version >= 2
-		- keep (int in 4 bytes)
-		- lastAction (int in 4 bytes)
-		- id (int in 4 bytes)
-	- start (int in 4 bytes)
-	- end (int in 4 bytes)
-	- originalLastAction (int in 4 bytes)
-	- callingParty (0 terminated string from 24 bytes)
-	- calledParty (0 terminated string from 24 bytes)
-	- phoneip (0 terminated string from 24 bytes)
-	- origCallingParty (0 terminated string from 24 bytes)
-		if origCallingParty contains '.' then it's a remote IP
-			- remoteip = origCallingParty
-			- origCallingParty = ""
-			- initiator (0 terminated string from 24 bytes)
-		else
-			- origCalledParty (0 terminated string from 24 bytes)
-	- status (int in 4 bytes)
-	- signaling (int in 4 bytes)
-	- codec (int in 4 bytes)
-	- originalKeep (int in 4 bytes)
-	- audiolength (int in 4 bytes)
-	- keySize (int in 4 bytes)
-		if keySize = 0
-			- keySize = ENCRYPTION_ALGORITHM_LENGTH_128 (128)
-
-AUDIO	(at position 512)
-
-If filename ends with '.spx'
-----------------------------
-File contains only audio data.
-
-- id = getIDFromFilename(filename)
-- record will be read from rec_call table
-
+MOVED INTO:	source_code_discovery/Recording.txt
+						
 
 -------------------------------------------------------------------------------------------------------------------------------------
 Playback by phone

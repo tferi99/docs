@@ -1,0 +1,93 @@
+======
+Nx FAQ
+======
+
+Basics
+------
+- What is Nx?
+- How to setup Nx?
+- How to create a workspace?
+- Tips
+
+Projects
+--------
+- Nest project
+- Lib project
+- How to delete a project?
+
+-------------------------------------------------------------------------------------------------------------------------------------
+What is Nx?
+===========
+Nx is the preeminent toolkit for Monorepo development, which helps you to build software smarter and faster. 
+With Nx you can build full-stack applications with your preferred framework.
+
+Nx is an extension for the Angular CLI and is made up of the following:
+- A set of schematics for project and code generation (@nrwl/schematics)
+- A helper library for handling common tasks like data persistence with NgRx and testing (@nrwl/nx)
+- A set of binaries that can be run from the terminal to help with formatting, linting and code base analysis
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to setup Nx?
+================
+npm install -g @nrwl/cli
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to create a workspace?
+==========================
+npx create-nx-workspace@latest
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Tips
+====
+nx list		: list plugins (installed/available)
+
+
+
+Nx course:		https://www.youtube.com/watch?v=2mYLe9Kp9VM&list=PLakNactNC1dH38AfqmwabvOszDmKriGco
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Nest project
+============
+Add Nest dependency (if not added before):
+
+	npm install --save-dev @nrwl/nest
+
+Generate Nest project:
+
+	nx generate @nrwl/nest:application <nest-app> --frontendProject my-angular-app
+
+
+- it generates a project into 'apps'
+- it creates 'proxy.conf.json' into client frontend  project (e.g Angular)
+- run:
+
+		nx server <nest-app>
+		
+  OR
+
+	- create a new entry into package.json, for example ('api' is Nest project):
+	
+		"start-api": "ng serve api",
+
+	By default, the serve command will run in watch mode. This allows code to be changed, and the Nest application to be rebuilt automatically. 
+	Nest applications also have the inspect flag set, so you can attach your debugger to the running instance.		
+	
+SEE ALSO:	https://nx.dev/angular/plugins/nest/overview
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Lib project
+===========
+Generate a lib project:
+nx g @nrwl/workspace:lib commondata
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to delete a project?
+========================
+- delete project directory from 'apps' or from 'libs'
+- delete project entry from "projects" node of nx.json
+- delete project entry from "projects" node of angular.json
+

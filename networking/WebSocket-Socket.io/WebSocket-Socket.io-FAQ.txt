@@ -1,0 +1,35 @@
+=======================
+WebSocket/Socket.io FAQ
+=======================
+
+- WebSocket vs Socket.io
+- What Socket.IO is not?
+
+---------------------------------------------------------------------------------------------------------------
+WebSocket vs Socket.io
+======================
+
+	WebSocket																	Socket.io
+	---------																	---------
+1	It is the protocol which is established over the TCP connection	 			It is the library to work with WebSocket
+2	It provides full duplex communication on TCP connections.					Provides the event-based communication between browser and server.
+3	Proxy and load balancer is not supported in WebSocket.						A connection can be established in the presence of proxies and load balancers.
+4.	It doesn’t support broadcasting.											It supports broadcasting.
+5.	It doesn’t have a fallback option.											It supports fallback options.
+
+
+SEE ALSO:	https://www.educba.com/websocket-vs-socket-io/
+
+---------------------------------------------------------------------------------------------------------------
+What Socket.IO is not?
+======================
+Socket.IO is NOT a WebSocket implementation. 
+Although Socket.IO indeed uses WebSocket as a transport when possible, it adds some metadata to each packet: the packet type, 
+the namespace and the packet id when a message acknowledgement is needed. That is why a WebSocket client will not be able 
+to successfully connect to a Socket.IO server, and a Socket.IO client will not be able to connect to a WebSocket server either. 
+
+
+	// WARNING: the client will NOT be able to connect!
+	const client = io('ws://echo.websocket.org');
+
+SEE ALSO:	https://socket.io/docs/#What-Socket-IO-is-not

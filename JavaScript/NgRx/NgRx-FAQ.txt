@@ -25,6 +25,7 @@ Selectors
 - Evolution of selectors
 - How to call a selector from a reducer?
 - How to re-use a selector?
+- Parameterized selectors
 
 Effects
 -------
@@ -668,3 +669,32 @@ to pre-process actions before normal reducers are invoked.
 Possible use-cases of a metareducer:
 - logging store before changes
 
+
+---------------------------------------------------------------------------------------------------------------
+Parameterized selectors
+=======================
+SEE ALSO:	https://medium.com/angular-in-depth/ngrx-parameterized-selector-e3f610529f8
+
+- props:
+
+	export const getCount = () =>  createSelector(
+		(state, props) => state.counter[props.id],
+		(counter, props) => counter * props.multiply
+	);
+  
+	this.counter2 = this.store.pipe(select(fromRoot.getCount(), { id: 'counter2', multiply: 2 }))
+	this.counter4 = this.store.pipe(select(fromRoot.getCount(), { id: 'counter4', multiply: 4 }))
+
+		
+- static parameter with factory:
+
+	export const selectCustomer = (id: string) => createSelector(
+		selectCustomers,
+		customers => customers[id]
+	);
+
+	this.customer = store.pipe(
+		select(customers.selectCustomer('47'))
+	);
+	
+	

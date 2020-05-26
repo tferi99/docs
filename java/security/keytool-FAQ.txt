@@ -121,7 +121,7 @@ e.g.
 	EXT1="SubjectAlternativeName=dns:ml-sv-vfandha.stmelf.bybn.de,ip:10.3.59.30"
 	EXT2="KeyUsage=digitalSignature,nonRepudiation,keyEncipherment"
 	EXT3="ExtendedkeyUsage=clientAuth,serverAuth"
-	KEYSIZE=2024
+	KEYSIZE=2048
 	KEYALG=RSA
 	SIGALG=SHA256withRSA
 	VALIDITY=730

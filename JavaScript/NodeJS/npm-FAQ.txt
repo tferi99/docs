@@ -3,6 +3,7 @@ npm FAQ
 =======
 
 - What is npm?
+- 'npm' tips
 - Where are global npm packages installed?
 - How to install packages?
 - How to create package.json?
@@ -33,8 +34,8 @@ Non-global libraries:
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
-Useful comands
-=====================
+'npm' tips
+==========
 npm -l							: full list of commands
 
 npm ls/ll/la [-g] [--<options>] : list of installed packages, it draws a dependency tree. ll and la shows detailed info

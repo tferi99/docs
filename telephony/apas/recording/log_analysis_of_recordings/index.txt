@@ -1,2 +1,4 @@
 - Use case 1: 	only one endpoint recorded (called party), so 1 terminal involved into recording
+- Use case 2: 	only one endpoint recorded (called party), so 1 terminal involved into recording + wireshark
+
 
