@@ -6,16 +6,20 @@ Basics
 ------
 - Installation
 - How to generate basics?
-
+- How to use NgRx in Nx monorepo?
+- Scaffolding tips
 
 General
 -------
 - Concept
-- FUC (Frequently Used Commands)
 - Steps - How to use it?
 - How to setup Store Development Tools?
 - How we can specify initial state of store?
 
+Actions
+-------
+- Grouping feature actions
+ 
 Reducers
 --------
 - What is a metareducer?
@@ -42,18 +46,42 @@ Tips
 Troubleshooting
 ---------------
 - ERROR: StaticInjectorError... [...Effects -> Actions]: ... NullInjectorError: No provider for Actions!
-
-
+- ERROR: NullInjectorError: No provider for EffectsRootModule!
+- Application hangs when an action dispatched
 
 
 ---------------------------------------------------------------------------------------------------------------
-FUC (Frequently Used Commands)
-==============================
-Generating a feature into 'reducers' directory and register into app.module:
+Scaffolding tips
+================
+- generate actions file:
 
-	ng g f reducers/Telephony -m app.module.ts
+	- go to module directory (where you want to generate actions)
+	- call:
+	
+		ng g action Presence
+	
+		
 
+- Generating a feature:
 
+	- add Angular module for feature:
+
+		- go to Angular project into /src/app
+		- call:
+		
+			ng g module presence
+		
+		  OR use right-mouse/New here.
+		
+	- generate feature elements:
+		
+		- go to module directory
+		- call:
+		
+			ng g @ngrx/schematics:f presence -m presence.module.ts --skipTests true
+			
+			OR use here right-mouse/New with: presence -m presence.module.ts --skipTests true
+		
 
 ---------------------------------------------------------------------------------------------------------------
 Installation
@@ -698,3 +726,60 @@ SEE ALSO:	https://medium.com/angular-in-depth/ngrx-parameterized-selector-e3f610
 	);
 	
 	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to use NgRx in Nx monorepo?
+===============================
+SEE ALSO: ../Nx/Nx-FAQ.txt/How to use NgRx in Nx monorepo?
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: NullInjectorError: No provider for EffectsRootModule!
+============================================================
+Error in console during start application in browser:
+
+	main.ts:13 NullInjectorError: R3InjectorError(AppModule)[EffectsFeatureModule -> EffectsRootModule -> EffectsRootModule -> EffectsRootModule]: 
+	  NullInjectorError: No provider for EffectsRootModule!
+	  ...
+	  
+	  
+Fix:
+
+	Add to imports of AppModule:
+	
+		EffectsModule.forRoot([])
+		
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Grouping feature actions
+========================
+For most clear code it worths to group your feature action by feature.
+
+Add action-types.ts to your feature (module) directory with a content lik this:
+
+	import * as PresenceActions from './presence.actions'
+	export {PresenceActions}
+
+ 
+It will minimize import lines in action user classes.
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Application hangs when an action dispatched
+===========================================
+In general effects dispatch new action(s) at the end of action processing.
+
+If you have an effects which does not dispatch new action 
+then you have to inform NgRx Effects otherwise it dispatches incoming action by default and it leads to an infinite loop
+which hangs application.
+
+	@Injectable()
+	export class PresenceEffects {
+
+
+	  loadPresences$ = createEffect(() => this.actions$.pipe(
+		ofType(PresenceActions.presencesPushed),
+		...
+	  ), {dispatch: false});
+
+	  constructor(private actions$: Actions) {}
+	}
+

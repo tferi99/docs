@@ -19,6 +19,9 @@ Error handling
 - Error handling
 - How to create and register custom exception filters?
 
+Scheduler
+---------
+- How to call background job repeatedly?
 
 Websocket
 ---------
@@ -533,4 +536,19 @@ How to create WebSocket server?
 	nest g gateway App
 	
 SEE ALSO:	https://www.educba.com/websocket-vs-socket-io/
+	
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+How to call background job repeatedly?
+======================================
+- create a service
+- implement job as a method
+- decorate method with @Cron(...):
+
+	@Cron('0,30 * * * * *')
+	changePresenceState() {
+		...
+	}
+
 	

@@ -35,6 +35,7 @@ OO
 - Inheritance in JavaScript
 - How to define prototypes?	
 - How to enumerate object properties?
+- How to campare objects?
 
 Tips
 ----
@@ -800,3 +801,51 @@ DEEP copy
 
 SEE ALSO:	
 	https://medium.com/javascript-in-plain-english/how-to-deep-copy-objects-and-arrays-in-javascript-7c911359b089		
+
+	
+------------------------------------------------------------------------------------------------
+How to campare objects?
+=======================
+- Method 1 - Fast and limited:
+
+	Works when you have simple JSON-style objects without methods and DOM nodes inside:
+
+	 JSON.stringify(obj1) === JSON.stringify(obj2) 
+
+	 
+- Method 2 - Own implementation:	
+
+	function isEquivalent(a, b) {
+		// Create arrays of property names
+		var aProps = Object.getOwnPropertyNames(a);
+		var bProps = Object.getOwnPropertyNames(b);
+
+		// If number of properties is different,
+		// objects are not equivalent
+		if (aProps.length != bProps.length) {
+			return false;
+		}
+
+		for (var i = 0; i < aProps.length; i++) {
+			var propName = aProps[i];
+
+			// If values of same property are not equal,
+			// objects are not equivalent
+			if (a[propName] !== b[propName]) {
+				return false;
+			}
+		}
+
+		// If we made it this far, objects
+		// are considered equivalent
+		return true;
+	}
+
+	// Outputs: true
+	console.log(isEquivalent(bobaFett, jangoFett));	
+
+- Method 3 - lodash	(RECOMMENDED):
+
+	console.log(_.isEqual(bobaFett, jangoFett));
+	
+	

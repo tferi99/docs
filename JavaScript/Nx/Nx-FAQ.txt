@@ -15,6 +15,14 @@ Projects
 - Lib project
 - How to delete a project?
 
+NgRx
+----
+- How to use NgRx in Nx monorepo?
+
+Troubleshooting
+---------------
+- ERROR: Module not found: Error: Can't resolve 'cache-manager' in '.....\node_modules\@nestjs\common\cache'
+
 -------------------------------------------------------------------------------------------------------------------------------------
 What is Nx?
 ===========
@@ -90,4 +98,97 @@ How to delete a project?
 - delete project directory from 'apps' or from 'libs'
 - delete project entry from "projects" node of nx.json
 - delete project entry from "projects" node of angular.json
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+How to use NgRx in Nx monorepo?
+===============================
+The structure of Nx project is a little bit different than standar Angular project:
+	- there are multiple project with a single package.json
+	- projects are in apps
+	
+If you create elements with schematics you have to add options for proper result.
+
+Steps are:
+
+- go to Angular project directory
+
+- intall @ngrx/store:
+
+	ng add @ngrx/store --module src/app/app.module.ts --minimal false
+	
+	NOTE: move 'reducers' directory into 'src' directory.
+	
+- install @ngrx/store-devtools:
+
+	ng add @ngrx/store-devtools --module src/app/app.module.ts
+	
+
+TEST:
+	- 'app.module.ts' will contain:
+		
+		...
+		StoreModule.forRoot(reducers, {
+		  metaReducers
+		}),
+		StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+		...
+		
+	- There is a reducers/index.ts with reducers and metaReducers
+	
+- move into monorepo root directory (to package.json) and install other packages
+		
+		npm install @ngrx/effects
+		npm install @ngrx/entity
+		npm install @ngrx/data 		(optional)
+		
+TEST:
+	Start application and goto Redux in devtools.
+	- inspector contains initial action:		@ngrx/store/init
+	- State/Raw contains:						{}
+	
+- add Angular module for feature:
+
+	- go to Angular project into /src/app
+	- call:
+	
+		ng g module presence
+	
+	  OR use right-mouse/New here.
+	
+- generate feature elements:
+	
+	- go to module directory
+	- call:
+	
+		ng g @ngrx/schematics:f presence -m presence.module.ts --skipTests true
+		
+		OR use here right-mouse/New with: presence -m presence.module.ts --skipTests true
+		
+		
+TEST: 	
+	Start application and goto Redux in devtools.
+	- State/Raw contains:			{
+										presence: {}
+									}
+									
+
+
+	
+									
+- Generate action file:
+
+	- go to module directory (where you want to generate actions)
+	- call:
+	
+		ng g @ngrx/schematics:action Presence
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Module not found: Error: Can't resolve 'cache-manager' in '.....\node_modules\@nestjs\common\cache'
+==========================================================================================================
+Problem:
+If you have a monorepo environment with NestJS and Angular project and you accidentally imported a NestJS 
+class/module into Angular project.
+
+In this case 'ng build' detects similar problem.
 

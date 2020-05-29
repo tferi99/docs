@@ -14,6 +14,7 @@ General
 - i18n
 - Change detection
 - Why called change detection 2x in developer mode?
+- How to use NgRx in Nx monorepo?
 
 Configuration
 -------------
@@ -38,7 +39,6 @@ Directives, Components
 - How to set component input with a literal value?
 - How to set component input with a boolean value?
 - Parent-child component interaction
-- How to project content from parent to child component?
 
 Templating
 ----------
@@ -46,10 +46,14 @@ Templating
 - Templating - structural directives
 - Templating expressions
 - ng-template directive
+- ng-content directive
 - ERROR: Can't have multiple template bindings on one element
 - ng-container directive
 - ngTemplateOutlet
 - Howto inject a template into a component (template reference)?
+- How to project content from parent to child component?
+- @ViewChild vs @ContentChild
+
 
 Data input, Forms
 -----------------
@@ -67,11 +71,17 @@ Data input, Forms
 - Howto generate FormControls dynamically?
 - Howto display error-specific messages on validation errors?
 - Howto use datepicker?
+- Howto initialize reactive form from route resolver?
+- How to save form content without submitting (no save button)?
 
 RxJS
 ----
 - How to bind an event observable to an HTTP element?
 - Howto use boolean observable with async pipe and ngIf?
+
+NgRx
+----
+SEE: ../NgRx/NgRx-FAQ.txt
 
 Design, CSS
 -----------
@@ -86,8 +96,9 @@ Routing, navigation
 - How to go back to previous page?
 - Passing/retrieving parameter with routing							!!! UNDER CONSTRUCTION !!!
 - Howto preserve query parameters for the next navigation?
-- Passing static data to route
+- Passing data to route
 - How to prevent user from accidentaly navigating away?
+- Howto specify default child route?
 
 Other Tips
 ----------
@@ -141,6 +152,7 @@ Troubleshooting
 - ERROR: Error: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked.
 - ERROR: Uncaught Error: Can't resolve all parameters for ...
 - ERROR: '...' is not a known element
+- ERROR: Module not found: Error: Can't resolve 'cache-manager' in '.....\node_modules\@nestjs\common\cache'
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to add Bootstrap to an Angular project?
@@ -913,8 +925,10 @@ Form management based on a common ancestor class:
 				  <input type="text"
 						 id="skuInput"
 						 placeholder="SKU"
-						 name="sku" ngModel>					<<< ngModel: it builds a FormControl and associates this field to f.value.sku
-						 required						 		<<< validator is in the template
+						 name="sku" 
+						 ngModel						<<< ngModel: it builds a FormControl and associates this field to f.value.sku
+						 required						 <<< validator is in the template
+					>
 				</div>
 				<button type="submit" class="ui button">Submit</button>
 			  </form>
@@ -938,9 +952,15 @@ Form management based on a common ancestor class:
 			2. we want to create a FormControl on this form with the name sku (because of the name attribute on the input tag)
 			
 		- There are two important pieces of functionality that NgForm gives us:
-			1. A FormGroup named ngForm
+			1. A FormGroup named ngForm		
 			2. A (ngSubmit) output
-			
+				
+				NgForm.
+					- control: FormGroup (which has the same properties: controls, value, status, touched, ...)
+					- controls: disctionary of FormControls
+					- value: object with values
+					- status
+					- ...
 			
 	How to set input values of fields?
 	----------------------------------
@@ -977,7 +997,7 @@ Form management based on a common ancestor class:
 				}
 				
 			template:
-				<form [formGroup]="signupForm">						<<<< bind template form and FormGroup
+				<form [formGroup]="signupForm" (ngSubmit)="onSubmit()>						<<<< bind template form and FormGroup
 					<input 
 						type="text" 
 						formControlName="username"				<<<< bind input to FormControllers
@@ -2007,6 +2027,39 @@ Common use of ng-template:
 		</ng-template>	
 		
 		
+		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ng-content directive
+====================
+Dynamic content. That is the simplest way to explain what ng-content provides. 
+You use the <ng-content></ng-content> tag as a placeholder for that dynamic content, 
+then when the template is parsed Angular will replace that placeholder tag with your content. 
+
+Component <add-button>:
+
+		<button (click)="add()">
+			<ng-content></ng-content>
+		</button>
+
+
+Usage of component:
+
+		<add-button>
+			Add new item
+			
+		</add-button>
+		
+
+SEE ALSO:
+https://medium.com/@joshblf/wtf-is-ng-content-8382b2a664e1
+https://www.freecodecamp.org/news/everything-you-need-to-know-about-ng-template-ng-content-ng-container-and-ngtemplateoutlet-4b7b51223691/
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to project content from parent to child component?
+======================================================		
+SEE ALSO:	ng-content directive		
+		
 --------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR: Can't have multiple template bindings on one element		
 ===========================================================
@@ -2729,6 +2782,8 @@ Static (specifying data in route)
 Dynamic (fetching data during routing)
 --------------------------------------
 - create a resolver (ServerResolver)
+	
+	It's a class implementing Resolve<T>.
 
 - add to route:
 
@@ -2737,18 +2792,137 @@ Dynamic (fetching data during routing)
 	
 - retrieve data in component:
 
-EditServerComponent:
+	EditServerComponent:
 
-	ngOnInit() {
-		this.route.data.subscribe(
-			(data: Data) => {
-				this.server = data['server'];
-			}
-		);
-	}
+		constr
+	
+		ngOnInit() {
+			this.route.data.subscribe(
+				(data: Data) => {
+					this.server = data['server'];
+				}
+			);
+		}
 
+	
 How to prevent user from accidentaly navigating away?
 -----------------------------------------------------
 Use canDeactivate guard.
 
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto specify default child route?
+==================================
+Add an empty route into children and redirect to default child route. 
+
+const routes: Routes = [
+  { path: 'home', component: HomePageComponent },
+  { path: 'broadcast', component: EventBroadcastMain },
+  { path: 'rxjs', component: RxjsMain, children: [
+      { path: '', redirectTo: 'observables', pathMatch: 'full'},						<<<< redirecting child route
+      { path: 'observables', component: ObservablesComponent},
+      { path: 'simplelist', component: CourseListComponent},
+	  ...
+	  
+	  
+--------------------------------------------------------------------------------------------------------------------------------------------------
+@ViewChild vs @ContentChild
+===========================
+With @ViewChild you can refer an element of the current component template.
+With @ContentChild you also refer and elemet on the current component but in the content pushed from the parent into <ng-content>
+
+
+Child:	
+	<div class="alert alert-success" role="alert" #panel>
+	  <ng-content></ng-content>
+	</div>
+
+  @ViewChild('panel', {static: true}) panel: ElementRef;
+  @ContentChild('pushedContentRef', {static: true}) pushedContentRef: ElementRef;
+
+  ngOnInit(): void {
+    if (this.pushedContentRef) {
+      this.pushedContentRef.nativeElement.style.backgroundColor = 'yellow';     // set background color of referenced pushed content
+    }
+  }
+  
+
+Parent:
+
+	<con-child>injected content <span style="padding: 3px" #pushedContent>PUSHED</span></con-child>
+  
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to use NgRx in Nx monorepo?
+===============================
+SEE ALSO: ../Nx/Nx-FAQ.txt/How to use NgRx in Nx monorepo?
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Module not found: Error: Can't resolve 'cache-manager' in '.....\node_modules\@nestjs\common\cache'
+==========================================================================================================
+Problem:
+If you have a monorepo environment with NestJS and Angular project and you accidentally imported a NestJS 
+class/module into Angular project.
+
+In this case 'ng build' detects similar problem.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto initialize reactive form from route resolver?
+===================================================
+If FormControl names of reactive form are the same as DTO properties then use simple form.patchValue(dto).
+
+- Fetch value from backend with a Resolver:
+
+	export interface AppConfig {
+	  autoChangePresenceStates: boolean;
+	}
+
+
+	@Injectable()
+	export class ConfigResolver implements Resolve<AppConfig> {
+
+	  constructor(private configService: ConfigService) {}
+
+	  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<AppConfig> | Promise<AppConfig> | AppConfig {
+		return this.configService.getConfig();
+	  }
+	}
+
+- then retrieve fetched value in component and call patchValue(val):
+
+	export class ConfigComponent implements OnInit {
+	  config: AppConfig;
+		
+	  constructor(private route: ActivatedRoute, private configService: ConfigService) {
+		this.form = new FormGroup({
+		  'autoChangePresenceState': new FormControl(false)
+		});
+
+		// routing getting resolver data
+		this.config = this.route.snapshot.params['config'];
+		this.route.data.subscribe(
+		  (data: Data) => {
+			this.config = data['config'];
+			this.form.patchValue(this.config);						<<<<<<< here
+		  }
+		);
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to save form content without submitting (no save button)?
+=============================================================
+FormGroup.valueChanges is an observable which emits form value on every changes. Subscribe to it and save changes.
+For example:
+
+	export class ConfigComponent implements OnInit {
+		form: FormGroup;
+
+		constructor(private route: ActivatedRoute, private configService: ConfigService) {
+		this.form.valueChanges.subscribe(value => {
+			this.configService.setConfig(value).subscribe()
+		})
+			
+	}
 

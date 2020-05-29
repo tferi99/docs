@@ -21,6 +21,7 @@ Observables
 Operators
 ---------
 - How to share an observable (shareReplay)?
+- How to emit values from an array with timer (zip)?
 
 Troubleshooting, testing
 ------------------------
@@ -127,7 +128,7 @@ SEE ALSO:
 	
 ----------------------------------------------------------------------------------------------------
 How to share an observable (shareReplay)?
-==================================================================================
+=========================================
 Ensure that all observers see the same sequence of emitted items, 
 even if they subscribe after the Observable has begun emitting items.
 
@@ -571,7 +572,23 @@ You DON'T NEED to unsubscribe from a completed/errored observable, but it won't 
 SEE ABOVE:	Do we need to unsubscribe all the observables?
 
 
-
+----------------------------------------------------------------------------------------------------
+How to emit values from an array with timer (zip)?
+==================================================
+Use ZIP operator to merge values from multiple observables together.
+It waits for values from all stream. It does not emit value till no value emitted from all streams.
+	
+	
+	const tm = interval(1000);
+    const arr = fromArray([1, 20, 4, 3456, 124, 33, 2]);
+    zip(tm, arr).pipe(
+      map((data: Array<number>) => {return data[1]})
+    ).subscribe(
+		val => console.log(val);
+	);
+	
+SEE ALSO:	https://rxmarbles.com/#zip
+	
 	
 	
 	
