@@ -22,6 +22,7 @@ Arrays
 ------
 - How to iterate over array elements?
 - How to copy an array?
+- How to convert array into another array?
 	
 OO
 --
@@ -849,3 +850,21 @@ How to campare objects?
 	console.log(_.isEqual(bobaFett, jangoFett));
 	
 	
+------------------------------------------------------------------------------------------------
+How to convert array into another array?
+========================================
+Use Array.Map()
+
+- The map() method creates a new array with the results of calling a function for every array element.
+- The map() method calls the provided function once for each element in an array, in order.
+
+	const array1 = [1, 4, 9, 16];
+
+	// pass a function to map
+	const array2 = array1.map(x => x * 2);
+
+	console.log(array2);
+	// expected output: Array [2, 8, 18, 32]
+
+
+

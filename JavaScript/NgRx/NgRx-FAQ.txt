@@ -27,7 +27,9 @@ Reducers
 Selectors
 ---------
 - Evolution of selectors
-- How to call a selector from a reducer?
+- How to call a selector from a reducer?							UNDER CONSTRUCTION
+- How to call a selector from an effect?							UNDER CONSTRUCTION
+
 - How to re-use a selector?
 - Parameterized selectors
 
@@ -560,42 +562,121 @@ Example store data:
 ---------------------------------------------------------------------------------------------------------------
 How to call a selector from a reducer?
 ======================================
-You can call selector method directly where the parameter itself the 'state':
+It depends on. Sometimes you cannot access state from selector.
+
+- By design a reducer only can access the feature slide of the root state. Initial state of a reducer is always the feature state. 
+	So if you want to select comething from feature slide it's not a problem but...
+
+There are 2 scenarios:	
+	
+1. You need data from the same feature state slide.
+	
+	In this case you cannot use original selectors which are built up from the feature selector because it based on absolute path:
+	
+		root/feature/....
+		
+	In a feature reducer it provides the feature state. In this case you need a feature store relative selector.
+
+		export const selectPresenceState = createFeatureSelector<fromPresence.PresenceState>(fromPresence.presenceFeatureKey);			<<< feature selector
+		
+|--->	export const selectAllPresence = createSelector(																				<<< get the entity data from feature
+|			selectPresenceState,
+|	|--->	fromPresence.selectAll
+|	|	);
+|	|
+|	|	// props: {olderThan} timestamp to choose old entries																			
+|	|	export const selectOldPresentsIds = createSelector(																				<<< selector derived from root
+|---|--->	selectAllPresence,																	
+	|	 	(presences: AppPresenceItem[], props) => {
+	|			return presences.filter(p => p.lastKeepAlive < props.olderThan).map(p => p.id)
+	|		}
+	|	)
+	|
+	|	/**
+	|	 * Feature-relative version of selectOldPresentsIds
+	|	 */
+	|	export const _selectOldPresentsIds = createSelector(																			<<< almost the same as selectOldPresentsIds but it uses feaure state
+	|--->	fromPresence.selectAll,																										<<< this is the same operation but without feature selector
+			(presences: AppPresenceItem[], props) => {
+			return presences.filter(p => p.lastKeepAlive < props.olderThan).map(p => p.id)
+		  }
+		)
+
+		
+		
+2. You need data from a different feature or from root state (outside of this feaure).
+
+	Feature reduces cannot access outer state directly. You have to push information:
+	- catch action with an effect
+	- inject root store into effect
+	- get current state data using withLatestFrom
+		
+	SEE ALSO: How to call a selector from an effect?
+		
+
+		
+SEE ALSO:	Pass the root state as an optional argument to the reducers.		https://github.com/ngrx/platform/issues/1437
+
+---------------------------------------------------------------------------------------------------------------
+How to call a selector from an effect?
+======================================
+Join data from other stream with withLatestFrom():
 
 
-	Selector:
-	---------
-	export const getState = createFeatureSelector<State>('feature');
+		@Injectable()
+		export class AuthEffects {
+			constructor(private store$: Store<AuthState>)
+			
+		@Effect({dispatch: false})
+		logoutPopup$ = this.actions$.pipe(
+			ofType<LogoutPopupAction>(AuthActionTypes.LogoutPopupAction),
+			withLatestFrom(this.store$.pipe(select(selectUserSettings()))),					<<< selecting user settings and adding to current stream
+			map(([action, userSettings]) => {												<<< original and assigned data are in an array
+				...
+			}),
+		);
 
-	export const getIsLoading = createSelector(
-	   getState,
-	   state => state.loading
-	);
+
+- How to pass parameter to selector called from effect with eithLatestFrom?
 
 
-	Reducer:
-	--------
-	export function reducer(state = initialAuthState, action: AuthActions): AuthState {
-		switch (action.type) {
-			case Action Types.ACTION: {
-				const loading = getIsLoading(state);
-				return {
-					atribute1: false,
-					attribute2: action.payload,
-				}
-			}
-			default: {
-				return state;
-			} 
-		}
-	}
+	map(action => action.payload),
+	mergeMap((id) =>
+		of(id).pipe(
+			withLatestFrom(
+				this.store.pipe(select(state => getEntityById(state, id))),
+				this.store.pipe(select(state => getWhateverElse(state)))
+			)
+		),
+		(id, latestStoreData) => latestStoreData
+	),
+	switchMap(([id, entity, whateverElse]) => callService(entity))
+
+
+OR
+	
+
+	loadLocalSubServices$: Observable<Action> = this.actions$.pipe(
+		ofType(LocalSubServiceTemplateActions.LocalSubServicesTemplateActionTypes.LoadLocalSubService),
+		map((action: LocalSubServiceTemplateActions.LoadLocalSubService) => action.payload.globalSubServiceId),
+		(globalSubServiceId) => {
+			return withLatestFrom(this.store.pipe(select(fromLocalSubservices.getSearchParams(globalSubServiceId))));
+		},
+		map(searchParams => searchParams[1]),
+		mergeMap((params) =>
+			this.subServiceService.getLocalSubServices(params).pipe(
+				map(localSubServices => (new LocalSubServiceTemplateActions.LocalSubServiceLoadSuccess(localSubServices))),
+				catchError(err => of(new LocalSubServiceTemplateActions.LocalSubServiceLoadFail(err)))
+			)
+		)
+	);     	
 
 ---------------------------------------------------------------------------------------------------------------
 How to re-use a selector?
 =========================
 If you want to re-use a selector and you want to utilize memoization efficiently then use a little bit different method.
 
-- DEFAULT WAY (SHARED):
+- DEFAULT WAY (SHARED SINGLETON):
 
 	Selector:
 	
@@ -617,7 +698,7 @@ If you want to re-use a selector and you want to utilize memoization efficiently
 	This is because it's receiving both of the multiply factors (e.g. one time 2, the other time 4). In order to correctly 
 	memoize the selector, wrap the selector inside a factory function to create different instances of the selector.
 
-- FACTORY CREATION:
+- FACTORY CREATION (INSTANCE PER CREATION):
 	
 	The following is an example of using multiple counters differentiated by id. It does not return a selector but a 
 	factory function:

@@ -74,10 +74,11 @@ Data input, Forms
 - Howto initialize reactive form from route resolver?
 - How to save form content without submitting (no save button)?
 
-RxJS
-----
+Observables
+-----------
 - How to bind an event observable to an HTTP element?
 - Howto use boolean observable with async pipe and ngIf?
+- Howto avoid multiple subscription with async pipes?
 
 NgRx
 ----
@@ -153,6 +154,7 @@ Troubleshooting
 - ERROR: Uncaught Error: Can't resolve all parameters for ...
 - ERROR: '...' is not a known element
 - ERROR: Module not found: Error: Can't resolve 'cache-manager' in '.....\node_modules\@nestjs\common\cache'
+- How to dump any (even async) variable from template?
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to add Bootstrap to an Angular project?
@@ -750,6 +752,11 @@ Setting styles:
 			Uses fixed white text on blue background
 		</div>
 		
+Conditional style:
+
+	<div [ngStyle]="{'background-color': isDanger() ? '#ff0000' : 'transparent'}">		
+		
+		
 		
 Conditional class:
 	<tag [class.<CSS CLASS>]='<boolean component property>'>
@@ -758,7 +765,7 @@ Conditional class:
 	
 	HTML:
 		
-		<p [class.clicked]='clicked' (click)="onClick()">
+		<p [class.clicked]='selected' (click)="onClick()">
 		
 	TS:
 		
@@ -768,7 +775,7 @@ Conditional class:
 		  styleUrls: ['./css-demo.component.css']
 		})
 		export class CssDemoComponent implements OnInit {
-		  clicked: boolean = false;
+		  selected: boolean = false;
 
 		  constructor() {
 			this.showTitle();
@@ -778,7 +785,7 @@ Conditional class:
 		  }
 
 		  onClick() {
-			this.clicked = !this.clicked;
+			this.selected = !this.selected;
 		  }
 		}
 		
@@ -2871,45 +2878,99 @@ In this case 'ng build' detects similar problem.
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Howto initialize reactive form from route resolver?
 ===================================================
-If FormControl names of reactive form are the same as DTO properties then use simple form.patchValue(dto).
+If you want to control data fetching to a form with routing then use a resolver.
+It creates an observable for retieving data. This observable need to complete.
+We are going to make sure that this observable emits a value and then completes.
+The router will only complete the transition to the target screen when observable (returned by resolver) completes.
+If this observable does not complete the route transition is going to hang and we will never go to target screen.
 
-- Fetch value from backend with a Resolver:
+- If FormControl names of reactive form are the same as DTO properties then use simple form.patchValue(dto).
+- register resolver into routing config:
 
-	export interface AppConfig {
-	  autoChangePresenceStates: boolean;
-	}
+	{ path: 'config', component: ConfigComponent, resolve: {config: ConfigResolver} },
+
+- Method 1 - without NgRx store:
+	
+	- Fetch value directly from backend with a Resolver:
+
+		export interface AppConfig {
+		  autoChangePresenceStates: boolean;
+		}
 
 
-	@Injectable()
-	export class ConfigResolver implements Resolve<AppConfig> {
+		@Injectable()
+		export class ConfigResolver implements Resolve<AppConfig> {
 
-	  constructor(private configService: ConfigService) {}
+		  constructor(private configService: ConfigService) {}
 
-	  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<AppConfig> | Promise<AppConfig> | AppConfig {
-		return this.configService.getConfig();
-	  }
-	}
-
-- then retrieve fetched value in component and call patchValue(val):
-
-	export class ConfigComponent implements OnInit {
-	  config: AppConfig;
-		
-	  constructor(private route: ActivatedRoute, private configService: ConfigService) {
-		this.form = new FormGroup({
-		  'autoChangePresenceState': new FormControl(false)
-		});
-
-		// routing getting resolver data
-		this.config = this.route.snapshot.params['config'];
-		this.route.data.subscribe(
-		  (data: Data) => {
-			this.config = data['config'];
-			this.form.patchValue(this.config);						<<<<<<< here
+		  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<AppConfig> | Promise<AppConfig> | AppConfig {
+			return this.configService.getConfig();
 		  }
-		);
+		}
 
+	- then retrieve fetched value in component and call patchValue(val):
 
+		export class ConfigComponent implements OnInit {
+		  config: AppConfig;
+			
+		  constructor(private route: ActivatedRoute, private configService: ConfigService) {
+			this.form = new FormGroup({
+			  'autoChangePresenceState': new FormControl(false)
+			});
+
+			// routing getting resolver data
+			this.config = this.route.snapshot.params['config'];
+			this.route.data.subscribe(
+			  (data: Data) => {
+				this.config = data['config'];
+				this.form.patchValue(this.config);						<<<<<<< here
+			  }
+			);
+
+- Method 2 - with NgRx store:
+
+	- create action, e.g. configLoad
+	
+	- dispatch data from resolver:
+	
+		@Injectable()
+		export class ConfigResolver implements Resolve<AppConfig> {
+
+		  constructor(private store: Store<AppState>) {}
+
+		  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<AppConfig> | Promise<AppConfig> | AppConfig {
+			return this.store.pipe(
+				tap(() => this store.dispatch(loadConfig())),
+				first()											<<<<< emit only 1 value and complete the observable
+			);
+		  }
+		}
+	
+	
+If multiple actions dispathing during router transition (because of devtools) then you can extend this code this way:
+
+		@Injectable()
+		export class ConfigResolver implements Resolve<AppConfig> {
+		  loading = false;
+		  
+		  constructor(private store: Store<AppState>) {}
+
+		  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<AppConfig> | Promise<AppConfig> | AppConfig {
+			return this.store.pipe(				
+				tap(() => {
+					if (!this.loading) {
+						this.loading = true;
+						this store.dispatch(loadConfig());
+					}
+				}),
+				first(),											<<<<< emit only 1 value and complete the observable
+				finalize(() => this.loading = false)
+			);
+		  }
+		}
+	
+
+	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to save form content without submitting (no save button)?
 =============================================================
@@ -2926,3 +2987,52 @@ For example:
 			
 	}
 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto avoid multiple subscription with async pipes?
+===================================================
+Sometimes you need to show the asynchronous data in multiple places of the same component. We don’t want to use async pipe twice because 
+it will create two subscriptions instead of one. Multiple subscriptions can be harmful. 
+It’s not uncommon that double subscription would lead our frontend to perform two identical http-calls instead of one, 
+or dispatch identical actions to your state management engine, or do heavy calculations more than once.
+
+Since Angular 4 the syntax of ngIf and ngFor directives was updated to allow local variables. See ngIf reference for details. 
+It's possible to store asynchronous data into a local variable with 'as':
+
+
+	<div *ngIf="userObservable | async as user; else loading">
+		Hello {{user.last}}, {{user.first}}!
+    </div>
+    <ng-template #loading let-user>Waiting... (user is {{user|json}})</ng-template>
+
+
+SEE ALSO:
+	https://angular.io/api/common/NgIf
+	https://medium.com/@yurykatkov/how-to-avoid-multiple-async-pipes-in-angular-ff0d51a8d368
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to dump any (even async) variable from template?
+====================================================
+You can declare local variables on templates is structural directives.
+This variables added to context of template element.
+
+Put an *ngIf into a container element where you need a value to be dumped, like this:
+
+	<div *ngIf="{selectedDirectory: (selectedDirectory$ | async)}; let localVars">
+		<button> (click)="dumpVar(localVars)"
+	</div>
+	
+	
+  dumpAnyValue(v: any) {
+    console.log('DUMP:', v);
+  }
+
+
+NOTE: you can add only a single structural directive to an element.
+
+
+
+
+
+	

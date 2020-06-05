@@ -543,7 +543,7 @@ Renaming target variables (with arrays/objects):
 
 		let { a: newName1, b: newName2 } = {a:5, b:10};
 	
-
+SEE ALSO:	https://medium.com/@justintulk/adding-an-alias-to-a-destructured-assignment-7b9fb6828a2d
 	
 ------------------------------------------------------------------------------------------------------------------------
 TS interfaces

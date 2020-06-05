@@ -173,8 +173,6 @@ TEST:
 									}
 									
 
-
-	
 									
 - Generate action file:
 
@@ -182,6 +180,15 @@ TEST:
 	- call:
 	
 		ng g @ngrx/schematics:action Presence
+		
+- Generate entity:
+
+	- go to module directory (where you want to generate actions)
+	- call:
+	
+		ng g @ngrx/schematics:entity Presence -m presence.module.ts --skipTests
+		
+		OR use here right-mouse/New with: presence -m presence.module.ts --skipTests
 		
 --------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR: Module not found: Error: Can't resolve 'cache-manager' in '.....\node_modules\@nestjs\common\cache'

@@ -13,10 +13,14 @@ Observables
 - Hot vs cold observables
 - How to perform a transformation on values from an observable?
 - How to process values from an observable with multiple operators?
-- How to join multiple observables into single onserver?
-- How to join multiple observables into single onserver v2 (flattening)?
 - Do we need to unsubscribe all the observables?
 - Do I need to unsubscribe completed observables?
+
+
+Multiple observables
+--------------------
+- How to join multiple observables into single onserver?											UNDER CONSTRUCTION
+- How to join multiple observables into single onserver v2 (flattening)?
 
 Operators
 ---------
@@ -184,32 +188,49 @@ then use multiple operators and join them in a chain using pipe():
 ----------------------------------------------------------------------------------------------------
 How to join multiple observables into single onserver?
 ======================================================
-Use concat() to concatenate observers in a sequence:
+- concat (static)
+- zip (static)
+- withLatestFrom
+- forkJoin
+.........................................
 
-	const o1 = of(1, 2, 3);
-	const o2 = interval(1000).pipe(       // waiting 1 sec 3 times
-		tap(x => console.warn(x + ' : after 1 sec ')),
-		take(3));
-	const o3 = of(5, 6, 7);
-	concat(o1, o2, o3).subscribe(console.log);
+- concat (static)
+	Use concat() to concatenate observers in a sequence:
 
-	-----------------------
-	1
-	2
-	3
-	waiting 1 sec
-	0
-	waiting 1 sec
-	1
-	waiting 1 sec
-	2
-	5
-	6
-	7
+		const o1 = of(1, 2, 3);
+		const o2 = interval(1000).pipe(       // waiting 1 sec 3 times
+			tap(x => console.warn(x + ' : after 1 sec ')),
+			take(3));
+		const o3 = of(5, 6, 7);
+		concat(o1, o2, o3).subscribe(console.log);
+
+		-----------------------
+		1
+		2
+		3
+		<waiting 1 sec>
+		0
+		<waiting 1 sec>
+		1
+		<waiting 1 sec>
+		2
+		5
+		6
+		7
+		
+	NOTE: if any observable in infinite next observables won't be called.
+
+	SEE ALSO:	
+		https://rxjs-dev.firebaseapp.com/api/index/function/concat
+		https://rxmarbles.com/#concat
 	
-NOTE: if any observable in infinite next observables won't be called.
+	
+- zip (static)
 
-
+	SEE ALSO:
+		https://rxmarbles.com/#zip
+	
+	
 ----------------------------------------------------------------------------------------------------
 How to join multiple observables into single onserver v2 (flattening)?
 ======================================================================
