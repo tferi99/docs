@@ -4,28 +4,52 @@ TypeScript FAQ
 
 SEE ALSO:	https://en.wikipedia.org/wiki/TypeScript
 
-Language elements
------------------
+
+Types
+-----
 - TS types
-- Why 'let' (let vs var)?
-- How to map object attributes into variables automatically?
-- What is destructuring?
 - TS interfaces
-- Class developer patterns/rules
-- What is IIFE?
-- Class constructor overload
-- How to add a dynamic property to an object referenced by an interface?
-- How to specify optional and default parameters in TS functions?
+- Indexable Types
+- How to iterate over Indexable Types?
+- What is type alias? Types vs interfaces
+- What is declaration merging?
+- Function interfaces
 - How to find out type of an instance?
+
+Enums
+-----
 - Types of enums
 - How to get an enum by value?
 - How to check if a variable is an enum?
 - How to add static methods to an enum?
-- Loops
-- How to pass callback function to class method with generics type?
+
+Arrays
+------
 - Initialize arrays
-- Function interfaces
-- Indexable Types
+- Howto iterate over an array?
+
+Control functions
+-----------------
+- Loops
+
+Value assignment
+----------------
+- Why 'let' (let vs var)?
+- How to map object attributes into variables automatically?
+- What is destructuring?
+
+Functions
+---------
+- How to pass callback function to class method with generics type?
+- How to specify optional and default parameters in TS functions?
+- What is IIFE (Immediately Invoked Function Expression)?
+
+OO
+--
+- Class developer patterns/rules
+- Class constructor overload
+- How to add a dynamic property to an object referenced by an interface?
+
 
 Config, build
 -------------
@@ -346,8 +370,8 @@ Excess Property Checks
 		- in the constructor
 	
 ------------------------------------------------------------------------------------------------------------------------
-What is IIFE?
-=============
+What is IIFE (Immediately Invoked Function Expression)?
+=======================================================
 IIFE =  Immediately Invoked Function Expression 
 
 In JS if you pass a variable to IIFE it preserves current value of variable.
@@ -1031,7 +1055,74 @@ If you want to use an array you have to initialize first.
 	arr.push(2, 3, 4, 5);					// adding values later
 
 	
+------------------------------------------------------------------------------------------------------------------------
+Howto iterate over an array?
+============================
+- for:
+
+	for (let n=0; n<arr.length; n++) {
+		const elem = array[n];
+		...
+	}
 	
+	Pros:
+		- Works on every environment
+		- You can use break and continue flow control statements
+		
+	Cons:
+		- Too verbose
+		- Imperative
+		- Easy to have off-by-one errors (sometimes also called a fence post error)	
+	
+	
+- prototype.forEach():
+
+	arr.forEach(function (item, index) {
+		...
+	});
+	
+	OR
+	
+	arr.forEach(item, index) => {
+		...
+	});
+	
+	
+	Pros:
+		- Very short and succinct.
+		- Declarative
+		
+	Cons:
+		- Cannot use break / continue
+		
+- ES6 for-of:
+
+	for (const elem of arr){
+		...
+	}
+	
+	Pros:
+		- It can iterate over a large variety of objects.
+		- Can use normal flow control statements (break / continue).
+		- Useful to iterate serially asynchronous values.
+
+	Cons:
+		- If you are targeting older browsers, the transpiled output might surprise you.
+
+	
+- DON'T USE for-in:
+
+	for (const elem in arr) {
+		...
+	}		
+	
+	It shouldn't be used for array-like objects because:
+		- The order of iteration is not guaranteed; the array indexes may not be visited in numeric order.
+		- Inherited properties are also enumerated.
+		- The second point is that it can give you a lot of problems, for example, if you extend the Array.prototype object 
+			to include a method there, that property will also be enumerated.	
+	
+SEE ALSO:	https://stackoverflow.com/questions/3010840/loop-through-an-array-in-javascript
 	
 ------------------------------------------------------------------------------------------------------------------------
 How to get an enum by value?
@@ -1139,11 +1230,13 @@ Interfaces are capable of describing the wide range of shapes that JavaScript ob
 
 
 
-
-
 ------------------------------------------------------------------------------------------------------------------------	
 Indexable Types
 ===============
+We can define indexable types for data like arrays. Any object THAT USES BRACKET NOTATION like arrays and dynamic object types 
+can be designated with indexable types. 
+Indexable types have an index signature that describes the types that we can use as an index for our object, alongside the return type for the corresponding index. 
+
 An interface can also define the type of an array where you can define the type of index as well as values.
 You can define type of  indexable objects:
 
@@ -1213,4 +1306,98 @@ Example:
 		  custom: 12
 		}
 	
+
+SEE ALSO:
+	https://levelup.gitconnected.com/introduction-to-typescript-interfaces-indexable-types-d66958523518
+	
+	
+------------------------------------------------------------------------------------------------------------------------	
+How to iterate over Indexable Types?
+====================================
+Here is an indexable type:
+
+	private static colorsByName: { [index: string]: MyColorClass}
+
+Method 1 - array of preperties:
+	What you can do, is turn it into an array by getting an array of the object's keys then mapping the keys to the properties of the object:
+
+		const colors = Object.keys(MyClass.colorsByName).map(key => MyClass.colorsByName[key]);
+		
+	Or with a reusable function:
+	
+		function propsToArray<T>(obj: { [index: string]: T; } | { [index: number]: T; }) {
+			return Object.keys(obj).map(prop => obj[prop]);
+		}
+
+	...and iterate:
+	
+		for (const color of propsToArray(MyClass.colorsByName)) {
+			// use color here
+		}
+
+
+Method 2: Object.values()
+
+	for (const color of Object.values(MyClass.colorsByName)) {
+		...
+	}		
+		
+		
+Method 3: for-in:
+
+	for (const colorName in colorsByName) {
+		const color = colorsByName[colorName];
+		...
+	}	
+		
+SEE ALSO:	https://stackoverflow.com/questions/35370414/how-to-iterate-over-string-indexed-array-in-typescript
+
+------------------------------------------------------------------------------------------------------------------------	
+What is type alias? Types vs interfaces
+=======================================
+Type aliases create a new name for a type. Type aliases are sometimes similar to interfaces, 
+but can name primitives, unions, tuples, and any other types that you’d otherwise have to write by hand.
+
+Unlike an interface declaration, which ALWAYS INTRODUCES A NAMED OBJECT TYPE, a type alias declaration can introduce a NAME FOR ANY KIND OF TYPE, 
+including primitive, union, and intersection types.
+
+
+Types vs interfaces
+-------------------
+- Both of them can be implemented
+- Both of them can be extended
+- Only interface can be merged, if you define type twice, typescript gives you error.
+
+
+SEE ALSO:
+	https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-aliases
+	https://stackoverflow.com/questions/44079820/what-is-export-type-in-typescript
+	https://stackoverflow.com/questions/37233735/typescript-interfaces-vs-types
+	What is declaration merging?
+	
+------------------------------------------------------------------------------------------------------------------------	
+What is declaration merging?
+============================
+If you declare a type more than one. 
+These can be merged:
+- interfaces
+- namespaces
+- Namespaces with Classes, Functions, and Enums
+
+	
+For exmple interface merging:
+
+	interface Box {
+		height: number;
+		width: number;
+	}
+
+	interface Box {
+		scale: number;
+	}
+
+	let box: Box = {height: 5, width: 6, scale: 10};
+
+
+SEE ALSO:	https://www.typescriptlang.org/docs/handbook/declaration-merging.html
 	

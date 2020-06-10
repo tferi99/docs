@@ -1,0 +1,73 @@
+===========================
+WebAttendant startup-reload
+===========================
+
+Routing
+-------
+	- default route redirected to 'main'
+	- 'main' protected by AuthGuard which redirects to 'login' if not authenticated
+	- 'login' navigates to 'main' after logged-in
+	
+	
+Initial data loading
+--------------------	
+- If authenticated then you are on 'main'
+- MainComponent dispatches AppDataLoadRequestedAction which loads (reloads) initial data of application
+- Application data in response populated into feature store slides
+- Finally dispatcing a AppDataLoadedAction. Subscribers are:
+	- MainComponent
+	- GlobalEffects
+
+
+
+--> MainComponent.ngOnInit()
+	==> AppDataLoadRequestedAction
+
+		-->  GlobalEffects.appDataLoadRequested
+			--> InitService.appReload()
+				==> HTTP GET: '/init/reload'
+					HTTP --> InitController.reload(...) ==> AppResource
+						
+			- checking version in local storeage
+			---------------- if version different -----------------
+				- store version to local storage
+				--> F5 to reload application into brovser
+				
+			----------------- else --------------------
+			==> AppCsrfInitiatingAction(data: AppData)
+			
+				--> GlobalEffects.appCsrfInitiating$
+					--> authService.init_csrf()
+						==> HTTP POST: /auth/init-csrf'
+					==> AppCsrfInitiatedAction(payload: AppData)
+						--> GlobalEffects.appCsrfInitiated$
+							- sending actions to feature effects and reducers to load data to feature states
+								==> LoginSuccessAction(data.user)
+								==> SettingsLoadedAction(data.settings)
+								==> ProfileLoadedAction(data.profile)
+								==> PhonesLoadedAction({phones: data.phones})
+								==> WidgetsLoadedAction(data.gridster)
+								==> AllCallsLoaded({calls: data.calls})
+								==> BulkLookupRequestAction(data.calls)
+								==> QueuesLoadedAction(data.queues)
+								==> CallHistoryLoaded(data.lastOutgoingLines)
+								==> HotkeysLoadedAction(data.hotkeys)
+								==> updatePresenceSubscriptions()						// starting presence update subscription job
+								==> presenceStoreCleanup()								// starting presence store cleanup job   
+								
+								==> AppDataLoadedAction(data)			// LAST
+								
+									--> MainComponent.initSubscription
+										--> startKeepalive()
+										
+									--> GlobalEffects.appDataLoaded$
+										--> initService.subscribeToAtmosphere(data.payload)
+											--> atmosphereService.subscribe(atmSubsString)
+										
+									--> global.reducer - case GlobalActionTypes.AppDataLoadedAction
+										info to store:
+											- APAS version
+											- server time offset
+											- loaded = true
+											
+								

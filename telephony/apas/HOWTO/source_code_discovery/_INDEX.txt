@@ -94,6 +94,8 @@ Web/WebClient/WebAttendant
 - Pushing APAS events with Atmosphere
 - Managing WebClient client connections
 - Force logout in Web applications
+- WebAttendant startup-reload
+
 
 REST API
 --------

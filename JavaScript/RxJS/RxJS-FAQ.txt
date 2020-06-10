@@ -11,6 +11,7 @@ Observables
 -----------
 - Observer vs. Observable
 - Hot vs cold observables
+- Howto make hot observable from cold?										UNDER CONSTRUCTION
 - How to perform a transformation on values from an observable?
 - How to process values from an observable with multiple operators?
 - Do we need to unsubscribe all the observables?
@@ -19,8 +20,8 @@ Observables
 
 Multiple observables
 --------------------
-- How to join multiple observables into single onserver?											UNDER CONSTRUCTION
-- How to join multiple observables into single onserver v2 (flattening)?
+- How to join multiple observables?											UNDER CONSTRUCTION
+- How to join multiple observables v2 (flattening)?
 
 Operators
 ---------
@@ -44,22 +45,54 @@ Error handling
 ----------------------------------------------------------------------------------------------------
 Concept
 =======
-- Observable: This is a class representing a stream of data.
+- Observable - a stream of events to which observers can subscribe.
 
-- Observer: This is a class able to emit data.
+- Observer - an object with next, error and complete methods, which subscribes to an observable.
 
-- Producer: This is what internally produces data, which the Observer
-	ultimately emits.
-	
+- Subscription function - the function which executes each time an observer subscribes to an observable.
+
+- Producer - the source of data for an observable, the thing that calls an observers next, error, and complete methods.
+
+- Hot observable - an observable which creates its producer.
+
+- Cold observable - an observable which closes over (surrounds/covers) its producer.
+
+- Finite observable - an observable which completes.
+
+- Infinite observable - an observable which never completes.
+
+- Unicast observable - an observable whose emitted values are not shared amongst subscribers.
+
+- Multicast observable - an observable whose emitted values are shared amongst subscribers.
+
 - Operator: This is a method on an Observable, which allows us to manipulate the
 	stream itself or the data it emits.
+
+
+	const subscriptionFn = observer => {
+	  console.log('A new subscriber');
+	  observer.next(1);
+	  observer.next(2);
+	  observer.complete();
+	}
+
+
+	const source$ = Observable.create(subscriptionFn);
 	
-- Stream: This is synonymous with an instance of an Observable. The reason for it
-	being called a stream is that you should think of the data as continuous and not
-	really having an end, unless you explicitly define an end.
 	
+	const observer = {
+		next: value => console.log(value),
+		error: error => console.log(`Error: ${error}`),
+		complete: () => console.log('Complete'),
+	};
+
+
+	source$.subscribe(observer);						<<<< observer is passed to subscribe
 	
-SEE ALSO:	tools_and_languages/JavaScript/Angular/ARCHITECTING_ANGULAR_APPLICATIONS_WITH_REDUX_RXJS_AND_NGRX.2018.pdf	
+
+	
+SEE ALSO:	http://willtaylor.blog/rxjs-observables-hot-cold-explained/
+
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Observer vs. Observable
 =======================
@@ -110,6 +143,8 @@ Method 2 (not recommended in new projects):
 ----------------------------------------------------------------------------------------------------
 Types of Subjects
 =================
+A Subject is a special type of Observable which shares a single execution path among observers.
+
 - Subject:
 	A Subject is a special type of Observable that allows values to be multicasted to many Observers. 
 	Subjects are like EventEmitters.
@@ -128,6 +163,7 @@ Types of Subjects
 	
 SEE ALSO:
 	https://stackblitz.com/edit/ftoth-rxjs-subjects	
+	https://www.learnrxjs.io/learn-rxjs/subjects
 	
 	
 ----------------------------------------------------------------------------------------------------
@@ -186,8 +222,8 @@ then use multiple operators and join them in a chain using pipe():
 	4
 
 ----------------------------------------------------------------------------------------------------
-How to join multiple observables into single onserver?
-======================================================
+How to join multiple observables?
+================================
 - concat (static)
 - zip (static)
 - withLatestFrom
@@ -232,8 +268,8 @@ How to join multiple observables into single onserver?
 	
 	
 ----------------------------------------------------------------------------------------------------
-How to join multiple observables into single onserver v2 (flattening)?
-======================================================================
+How to join multiple observables v2 (flattening)?
+=================================================
 SEE ALSO:	https://medium.com/@shairez/a-super-ninja-trick-to-learn-rxjss-switchmap-mergemap-concatmap-and-exhaustmap-forever-88e178a75f1b
 
 Flattening (Flattening just means — "subscribing inside a subscribe"):
@@ -385,7 +421,7 @@ Hot vs cold observables
 COLD
 ----
 - COLD is when your observable creates the producer (Producers created *inside*)
-- Producer created and activated during subscription:
+- Producer created and activated during subscription
 - Subscription is receiving all emitted values
 
 	1. creates the producer
@@ -435,6 +471,22 @@ HOT
 		  noop,
 		  () => name + ' COMPLETED'
 		);
+
+		
+SEE ALSO:
+https://medium.com/@benlesh/hot-vs-cold-observables-f8094ed53339
+
+
+----------------------------------------------------------------------------------------------------
+Howto make hot observable from cold?
+====================================
+
+	function makeHot(cold) {
+	  const subject = new Subject();
+	  cold.subscribe(subject);
+	  return new Observable((observer) => subject.subscribe(observer));
+	}
+
 
 
 ----------------------------------------------------------------------------------------------------

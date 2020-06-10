@@ -1,0 +1,22 @@
+===============================================
+How directories are merged in directory groups?
+===============================================
+
+Direcory groups can contain multiple directories. 
+If a directory group has multiple directories search can retrieve items from multiple directories.
+
+- Search result columns generated from union of group columns. 
+	If colums from different group have the same 'Display Name' these colums will be merged into a single column.
+	
+- Search result records also can be merged by 'Output Template'. BTW it's not really a merge but a conflict.
+
+	A hash will be generated from field values by output template and if hash values of two (or more) result records are the same
+	they will be joined into single record. That means only a single record will be added to results. 
+	
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	Internally result records are put into a map by hash value so THE LAST WILL BE WIN. 
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
+	
+- In union of fields of search result only fields from the current directory are filled, other fields are empty.
+

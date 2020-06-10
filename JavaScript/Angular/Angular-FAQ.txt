@@ -53,6 +53,13 @@ Templating
 - Howto inject a template into a component (template reference)?
 - How to project content from parent to child component?
 - @ViewChild vs @ContentChild
+- Bindings:
+	- Property binding or interpolation?
+	- Attribute binding
+	- Class binding
+	- Style binding
+	- Event binding
+	- Data binding
 
 
 Data input, Forms
@@ -103,20 +110,13 @@ Routing, navigation
 
 Other Tips
 ----------
-- Bindings:
-	- Property binding or interpolation?
-	- Attribute binding
-	- Class binding
-	- Style binding
-	- Event binding
-	- Data binding
-
 - Conditional or dynamic CSS Style/Class
 - How to check empty values in interpolations?
 - How to access DOM elements from a controller?
 - Null check on objects
 - How to interpolate enum values in template?
 - How to use environment variables?
+- Howto access class members from setTimeout()?
 
 Services
 --------
@@ -133,7 +133,7 @@ Development
 -----------
 - How to debug Angular?
 - How to generate components?
-- Howto get usable Angular CLI functions?
+- Angular CLI functions
 
 Deployment
 ----------
@@ -155,6 +155,11 @@ Troubleshooting
 - ERROR: '...' is not a known element
 - ERROR: Module not found: Error: Can't resolve 'cache-manager' in '.....\node_modules\@nestjs\common\cache'
 - How to dump any (even async) variable from template?
+- ERROR: The Angular Compiler requires TypeScript >=X and <Y but Z was found instead
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Angular CLI functions
+=====================
+ng --help
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to add Bootstrap to an Angular project?
@@ -574,10 +579,6 @@ It prints version of all important packages:
 	typescript                   2.7.2
 
 
---------------------------------------------------------------------------------------------------------------------------------------------------
-Howto get usable Angular CLI functions?
-=======================================
-ng --help
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -3030,6 +3031,33 @@ Put an *ngIf into a container element where you need a value to be dumped, like 
 
 
 NOTE: you can add only a single structural directive to an element.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto access class members from setTimeout()?
+=============================================
+If you call setTimeout() from an Angular component code and you want to access members sometimes member references are undefined.
+
+The reason for this is that the callback function inside setTimeout is in a different lexical environment. 
+This is why in ES6+ functions can be defined using =>. 
+
+	ngOnInit() {
+		setTimeout(this.presenceUpdateStorePresenceKeepAlive, PRESENCE_WIDGET_KEEPALIVE_PERIOD);
+	}
+
+Use arrow function intstead:
+
+	ngOnInit() {
+		setTimeout(() => this.presenceUpdateStorePresenceKeepAlive, PRESENCE_WIDGET_KEEPALIVE_PERIOD);
+	}
+	
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: The Angular Compiler requires TypeScript >=X and <Y but Z was found instead
+==================================================================================
+
+npm install typescript@">=X <Y" 
+
 
 
 
