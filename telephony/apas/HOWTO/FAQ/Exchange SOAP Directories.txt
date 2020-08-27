@@ -85,7 +85,9 @@ Configuration of public folders
 	- SOAP Service URL - format: 	https://<EXCHANGE_SERVER>/EWS/Exchange.asmx
 	- Login: User account is used for Exchange SOAP authentication. Format: user@domain
 	- Folder name:
-		- contactsroot: with this name APAS will get content of all public folders under root public folder recursively
+		- publicfoldersroot: with this name APAS will get content of all public folders under root public folder recursively
+		OR
+		- folder1/folder2/.../folderN : get contacts from a public folder specified by exact absolute path
 
 		
 - Command line solution		
@@ -191,7 +193,7 @@ SEE ALSO:
 ---------------------------------------------------------------------------------------------------------------------------
 Troubleshooting
 ===============
-Error 401:
+- Error 401:
 
 	If you have the following error during connecting to Exchange Server:
 
@@ -208,13 +210,38 @@ Error 401:
 	SEE ALSO: 	Howto enable basic authentication in Exchange Server?
 
 	
-Outlook cannot login:	which connected before - a login dialog displayed
+- Outlook cannot login:	which connected before - a login dialog displayed
 
-	In the same page where you configure Basic Auhtntication check if these options are set:
-	- Integrated Windows uthentication 
+	In the same page where you configure Basic Authentication check if these options are set:
+	- Integrated Windows authentication 
 	- (and maybe) Digest Authentication for Windows domain server
 	
 	SEE ALSO: 	Howto enable basic authentication in Exchange Server?
 
 
-	
+- NTLM authentication scheme selected + (401)Unauthorized
+
+	Jul 08, 2020 10:29:09 AM org.apache.commons.httpclient.auth.AuthChallengeProcessor selectAuthScheme
+	INFO: NTLM authentication scheme selected
+	Jul 08, 2020 10:29:09 AM org.apache.commons.httpclient.auth.AuthPolicy getAuthScheme
+	SEVERE: Error initializing authentication scheme: NTLM
+	org.apache.commons.httpclient.auth.AuthenticationException: Unable to proceed as JCIFS library is not found.
+		at microsoft.exchange.webservices.data.EwsJCIFSNTLMScheme.<init>(Unknown Source)
+		at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+		at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+		at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+		at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+		at java.lang.Class.newInstance(Class.java:442)
+		at org.apache.commons.httpclient.auth.AuthPolicy.getAuthScheme(AuthPolic	
+	...
+	Jul 08, 2020 10:29:09 AM org.apache.commons.httpclient.HttpMethodDirector processWWWAuthChallenge
+	WARNING: NTLM authentication scheme implemented by microsoft.exchange.webservices.data.EwsJCIFSNTLMScheme could not be initialized
+	microsoft.exchange.webservices.data.HttpErrorException: The remote server returned an error: (401)Unauthorized
+		at microsoft.exchange.webservices.data.ServiceRequestBase.validateAndEmitRequest(Unknown Source)
+		at microsoft.exchange.webservices.data.SimpleServiceRequestBase.internalExecute(Unknown Source)
+		at microsoft.exchange.webservices.data.MultiResponseServiceRequest.execute(Unknown Source)
+		at microsoft.exchange.webservices.data.ExchangeService.resolveName(Unknown Source)
+	...
+		
+		
+	Probllem is the same: no basic authentication is enabled 

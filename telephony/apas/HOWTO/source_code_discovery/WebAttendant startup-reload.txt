@@ -2,6 +2,50 @@
 WebAttendant startup-reload
 ===========================
 
+- Data initialization
+- Call flow
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Data initialization
+===================
+There are 2 ways to initialize data with REST:
+
+	1. /init/reload
+	2. Widget specific init REST
+
+
+1. /init/reload
+---------------
+This endpoint provides a lot of global initial data via REST in AppResource object:
+	- apasVersion
+	- user
+	- profile
+	- gridster
+	- phones
+	- calls
+	- settings
+	- queues
+	- lastOutgoingLines
+	- hotkeys
+
+2. Widget specific init REST
+----------------------------
+Widget (feature) specific data loaded during initialization by WidgetStatusManagerDirective only if widget instatiated.
+
+
+Widget specific actions and endpoints:
+- DirectoryInitAction => directoryApiService.getDirectories() => /directory/directories
+- CallListInitAction => CallListSearchRequestAction => callListService.getCalls() => /calllist/calls
+- CallCenterInitAction => CallCenterInitAction => nothing
+- CallCenterCallBackInitAction => callCenterCallBackService.getInitdata() => /callcenter/callbacks
+- GroupInitAction => groupService.getGroupList() => /group/getGroupList
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Call flow
+=========
+
 Routing
 -------
 	- default route redirected to 'main'

@@ -1,42 +1,38 @@
------> 2020-02-28 07:46:21.317 [ERROR] 20. Statement.execute(COMMENT ON COLUMN acd_pilot_view.fk_acd_call_classification_id is 'The reference key to the acd_call_classification_view table.') COMMENT ON COLUMN acd_pilot_view.fk_acd_call_classification_id is 'The reference key to the 
+-----> 2020-08-14 14:09:48.900 [ERROR] 22. Statement.execute(COMMENT ON COLUMN acd_pilot_view.fk_acd_call_classification_id is 'The reference key to the acd_call_classification_view table.') COMMENT ON COLUMN acd_pilot_view.fk_acd_call_classification_id is 'The reference key to the 
 acd_call_classification_view table.' 
 
 
 org.postgresql.util.PSQLException: ERROR: column "fk_acd_call_classification_id" of relation "acd_pilot_view" does not exist
-	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2455) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2155) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:288) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:430) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:356) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:303) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:289) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:266) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:262) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.apache.tomcat.dbcp.dbcp2.DelegatingStatement.execute(DelegatingStatement.java:290) ~[tomcat-dbcp.jar:8.0.35]
-	at org.apache.tomcat.dbcp.dbcp2.DelegatingStatement.execute(DelegatingStatement.java:290) ~[tomcat-dbcp.jar:8.0.35]
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2578) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2313) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:331) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:448) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:369) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:310) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:296) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:273) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:268) ~[postgresql-jdbc.jar:42.2.11]
 	at net.sf.log4jdbc.StatementSpy.execute(StatementSpy.java:842) [log4jdbc4-1.2.jar:?]
 	at com.andtek.andphone.partner.acd.ModuleDB.create(ModuleDB.java:2066) [classes/:?]
 	at com.andtek.andphone.utils.ModuleDBUtils.createDB(ModuleDBUtils.java:977) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3585) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3597) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:364) [classes/:?]
------> 2020-02-28 07:46:21.317 [ERROR] 20. Statement.execute(COMMENT ON COLUMN acd_pilot_view.fk_acd_call_classification_id is 'The reference key to the acd_call_classification_view table.') COMMENT ON COLUMN acd_pilot_view.fk_acd_call_classification_id is 'The reference key to the 
+-----> 2020-08-14 14:09:48.901 [ERROR] 22. Statement.execute(COMMENT ON COLUMN acd_pilot_view.fk_acd_call_classification_id is 'The reference key to the acd_call_classification_view table.') COMMENT ON COLUMN acd_pilot_view.fk_acd_call_classification_id is 'The reference key to the 
 acd_call_classification_view table.' 
 
 
 org.postgresql.util.PSQLException: ERROR: column "fk_acd_call_classification_id" of relation "acd_pilot_view" does not exist
-	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2455) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2155) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:288) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:430) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:356) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:303) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:289) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:266) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:262) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.apache.tomcat.dbcp.dbcp2.DelegatingStatement.execute(DelegatingStatement.java:290) ~[tomcat-dbcp.jar:8.0.35]
-	at org.apache.tomcat.dbcp.dbcp2.DelegatingStatement.execute(DelegatingStatement.java:290) ~[tomcat-dbcp.jar:8.0.35]
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2578) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2313) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:331) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:448) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:369) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:310) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:296) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:273) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:268) ~[postgresql-jdbc.jar:42.2.11]
 	at net.sf.log4jdbc.StatementSpy.execute(StatementSpy.java:842) [log4jdbc4-1.2.jar:?]
 	at com.andtek.andphone.partner.acd.ModuleDB.create(ModuleDB.java:2066) [classes/:?]
 	at com.andtek.andphone.utils.ModuleDBUtils.createDB(ModuleDBUtils.java:977) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3585) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3597) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:364) [classes/:?]

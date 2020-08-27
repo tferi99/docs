@@ -31,7 +31,9 @@ Logging
 -------
 - Logging architecture
 
-
+Troubleshooting
+---------------
+- How to attach debugger to NestJS project?
 
 --------------------------------------------------------------------------------------------------------------------------------------
 Howto build-up a NestJS development environment?
@@ -552,3 +554,28 @@ How to call background job repeatedly?
 	}
 
 	
+--------------------------------------------------------------------------------------------------------------------------------------
+How to attach debugger to NestJS project?
+=========================================
+Normal way:
+	NestJs project contains "start:debug" script. If you start this script with 'Debug' then WebStrom generally attaches debugger to
+	project:
+	
+		Debugger listening on ws://127.0.0.1:9229/f883f5e8-fba8-436c-beb6-f1e3a3715cdf
+		For help, see: https://nodejs.org/en/docs/inspector
+		Debugger attached.
+		
+but sometimes debuger not attached.
+
+In this case you can attachdebuger manually.
+	1. go to 'Edit Configurations...' in the launch bar
+	2. add 'Attach to Node.js/Chrome' entry
+	3. specify port if not the default '9229'
+	4. start project first with Debug
+	5. start attach entry with Debug
+
+If project started with --watch and it reloaded on code change sometimes debugger shoul de re-attach (restart 5.).
+
+
+
+		

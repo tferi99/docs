@@ -1,0 +1,116 @@
+==============================================================
+Analysis of use case 1: non-secure, only called party recorded
+==============================================================
+
+- Description
+- Call info
+- XML messages
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Description
+===========
+- configuration:
+	- there is a configured SIP trunk recording with rules
+	- logs are on DEBUG level
+	- jmf.log enabled
+	- no announcement
+- not-recorded calling party calls a recorded called party
+- talking
+- terminated by calling party
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Call info
+=========
+
+	+36110009100 -----> +36110009020
+
+APAS:			10.51.51.122
+
+Call ID:		sip21172/1
+Call leg ID:	25252351
+DB ID:			90
+
+Time:			2020-02-28 07:47:09 - 2020-02-28 07:47:21  :  12 sec(s)
+Calling party:	+36110009100			SEP100000009030
+Called party:	+36110009020			SEPA45630BB1748
+RTP 1 (calling):	10.51.51.122:47793
+RTP 2 (called):		10.51.51.122:41899
+
+
+RECORDING[0][sip21172/1, SEPA45630BB1748] : 2020-02-28 07:47:09 - 2020-02-28 07:47:21, DB:104
+   - callingPartyName=
+   - srcIP=10.51.51.122
+   - callID=sip21172/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=40895
+   - initiated=false
+   - dstIP=10.51.51.122
+   - lastRedirectingParty=
+   - callingParty=+36110009100
+   - originalCallingParty=+36110009100
+   - dstPort=46610
+   - calledParty=+36110009020 
+	
+	
+-------------------------------------------------------------------------------------------------------------------------------------------
+XML messages
+============
+	From andphone.log:
+		[2020-02-28 07:47:09,789] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6cc178d7)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+		[2020-02-28 07:47:09,797] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
+		[2020-02-28 07:47:10,038] [DEBUG] [APAS-defaultWorker-11] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" srcIP="10.51.51.122" srcPort="40895"/>]
+		[2020-02-28 07:47:10,040] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
+		[2020-02-28 07:47:10,065] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" dstIP="10.51.51.122" dstPort="46610"/>]
+		[2020-02-28 07:47:10,066] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
+		[2020-02-28 07:47:21,251] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6cc178d7)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" stopOut="1" />]
+		[2020-02-28 07:47:21,257] [DEBUG] [APAS-defaultWorker-15] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="csip25252351" stopOut="1" />]
+		[2020-02-28 07:47:21,258] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="100" string="Call removed"/>
+		[2020-02-28 07:47:21,261] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+		[2020-02-28 07:47:21,273] [DEBUG] [APAS-defaultWorker-17] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="csip25252351" stopOut="1" />]
+		[2020-02-28 07:47:21,273] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+
+
+Message-1:	generated from call observer. 
+
+	<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+
+
+	Retrieved information:
+
+		- Cisco call ID
+		- recorder terminal
+		- calling party (+ original, name)
+		- called party (+ original, name)
+		- last redirecting party
+
+		
+	Response:
+	
+		- DB ID added
+		
+		
+	DB ID will be contained by all subsequent responses till stopOut message.
+
+
+Message-2-3: generated from SIP ACK:
+
+	[2020-02-28 07:47:10,038] [DEBUG] [APAS-defaultWorker-11] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" srcIP="10.51.51.122" srcPort="40895"/>]
+
+		
+		
+Final message(s): stopOut
+		
+	[2020-02-28 07:47:21,251] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6cc178d7)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" stopOut="1" />]
+
+	Sometimes there are stopOut messages with ID: 'csip' + callLegId
+	
+
+-------------------------------------------------------------------------------------------------------------------------------------------	
+recorder.logs
+=============
+		
+		

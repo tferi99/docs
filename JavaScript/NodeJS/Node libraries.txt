@@ -21,7 +21,7 @@ newman				: Newman is a command-line collection runner for Postman
 Config
 ======
 configstore			: Easily load and persist config without having to think about where and how
-
+@hapi/joi			: The most powerful schema description language and data validator for JavaScript
 
 -------------------------------------------------------------------------
 Terminal

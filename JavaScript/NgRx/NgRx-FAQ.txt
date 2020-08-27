@@ -23,13 +23,13 @@ Actions
 Reducers
 --------
 - What is a metareducer?
+- Effect and Reducer execution order
 
 Selectors
 ---------
 - Evolution of selectors
-- How to call a selector from a reducer?							UNDER CONSTRUCTION
+- How to call a selector from a reducer?
 - How to call a selector from an effect?							UNDER CONSTRUCTION
-
 - How to re-use a selector?
 - Parameterized selectors
 
@@ -37,6 +37,8 @@ Effects
 -------
 - What is a side-effect?
 - How to create an effect?
+- Howto dispatch multiple actions from effects?
+- Howto accept multiple action types in effect?
 
 Tips
 ----
@@ -49,8 +51,8 @@ Troubleshooting
 ---------------
 - ERROR: StaticInjectorError... [...Effects -> Actions]: ... NullInjectorError: No provider for Actions!
 - ERROR: NullInjectorError: No provider for EffectsRootModule!
-- Application hangs when an action dispatched
-
+- Application hangs when an action dispatched (because of infinite loop of actions)
+- ERROR TypeError: Cannot read property 'map' of undefined
 
 ---------------------------------------------------------------------------------------------------------------
 Scaffolding tips
@@ -562,14 +564,13 @@ Example store data:
 ---------------------------------------------------------------------------------------------------------------
 How to call a selector from a reducer?
 ======================================
-It depends on. Sometimes you cannot access state from selector.
-
-- By design a reducer only can access the feature slide of the root state. Initial state of a reducer is always the feature state. 
-	So if you want to select comething from feature slide it's not a problem but...
+It depends on. You cannot access the whole state from reducers, only the local feature slice.
+By design a reducer only can access the feature slide of the root state. Initial state of a reducer is always the feature state. 
+So if you want to select something from own feature slide it's not a problem but...
 
 There are 2 scenarios:	
 	
-1. You need data from the same feature state slide.
+1. You need data from the own feature state slide.
 	
 	In this case you cannot use original selectors which are built up from the feature selector because it based on absolute path:
 	
@@ -606,16 +607,17 @@ There are 2 scenarios:
 		
 2. You need data from a different feature or from root state (outside of this feaure).
 
-	Feature reduces cannot access outer state directly. You have to push information:
+	Feature reducers cannot access outer state directly. You have to push information:
 	- catch action with an effect
 	- inject root store into effect
-	- get current state data using withLatestFrom
+	- get current state data using withLatestFrom and push it in an action to reducer
 		
 	SEE ALSO: How to call a selector from an effect?
 		
 
 		
-SEE ALSO:	Pass the root state as an optional argument to the reducers.		https://github.com/ngrx/platform/issues/1437
+SEE ALSO:	
+	Pass the root state as an optional argument to the reducers.		https://github.com/ngrx/platform/issues/1437
 
 ---------------------------------------------------------------------------------------------------------------
 How to call a selector from an effect?
@@ -637,7 +639,7 @@ Join data from other stream with withLatestFrom():
 		);
 
 
-- How to pass parameter to selector called from effect with eithLatestFrom?
+- How to pass parameter to selector called from effect with withLatestFrom ?
 
 
 	map(action => action.payload),
@@ -844,8 +846,8 @@ Add action-types.ts to your feature (module) directory with a content lik this:
 It will minimize import lines in action user classes.
 		
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Application hangs when an action dispatched
-===========================================
+Application hangs when an action dispatched (because of infinite loop of actions)
+=================================================================================
 In general effects dispatch new action(s) at the end of action processing.
 
 If you have an effects which does not dispatch new action 
@@ -864,3 +866,111 @@ which hangs application.
 	  constructor(private actions$: Actions) {}
 	}
 
+Typical error:
+	
+	@Injectable()
+	export class PresenceEffects {
+
+
+	  loadPresences$ = createEffect(() => this.actions$.pipe(
+		ofType(PresenceActions.presencesPushed),
+		tap(action => {															// tap IS NOT map !!!!!!!
+			...
+			return someAction();
+		})
+	  ));
+
+	  constructor(private actions$: Actions) {}
+	}
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR TypeError: Cannot read property 'map' of undefined
+========================================================
+If you have error like this:
+
+	core.js:6185 ERROR TypeError: Cannot read property 'map' of undefined
+		at entity.js:72
+		at store.js:1061
+		at memoized (store.js:984)
+		at defaultStateFn (store.js:1016)
+		at store.js:1070
+		
+then you likely use selector which gets data from an entity.
+
+If you use built-in entity selector helper (exported from adapter.getSelectors()) then it's very important to use them 
+with a feature selector:
+
+	export const selectPresenceState = createFeatureSelector<fromPresence.State>(fromPresence.presenceFeatureKey);
+
+	export const selectAllPresence = createSelector(
+	  selectPresenceState,
+	  fromPresence.selectAll
+	);
+		
+You cannot use them alone:
+
+	export const selectOldPresences = createSelector(
+		selectUserProfile(),
+		fromPresence.selectAll,																<<<<<<<< entity is undefine here !!!
+		(profile: WebAttendantProfile, presences: PresenceItem[]) => {
+			....
+		}
+	)
+
+They alone cannot access feature node  and in this case entity is 'undefined'.
+
+Proper usage:
+
+	export const selectOldPresences = createSelector(
+		selectUserProfile(),
+		selectAllPresence,																	<<<<< created before from afeature selector and selectAll
+		(profile: WebAttendantProfile, presences: PresenceItem[]) => {
+			...
+		}
+	)
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto dispatch multiple actions from effects?
+=============================================
+Use switchMap and return an array of actions. For example:
+
+  appCsrfInitiated$ = this.actions$.pipe(
+    ofType<AppCsrfInitiatedAction>(GlobalActionTypes.AppCsrfInitiatedAction),
+    map((action: AppCsrfInitiatedAction) => action.payload),
+    switchMap(payload => this.myService.save(payload)),
+    switchMap(data => [
+      new LoginSuccessAction(data.user),
+      new SettingsLoadedAction(data.settings),
+	  ...
+      new HotkeysLoadedAction(data.hotkeys),
+      updatePresenceSubscriptions(),
+      presenceStoreCleanupInit({now: Date.now()}),
+      new AppDataLoadedAction(data),
+    ])
+  ).catch(() => of(new SomeErrorAction());
+
+  
+SEE ALSO:	https://medium.com/@amcdnl/dispatching-multiple-actions-from-ngrx-effects-c1447ceb6b22
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto accept multiple action types in effect?
+=============================================
+Just add multiple types to ofType():
+
+	ofType<Action>(GlobalActionTypes.AppDataLoadedAction, AuthActionTypes.KeepAliveErrorAction)
+	
+	
+In this case specify Action as generics type and cast it later (with 'as').
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Effect and Reducer execution order
+==================================
+Q:
+	Is there a guaranteed order of execution of effects vs reducers?
+	Are effects invoked only after all reducers are done for an action?
+
+A:	Yes, this order is guaranteed. 
+	Effects only receive the latest action AFTER a new state has been composed.

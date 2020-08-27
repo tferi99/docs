@@ -15,8 +15,6 @@ Configuration
     Exchange Server <----- Exchange Presence Source
 
 
-
-
 - Configure Exchange Server (2010, 2013, 2016)
 
 - Configure admin user with Impersonation
@@ -32,20 +30,20 @@ Configuration
 	- Username:				user (without domain - specify domain in a different field below)
 	- Use impersonation:	true
 	
-	- Import Echange certificate into APAS:
-		- export certificate from browser 
-		- Export the Exchange Certificate by browser Export e.g. “WIN-EX7.crt” from URL: https://EXCHANGE-IP/EWS/Exchange.asmx
-		- Import Certificate APAS: Global > Security> Import Trusted Certificate
-		- APAS soft restart
+- Import Exchange certificate into APAS:
+	- export certificate from browser 
+	- Export the Exchange Certificate by browser Export e.g. “WIN-EX7.crt” from URL: https://EXCHANGE-IP/EWS/Exchange.asmx
+	- Import Certificate APAS: Global > Security> Import Trusted Certificate
+	- APAS soft restart
 		
-	- APAS/Presence/Source/(Add)
+- APAS/Presence/Source/(Add)
+
+	Type:				Exchange
 	
-		Type:				Exchange
-		
-		Allowed Domain: 	The allowed domains for this presence source, separated by semicolons. 
-							Only email addresses having one of the given domains (APAS servers) as domain are allowed to register to the presence source.
-							
-							E.g:	andtek.cee.cs.eilab.biz
+	Allowed Domain: 	The allowed domains for this presence source, separated by semicolons. 
+						Only email addresses having one of the given domains (APAS servers) as domain are allowed to register to the presence source.
+						
+						E.g:	andtek.cee.cs.eilab.biz
 							
 	- Create a directory and directory group with presence user information.
 	
@@ -73,6 +71,8 @@ Configuration
 		
 		AND
 	
+	  Enable presence subscription:
+		
 			APAS/Client/Profiles/(choose DC profile)/[Directory Search]/(Enable Dynamic presence user subscription)		: true
 	
 -----------------------------------------------------------------------------------------------------------------

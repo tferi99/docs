@@ -1,0 +1,503 @@
+[2020-02-28 07:46:24,886] [>RECEIVED] [SIPServer-3] [OPTIONS sip:10.51.51.122:5060]
+OPTIONS sip:10.51.51.122:5060 SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e771b1b4ba9
+From: <sip:10.51.51.34>;tag=936537561
+To: <sip:10.51.51.122>
+Date: Fri, 28 Feb 2020 06:46:24 GMT
+Call-ID: 3d84800-e581b739-1e710-2233330a@10.51.51.34
+User-Agent: Cisco-CUCM11.5
+CSeq: 101 OPTIONS
+Contact: <sip:10.51.51.34:5060>
+Max-Forwards: 0
+Content-Length: 0
+
+
+
+[2020-02-28 07:46:25,049] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e771b1b4ba9
+From: <sip:10.51.51.34>;tag=936537561
+To: <sip:10.51.51.122>
+Call-ID: 3d84800-e581b739-1e710-2233330a@10.51.51.34
+CSeq: 101 OPTIONS
+Content-Length: 0
+
+
+
+[2020-02-28 07:46:25,066] [SENT>] [SIPServer-3] [OPTIONS sip:PING@10.51.51.34:5060]
+OPTIONS sip:PING@10.51.51.34:5060 SIP/2.0
+Call-ID: 9f3e986101bfee5e9b26cdb901983506@10.51.51.122
+CSeq: 1 OPTIONS
+From: "APAS" <sip:APAS@10.51.51.122:5060>;tag=b72cdd26
+To: <sip:PING@10.51.51.34:5060>
+Via: SIP/2.0/UDP 10.51.51.122:5060;branch=z9hG4bK14684d1bc1e8e4623c6485d820b49364323036
+Max-Forwards: 70
+Contact: "APAS" <sip:APAS@10.51.51.122:5060;transport=udp>
+Content-Length: 0
+
+
+
+[2020-02-28 07:46:25,097] [>RECEIVED] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.122:5060;branch=z9hG4bK14684d1bc1e8e4623c6485d820b49364323036
+From: "APAS" <sip:APAS@10.51.51.122:5060>;tag=b72cdd26
+To: <sip:PING@10.51.51.34:5060>;tag=791683269
+Date: Fri, 28 Feb 2020 06:46:25 GMT
+Call-ID: 9f3e986101bfee5e9b26cdb901983506@10.51.51.122
+Server: Cisco-CUCM11.5
+CSeq: 1 OPTIONS
+Allow: INVITE,OPTIONS,INFO,BYE,CANCEL,ACK,PRACK,UPDATE,REFER,SUBSCRIBE,NOTIFY
+Content-Length: 0
+
+
+
+[2020-02-28 07:46:30,606] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:46:57,244] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:47:09,913] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009202@10.51.51.122:5060]
+INVITE sip:+36110009202@10.51.51.122:5060 SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e77d43dcde82
+From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497821~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252355
+To: <sip:+36110009202@10.51.51.122>
+Date: Fri, 28 Feb 2020 06:47:09 GMT
+Call-ID: 22d6da00-e581b76d-1e71a-2233330a@10.51.51.34
+Supported: timer,resource-priority,replaces,X-cisco-srtp-fallback,Geolocation
+Min-SE: 1800
+User-Agent: Cisco-CUCM11.5
+Allow: INVITE,OPTIONS,INFO,BYE,CANCEL,ACK,PRACK,UPDATE,REFER,SUBSCRIBE,NOTIFY
+CSeq: 101 INVITE
+Expires: 180
+Allow-Events: presence,kpml
+Call-Info: <urn:x-cisco-remotecc:callinfo>;security=Unknown;gci=1-21173;isVoip,<sip:10.51.51.34:5060>;method="NOTIFY;Event=telephone-event;Duration=500",<urn:x-cisco-remotecc:callinfo>;x-cisco-video-traffic-class=DESKTOP
+Session-ID: f6b78649c8d249488d4d36c1aa497819;remote=00000000000000000000000000000000
+Cisco-Guid: 0584505856-0000065536-0000000042-0573780746
+P-Charging-Vector: icid-value="22D6DA0000010000000000292233330A";icid-generated-at=CEERD-CUCM-11;orig-ioi=IMS Inter Operator Identification
+Session-Expires: 1800
+P-Asserted-Identity: <sip:+36110009020@10.51.51.34>
+Remote-Party-ID: <sip:+36110009020@10.51.51.34>;party=calling;screen=yes;privacy=off
+Contact: <sip:+36110009020@10.51.51.34:5060>;isFocus
+Max-Forwards: 70
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:09,923] [SENT>] [SIPServer-3] [100 Trying]
+SIP/2.0 100 Trying
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e77d43dcde82
+From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497821~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252355
+To: <sip:+36110009202@10.51.51.122>
+Call-ID: 22d6da00-e581b76d-1e71a-2233330a@10.51.51.34
+CSeq: 101 INVITE
+User-Agent: APAS4.1.2
+Allow: INVITE, ACK, OPTIONS, CANCEL, BYE, INFO, REFER, MESSAGE, NOTIFY, SUBSCRIBE
+Supported: replaces
+Contact: "APAS" <sip:APAS@10.51.51.122:5060;transport=udp>
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:09,930] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e77d43dcde82
+From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497821~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252355
+To: <sip:+36110009202@10.51.51.122>;tag=APAS616
+Call-ID: 22d6da00-e581b76d-1e71a-2233330a@10.51.51.34
+CSeq: 101 INVITE
+Allow: INVITE, ACK, OPTIONS, CANCEL, BYE, INFO, REFER, MESSAGE, NOTIFY, SUBSCRIBE
+Supported: replaces
+Contact: "APAS" <sip:APAS@10.51.51.122:5060;transport=udp>
+Content-Type: application/sdp
+Content-Length: 359
+
+v=0
+o=apas 16807 16807 IN IP4 10.51.51.122 s=session
+c=IN IP4 10.51.51.122
+t=0 0
+m=audio 40895 RTP/AVP 0 8 9 18 101
+a=rtpmap:0 PCMU/8000
+a=ptime:20
+a=rtpmap:8 PCMA/8000
+a=ptime:20
+a=rtpmap:9 G722/8000
+a=ptime:20
+a=rtpmap:18 G729/8000
+a=ptime:20
+a=fmtp:18 annexb=yes
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-16
+a=silenceSupp:off - - - -
+
+
+[2020-02-28 07:47:09,980] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009202@10.51.51.122:5060]
+INVITE sip:+36110009202@10.51.51.122:5060 SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78164ca12c5
+From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497824~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252358
+To: <sip:+36110009202@10.51.51.122>
+Date: Fri, 28 Feb 2020 06:47:09 GMT
+Call-ID: 22d6da00-e581b76d-1e71c-2233330a@10.51.51.34
+Supported: timer,resource-priority,replaces,X-cisco-srtp-fallback,Geolocation
+Min-SE: 1800
+User-Agent: Cisco-CUCM11.5
+Allow: INVITE,OPTIONS,INFO,BYE,CANCEL,ACK,PRACK,UPDATE,REFER,SUBSCRIBE,NOTIFY
+CSeq: 101 INVITE
+Expires: 180
+Allow-Events: presence,kpml
+Call-Info: <urn:x-cisco-remotecc:callinfo>;security=Unknown;gci=1-21174;isVoip,<sip:10.51.51.34:5060>;method="NOTIFY;Event=telephone-event;Duration=500",<urn:x-cisco-remotecc:callinfo>;x-cisco-video-traffic-class=DESKTOP
+Session-ID: f6b78649c8d249488d4d36c1aa497822;remote=00000000000000000000000000000000
+Cisco-Guid: 0584505856-0000065536-0000000044-0573780746
+P-Charging-Vector: icid-value="22D6DA00000100000000002B2233330A";icid-generated-at=CEERD-CUCM-11;orig-ioi=IMS Inter Operator Identification
+Session-Expires: 1800
+P-Asserted-Identity: <sip:+36110009020@10.51.51.34>
+Remote-Party-ID: <sip:+36110009020@10.51.51.34>;party=calling;screen=yes;privacy=off
+Contact: <sip:+36110009020@10.51.51.34:5060>;isFocus
+Max-Forwards: 70
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:09,982] [SENT>] [SIPServer-3] [100 Trying]
+SIP/2.0 100 Trying
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78164ca12c5
+From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497824~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252358
+To: <sip:+36110009202@10.51.51.122>
+Call-ID: 22d6da00-e581b76d-1e71c-2233330a@10.51.51.34
+CSeq: 101 INVITE
+User-Agent: APAS4.1.2
+Allow: INVITE, ACK, OPTIONS, CANCEL, BYE, INFO, REFER, MESSAGE, NOTIFY, SUBSCRIBE
+Supported: replaces
+Contact: "APAS" <sip:APAS@10.51.51.122:5060;transport=udp>
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:09,983] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78164ca12c5
+From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497824~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252358
+To: <sip:+36110009202@10.51.51.122>;tag=APAS7759
+Call-ID: 22d6da00-e581b76d-1e71c-2233330a@10.51.51.34
+CSeq: 101 INVITE
+Allow: INVITE, ACK, OPTIONS, CANCEL, BYE, INFO, REFER, MESSAGE, NOTIFY, SUBSCRIBE
+Supported: replaces
+Contact: "APAS" <sip:APAS@10.51.51.122:5060;transport=udp>
+Content-Type: application/sdp
+Content-Length: 359
+
+v=0
+o=apas 16807 16807 IN IP4 10.51.51.122 s=session
+c=IN IP4 10.51.51.122
+t=0 0
+m=audio 46610 RTP/AVP 0 8 9 18 101
+a=rtpmap:0 PCMU/8000
+a=ptime:20
+a=rtpmap:8 PCMA/8000
+a=ptime:20
+a=rtpmap:9 G722/8000
+a=ptime:20
+a=rtpmap:18 G729/8000
+a=ptime:20
+a=fmtp:18 annexb=yes
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-16
+a=silenceSupp:off - - - -
+
+
+[2020-02-28 07:47:10,012] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78471f0028e
+From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497821~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252355
+To: <sip:+36110009202@10.51.51.122>;tag=APAS616
+Date: Fri, 28 Feb 2020 06:47:09 GMT
+Call-ID: 22d6da00-e581b76d-1e71a-2233330a@10.51.51.34
+User-Agent: Cisco-CUCM11.5
+Max-Forwards: 70
+CSeq: 101 ACK
+Allow-Events: presence,kpml
+Session-ID: f6b78649c8d249488d4d36c1aa497819;remote=56666adae72b69dc4249dfd2ab497821
+Content-Type: application/sdp
+Content-Length: 238
+
+v=0
+o=CiscoSystemsCCM-SIP 497821 1 IN IP4 10.51.51.34
+s=SIP Call
+c=IN IP4 10.122.188.166
+b=TIAS:64000
+b=AS:64
+t=0 0
+m=audio 23534 RTP/AVP 9 101
+a=rtpmap:9 G722/8000
+a=sendonly
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-15
+
+
+[2020-02-28 07:47:10,063] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78675e93442
+From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497824~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252358
+To: <sip:+36110009202@10.51.51.122>;tag=APAS7759
+Date: Fri, 28 Feb 2020 06:47:09 GMT
+Call-ID: 22d6da00-e581b76d-1e71c-2233330a@10.51.51.34
+User-Agent: Cisco-CUCM11.5
+Max-Forwards: 70
+CSeq: 101 ACK
+Allow-Events: presence,kpml
+Session-ID: f6b78649c8d249488d4d36c1aa497822;remote=56666adae72b69dc4249dfd2ab497824
+Content-Type: application/sdp
+Content-Length: 238
+
+v=0
+o=CiscoSystemsCCM-SIP 497824 1 IN IP4 10.51.51.34
+s=SIP Call
+c=IN IP4 10.122.188.166
+b=TIAS:64000
+b=AS:64
+t=0 0
+m=audio 32088 RTP/AVP 9 101
+a=rtpmap:9 G722/8000
+a=sendonly
+a=rtpmap:101 telephone-event/8000
+a=fmtp:101 0-15
+
+
+[2020-02-28 07:47:18,432] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:47:18,482] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:47:21,248] [>RECEIVED] [SIPServer-3] [BYE sip:APAS@10.51.51.122:5060;transport=udp]
+BYE sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78b16c5d3e9
+From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497821~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252355
+To: <sip:+36110009202@10.51.51.122>;tag=APAS616
+Date: Fri, 28 Feb 2020 06:47:09 GMT
+Call-ID: 22d6da00-e581b76d-1e71a-2233330a@10.51.51.34
+User-Agent: Cisco-CUCM11.5
+Max-Forwards: 70
+P-Asserted-Identity: <sip:+36110009020@10.51.51.34>
+CSeq: 102 BYE
+Reason: Q.850;cause=16
+Session-ID: f6b78649c8d249488d4d36c1aa497819;remote=56666adae72b69dc4249dfd2ab497821
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:21,249] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78b16c5d3e9
+From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497821~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252355
+To: <sip:+36110009202@10.51.51.122>;tag=APAS616
+Call-ID: 22d6da00-e581b76d-1e71a-2233330a@10.51.51.34
+CSeq: 102 BYE
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:21,257] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78b16c5d3e9
+From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497821~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252355
+To: <sip:+36110009202@10.51.51.122>;tag=APAS616
+Call-ID: 22d6da00-e581b76d-1e71a-2233330a@10.51.51.34
+CSeq: 102 BYE
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:21,271] [>RECEIVED] [SIPServer-3] [BYE sip:APAS@10.51.51.122:5060;transport=udp]
+BYE sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78d2746d154
+From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497824~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252358
+To: <sip:+36110009202@10.51.51.122>;tag=APAS7759
+Date: Fri, 28 Feb 2020 06:47:09 GMT
+Call-ID: 22d6da00-e581b76d-1e71c-2233330a@10.51.51.34
+User-Agent: Cisco-CUCM11.5
+Max-Forwards: 70
+P-Asserted-Identity: <sip:+36110009020@10.51.51.34>
+CSeq: 102 BYE
+Reason: Q.850;cause=16
+Session-ID: f6b78649c8d249488d4d36c1aa497822;remote=56666adae72b69dc4249dfd2ab497824
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:21,272] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78d2746d154
+From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497824~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252358
+To: <sip:+36110009202@10.51.51.122>;tag=APAS7759
+Call-ID: 22d6da00-e581b76d-1e71c-2233330a@10.51.51.34
+CSeq: 102 BYE
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:21,273] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e78d2746d154
+From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=25252351;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=25252350;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=497824~0397bdeb-e9fe-44a2-8560-60f291557ddb-25252358
+To: <sip:+36110009202@10.51.51.122>;tag=APAS7759
+Call-ID: 22d6da00-e581b76d-1e71c-2233330a@10.51.51.34
+CSeq: 102 BYE
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:25,136] [SENT>] [SIPServer-3] [OPTIONS sip:PING@10.51.51.34:5060]
+OPTIONS sip:PING@10.51.51.34:5060 SIP/2.0
+Call-ID: be45a33912b98f8c5cfa744758162e0e@10.51.51.122
+CSeq: 1 OPTIONS
+From: "APAS" <sip:APAS@10.51.51.122:5060>;tag=11c1779
+To: <sip:PING@10.51.51.34:5060>
+Via: SIP/2.0/UDP 10.51.51.122:5060;branch=z9hG4bK696e6f9a1d5d584ca99f24cf058b2f37323036
+Max-Forwards: 70
+Contact: "APAS" <sip:APAS@10.51.51.122:5060;transport=udp>
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:25,139] [>RECEIVED] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.122:5060;branch=z9hG4bK696e6f9a1d5d584ca99f24cf058b2f37323036
+From: "APAS" <sip:APAS@10.51.51.122:5060>;tag=11c1779
+To: <sip:PING@10.51.51.34:5060>;tag=195136879
+Date: Fri, 28 Feb 2020 06:47:25 GMT
+Call-ID: be45a33912b98f8c5cfa744758162e0e@10.51.51.122
+Server: Cisco-CUCM11.5
+CSeq: 1 OPTIONS
+Allow: INVITE,OPTIONS,INFO,BYE,CANCEL,ACK,PRACK,UPDATE,REFER,SUBSCRIBE,NOTIFY
+Content-Length: 0
+
+
+
+[2020-02-28 07:47:29,250] [>RECEIVED] [SIPServer-3] [DIALOG TERMINATED]
+javax.sip.DialogTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:47:29,272] [>RECEIVED] [SIPServer-3] [DIALOG TERMINATED]
+javax.sip.DialogTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:47:30,639] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:47:53,282] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:47:53,297] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:48:19,893] [>RECEIVED] [SIPServer-3] [OPTIONS sip:10.51.51.122:5060]
+OPTIONS sip:10.51.51.122:5060 SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e7911d3877e1
+From: <sip:10.51.51.34>;tag=486230051
+To: <sip:10.51.51.122>
+Date: Fri, 28 Feb 2020 06:48:19 GMT
+Call-ID: 4c900100-e581b7b3-1e722-2233330a@10.51.51.34
+User-Agent: Cisco-CUCM11.5
+CSeq: 101 OPTIONS
+Contact: <sip:10.51.51.34:5060>
+Max-Forwards: 0
+Content-Length: 0
+
+
+
+[2020-02-28 07:48:19,893] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e7911d3877e1
+From: <sip:10.51.51.34>;tag=486230051
+To: <sip:10.51.51.122>
+Call-ID: 4c900100-e581b7b3-1e722-2233330a@10.51.51.34
+CSeq: 101 OPTIONS
+Content-Length: 0
+
+
+
+[2020-02-28 07:48:25,142] [SENT>] [SIPServer-3] [OPTIONS sip:PING@10.51.51.34:5060]
+OPTIONS sip:PING@10.51.51.34:5060 SIP/2.0
+Call-ID: e31f6f46b895757952f31bb586518dd8@10.51.51.122
+CSeq: 1 OPTIONS
+From: "APAS" <sip:APAS@10.51.51.122:5060>;tag=52f74adc
+To: <sip:PING@10.51.51.34:5060>
+Via: SIP/2.0/UDP 10.51.51.122:5060;branch=z9hG4bK50f1c11b87348b89efae1d3f57178699323036
+Max-Forwards: 70
+Contact: "APAS" <sip:APAS@10.51.51.122:5060;transport=udp>
+Content-Length: 0
+
+
+
+[2020-02-28 07:48:25,145] [>RECEIVED] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.122:5060;branch=z9hG4bK50f1c11b87348b89efae1d3f57178699323036
+From: "APAS" <sip:APAS@10.51.51.122:5060>;tag=52f74adc
+To: <sip:PING@10.51.51.34:5060>;tag=1177511472
+Date: Fri, 28 Feb 2020 06:48:25 GMT
+Call-ID: e31f6f46b895757952f31bb586518dd8@10.51.51.122
+Server: Cisco-CUCM11.5
+CSeq: 1 OPTIONS
+Allow: INVITE,OPTIONS,INFO,BYE,CANCEL,ACK,PRACK,UPDATE,REFER,SUBSCRIBE,NOTIFY
+Content-Length: 0
+
+
+
+[2020-02-28 07:48:30,644] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:48:51,902] [>RECEIVED] [SIPServer-3] [TRANSACTION TERMINATED]
+javax.sip.TransactionTerminatedEvent[source=gov.nist.javax.sip.SipProviderImpl@77c3fe23]
+
+[2020-02-28 07:49:21,215] [>RECEIVED] [SIPServer-3] [OPTIONS sip:10.51.51.122:5060]
+OPTIONS sip:10.51.51.122:5060 SIP/2.0
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e793664fc530
+From: <sip:10.51.51.34>;tag=1902170618
+To: <sip:10.51.51.122>
+Date: Fri, 28 Feb 2020 06:49:21 GMT
+Call-ID: 71847400-e581b7f1-1e724-2233330a@10.51.51.34
+User-Agent: Cisco-CUCM11.5
+CSeq: 101 OPTIONS
+Contact: <sip:10.51.51.34:5060>
+Max-Forwards: 0
+Content-Length: 0
+
+
+
+[2020-02-28 07:49:21,216] [SENT>] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1e793664fc530
+From: <sip:10.51.51.34>;tag=1902170618
+To: <sip:10.51.51.122>
+Call-ID: 71847400-e581b7f1-1e724-2233330a@10.51.51.34
+CSeq: 101 OPTIONS
+Content-Length: 0
+
+
+
+[2020-02-28 07:49:25,147] [SENT>] [SIPServer-3] [OPTIONS sip:PING@10.51.51.34:5060]
+OPTIONS sip:PING@10.51.51.34:5060 SIP/2.0
+Call-ID: 40c0904ae3ca4f42f746f129162eb791@10.51.51.122
+CSeq: 1 OPTIONS
+From: "APAS" <sip:APAS@10.51.51.122:5060>;tag=74a368b9
+To: <sip:PING@10.51.51.34:5060>
+Via: SIP/2.0/UDP 10.51.51.122:5060;branch=z9hG4bKe36649cf5e8b15c1135046f2cb6b25d1323036
+Max-Forwards: 70
+Contact: "APAS" <sip:APAS@10.51.51.122:5060;transport=udp>
+Content-Length: 0
+
+
+
+[2020-02-28 07:49:25,151] [>RECEIVED] [SIPServer-3] [200 OK]
+SIP/2.0 200 OK
+Via: SIP/2.0/UDP 10.51.51.122:5060;branch=z9hG4bKe36649cf5e8b15c1135046f2cb6b25d1323036
+From: "APAS" <sip:APAS@10.51.51.122:5060>;tag=74a368b9
+To: <sip:PING@10.51.51.34:5060>;tag=339638308
+Date: Fri, 28 Feb 2020 06:49:25 GMT
+Call-ID: 40c0904ae3ca4f42f746f129162eb791@10.51.51.122
+Server: Cisco-CUCM11.5
+CSeq: 1 OPTIONS
+Allow: INVITE,OPTIONS,INFO,BYE,CANCEL,ACK,PRACK,UPDATE,REFER,SUBSCRIBE,NOTIFY
+Content-Length: 0
+
+
+

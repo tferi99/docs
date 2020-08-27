@@ -725,9 +725,9 @@ If you have a component with a boolean and you try to specify property this way:
 	...then value will be "false" string.
 	
 	
-	YOU SHOUL always use brackets if you want to get right data type:
+	You should ALWAYS USE BRACKETS if you want to get right data type:
 	
-		<app-test [enabled]="false>																	// GOOD
+		<app-test [enabled]="false">																	// GOOD
 	
 	
 
@@ -1937,7 +1937,7 @@ How to test HTTPS(SSL) in development environment?
 --------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR: '...' is not a known element
 ===================================
-These are the 5 steps I perform when I got such an error.
+These are 5 steps should be performed when you got such an error:
 
 	- Are you sure the name is correct? (also check the selector defined in the component)
 	- Declare the component in a module?
@@ -3015,7 +3015,7 @@ SEE ALSO:
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to dump any (even async) variable from template?
 ====================================================
-You can declare local variables on templates is structural directives.
+You can declare local variables on templates in structural directives.
 This variables added to context of template element.
 
 Put an *ngIf into a container element where you need a value to be dumped, like this:

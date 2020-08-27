@@ -95,7 +95,12 @@ Web/WebClient/WebAttendant
 - Managing WebClient client connections
 - Force logout in Web applications
 - WebAttendant startup-reload
+- Detecting devices in Web applications
 
+Presence
+--------
+- Exchange Presence
+- Presence subscription managements
 
 REST API
 --------

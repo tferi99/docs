@@ -63,6 +63,7 @@ Development tips
 ----------------
 - How to test TS?
 - How to simply get JS from TS?
+- Sharing types with project references
 
 Tools
 -----
@@ -772,6 +773,40 @@ You can mix them:
 They are equivalent, you can use them in arbitrary order - at the end of parameters, following mandatory parameters.
 
 
+Interesting example:
+
+	/**
+	 * Function with object type parameter, where:
+	 * - object properties are optional 
+	 * - oject properties are desctructured into local variables with default values
+	 * - and object function attribute also has a default value
+	 */
+
+	export const func2 = ({
+	  a= 5,
+	  b= 'abc',
+	  c= [1, 2, 3]
+	}: {
+	  a?: number,
+	  b?: string,
+	  c?: number[]} = {}) =>
+	{
+	  console.log(a, b, c);
+	}
+
+	func2();
+	func2({b: 'other'});
+	func2({b: 'other', c: []});
+
+Output:
+
+	5 abc [1, 2, 3]
+	5 other [1, 2, 3]
+	5 other []
+
+SEE ALSO:	https://stackblitz.com/edit/typescript-ftoth-tricky-optional-paramaters	
+	
+	
 ------------------------------------------------------------------------------------------------------------------------
 How to find out type of an instance?
 ====================================
@@ -1400,4 +1435,47 @@ For exmple interface merging:
 
 
 SEE ALSO:	https://www.typescriptlang.org/docs/handbook/declaration-merging.html
+	
+	
+------------------------------------------------------------------------------------------------------------------------	
+Sharing types with project references
+=====================================
+Project references are a new feature in TypeScript 3.0 that allow you to structure your TypeScript programs into smaller pieces.
+
+tsconfig.json files have a new top-level property, references. 
+
+The lib project should have a tsconfig containing:
+
+	// lib/tsconfig.json
+    {
+          "compilerOptions": {
+            /* Truncated compiler options to list only relevant options */
+            "declaration": true, 
+            "declarationMap": true,
+            "rootDir": ".",   
+            "composite": true,     
+          },
+          "references": []  // * Any project that is referenced must itself have a `references` array (which may be empty).
+        }	
+	
+	
+In the lib project. Create a file index.ts which should export all your code you want to share with other projects.
+
+	// exporting common data
+	export * from './app/common/common.types'
+
+The consumer project should contain lib project
+
+	{
+		"compilerOptions": {
+			// The usual
+		},
+		"references": [
+			{ "path": "../lib" }
+		]
+	}
+	
+SEE ALSO:	
+	https://www.typescriptlang.org/docs/handbook/project-references.html
+	https://stackoverflow.com/questions/47729344/how-to-share-code-between-typescript-projects
 	

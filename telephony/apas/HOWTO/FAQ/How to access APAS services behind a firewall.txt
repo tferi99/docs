@@ -1,0 +1,12 @@
+==============================================
+How to access APAS services behind a firewall?
+==============================================
+If you can login to APAS with SSH then you can access other sevices via LOCAL SSH tunneling.
+
+APAS services:
+	- Admin UI, WebClient, WebAttendant, etc:	tcp/8080 or tcp/8443
+	- database:									tcp/5432
+	- access with CesltopClient:				tcp/31421
+	- default SIP trunk:						tcp/5060 or tcp/5061
+	- recorder:									tcp/31320
+	

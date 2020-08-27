@@ -372,7 +372,7 @@ using catchError() operator:
 		)
 
 		
-3. Catch and Rethrow Strategy:
+3. Catch and Replace (Rethrow) Strategy:
 
 	<OBSERVABLE>.pipe(
 		...
@@ -394,6 +394,11 @@ using catchError() operator:
 			})
 		)
 
+	NOTE: 
+		You can catch error immediately in the 1st operator, or everywhere error can be caused,
+		you can use multiple error catch after any operator.
+		
+		
 4. Cleanup logic:
 	<OBSERVABLE>.pipe(
 		...
@@ -408,12 +413,82 @@ using catchError() operator:
 		})
 	);
 		
-5. Retry Strategy (immediate or delayed):		
+5. Retry Strategy:		
+- immediate:
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+		retry(N)									<<<< retry max N times
+	);
 		
-	NOTE: 
-		You can catch error immediately in the 1st operator, or everywhere error can generated,
-		Event you can use multiple error catch after any operator.
-		
+
+- delayed:
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+		retryWhen(errors => {
+            return errors.pipe(
+				delayWhen(() => timer(2000)),
+				tap(() => console.log('retrying...'))
+			);
+        } )
+	);
+	
+- delayed with max:
+
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+		retryWhen(errors => {
+			mergeMap((error, index) => {
+				const retryAttempt = index + 1;
+				// if maximum number of retries have been met, throw error
+				if (retryAttempt >= maxRetryAttempts) {
+					return throwError(error);
+				}
+				console.log(`Error found. Attempt ${retryAttempt}: retrying in ${retryInterval}ms - Error:`, error);
+				return timer(retryInterval);
+			})
+		}
+	);
+	
+	BETTER SOLUTION:
+	
+	export const genericRetryStrategy = ({
+		maxRetryAttempts = 3,
+		retryInterval = 1000,
+	  }: {
+		maxRetryAttempts?: number,
+		retryInterval?: number
+	  } = {}) => (attempts: Observable<any>) => {
+	  return attempts.pipe(
+		mergeMap((error, index) => {
+		  const retryAttempt = index + 1;
+		  // if maximum number of retries have been met, throw error
+		  if (retryAttempt >= maxRetryAttempts) {
+			return throwError(error);
+		  }
+		  console.log(`Error found. Attempt ${retryAttempt}: retrying in ${retryInterval}ms - Error:`, error);
+
+		  return timer(retryInterval);
+		}),
+		finalize(() => console.log('We are done!'))
+	  );
+	};
+
+	
+	<OBSERVABLE>.pipe(
+		...
+		...
+		...
+		retryWhen(errors => errors.pipe(
+			genericRetryStrategy({retryInterval: 2000, maxRetryAttempts: 5}),
+		)
+	);
+	
 
 ----------------------------------------------------------------------------------------------------
 Hot vs cold observables

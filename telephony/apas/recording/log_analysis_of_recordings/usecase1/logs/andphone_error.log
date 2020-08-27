@@ -1,8 +1,9 @@
-[2020-02-28 07:46:16,469] [WARN] [APAS-JTAPIThread] [ANDProperties.java:147] - Sent HUP to Sniffer to reread config. Message from Sniffer: 
-[2020-02-28 07:46:16,875] [WARN] [APAS-JTAPIThread] [Admin.java:6144] - APAS version: 6.2.2-12898 (Appliance-64bit)
-[2020-02-28 07:46:17,659] [ERROR] [APAS-JTAPIThread] [Module.java:1339] - Unable to set smbpasswd for user backup, does the user have global_backup permissions?
-[2020-02-28 07:46:19,281] [ERROR] [http-nio-8080-exec-5] [EventLog.java:298] - RECORDER: Sniffer process (andphone_record) went out of service (status=DISCONNECTED).
-[2020-02-28 07:46:20,059] [FATAL] [APAS-JTAPIThread] [ModuleDB.java:41] - Failed to migrate or create the recorder database schema!
+[2020-08-14 14:09:42,686] [WARN] [APAS-JTAPIThread] [ANDProperties.java:147] - Sent HUP to Sniffer to reread config. Message from Sniffer: 
+[2020-08-14 14:09:43,301] [WARN] [APAS-JTAPIThread] [Admin.java:6175] - APAS version: 6.2.3-13372 (Appliance-64bit)
+[2020-08-14 14:09:44,408] [ERROR] [APAS-JTAPIThread] [Module.java:1352] - Unable to set smbpasswd for user backup, does the user have global_backup permissions?
+[2020-08-14 14:09:45,706] [ERROR] [http-nio-8080-exec-9] [EventLog.java:298] - RECORDER: Sniffer process (andphone_record) went out of service (status=DISCONNECTED).
+[2020-08-14 14:09:45,704] [ERROR] [http-nio-8080-exec-7] [EventLog.java:298] - RECORDER: Sniffer process (andphone_record) went out of service (status=DISCONNECTED).
+[2020-08-14 14:09:47,048] [FATAL] [APAS-JTAPIThread] [ModuleDB.java:41] - Failed to migrate or create the recorder database schema!
 com.googlecode.flyway.core.api.FlywayException: Unable to determine URL for classpath location: com/andtek/andphone/recorder/migrations (ClassLoader: WebappClassLoader
   context: andphone
   delegate: false
@@ -29,64 +30,62 @@ java.net.URLClassLoader@515f550a
 	at com.andtek.andphone.recorder.ModuleDB.internalCreate(ModuleDB.java:49) ~[classes/:?]
 	at com.andtek.andphone.recorder.ModuleDB.create(ModuleDB.java:39) [classes/:?]
 	at com.andtek.andphone.utils.ModuleDBUtils.createDB(ModuleDBUtils.java:977) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3585) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3597) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:364) [classes/:?]
-[2020-02-28 07:46:21,318] [ERROR] [APAS-JTAPIThread] [ModuleDB.java:2070] - Adding comments to the view acd_call_classification_2_tag_view failed ([42703:0:ERROR: column "fk_acd_call_classification_id" of relation "acd_pilot_view" does not exist])  
+[2020-08-14 14:09:48,902] [ERROR] [APAS-JTAPIThread] [ModuleDB.java:2070] - Adding comments to the view acd_call_classification_2_tag_view failed ([42703:0:ERROR: column "fk_acd_call_classification_id" of relation "acd_pilot_view" does not exist])  
 org.postgresql.util.PSQLException: ERROR: column "fk_acd_call_classification_id" of relation "acd_pilot_view" does not exist
-	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2455) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2155) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:288) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:430) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:356) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:303) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:289) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:266) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:262) ~[postgresql-jdbc.jar:9.4.1212]
-	at org.apache.tomcat.dbcp.dbcp2.DelegatingStatement.execute(DelegatingStatement.java:290) ~[tomcat-dbcp.jar:8.0.35]
-	at org.apache.tomcat.dbcp.dbcp2.DelegatingStatement.execute(DelegatingStatement.java:290) ~[tomcat-dbcp.jar:8.0.35]
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2578) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2313) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:331) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:448) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:369) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:310) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:296) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:273) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:268) ~[postgresql-jdbc.jar:42.2.11]
 	at net.sf.log4jdbc.StatementSpy.execute(StatementSpy.java:842) ~[log4jdbc4-1.2.jar:?]
 	at com.andtek.andphone.partner.acd.ModuleDB.create(ModuleDB.java:2066) [classes/:?]
 	at com.andtek.andphone.utils.ModuleDBUtils.createDB(ModuleDBUtils.java:977) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3585) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3597) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:364) [classes/:?]
-[2020-02-28 07:46:24,284] [ERROR] [APAS-JTAPIThread] [CommunicatorProfile.java:263] - Exception
+[2020-08-14 14:09:54,081] [ERROR] [APAS-JTAPIThread] [CommunicatorProfile.java:275] - Exception
 java.lang.NullPointerException
-	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:458) ~[classes/:?]
-	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:261) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:474) ~[classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:273) [classes/:?]
 	at com.andtek.andphone.clientcore.GenericProfile.load(GenericProfile.java:128) [classes/:?]
 	at com.andtek.andphone.clientcore.GenericProfile.getAllProfiles(GenericProfile.java:340) [classes/:?]
 	at com.andtek.andphone.clientcore.GenericProfile.getAllProfiles(GenericProfile.java:357) [classes/:?]
-	at com.andtek.andphone.communicator.CommunicatorProfile.getPools(CommunicatorProfile.java:148) [classes/:?]
-	at com.andtek.andphone.communicator.CommunicatorProfile.reLoadDefaultStatisticsTableColumns(CommunicatorProfile.java:411) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.getPools(CommunicatorProfile.java:154) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.reLoadDefaultStatisticsTableColumns(CommunicatorProfile.java:427) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.AcdCategoryThresholdDefinitionsBase.initDefaultDefinitions(AcdCategoryThresholdDefinitionsBase.java:177) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.AcdCategoryThresholdDefinitionsBase.<init>(AcdCategoryThresholdDefinitionsBase.java:136) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.standard.StandardAcdCategoryThresholdDefinitions.<init>(StandardAcdCategoryThresholdDefinitions.java:11) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.standard.StandardAcdCalculationPlugin.init(StandardAcdCalculationPlugin.java:29) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.AcdCalculationPluginLocator.getPlugin(AcdCalculationPluginLocator.java:62) [classes/:?]
-	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:457) [classes/:?]
-	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:261) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:473) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:273) [classes/:?]
 	at com.andtek.andphone.clientcore.GenericProfile.load(GenericProfile.java:128) [classes/:?]
-	at com.andtek.andphone.global.Module.init(Module.java:355) [classes/:?]
+	at com.andtek.andphone.global.Module.init(Module.java:357) [classes/:?]
 	at com.andtek.andphone.utils.Modules.init(Modules.java:544) [classes/:?]
 	at com.andtek.andphone.utils.Modules.init(Modules.java:524) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:383) [classes/:?]
-[2020-02-28 07:46:24,298] [ERROR] [APAS-JTAPIThread] [CommunicatorProfile.java:418] - Exception
+[2020-08-14 14:09:54,123] [ERROR] [APAS-JTAPIThread] [CommunicatorProfile.java:434] - Exception
 java.lang.NullPointerException
-	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:458) ~[classes/:?]
-	at com.andtek.andphone.communicator.CommunicatorProfile.reLoadDefaultStatisticsTableColumns(CommunicatorProfile.java:416) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:474) ~[classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.reLoadDefaultStatisticsTableColumns(CommunicatorProfile.java:432) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.AcdCategoryThresholdDefinitionsBase.initDefaultDefinitions(AcdCategoryThresholdDefinitionsBase.java:177) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.AcdCategoryThresholdDefinitionsBase.<init>(AcdCategoryThresholdDefinitionsBase.java:136) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.standard.StandardAcdCategoryThresholdDefinitions.<init>(StandardAcdCategoryThresholdDefinitions.java:11) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.standard.StandardAcdCalculationPlugin.init(StandardAcdCalculationPlugin.java:29) [classes/:?]
 	at com.andtek.andphone.partner.acd.plugins.AcdCalculationPluginLocator.getPlugin(AcdCalculationPluginLocator.java:62) [classes/:?]
-	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:457) [classes/:?]
-	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:261) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:473) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:273) [classes/:?]
 	at com.andtek.andphone.clientcore.GenericProfile.load(GenericProfile.java:128) [classes/:?]
-	at com.andtek.andphone.global.Module.init(Module.java:355) [classes/:?]
+	at com.andtek.andphone.global.Module.init(Module.java:357) [classes/:?]
 	at com.andtek.andphone.utils.Modules.init(Modules.java:544) [classes/:?]
 	at com.andtek.andphone.utils.Modules.init(Modules.java:524) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:383) [classes/:?]
-[2020-02-28 07:46:24,566] [ERROR] [APAS-JTAPIThread] [Module.java:223] - Unable to connect server
+[2020-08-14 14:09:54,815] [ERROR] [APAS-JTAPIThread] [Module.java:223] - Unable to connect server
 javax.sip.ObjectInUseException: Provider already attached!
 	at gov.nist.javax.sip.SipStackImpl.createSipProvider(SipStackImpl.java:961) ~[jain-sip-ri-1.2.129-mod-SNAPSHOT.jar:?]
 	at com.andtek.andphone.sip.trunk.SIPServer.listen(SIPServer.java:1149) ~[classes/:?]
@@ -94,94 +93,89 @@ javax.sip.ObjectInUseException: Provider already attached!
 	at com.andtek.andphone.utils.Modules.init(Modules.java:544) [classes/:?]
 	at com.andtek.andphone.utils.Modules.init(Modules.java:524) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:383) [classes/:?]
-[2020-02-28 07:46:25,108] [WARN] [http-nio-8080-exec-7] [ANDRealm.java:182] - [SECURITY]: ANDRealm.authenticate(): Authentication failure: Verify username and password. | Profile: Web Client default authentication profile [type=CUCM AXL]
-[2020-02-28 07:46:26,078] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
-[2020-02-28 07:46:26,088] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
-[2020-02-28 07:46:26,089] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
-[2020-02-28 07:46:26,095] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
-[2020-02-28 07:46:26,098] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
-[2020-02-28 07:46:26,122] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
-[2020-02-28 07:46:26,148] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
-[2020-02-28 07:46:26,149] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
-[2020-02-28 07:46:26,152] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
-[2020-02-28 07:46:26,154] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
-[2020-02-28 07:46:26,175] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
-[2020-02-28 07:46:26,177] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
-[2020-02-28 07:46:26,180] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
-[2020-02-28 07:46:26,214] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
-[2020-02-28 07:46:26,219] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
-[2020-02-28 07:46:26,232] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
-[2020-02-28 07:46:26,237] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
-[2020-02-28 07:46:26,238] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
-[2020-02-28 07:46:26,239] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
-[2020-02-28 07:46:26,241] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
-[2020-02-28 07:46:26,261] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
-[2020-02-28 07:46:26,261] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
-[2020-02-28 07:46:26,263] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
-[2020-02-28 07:46:26,264] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
-[2020-02-28 07:46:26,266] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
-[2020-02-28 07:46:26,266] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
-[2020-02-28 07:46:26,268] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
-[2020-02-28 07:46:26,269] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
-[2020-02-28 07:46:26,270] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
-[2020-02-28 07:46:26,270] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
-[2020-02-28 07:46:26,278] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
-[2020-02-28 07:46:26,280] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
-[2020-02-28 07:46:26,281] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
-[2020-02-28 07:46:26,283] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
-[2020-02-28 07:46:26,284] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
-[2020-02-28 07:46:26,286] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
-[2020-02-28 07:46:26,288] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
-[2020-02-28 07:46:26,290] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
-[2020-02-28 07:46:26,290] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
-[2020-02-28 07:46:26,443] [ERROR] [APAS-JTAPIThread] [RestCall.java:131] - Connection to http://127.0.0.1:8081/andguard/rest/apas/licenses/notification failed.
-[2020-02-28 07:46:26,443] [ERROR] [APAS-JTAPIThread] [ANDGuardConnector.java:100] - Exception when notifying Guard about license changes
-org.springframework.web.client.ResourceAccessException: I/O error on POST request for "http://127.0.0.1:8081/andguard/rest/apas/licenses/notification":Read timed out; nested exception is java.net.SocketTimeoutException: Read timed out
-	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:602) ~[spring-web-4.2.0.RELEASE.jar:4.2.0.RELEASE]
-	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:552) ~[spring-web-4.2.0.RELEASE.jar:4.2.0.RELEASE]
-	at org.springframework.web.client.RestTemplate.postForEntity(RestTemplate.java:379) ~[spring-web-4.2.0.RELEASE.jar:4.2.0.RELEASE]
-	at com.andtek.andphone.api.rest.RestCall.sendPostRequest(RestCall.java:119) ~[classes/:?]
-	at com.andtek.andphone.api.rest.RestCall.sendPostRequest(RestCall.java:159) ~[classes/:?]
-	at com.andtek.andphone.andguard.rest.ANDGuardConnector.notifyGuardToUpdateLicenseInformation(ANDGuardConnector.java:96) [classes/:?]
-	at com.andtek.andphone.andguard.Module.init(Module.java:90) [classes/:?]
-	at com.andtek.andphone.utils.Modules.init(Modules.java:544) [classes/:?]
-	at com.andtek.andphone.utils.Modules.init(Modules.java:524) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:383) [classes/:?]
-Caused by: java.net.SocketTimeoutException: Read timed out
-	at java.net.SocketInputStream.socketRead0(Native Method) ~[?:1.8.0_144]
-	at java.net.SocketInputStream.socketRead(SocketInputStream.java:116) ~[?:1.8.0_144]
-	at java.net.SocketInputStream.read(SocketInputStream.java:171) ~[?:1.8.0_144]
-	at java.net.SocketInputStream.read(SocketInputStream.java:141) ~[?:1.8.0_144]
-	at org.apache.http.impl.io.SessionInputBufferImpl.streamRead(SessionInputBufferImpl.java:136) ~[httpcore-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:152) ~[httpcore-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:270) ~[httpcore-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:140) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:57) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:260) ~[httpcore-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:161) ~[httpcore-4.3.2.jar:4.3.2]
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_144]
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_144]
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_144]
-	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_144]
-	at org.apache.http.impl.conn.CPoolProxy.invoke(CPoolProxy.java:138) ~[httpclient-4.3.2.jar:4.3.2]
-	at com.sun.proxy.$Proxy116.receiveResponseHeader(Unknown Source) ~[?:?]
-	at org.apache.http.protocol.HttpRequestExecutor.doReceiveResponse(HttpRequestExecutor.java:271) ~[httpcore-4.3.2.jar:4.3.2]
-	at org.apache.http.protocol.HttpRequestExecutor.execute(HttpRequestExecutor.java:123) ~[httpcore-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:254) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:195) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:85) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:108) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:186) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:82) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:57) ~[httpclient-4.3.2.jar:4.3.2]
-	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:91) ~[spring-web-4.2.0.RELEASE.jar:4.2.0.RELEASE]
-	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48) ~[spring-web-4.2.0.RELEASE.jar:4.2.0.RELEASE]
-	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:53) ~[spring-web-4.2.0.RELEASE.jar:4.2.0.RELEASE]
-	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:591) ~[spring-web-4.2.0.RELEASE.jar:4.2.0.RELEASE]
-	... 9 more
-[2020-02-28 07:46:26,870] [WARN] [APAS-JTAPIThread] [Admin.java:6144] - APAS version: 6.2.2-12898 (Appliance-64bit), Cisco Jtapi version: 11.5(1.10000)-1 Release
-[2020-02-28 07:46:37,598] [ERROR] [APAS-JTAPIThread] [PGroupMember.java:1333] - No Address found on JTAPI provider for +36110009098. Check if the device is associated with the user FTOTH_APAS2 on Cisco CallManager.
-[2020-02-28 07:46:37,608] [ERROR] [APAS-JTAPIThread] [Module.java:317] - Exception from the init process. 
+[2020-08-14 14:09:56,331] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2020-08-14 14:09:56,351] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2020-08-14 14:09:56,352] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2020-08-14 14:09:56,395] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2020-08-14 14:09:56,399] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2020-08-14 14:09:56,458] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2020-08-14 14:09:56,473] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2020-08-14 14:09:56,474] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2020-08-14 14:09:56,477] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2020-08-14 14:09:56,480] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2020-08-14 14:09:56,487] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2020-08-14 14:09:56,489] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2020-08-14 14:09:56,492] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2020-08-14 14:09:56,496] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2020-08-14 14:09:56,504] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2020-08-14 14:09:56,514] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2020-08-14 14:09:56,521] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2020-08-14 14:09:56,521] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2020-08-14 14:09:56,522] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2020-08-14 14:09:56,524] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2020-08-14 14:09:56,533] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2020-08-14 14:09:56,533] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2020-08-14 14:09:56,535] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2020-08-14 14:09:56,537] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2020-08-14 14:09:56,540] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2020-08-14 14:09:56,540] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2020-08-14 14:09:56,542] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2020-08-14 14:09:56,545] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2020-08-14 14:09:56,545] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2020-08-14 14:09:56,545] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2020-08-14 14:09:56,546] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2020-08-14 14:09:56,548] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2020-08-14 14:09:56,551] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2020-08-14 14:09:56,553] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2020-08-14 14:09:56,555] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2020-08-14 14:09:56,557] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2020-08-14 14:09:56,560] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2020-08-14 14:09:56,562] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2020-08-14 14:09:56,563] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2020-08-14 14:09:57,169] [WARN] [APAS-JTAPIThread] [Admin.java:6175] - APAS version: 6.2.3-13372 (Appliance-64bit), Cisco Jtapi version: 11.5(1.10000)-1 Release
+[2020-08-14 14:09:57,753] [WARN] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@2c992a4d)] [CiscoJtapiProviderObserver.java:138] - ProvOutOfServiceEv
+[2020-08-14 14:10:00,008] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2020-08-14 14:10:00,010] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2020-08-14 14:10:00,011] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2020-08-14 14:10:00,017] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2020-08-14 14:10:00,021] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2020-08-14 14:10:00,025] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2020-08-14 14:10:00,030] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2020-08-14 14:10:00,031] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2020-08-14 14:10:00,031] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2020-08-14 14:10:00,033] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2020-08-14 14:10:00,034] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2020-08-14 14:10:00,035] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2020-08-14 14:10:00,036] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2020-08-14 14:10:00,040] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2020-08-14 14:10:00,042] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2020-08-14 14:10:00,045] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2020-08-14 14:10:00,047] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2020-08-14 14:10:00,048] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2020-08-14 14:10:00,048] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2020-08-14 14:10:00,049] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2020-08-14 14:10:00,052] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2020-08-14 14:10:00,053] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2020-08-14 14:10:00,054] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2020-08-14 14:10:00,055] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2020-08-14 14:10:00,056] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2020-08-14 14:10:00,057] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2020-08-14 14:10:00,058] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2020-08-14 14:10:00,059] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2020-08-14 14:10:00,059] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2020-08-14 14:10:00,060] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2020-08-14 14:10:00,061] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2020-08-14 14:10:00,062] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2020-08-14 14:10:00,063] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2020-08-14 14:10:00,064] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2020-08-14 14:10:00,064] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2020-08-14 14:10:00,066] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2020-08-14 14:10:00,067] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2020-08-14 14:10:00,068] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2020-08-14 14:10:00,069] [WARN] [http-nio-8080-exec-1] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2020-08-14 14:10:03,819] [WARN] [APAS-TimerDaemon] [Admin.java:514] - InMaintenance changed from 2 to 0
+[2020-08-14 14:10:07,799] [WARN] [APAS-JTAPIThread] [JTAPIThread.java:2754] - WARNING: There are no groups defined
+[2020-08-14 14:10:07,823] [ERROR] [APAS-JTAPIThread] [Module.java:317] - Exception from the init process. 
 com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_CONF is not in provider's domain.
 	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
 	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
@@ -189,32 +183,31 @@ com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_CONF is not in pro
 	at com.andtek.andphone.mcast.Module.initJTAPI(Module.java:313) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2746) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2499) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
-[2020-02-28 07:46:37,610] [ERROR] [APAS-JTAPIThread] [Module.java:622] - Failed to setup the recorder media route point. Recording will probably NOT work without it!
+[2020-08-14 14:10:07,826] [ERROR] [APAS-JTAPIThread] [Module.java:627] - Failed to setup the recorder media route point. Recording will probably NOT work without it!
 com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
 	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
 	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
-	at com.andtek.andphone.recorder.Module.setupMediaRoutePoint(Module.java:354) ~[classes/:?]
-	at com.andtek.andphone.recorder.Module.initJTAPI(Module.java:620) [classes/:?]
+	at com.andtek.andphone.recorder.Module.setupMediaRoutePoint(Module.java:358) ~[classes/:?]
+	at com.andtek.andphone.recorder.Module.initJTAPI(Module.java:625) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2746) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2499) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
-[2020-02-28 07:46:37,636] [ERROR] [APAS-JTAPIThread] [Module.java:236] - Exception
+[2020-08-14 14:10:07,894] [ERROR] [APAS-JTAPIThread] [Module.java:236] - Exception
 com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_ECR is not in provider's domain.
 	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
 	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
 	at com.andtek.andphone.blacklist.Module.initJTAPI(Module.java:211) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2746) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2499) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
-[2020-02-28 07:46:37,642] [WARN] [APAS-JTAPIThread] [Module.java:1000] - CallBackModule: WARNING: we are installing CallbackCallObservers for calllist on ALL terminals!
-[2020-02-28 07:46:37,645] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module callrouting
+[2020-08-14 14:10:07,903] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module callrouting
 com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal  is not in provider's domain.
 	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
 	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
@@ -223,108 +216,78 @@ com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal  is not in provider's dom
 	at com.andtek.andphone.callrouting.Module.initJTAPI(Module.java:671) ~[classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2746) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2499) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
-[2020-02-28 07:46:37,645] [WARN] [APAS-JTAPIThread] [Module.java:695] - WARNING: we are installing observers on ALL terminals!
-[2020-02-28 07:46:37,649] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module communicator
+[2020-08-14 14:10:07,905] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module communicator
 com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_COMM is not in provider's domain.
 	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
 	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
-	at com.andtek.andphone.communicator.Module.setupRouteCallBack(Module.java:428) ~[classes/:?]
-	at com.andtek.andphone.communicator.Module.initJTAPI(Module.java:708) ~[classes/:?]
+	at com.andtek.andphone.communicator.Module.setupRouteCallBack(Module.java:435) ~[classes/:?]
+	at com.andtek.andphone.communicator.Module.initJTAPI(Module.java:715) ~[classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2746) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2499) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
-[2020-02-28 07:46:37,650] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module phonemenu
+[2020-08-14 14:10:07,907] [ERROR] [APAS-JTAPIThread] [Module.java:664] - Exception
+java.lang.ClassCastException: com.cisco.jtapi.TerminalImpl cannot be cast to com.cisco.jtapi.extensions.CiscoRouteTerminal
+	at com.andtek.andphone.partner.acd.Module.initJTAPI(Module.java:654) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2020-08-14 14:10:07,907] [ERROR] [APAS-JTAPIThread] [Module.java:664] - Exception
+java.lang.ClassCastException: com.cisco.jtapi.TerminalImpl cannot be cast to com.cisco.jtapi.extensions.CiscoRouteTerminal
+	at com.andtek.andphone.partner.acd.Module.initJTAPI(Module.java:654) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2020-08-14 14:10:07,909] [ERROR] [APAS-JTAPIThread] [Module.java:664] - Exception
+java.lang.ClassCastException: com.cisco.jtapi.TerminalImpl cannot be cast to com.cisco.jtapi.extensions.CiscoRouteTerminal
+	at com.andtek.andphone.partner.acd.Module.initJTAPI(Module.java:654) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2020-08-14 14:10:07,910] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module phonemenu
 com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_MENU is not in provider's domain.
 	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
 	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
 	at com.andtek.andphone.phonemenu.Module.initJTAPI(Module.java:52) ~[classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2746) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2499) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
-[2020-02-28 07:46:37,652] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module andmobile
+[2020-08-14 14:10:07,911] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module andmobile
 com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_CP_MOBILE is not in provider's domain.
 	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
 	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
 	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
 	at com.andtek.andphone.andmobile.CTIPortObserver.observe(CTIPortObserver.java:185) ~[classes/:?]
-	at com.andtek.andphone.andmobile.Module.initJTAPI(Module.java:111) ~[classes/:?]
+	at com.andtek.andphone.andmobile.Module.initJTAPI(Module.java:108) ~[classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2746) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2499) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
-[2020-02-28 07:46:37,653] [ERROR] [APAS-JTAPIThread] [Module.java:117] - Exception
+[2020-08-14 14:10:07,913] [ERROR] [APAS-JTAPIThread] [Module.java:117] - Exception
 com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_LOGIN is not in provider's domain.
 	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
 	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
 	at com.andtek.andphone.web.webclient.Module.initJTAPI(Module.java:92) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
 	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2746) [classes/:?]
-	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2499) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
 	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
-[2020-02-28 07:46:37,702] [WARN] [APAS-TimerDaemon] [Admin.java:514] - InMaintenance changed from 2 to 0
-[2020-02-28 07:46:38,482] [ERROR] [APAS-PGMWorker-9] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
-[2020-02-28 07:46:38,604] [ERROR] [APAS-PGMWorker-7] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
-[2020-02-28 07:46:38,963] [WARN] [APAS-PGMWorker-9] [LockoutProfile.java:699] - LOCKOUT: No found lockout profile for extension '+36110009020'. fallback to default profile. 
-[2020-02-28 07:46:39,754] [ERROR] [APAS-PGMWorker-9] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
-[2020-02-28 07:46:39,754] [ERROR] [APAS-PGMWorker-8] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
-[2020-02-28 07:46:39,759] [ERROR] [APAS-PGMWorker-10] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
-[2020-02-28 07:46:39,760] [WARN] [APAS-PGMWorker-7] [LockoutProfile.java:699] - LOCKOUT: No found lockout profile for extension '+36110009021'. fallback to default profile. 
-[2020-02-28 07:46:39,798] [ERROR] [APAS-PGMWorker-7] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
-[2020-02-28 07:46:39,800] [ERROR] [APAS-PGMWorker-6] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
-[2020-02-28 07:46:42,760] [ERROR] [APAS-PGMAXLWorker-1] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630401BDA'. fallback to default profile. 
-[2020-02-28 07:46:42,870] [ERROR] [APAS-PGMAXLWorker-1] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
-[2020-02-28 07:47:00,773] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:00,774] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:00,774] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:00,775] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:00,786] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:00,787] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:00,787] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:01,155] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:01,163] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:01,163] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:01,164] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:01,166] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:01,176] [ERROR] [APAS-DesktopPhoneEventQueueWorker-1] [DesktopCallObserver.java:868] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
-com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
-	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
-	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:866) [classes/:?]
-	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1049) [classes/:?]
-	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
-	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
-	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
-[2020-02-28 07:47:01,278] [ERROR] [APAS-DesktopPhoneEventQueueWorker-1] [DesktopCallObserver.java:868] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
-com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
-	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
-	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:866) [classes/:?]
-	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1049) [classes/:?]
-	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
-	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
-	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
-[2020-02-28 07:47:09,793] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:09,793] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:09,796] [ERROR] [APAS-DesktopPhoneEventQueueWorker-2] [DesktopCallObserver.java:868] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
-com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
-	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
-	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:866) [classes/:?]
-	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1049) [classes/:?]
-	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
-	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
-	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
-[2020-02-28 07:47:09,807] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:09,807] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:09,989] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:09,990] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:12,568] [ERROR] [rememberMeScheduler-1] [WackerPhoneNumberMgmtServiceImpl.java:59] - Log PhoneNumberMgmt - LDAP sync faild! Project : com.andtek.andphone.provisioning.project.Project@5af7da23
+[2020-08-14 14:10:12,295] [WARN] [APAS-JTAPIThread] [JTAPIThread.java:526] - Provider went out of service 1
+[2020-08-14 14:10:38,432] [ERROR] [springTaskScheduler-1] [WackerPhoneNumberMgmtServiceImpl.java:59] - Log PhoneNumberMgmt - LDAP sync faild! Project : com.andtek.andphone.provisioning.project.Project@7950b055
 java.lang.NullPointerException
 	at com.andtek.andphone.provisioning.project.utils.wacker.cacheimpl.WackerLdapPhoneNumberCacheServiceImpl.runSync(WackerLdapPhoneNumberCacheServiceImpl.java:109) ~[classes/:?]
 	at com.andtek.andphone.provisioning.project.utils.wacker.cacheimpl.WackerPhoneNumberMgmtServiceImpl.sync(WackerPhoneNumberMgmtServiceImpl.java:57) [classes/:?]
@@ -333,8 +296,8 @@ java.lang.NullPointerException
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_144]
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_144]
 	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_144]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:65) [spring-context-4.2.0.RELEASE.jar:4.2.0.RELEASE]
-	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) [spring-context-4.2.0.RELEASE.jar:4.2.0.RELEASE]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:84) [spring-context-5.2.5.RELEASE.jar:5.2.5.RELEASE]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) [spring-context-5.2.5.RELEASE.jar:5.2.5.RELEASE]
 	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_144]
 	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_144]
 	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_144]
@@ -342,23 +305,105 @@ java.lang.NullPointerException
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_144]
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_144]
 	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
-[2020-02-28 07:47:12,568] [WARN] [rememberMeScheduler-1] [WackerCucmPhoneNumberCacheServiceImpl.java:63] - Log PhoneNumberMgmt - Run sync failed for CUCM phone numbers - input location list is null or empty!
-[2020-02-28 07:47:21,238] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,238] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,238] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,238] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,240] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,259] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,259] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,259] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,260] [WARN] [ObserverThread(com.andtek.andphone.callrouting.PhoneCallObserver@6cd2d897)] [WebClientAutoLoginHelper.java:41] - The AutoLogin RoutePoint is not found in the provider domain with the given name: APH_RP_LOGIN | Terminal APH_RP_LOGIN is not in provider's domain.
-[2020-02-28 07:47:21,272] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
-[2020-02-28 07:47:21,274] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
-[2020-02-28 07:47:21,459] [ERROR] [APAS-DesktopPhoneEventQueueWorker-3] [DesktopCallObserver.java:868] - DESKTOP_SILENT_MONITOR: Exception: Not found RoutePoint FTOTH_RP_REC by JTAPI. Maybe not exist or not assigned to application user.
-com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal FTOTH_RP_REC is not in provider's domain.
-	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
-	at com.andtek.andphone.communicator.DesktopCallObserver.updateClientsCall(DesktopCallObserver.java:866) [classes/:?]
-	at com.andtek.andphone.communicator.DesktopCallObserver.handleEvents(DesktopCallObserver.java:1049) [classes/:?]
-	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
-	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
-	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2020-08-14 14:10:38,432] [WARN] [springTaskScheduler-1] [WackerCucmPhoneNumberCacheServiceImpl.java:63] - Log PhoneNumberMgmt - Run sync failed for CUCM phone numbers - input location list is null or empty!
+[2020-08-14 14:11:08,724] [WARN] [http-nio-8080-exec-8] [ANDRealm.java:168] - [SECURITY]: ANDRealm.authenticate(): Authentication failure: Verify username and password. | Profile: Web Client default authentication profile [type=CUCM AXL]
+[2020-08-14 14:12:00,012] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2020-08-14 14:12:00,013] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2020-08-14 14:12:00,015] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2020-08-14 14:12:00,064] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2020-08-14 14:12:00,068] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2020-08-14 14:12:00,070] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2020-08-14 14:12:00,074] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2020-08-14 14:12:00,076] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2020-08-14 14:12:00,077] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2020-08-14 14:12:00,079] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2020-08-14 14:12:00,081] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2020-08-14 14:12:00,082] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2020-08-14 14:12:00,083] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2020-08-14 14:12:00,084] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2020-08-14 14:12:00,086] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2020-08-14 14:12:00,089] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2020-08-14 14:12:00,091] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2020-08-14 14:12:00,092] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2020-08-14 14:12:00,093] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2020-08-14 14:12:00,094] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2020-08-14 14:12:00,096] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2020-08-14 14:12:00,097] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2020-08-14 14:12:00,098] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2020-08-14 14:12:00,099] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2020-08-14 14:12:00,099] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2020-08-14 14:12:00,100] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2020-08-14 14:12:00,101] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2020-08-14 14:12:00,102] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2020-08-14 14:12:00,102] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2020-08-14 14:12:00,103] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2020-08-14 14:12:00,104] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2020-08-14 14:12:00,105] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2020-08-14 14:12:00,106] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2020-08-14 14:12:00,107] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2020-08-14 14:12:00,107] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2020-08-14 14:12:00,109] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2020-08-14 14:12:00,110] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2020-08-14 14:12:00,111] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2020-08-14 14:12:00,111] [WARN] [http-nio-8080-exec-5] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2020-08-14 14:12:27,130] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@3a0b896b)] [EventBroadcaster.java:98] - EVENT_BROADCASTER: Ignored broadcasting to ['webattendant_ftoth'] there is no active subscriber for this target
+[2020-08-14 14:12:27,134] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@3a0b896b)] [EventBroadcaster.java:98] - EVENT_BROADCASTER: Ignored broadcasting to ['webattendant_ftoth'] there is no active subscriber for this target
+[2020-08-14 14:12:28,004] [ERROR] [http-nio-8080-exec-8] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
+[2020-08-14 14:12:28,076] [WARN] [http-nio-8080-exec-8] [LockoutProfile.java:699] - LOCKOUT: No found lockout profile for extension ''. fallback to default profile. 
+[2020-08-14 14:12:35,065] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@3a0b896b)] [WebCallBuilder.java:104] - Unable to applyRegxCTI
+java.lang.NullPointerException
+	at com.andtek.andphone.web.common.utils.WebCallBuilder.buildWebCall(WebCallBuilder.java:99) [classes/:?]
+	at com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver.doHandleRingingOut(WebAttendantCallObserver.java:165) [classes/:?]
+	at com.andtek.andphone.web.common.observers.WebCallObserver.ringingOut(WebCallObserver.java:255) [classes/:?]
+	at com.andtek.andphone.web.common.observers.WebCallObserver.callChangedEvent(WebCallObserver.java:129) [classes/:?]
+	at com.cisco.jtapi.ObserverProxy.Z(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.jtapi.ObserverThread.messageReceived(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.append(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.CTQF(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.run(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+[2020-08-14 14:12:35,076] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@3a0b896b)] [EventBroadcaster.java:98] - EVENT_BROADCASTER: Ignored broadcasting to ['webattendant_SEP100000009100'] there is no active subscriber for this target
+[2020-08-14 14:12:35,158] [ERROR] [http-nio-8080-exec-7] [WebLookupThread.java:104] - no lookup directorygroup available or it does not contain any directory
+[2020-08-14 14:12:38,992] [ERROR] [http-nio-8080-exec-4] [WebLookupThread.java:104] - no lookup directorygroup available or it does not contain any directory
+[2020-08-14 14:12:39,097] [ERROR] [http-nio-8080-exec-3] [WebLookupThread.java:104] - no lookup directorygroup available or it does not contain any directory
+[2020-08-14 14:12:59,747] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2020-08-14 14:12:59,764] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2020-08-14 14:12:59,862] [ERROR] [http-nio-8080-exec-10] [WebLookupThread.java:104] - no lookup directorygroup available or it does not contain any directory
+[2020-08-14 14:14:00,011] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2020-08-14 14:14:00,012] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2020-08-14 14:14:00,013] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2020-08-14 14:14:00,019] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2020-08-14 14:14:00,022] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2020-08-14 14:14:00,025] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2020-08-14 14:14:00,028] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2020-08-14 14:14:00,029] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2020-08-14 14:14:00,030] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2020-08-14 14:14:00,032] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2020-08-14 14:14:00,033] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2020-08-14 14:14:00,034] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2020-08-14 14:14:00,035] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2020-08-14 14:14:00,037] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2020-08-14 14:14:00,039] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2020-08-14 14:14:00,042] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2020-08-14 14:14:00,044] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2020-08-14 14:14:00,045] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2020-08-14 14:14:00,046] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2020-08-14 14:14:00,046] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2020-08-14 14:14:00,049] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2020-08-14 14:14:00,050] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2020-08-14 14:14:00,051] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2020-08-14 14:14:00,052] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2020-08-14 14:14:00,052] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2020-08-14 14:14:00,053] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2020-08-14 14:14:00,054] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2020-08-14 14:14:00,055] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2020-08-14 14:14:00,055] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2020-08-14 14:14:00,056] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2020-08-14 14:14:00,057] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2020-08-14 14:14:00,058] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2020-08-14 14:14:00,059] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2020-08-14 14:14:00,059] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2020-08-14 14:14:00,060] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2020-08-14 14:14:00,062] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2020-08-14 14:14:00,063] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2020-08-14 14:14:00,064] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2020-08-14 14:14:00,064] [WARN] [http-nio-8080-exec-8] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!

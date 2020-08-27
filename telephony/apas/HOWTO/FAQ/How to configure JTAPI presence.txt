@@ -2,8 +2,12 @@
 How to configure JTAPI presence?
 ================================
 
-1. Static presence using observe pools
---------------------------------------
+- Static presence using observe pools
+- Dynamic JTAPI presence via directory search
+
+------------------------------------------------------------------------------------------------------------------
+Static presence using observe pools
+===================================
 
 - Create extension pool for participants:
 
@@ -15,7 +19,7 @@ How to configure JTAPI presence?
 
 - Assign this pool to a desktop client profile as observe pool.
 
-	APAS/Client/Profiles/[Observe Pools]/(Observe Pool)
+	APAS/Client/Profiles/<DESKTOP-CLIENT-PROFILE>/[Presence Settings]/(Observe Pool)
 
 - Restart APAS to start presence observers.	
 	
@@ -49,8 +53,9 @@ NOTE:
 	from ggroups.
 	
 	
-2. Dynamic JTAPI presence via directory search
-----------------------------------------------
+------------------------------------------------------------------------------------------------------------------	
+Dynamic JTAPI presence via directory search
+===========================================
 
 - Create a directory for search where it contains an attribute which type is 'Presence DN'.
 
@@ -60,11 +65,22 @@ NOTE:
 
 - Go to 
 
-	APAS/Client/Profiles/EDIT/[Directory Search]
+	APAS/Client/Profiles/<DC_PROFILE>/[Directory Search]
 	
-	and choose a 'Directoy Group' and set 'Enable Dynamic JTAPI Presence'
+	- choose a 'Directoy Group' 
+	- set 'Enable Dynamic JTAPI Presence'
+	- uncheck 'Dynamic presence user subscription'
+
+- Other limitations/settings	
+	- Remove phones from groups where you need Dynamic JTAPI presence info (or simply delete all groups.)
+	- Don't set observe pools from DC setting:
+		- go to:	APAS/Client/Profiles/<DESKTOP-CLIENT-PROFILE>/[Presence Settings]/(Observe Pool)
+		- choose:	No Extensions
 	
-- Call DC and add a Directory widget.
+	
+- Call DC and add a Directory widget
+OR
+- Call WAC and add a Directory widget
 
 - When you call a search observers will be created on terminals contained by search result on demand:
 
@@ -78,19 +94,20 @@ NOTE:
 	
 	Note here: observer cleanup logic polling time is about 1 minute.
 	
+	
 Test, troubleshooting
 ---------------------
 - Configured Dynamic JTAPI presence
 - Call a search from DC
-	- Call JTAPI Debug page and seach 'DynamicJtapiPresenceObserver'
+	- Call JTAPI Debug page and seach 'DynamicJtapiPresenceCallObserver'
 	
 	Terminals from search result where result item contains attribute with 'Presence DN' type should have 
 	
-		com.andtek.andphone.ccm.jtapi.presence.DynamicJtapiPresenceObserver 
+		com.andtek.andphone.ccm.jtapi.presence.DynamicJtapiPresenceCallObserver 
 		
 		
 	NOTE: 
-		If line is member of an observe pool DynamicJtapiPresenceObserver won't be created.
+		If line is member of an observe pool DynamicJtapiPresenceCallObserver won't be created.
 		
 		
 - After starting search these observers should be destroyed after 'Presence Subscription Time' seconds.

@@ -1,0 +1,486 @@
+=====================================
+Detecting devices in Web applications
+=====================================
+- WebAttendant scenarios and events
+- Event handling in WebAttendant
+- Device cache
+- WebClient Login
+- WebClient Logout
+- WebAttendant Login
+- WebAttendant Logout
+- WebClient F5
+- WebAttendant F5
+- WebClient EM login/logout
+- WebAttendant EM login/logout
+
+----------------------------------------------------------------------------------------------
+WebAttendant scenarios and events
+=================================
+Events
+------
+CUCM -> APAS
+	- CiscoTermInServiceEv
+
+APAS -> WebAttendant
+	- TerminalInOutServiceWebEvt
+	- 
+
+
+- Login:
+	- observer registered:
+		- CiscoTermInServiceEv ---> APAS[WebAttendantCallObserver]
+		- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=true) ---> WAC
+		NOTE: geneerally Atmosphere is not initialized and event not processed by WAC
+		
+			[2020-08-17 11:35:41,004] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermInServiceEv for SEP64A0E714F271
+			[2020-08-17 11:35:41,268] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP64A0E714F271, inService=true, lines=[DeviceLineImpl[device=DeviceImpl[SEP64A0E714F271] registered: true, lines=[LineImpl [address=+36110009000, partition=FTOTH_Phones]]]]]
+			[2020-08-17 11:35:41,308] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [EventBroadcaster.java:98] - EVENT_BROADCASTER: Ignored broadcasting to ['webattendant_ftoth'] there is no active subscriber for this target
+	
+- Login:
+	- APAS[WebAttendantCallObserver] --- CallObservationEndedEv
+	- not sent to WAC
+	
+		[2020-08-17 11:39:16,195] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [WebCallObserver.java:72] - [WebAttendant]: TO:TermObservationEndedEv for SEP64A0E714F271
+		[2020-08-17 11:39:16,224] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [WebCallObserver.java:101] - [WebAttendant]: WCO:NEW META EVENT_________META_UNKNOWN
+		[2020-08-17 11:39:16,224] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [WebCallObserver.java:104] - [WebAttendant]: WCO:Received CallObservationEndedEv for 
+	
+	
+- Terminal reset (out and in service)
+	
+	- CiscoTermOutOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- APAS --- QeueueChangedWebEvt ---> WAC
+	- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=false) ---> WAC
+	
+		[2020-08-17 11:41:53,096] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermOutOfServiceEv for SEP64A0E714F271
+		[2020-08-17 11:41:53,117] [DEBUG] [APAS-defaultWorker-13] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:QeueueChangedWebEvt [eventName=AgentUpdatedEvent, timestamp=0, wcAgent=null, call=null, queue=WebQueue[name=q1, description=, id=1, type=single, calls=[], agents=[], activeAgents=0, inactiveAgents=2, breakAgents=0, postcallAgents=0, availableAgentsPercent=0, inactiveAgentsPercent=100, breakAgentsPercent=0, postcallAgentsPercent=0, availableBusyAgentsPercent=0, callcountPercent=0, activeCallsPercent=0, slaValue=0, callcount=0, waitingTime=-1, agentNumber=2, availableAgents=0, activeCalls=0], agentGroupId=1]
+		[2020-08-17 11:41:53,120] [DEBUG] [APAS-defaultWorker-14] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:QeueueChangedWebEvt [eventName=AgentUpdatedEvent, timestamp=0, wcAgent=null, call=null, queue=WebQueue[name=q2, description=, id=2, type=single, calls=[], agents=[], activeAgents=0, inactiveAgents=1, breakAgents=0, postcallAgents=0, availableAgentsPercent=0, inactiveAgentsPercent=100, breakAgentsPercent=0, postcallAgentsPercent=0, availableBusyAgentsPercent=0, callcountPercent=0, activeCallsPercent=0, slaValue=0, callcount=0, waitingTime=-1, agentNumber=1, availableAgents=0, activeCalls=0], agentGroupId=0]
+		[2020-08-17 11:41:53,192] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@4beb1fa5)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-17 11:41:53,196] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@4beb1fa5)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalUnRegisteredEvImpl
+		[2020-08-17 11:41:53,199] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@4beb1fa5)] [CiscoJtapiProviderObserver.java:448] - JTT:CiscoProvTerminalUnRegisteredEv for SEP64A0E714F271
+		[2020-08-17 11:41:53,717] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP64A0E714F271, inService=false, lines=[DeviceLineImpl[device=DeviceImpl[SEP64A0E714F271] registered: false, lines=[LineImpl [address=+36110009000, partition=FTOTH_Phones]]]]]
+ 	
+	- CiscoTermInOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- APAS --- QeueueChangedWebEvt ---> WAC
+	- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=true) ---> WAC
+	
+		[2020-08-17 11:43:17,703] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermInServiceEv for SEP64A0E714F271
+		[2020-08-17 11:43:17,822] [DEBUG] [APAS-defaultWorker-15] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:QeueueChangedWebEvt [eventName=AgentUpdatedEvent, timestamp=0, wcAgent=WebClientAgent [agentName=, id=1+36110009000, available=1, AvailableString=Inactive, DN=+36110009000, partition=, fullDN=+36110009000, queueId=1, skill=0], call=null, queue=WebQueue[name=q1, description=, id=1, type=single, calls=[], agents=[], activeAgents=0, inactiveAgents=2, breakAgents=0, postcallAgents=0, availableAgentsPercent=0, inactiveAgentsPercent=100, breakAgentsPercent=0, postcallAgentsPercent=0, availableBusyAgentsPercent=0, callcountPercent=0, activeCallsPercent=0, slaValue=0, callcount=0, waitingTime=-1, agentNumber=2, availableAgents=0, activeCalls=0], agentGroupId=1]
+		[2020-08-17 11:43:17,824] [DEBUG] [APAS-defaultWorker-16] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:QeueueChangedWebEvt [eventName=AgentUpdatedEvent, timestamp=0, wcAgent=WebClientAgent [agentName=, id=2+36110009000, available=1, AvailableString=Inactive, DN=+36110009000, partition=, fullDN=+36110009000, queueId=2, skill=1], call=null, queue=WebQueue[name=q2, description=, id=2, type=single, calls=[], agents=[], activeAgents=0, inactiveAgents=1, breakAgents=0, postcallAgents=0, availableAgentsPercent=0, inactiveAgentsPercent=100, breakAgentsPercent=0, postcallAgentsPercent=0, availableBusyAgentsPercent=0, callcountPercent=0, activeCallsPercent=0, slaValue=0, callcount=0, waitingTime=-1, agentNumber=1, availableAgents=0, activeCalls=0], agentGroupId=0]
+		[2020-08-17 11:43:18,497] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@4192220e)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP64A0E714F271, inService=true, lines=[DeviceLineImpl[device=DeviceImpl[SEP64A0E714F271] registered: true, lines=[LineImpl [address=+36110009000, partition=FTOTH_Phones]]]]]
+	
+	
+- EM login (where device already assigned to end-user)
+
+	- CiscoProvTerminalUnRegisteredEvImpl -> ---> APAS[CiscoJtapiProviderObserver]					// not handled, phone not logged-in with EM
+	- CiscoTermOutOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=false) ---> WAC		// removing target device with old lines
+	- some events which are not handled by APAS (CiscoAddrRemovedEvImpl, CiscoAddrCreatedEvImpl)
+	- CiscoTermInOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- CiscoProvTerminalRegisteredEvImpl ---> APAS[CiscoJtapiProviderObserver]
+	- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=true) ---> WAC		// adding target device with EM lines
+	- APAS[WebAttendantCallObserver] --- PhoneAddRemoveWebEvt(inService=false) ---> WAC				// adding target device with EM lines (duplicated)
+	
+
+		[2020-08-18 10:28:24,655] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:28:24,655] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalUnRegisteredEvImpl
+		[2020-08-18 10:28:24,655] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:448] - JTT:CiscoProvTerminalUnRegisteredEv for SEP100000009100
+		[2020-08-18 10:28:24,655] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermOutOfServiceEv for SEP100000009100
+		[2020-08-18 10:28:25,832] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP100000009100, inService=false, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: false, lines=[LineImpl [address=+36110009100, partition=FTOTH_Phones], LineImpl [address=+36112220009100, partition=FTOTH_Phones]]]]]
+		[2020-08-18 10:28:27,547] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:28:27,547] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrRemovedEvImpl
+		[2020-08-18 10:28:27,547] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:303] - JTT:CiscoAddrRemovedEv for +36112220009100
+		[2020-08-18 10:28:27,555] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:28:27,555] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrRemovedEvImpl
+		[2020-08-18 10:28:27,555] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:303] - JTT:CiscoAddrRemovedEv for +36110009100
+		[2020-08-18 10:28:27,565] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:28:27,565] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrCreatedEvImpl
+		[2020-08-18 10:28:27,565] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:261] - JTT:CiscoAddrCreatedEv for +36110009200@FTOTH_Phones
+		[2020-08-18 10:28:27,565] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:267] - JTT:CiscoAddrCreatedEv(+36110009200@FTOTH_Phones) Term: SEP100000009100
+		[2020-08-18 10:28:27,566] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:288] - JTT:CiscoAddrCreatedEv(+36110009200@FTOTH_Phones) has currently no registered and unrestricted terminals
+		[2020-08-18 10:28:27,604] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermInServiceEv for SEP100000009100
+		[2020-08-18 10:28:27,614] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:28:27,614] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalRegisteredEvImpl
+		[2020-08-18 10:28:28,006] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP100000009100, inService=true, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: true, lines=[LineImpl [address=+36110009200, partition=FTOTH_Phones]]]]]
+		[2020-08-18 10:28:28,006] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:PhoneAddRemoveWebEvt [inservice=true, deviceName=SEP100000009100, userName=ftoth, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: true, lines=[LineImpl [address=+36110009200, partition=FTOTH_Phones]]]]]
+
+- EM logout (where device already assigned to end-user)	
+
+	- CiscoTermOutOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- CiscoProvTerminalUnRegisteredEvImpl -> ---> APAS[CiscoJtapiProviderObserver]					// not handled, phone not logged-in with EM	
+	- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=false) ---> WAC		// removing target device with EM lines
+	- some events which are not handled by APAS (CiscoAddrRemovedEvImpl, CiscoAddrCreatedEvImpl)
+	- CiscoTermInOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- CiscoProvTerminalRegisteredEvImpl ---> APAS[CiscoJtapiProviderObserver]
+	- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=true) ---> WAC		// adding target device with old lines
+	- APAS[WebAttendantCallObserver] --- PhoneAddRemoveWebEvt(inService=false) ---> WAC				// adding target device with old lines (duplicated)
+	
+	
+		[2020-08-18 10:49:31,219] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:49:31,219] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermOutOfServiceEv for SEP100000009100
+		[2020-08-18 10:49:31,219] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalUnRegisteredEvImpl
+		[2020-08-18 10:49:31,220] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:448] - JTT:CiscoProvTerminalUnRegisteredEv for SEP100000009100
+		[2020-08-18 10:49:31,954] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP100000009100, inService=false, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: false, lines=[LineImpl [address=+36110009200, partition=FTOTH_Phones]]]]]
+		[2020-08-18 10:49:34,178] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:49:34,178] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrRemovedEvImpl
+		[2020-08-18 10:49:34,178] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:303] - JTT:CiscoAddrRemovedEv for +36110009200
+		[2020-08-18 10:49:34,188] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:49:34,188] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrCreatedEvImpl
+		[2020-08-18 10:49:34,188] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:261] - JTT:CiscoAddrCreatedEv for +36110009100@FTOTH_Phones
+		[2020-08-18 10:49:34,188] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:267] - JTT:CiscoAddrCreatedEv(+36110009100@FTOTH_Phones) Term: SEP100000009100
+		[2020-08-18 10:49:34,188] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:288] - JTT:CiscoAddrCreatedEv(+36110009100@FTOTH_Phones) has currently no registered and unrestricted terminals
+		[2020-08-18 10:49:34,296] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:49:34,297] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrCreatedEvImpl
+		[2020-08-18 10:49:34,297] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:261] - JTT:CiscoAddrCreatedEv for +36112220009100@FTOTH_Phones
+		[2020-08-18 10:49:34,297] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:267] - JTT:CiscoAddrCreatedEv(+36112220009100@FTOTH_Phones) Term: SEP100000009100
+		[2020-08-18 10:49:34,298] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:288] - JTT:CiscoAddrCreatedEv(+36112220009100@FTOTH_Phones) has currently no registered and unrestricted terminals
+		[2020-08-18 10:49:34,410] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:49:34,410] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalRegisteredEvImpl
+		[2020-08-18 10:49:34,410] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermInServiceEv for SEP100000009100
+		[2020-08-18 10:49:34,771] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP100000009100, inService=true, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: true, lines=[LineImpl [address=+36110009100, partition=FTOTH_Phones], LineImpl [address=+36112220009100, partition=FTOTH_Phones]]]]]
+		[2020-08-18 10:49:34,780] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:PhoneAddRemoveWebEvt [inService=true, deviceName=SEP100000009100, userName=ftoth, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: true, lines=[LineImpl [address=+36110009100, partition=FTOTH_Phones], LineImpl [address=+36112220009100, partition=FTOTH_Phones]]]]]
+
+	
+- EM login (where EM device NOT assigned to end-user)
+
+	- CiscoProvTerminalUnRegisteredEvImpl -> ---> APAS[CiscoJtapiProviderObserver]					// not handled, phone not associated or logged-in with EM
+	- some events which are not handled by APAS (CiscoAddrRemovedEvImpl, CiscoAddrCreatedEvImpl)
+	- CiscoTermInOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- CiscoProvTerminalRegisteredEvImpl ---> APAS[CiscoJtapiProviderObserver]
+	- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=true) ---> WAC		// adding target device with EM lines
+	- APAS[WebAttendantCallObserver] --- PhoneAddRemoveWebEvt(inService=false) ---> WAC				// adding target device with EM lines (duplicated)
+	
+		[2020-08-18 10:55:19,430] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:55:19,430] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalUnRegisteredEvImpl
+		[2020-08-18 10:55:19,430] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:448] - JTT:CiscoProvTerminalUnRegisteredEv for SEP100000009100
+		[2020-08-18 10:55:22,397] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:55:22,397] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrRemovedEvImpl
+		[2020-08-18 10:55:22,397] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:303] - JTT:CiscoAddrRemovedEv for +36112220009100
+		[2020-08-18 10:55:22,411] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:55:22,411] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrRemovedEvImpl
+		[2020-08-18 10:55:22,411] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:303] - JTT:CiscoAddrRemovedEv for +36110009100
+		[2020-08-18 10:55:22,422] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:55:22,422] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrCreatedEvImpl
+		[2020-08-18 10:55:22,422] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:261] - JTT:CiscoAddrCreatedEv for +36110009200@FTOTH_Phones
+		[2020-08-18 10:55:22,422] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:267] - JTT:CiscoAddrCreatedEv(+36110009200@FTOTH_Phones) Term: SEP100000009100
+		[2020-08-18 10:55:22,422] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:288] - JTT:CiscoAddrCreatedEv(+36110009200@FTOTH_Phones) has currently no registered and unrestricted terminals
+		[2020-08-18 10:55:22,469] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:55:22,469] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalRegisteredEvImpl
+		[2020-08-18 10:55:23,379] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermInServiceEv for SEP100000009100
+		[2020-08-18 10:55:23,380] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:PhoneAddRemoveWebEvt [inService=true, deviceName=SEP100000009100, userName=ftoth, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: true, lines=[LineImpl [address=+36110009200, partition=FTOTH_Phones]]]]]
+		[2020-08-18 10:55:23,847] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP100000009100, inService=true, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: true, lines=[LineImpl [address=+36110009200, partition=FTOTH_Phones]]]]]
+			
+- EM logout (where device NOT assigned to end-user)	
+
+	- CiscoTermOutOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- CiscoProvTerminalUnRegisteredEvImpl -> ---> APAS[CiscoJtapiProviderObserver]					// not handled, phone not logged-in with EM	
+	- APAS[WebAttendantCallObserver] --- TerminalInOutServiceWebEvt(inService=false) ---> WAC		// removing target device with EM lines
+	- some events which are not handled by APAS (CiscoAddrRemovedEvImpl, CiscoAddrCreatedEvImpl)
+	- CiscoTermInOfServiceEv ---> APAS[WebAttendantCallObserver]
+	- CiscoProvTerminalRegisteredEvImpl ---> APAS[CiscoJtapiProviderObserver]
+																									// phone NOT added since not assigned by default
+	
+		[2020-08-18 10:58:10,268] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:58:10,269] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalUnRegisteredEvImpl
+		[2020-08-18 10:58:10,269] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermOutOfServiceEv for SEP100000009100
+		[2020-08-18 10:58:10,269] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:448] - JTT:CiscoProvTerminalUnRegisteredEv for SEP100000009100
+		[2020-08-18 10:58:10,950] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webattendant_ftoth, event:TerminalInOutServiceWebEvt [deviceName=SEP100000009100, inService=false, lines=[DeviceLineImpl[device=DeviceImpl[SEP100000009100] registered: false, lines=[LineImpl [address=+36110009200, partition=FTOTH_Phones]]]]]
+		[2020-08-18 10:58:13,272] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:58:13,272] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrRemovedEvImpl
+		[2020-08-18 10:58:13,272] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:303] - JTT:CiscoAddrRemovedEv for +36110009200
+		[2020-08-18 10:58:13,338] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:58:13,338] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrCreatedEvImpl
+		[2020-08-18 10:58:13,338] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:261] - JTT:CiscoAddrCreatedEv for +36110009100@FTOTH_Phones
+		[2020-08-18 10:58:13,338] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:267] - JTT:CiscoAddrCreatedEv(+36110009100@FTOTH_Phones) Term: SEP100000009100
+		[2020-08-18 10:58:13,338] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:288] - JTT:CiscoAddrCreatedEv(+36110009100@FTOTH_Phones) has currently no registered and unrestricted terminals
+		[2020-08-18 10:58:13,385] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:58:13,385] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoAddrCreatedEvImpl
+		[2020-08-18 10:58:13,385] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:261] - JTT:CiscoAddrCreatedEv for +36112220009100@FTOTH_Phones
+		[2020-08-18 10:58:13,386] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:267] - JTT:CiscoAddrCreatedEv(+36112220009100@FTOTH_Phones) Term: SEP100000009100
+		[2020-08-18 10:58:13,386] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:288] - JTT:CiscoAddrCreatedEv(+36112220009100@FTOTH_Phones) has currently no registered and unrestricted terminals
+		[2020-08-18 10:58:13,446] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:95] - JTT:NEW META EVENT_________META_UNKNOWN for: 10.51.51.34
+		[2020-08-18 10:58:13,446] [DEBUG] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@775bac0c)] [WebCallObserver.java:72] - [WebAttendant]: TO:CiscoTermInServiceEv for SEP100000009100
+		[2020-08-18 10:58:13,447] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@58f64583)] [CiscoJtapiProviderObserver.java:98] - JTT:Received com.cisco.jtapi.CiscoProvTerminalRegisteredEvImpl
+			
+	
+- Network (VPN) ON:
+
+	- APAS is running but there is no connection to CUCM (Network/VPN OFF)
+	- Network (VPN) ON
+	- CiscoProvTerminalRegisteredEv -> APAS (CiscoJtapiProviderObserver)
+
+- Network (VPN) OFF:
+	- APAS is running, WAC is running and logged in
+	- ProvOutOfServiceEvImpl -> APAS (CiscoJtapiProviderObserver)
+		- QeueueChangedWebEvt -> WAC
+	- later ProvShutdownEvImpl and ProvObservationEndedEvImpl
+	- during next keep-alive WAC inactivated going into 'Connecting...'
+	
+- Network (VPN)	ON again:
+	- ProvInServiceEvImpl -> APAS (CiscoJtapiProviderObserver)
+	- during next keep-alive WAC activated
+	- CiscoProvTerminalRegisteredEv -> APAS ((CiscoJtapiProviderObserver))
+		- QeueueChangedWebEvt -> WAC
+
+
+----------------------------------------------------------------------------------------------
+Event handling in WebAttendant
+==============================
+Pushed events from APAS:
+	- TerminalInOutServiceWebEvt
+	- 
+	
+Both events are handled by AtmosphereService.handlePhones() which displatches actions to overwrite or delete devices in store.
+	
+--> AtmosphereService.onMessage()
+      - case 'TerminalInOutServiceWebEvt':
+      - case 'PhoneAddRemoveWebEvt':
+		--> this.handlePhones(lines, inService)
+			----------------------------- if inService ---------------------------------
+				--> dispatch UpsertPhones(phones)
+			----------------------------- else ---------------------------------
+				--> dispatch DeletePhones(device IDs)
+	
+	
+	
+		
+----------------------------------------------------------------------------------------------
+Device cache
+============
+If a WEB user connected to a any APAS WEB application (WebClient, WebAttendant, ...) user related information is stored into a connection object.
+User's devices are also such information. Retrieving user's devices can be an expensive action. Therefor collected devices stored into a device cache (WebConnection.devices) after detection.
+Device cache management methods:
+	- WebConnection.setDevices(List<DeviceLine> devices)
+	- WebConnection.getDevices(boolean onlyRegistered)
+	
+Cache contains ALL devices which are associated to CUCM end-user and devices which are assigned by EM login.
+You can filter only registered devices with 'onlyRegistered'.
+
+Cache validity:
+	- Cache is always valid if you call setDevices(). 
+	
+		ONLY WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection() calls this method.
+	
+	- Cache will be invalid only if WebConnection.invalidateDeviceCache() has been called. 
+		It called from:
+			
+		
+	
+		If cache is invalid next WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection() will perform a device detection and sets cache to valid.
+		
+		
+		
+		
+	
+Code changes/refactors:
+	- WebConnectionServiceBaseImpl.devicesWithLinesForConnection(), WebClientConnectionServiceImpl.devicesWithLinesForConnection() renamed into:
+	
+		collectDevicesWithLinesForConnection()
+	
+	
+----------------------------------------------------------------------------------------------
+WebClient Login
+===============
+
+- WebClient:
+
+	- on success login request redirected to default-target-url (/rest-api/login/200)
+	--> LoginCtrl.login200(...)
+		--> userName = getLoggedUserName()
+		--> loginResponse = new LoginResponse(
+			--> getProfileForUser(request, response)
+				--> WebClientProfileService.findProfileByLoggedInUser(request)
+					--> conn = WebConnectionServiceBaseImpl.createConnection(loggedInUser, request)
+						--> wc = createConnectionInstance(userName, profile, settings, request)
+						--> connections.put(userName, wc)																		// put connection into a map by userName
+						--> [1] (userName, onlyRegistered = false)
+						--> set settings of a connection
+									
+			--> UserCtrl.getPhonesForUser(request, response)
+				--> --> [1] (userName, onlyRegistered = true)
+
+				--> SettingsCtrl.getUserSettings(request)
+
+
+
+[1]	--> WebClientConnectionServiceImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
+		--> [2] results = WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
+		------------------ if user has a CSF device (Jabber in softphone mode) ---------
+			- Overwrite the active line - that line must be the active line								
+		----------------- !foundActiveLine && !foundCSF -----------------------
+			- first line is the active line
+
+
+[2] -->  WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
+	--> connection = getConnection(userId)
+	--------------------------------- if cache is valid ---------------------------------
+
+		--> PhoneServiceImpl.devicesForUser(userId, false)
+			--> phones = getAssociatedDevicesForUser(userId)
+				--> docUser = JTAPIServlet.getDefaultJTAPI().axl.sendRequest("getUser", "<userid>" + userid + "</userid>") 				// getting end-user info with AXL
+				
+				--> getEMPhones(docUser)																							<<<<<<<<<<<<<<<<<<<<< getting EM phone
+					- getting associated devices for end-user with AXL
+						--> jtapi.axl.sendRequest("executeSQLQuery", AXLquery);
+								
+								<sql>SELECT * from extensionmobilitydynamic where fkdevice_currentloginprofile = <UUID> </sql>
+							
+						--> jtapi.axl.sendRequest("getPhone", "<uuid>" + phoneUUID + "</uuid>")
+					- then getting phones by retrieved device ID with JTAPI
+						--> JTAPIServlet.getPhone(deviceName)
+					
+				--> getAssociatedPhones(docUser)					// getting direct associated devices from docUser AXL response
+				
+			--> jtapiDevices = onlyKeepJtapiTerminals(phones, userId)		
+			
+----------------------------------------------------------------------------------------------
+WebClient Logout
+================
+
+- WebClient:
+	--> LoginCtrl.logout(...)
+		--> WebClientConnectionServiceImpl.removeConnection(userId)
+			--> observer = getObserver()
+				--> WebClientConnectionServiceImpl.getObserver()
+					--> WebClientCallObserver.getInstance()
+			--> deviceLineList = collectDevicesWithLinesForConnection(userName, !onlyRegistered)
+				--> [1]
+			--> PhoneServiceImpl.removeObservers(deviceLineList, observer, observer)
+			- removing recorder listener
+			- removing subscriptions and connection
+				--> wc = connections.get(userName)
+				--> unsubscribeFromEvents(wc)
+				--> connections.remove(userName)
+				
+
+	
+----------------------------------------------------------------------------------------------
+WebAttendant Login
+==================
+Request: /auth/login
+	--> AuthController.login()
+		--> authentication = this.authManager.authenticate(authenticationToken)
+		--> SecurityContextHolder.getContext().setAuthentication(authentication)
+		
+		--> conn = webAttendantConnectionService.getConnection(...)
+		----------------------------- if conn == null ----------------------------------------
+			--> conn = WebConnectionServiceBaseImpl.createConnection(loggedInUser, request)
+				--> settings = getUserSettingsService().getUserSettings(userName);				
+				--> profile = getProfileService().getProfileByUser(user);
+				--> createConnectionInstance(userName, profile, settings, request)
+				--> [1] WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, false)
+			
+Request:	/init/reload
+
+--> InitController.reload()
+		--> SEE: WebAttendant F5
+		
+----------------------------------------------------------------------------------------------
+WebClient EM login/logout
+=========================
+Provider events:
+	AndtekProvider.CiscoProvTerminalRegisteredEvID		(login)
+	AndtekProvider.CiscoProvTerminalUnRegisteredEvID	(logout)
+
+
+When APAS detected a new device or device removed it sends Atmosphere PhoneAddRemoveWebEvt event to clients:
+For example LOG:
+
+	[2020-07-21 22:52:55,169] [DEBUG] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@44fb7303)] [EventBroadcaster.java:61] - EVENT_BROADCASTER: Event broadcasted to:webclient_ftoth, event:PhoneAddRemoveWebEvt [inservice=true, deviceName=SEP100000009100, userName=ftoth, lines=[]]
+
+On provider events:	
+	
+	[10] --> CiscoJtapiProviderObserver.providerChangedEvent(ProvEv [] eventList)
+		--> NEW THREAD ProviderEventProcessor.run()
+			--> CiscoJtapiProviderObserver.processProviderEvent(ProvEv [] eventList)
+				-------------------------------- loop on events -----------------------------------------
+				--> com.andtek.andphone.utils.Modules.providerEvent(jtapi, eventList[i])
+					--> com.andtek.andphone.web.common.WebModuleBase.providerEvent(ProvEv provEv)
+						--> notifyWebApplications(...)
+							--> emLoggedUser = ct.getEMLoginUsername()
+							----------------------------- if emLoggedUser is not empty -----------------------------------------------
+								--> WebConnectionService.notifyWebOnEMLogin(terminal, user, true/false)
+								
+									--> WebClientConnectionService.notifyWebOnEMLogin(terminal, user, true/false)
+										--> conn.invalidateDeviceCache();																					<<<<<<< cache is invalidated here (but refreshed only during next reload)
+										--> event = new PhoneAddRemoveWebEvt(...)													// without lines
+										--> EventBroadcaster.broadcast(conn.getUsername().toLowerCase(), event, this.clientType)
+			
+									NOTE: array of lines is empty here
+	
+	
+WebClient has a 'addremoveModal' which registered globally and contains an event listener:
+	
+	from directive_addremovephone.js:
+
+		$rootScope.$on("event:PhoneAddRemoveWebEvt", function(dummy, data) {
+			...
+			$('#myModal').modal('show');
+		});
+	
+		modal template:		templates/phoneaddremovemodal.tpl		
+	
+	This directive displays a modal with detected phone information and it counts down. When counter reaches 0 it reloads WEB application.
+	
+	Reload triggers LoginCtrl.loginCheck() on the server side:
+	
+	
+--> Login/reload
+	--> LoginCtrl.loginCheck()
+		--> UserCtrl.getProfileForUser(request, response)
+			--> WebClientProfileService.findProfileByLoggedInUser(request)				
+				--> SEE MORE:	WebClient Login
+
+
+				
+----------------------------------------------------------------------------------------------
+WebAttendant EM login/logout
+============================
+Provider events:
+	AndtekProvider.CiscoProvTerminalRegisteredEvID		(login)
+	AndtekProvider.CiscoProvTerminalUnRegisteredEvID	(logout)
+
+Event handling is the same as WebClient, only difference is WebConnectionService implementation --> [10]	
+	
+	--> WebAttendantConnectionService.notifyWebOnEMLogin(terminal, user, true/false)
+		--> conn.invalidateDeviceCache();
+		--> lines = phoneService.linesForDevice(d.getId());
+		--> event = new PhoneAddRemoveWebEvt(...)																// with lines
+		-------------- if add phone ------------------
+			--> ubscribeForEvents(conn)
+				--> subscribeForGroupEvents(conn)
+				--> subscribeForQueueEvents(conn)
+				--> subscribeForTerminalEvents(conn)
+		--> EventBroadcaster.broadcast(conn.getUsername().toLowerCase(), event, this.clientType)
+	
+
+
+
+----------------------------------------------------------------------------------------------
+WebAttendant EM Logout
+======================
+
+----------------------------------------------------------------------------------------------
+WebClient F5
+============
+
+----------------------------------------------------------------------------------------------
+WebAttendant F5
+===============
+Request:	/init/reload
+
+--> InitController.reload()
+	--> userName = loggedInUser.getName()
+	...
+	--> phones = getPhones(userName)
+		--> deviceLineList = webAttendantConnectionService.collectDevicesWithLinesForConnection(userName, true)	// only active
+			--> WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userId, onlyRegistered)
+				----------------------- if connection.isValidDeviceCache ------------------------------
+					--> fixActiveDeviceSetting(userId, connection, onlyRegistered)
+					--> WebConnection.getDevices(onlyRegistered)
+						-------------------------------- loop on devices (cache) as d -------------------------------------------
+							--> d.setRegistered(JTAPIServlet.isTerminalRegistered(deviceName))
+						--> return filtered or not filtered list of devices
+		
+	--> result = new AppResource(apasVersion, user, profileRes, gridster, phones, calls, settings, queues, callHistory, hotkeys)
+
+	

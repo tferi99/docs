@@ -1,0 +1,19 @@
+=====================
+Howto forward a line?
+=====================
+
+- Configuration:
+	
+	- go to line (device/line) configuration in CUCM Admin into [Call Forward and Call Pickup Settings]
+	
+	- set CSS values (at least for 'Forward All')
+	
+	
+- Usage:
+
+		- on phone device press 'CFwdAll' softkey
+		
+		- specify target number
+		
+		- press 'End Call' button (if function not completed autmomatically)
+

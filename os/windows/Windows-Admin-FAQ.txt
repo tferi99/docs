@@ -1,0 +1,59 @@
+=================
+Windows Admin FAQ
+=================
+
+RDP
+---
+- Copy and Paste is not working on my Remote Desktop
+
+
+Office365
+---------
+- How to connect to Exchange Online with Office365 account?
+
+------------------------------------------------------------------------------------------------------------------------------------------
+Copy and Paste is not working on my Remote Desktop
+==================================================
+So what do I do when clipboard stops working?
+
+On the remote Windows:
+
+	- Load up task manager (right click taskbar and select Task Manager)
+	- Go to the Processes Tab
+	- Select rdpclip.exe
+	- Click End Process
+	- Go to the Application Tab
+	- Click New Process
+	- Type rdpclip
+	- Click Ok
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------
+How to connect to Exchange Online with Office365 account?
+=========================================================
+Connect to PowerShell with your O365 account. Run these commands in a privileged PowerShell:
+
+- load your credentials to a variable:
+
+	$UserCredential = Get-Credential
+	
+	Here a login dialog opened and you can specify credentials.
+
+- open a session:
+
+	$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
+
+- import session
+
+	Import-PSSession $Session -DisableNameChecking
+
+
+- Use it
+
+- Finally disconnect:
+
+
+	Remove-PSSession $Session
+
+	
+	

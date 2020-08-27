@@ -298,7 +298,8 @@ Troubleshooting
 - Troubleshooting with logs
 - Validating recorder mode
 - Troubleshooting checklist
-- Tracing standalone recorder process 
+- Tracing standalone recorder process
+- Examining recorded streams
 - Monitoring with Wireshark
 - Tracing network traffic between RecorderSniffer and APAS
 - Problem: There is no data on SIP trunk
@@ -622,7 +623,37 @@ In APAS command line:
 		- see logfile:			/var/log/apas/sip_protocol.log
 
 	
-	
+Examining recorded streams
+--------------------------
+If you have a working recording then you have log information about captured and recorded packets:
+
+- APAS sends port media stream IP/port information in <recordCall>
+- when recorder collected all media information it starts recording:
+	- LOG: [0]Resyncing RTP because new stream detected [call-id=104/sip21172/1, dir=1, ssrc=-1058530648]
+	- LOG: Setting up Disk_thread for call dbId: 104 (ref=1) direction 1 initializing
+	- all new recorded packets are logged with dbID and calling/called party information
+
+		2020-02-28 07:47:10,065: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip21172/1" dstIP="10.51.51.122" dstPort="46610"/>
+		...
+		2020-02-28 07:47:10,069: 3: |found Call_1 0,db:104 980 (+36110009100,+36110009020) [0]Resyncing RTP because new stream detected [call-id=104/sip21172/1, dir=1, ssrc=-1058530648]
+		2020-02-28 07:47:10,069: 2: Starting to record a stream [call-id=104/sip21172/1, dir=1]
+		2020-02-28 07:47:10,069: 1: Setting up Disk_thread for call dbId: 104 (ref=1) direction 1 initializing
+		2020-02-28 07:47:10,069: 1: Ringbuffer size: 65536
+		2020-02-28 07:47:10,070: 1: Setup done for Disk_thread 0x7f9c280a4700 for call 104 direction 1
+		2020-02-28 07:47:10,070: 1: disk_thread(): call 104 direction 1 - initializing
+		2020-02-28 07:47:10,070: 1: Server::send(<call callID="sip21172/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" origCallingParty="+36110009100" origCalledParty="+36110009020" lastRedirectingParty="" rtpRecorded="0" duplicate="0" keep="0" onDemand="0" record="1" keyIn="000000000000000000000000000000000000000000000000000000000000" keyOut="000000000000000000000000000000000000000000000000000000000000"/>,411)
+		2020-02-28 07:47:10,070: 1: worker::send(<call callID="sip21172/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" origCallingParty="+36110009100" origCalledParty="+36110009020" lastRedirectingParty="" rtpRecorded="0" duplicate="0" keep="0" onDemand="0" record="1" keyIn="000000000000000000000000000000000000000000000000000000000000" keyOut="000000000000000000000000000000000000000000000000000000000000"/>,411)
+		2020-02-28 07:47:10,070: 1: disk_thread(): call 104 direction 1 - started
+		2020-02-28 07:47:10,072: 2: sqlPrepare: UPDATE rec_call SET "end"=NOW(),lastaction=NOW(),phoneip='10.51.51.122',remoteip='10.51.51.122',status=1,initiated=0,initiator='',filename='',filesize=0,signaling=16,codec=0,duplicate=0,callingparty=?, calledparty=?, callingpartyname=?, calledpartyname=?,origcallingparty=?, origcalledparty=?, gcid=? WHERE id=104
+		2020-02-28 07:47:10,072: 2: Execute SQLExecute
+		2020-02-28 07:47:10,087: 3: |found Call_1 0,db:104 980 (+36110009100,+36110009020) [18]
+		2020-02-28 07:47:10,109: 3: |found Call_1 0,db:104 980 (+36110009100,+36110009020) [40]
+		2020-02-28 07:47:10,129: 3: |found Call_1 0,db:104 980 (+36110009100,+36110009020) [60]
+		...
+
+- with wrong SIP trunk configurqation 
+	- APAS cannot detect SIP messages with IP/port information
+	- streams are not detected and packets are not logged
 
 Monitoring with Wireshark		
 -------------------------

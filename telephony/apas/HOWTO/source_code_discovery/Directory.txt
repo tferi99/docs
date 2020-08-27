@@ -5,6 +5,8 @@ Directory
 - Directory types
 - Adding new directory
 
+- How to configura LDAP directory?
+
 -------------------------------------------------------------------------------------------------------------------------------------
 Directory types
 ===============
@@ -27,3 +29,18 @@ APAS/Directory/Directories/(Add) -> Add New Directory/(Directory Type)
 	
 	--> com.andtek.andphone.ldap.gwtapp.client.dirlist_editpanel
 		
+
+		
+-------------------------------------------------------------------------------------------------------------------------------------
+How to configura LDAP directory?
+================================
+Latest AD requires secure connection, don't configure it with un-secure LDAP.
+
+Example configuration:
+	- Server Name/IP:	ldaps://cee-cs-dc001.andtek.cee.cs.eilab.biz
+	- Login:			CN=Administrator,CN=Users,DC=andtek,DC=cee,DC=cs,DC=eilab,DC=biz
+	- Password:			And33dbadmin
+	- Base-DN:			CN=Users,DC=andtek,DC=cee,DC=cs,DC=eilab,DC=biz 
+	
+	1st attribute:		samAccountName
+	

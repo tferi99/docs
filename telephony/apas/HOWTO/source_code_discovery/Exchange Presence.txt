@@ -14,6 +14,7 @@ Exchange Presence
 - Troubleshooting, tracing
 - Additional troubleshooting features for memory consumption
 - ews-trace.log analysis
+- Howto use Office365 account?
 
 -------------------------------------------------------------------------------------------------------------------
 Configuration
@@ -824,3 +825,76 @@ ews-trace.log analysis
 					</FreeBusyResponse>
 				</FreeBusyResponseArray>
 			</GetUserAvailabilityResponse>	
+
+			
+			
+-------------------------------------------------------------------------------------------------------------------
+Howto use Office365 account?
+============================
+- Connection:
+	You can configure Exchange Presence for O365 similarly to on-premise Exchange.
+	The only difference is you have to specify a special service URL in Hostname/IP field:
+
+		https://outlook.office365.com/EWS/Exchange.asmx
+		
+		
+	then you can specify O365 credentials in Username and Password fields.
+
+- Impersonation:
+	- call Admin Portal:		https://outlook.office365.com/ecp/
+	- follow:					https://cloudsolutions.atlassian.net/wiki/spaces/CKB/pages/4358166/Setting+up+Application+Impersonation+for+Exchange+or+Office+365
+	
+	OR if it cannot work do it manually:
+	
+	How to connect to Exchange Online with Office365 account?
+	Connect to PowerShell with your O365 account. Run these commands in a privileged PowerShell:
+	
+		- load your credentials to a variable:
+		
+			$UserCredential = Get-Credential
+			
+			Here a login dialog opened and you can specify credentials.
+
+		- open a session:
+		
+			$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://outlook.office365.com/powershell-liveid/ -Credential $UserCredential -Authentication Basic -AllowRedirection
+
+		- import session
+		
+			Import-PSSession $Session -DisableNameChecking
+
+		- validate current session:
+		
+			Get-Mailbox
+
+			You can see your mailbox on the remote side.
+			
+		- Use session (run commands)
+		
+		- Finally disconnect:
+	
+	
+			Remove-PSSession $Session
+
+
+	- Impersonation from PowerShell:
+		To configure impersonation for all users in an organization:
+
+			New-ManagementRoleAssignment -name:impersonationAssignmentName -Role:ApplicationImpersonation -User:serviceAccount
+
+		for example:
+		
+			New-ManagementRoleAssignment -name:impersonationAssignmentName -Role:ApplicationImpersonation -User:ferenc@eilabonline.biz
+
+	- Validate:
+
+			Get-ManagementRoleAssignment -RoleAssignee "ferenc@eilabonline.biz" -Role ApplicationImpersonation -RoleAssigneeType user
+	
+	
+SEE ALSO:
+		https://www.codetwo.com/kb/how-to-set-impersonation-rights-manually/
+
+		
+		
+		
+		

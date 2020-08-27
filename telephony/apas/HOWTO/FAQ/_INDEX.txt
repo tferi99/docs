@@ -76,6 +76,7 @@ Network/Security
 - How to setup secure JTAPI?
 - How to trace PassThroughRequest messages sent by APAS to phones?
 - Phone authentication URL
+- How to access APAS services behind a firewall?
 
 Troubleshooting
 ---------------
@@ -104,6 +105,7 @@ Development
 - Where can I download APAS update packages?
 - How to upgrade an ISO APAS to the latest version.txt
 - Howto log from GWT?
+- Howto configure simulator?
 
 ISO
 ---
