@@ -1,1 +1,0 @@
-V	301009230410Z		1000	unknown	/C=HU/ST=Veszprem/O=Andtek/OU=Test Certificate Authority/CN=test.ca.lab.eu

@@ -125,3 +125,7 @@ createRoot
 createIntermediate
 createServer
 
+echo "###################################################################################"
+echo "Certificate chain"
+echo "###################################################################################"
+cat $CERT_ROOT $CERT_INTERMEDIATE $CERT_SERVER > cert-chain.pem

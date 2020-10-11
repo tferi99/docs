@@ -1,1 +1,0 @@
-V	301009230412Z		1000	unknown	/C=HU/ST=Veszprem/L=Balatonfured/O=Andtek/OU=Development/CN=andtek.lab.hu
