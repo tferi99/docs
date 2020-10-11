@@ -1,0 +1,41 @@
+===========================
+WebAttendant authentication
+===========================
+
+- Data model
+- Authentication
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Data model
+==========
+		               1       1         1        1                    1   1
+        auth_profiles ----------- pools ------------ attendant_profiles ------- generic_profiles
+                            (profile_id)        (userpoolid)   
+
+settings:		attendant_user_settings 
+
+	- 'userid' field contains user name
+	- settings record will be created on-demand in WebAttendantUserSettingServiceImpl.getUserSettings(userId)
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Authentication
+==============
+- user settings:		attendant_user_settings
+
+Request: /auth/login
+	--> AuthController.login()
+		--> authentication = this.authManager.authenticate(authenticationToken)
+		--> SecurityContextHolder.getContext().setAuthentication(authentication)
+		
+		--> conn = webAttendantConnectionService.getConnection(...)
+		----------------------------- if conn == null ----------------------------------------
+			--> conn = WebConnectionServiceBaseImpl.createConnection(loggedInUser, request)
+				--> settings = getUserSettingsService().getUserSettings(userName);								
+				--> profile = getProfileService().getProfileByUser(user);
+				--> createConnectionInstance(userName, profile, settings, request)
+				--> [1] WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, false)
+	
+
+About details about authManager.authenticate(...) SEE ALSO: WebClient authentication.txt

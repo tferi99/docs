@@ -1,0 +1,73 @@
+===================
+WebAttendant avatar
+===================
+
+- Configuration
+- How to configure 'AD Photo Edit Free Edition'?
+- Call flow
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+
+- EITHER use AD synchronized end-users in CUCM OR add the same user to AD which you have in CUCM
+
+- create an LDAP directory which points to an AD
+	- set 'Enable Thumbnail' in settings of that directory 
+	
+		APAS/Directory/<hoose>
+		
+- Choose this directory as 'Thumbnail Directory' in:
+
+	APAS/Client/Profiles/<choose>/[Directory]/(Thumbnail Directory)
+	
+- Upload an avatar picture with 'AD Photo Edit Free Edition'
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+How to configure 'AD Photo Edit Free Edition'?
+==============================================
+If AD domain is not your user's domain then set it manually.
+
+For example your LDAP server URL is:		ldaps://cee-cs-dc001.andtek.cee.cs.eilab.biz
+
+Then domain is:								andtek.cee.cs.eilab.biz
+and specify an admin as user here, e.g:		Administrator
+	
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Call flow
+=========
+- Avatar image is rendered by wacAwatar component (image-holder-directive.ts)
+- It injects 'src' attribute into <img> in nav.component.html .
+- Directory ID loaded from store[auth.profile/thumbnailDirId] by thumbnailDirectoryId$ selector
+
+Injected source URL is:		/dir/{directoryId}/photo/{userId:.+}
+
+	for example:			http://localhost:4200/andphone/webattendant-api/directory/dir/1/photo/avoros
+	
+	
+	
+--> DirectorWaController.getPhoto(@PathVariable int directoryId, @PathVariable String userId, HttpServletResponse res)
+	--> DirectoryPhotoServiceImpl.getDirectoryPhoto(directoryId, userId)
+		--> DirectoryPhotoDao.getDirectoryPhoto(directoryId, userId)
+			- it gets photo info from 'dirphoto' database table, which contains:
+				- user ID
+				- directory ID
+				- photo image bytes
+			
+		------------------------------ if photo does not exists --> fetch from AD -----------------------------------
+		- search for user by 'sAMAccountName'
+		- getting photo specified by 'Thumbnail Attribute' of directory (default: thumbnailPhoto)
+		
+		
+NOTE: 
+
+	Thumbnail image info expired in database once per day. This saved into database by DB creation script in ModuleDB (int NOT NULL default 24).
+	That means it won't be fetched immediately even if you change it on AD only after expiration.
+	
+	If you want to fetsch it immediately delete record from 'dirphoto' table.
+	
+	
+	

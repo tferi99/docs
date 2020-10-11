@@ -959,7 +959,17 @@ Howto accept multiple action types in effect?
 =============================================
 Just add multiple types to ofType():
 
+	this.actions$.pipe(
 	ofType<Action>(GlobalActionTypes.AppDataLoadedAction, AuthActionTypes.KeepAliveErrorAction)
+	).subscribe(action => {
+		if (action.type === GlobalActionTypes.AppDataLoadedAction) {
+			...
+		}
+		if (action.type === AuthActionTypes.KeepAliveErrorAction) {
+			...
+		}
+	  }
+	);
 	
 	
 In this case specify Action as generics type and cast it later (with 'as').

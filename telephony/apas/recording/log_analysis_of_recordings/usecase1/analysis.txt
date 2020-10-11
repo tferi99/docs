@@ -23,104 +23,255 @@ Description
 Call info
 =========
 
-	+36110009100 -----> +36110009020
+	+36110009100 (SEP100000009100) -----> +36110009020 (SEPA45630BB1748 - RECORDED)
 
-APAS:			10.51.51.122
-
-
-
-######################################################################## UNDER CONSTRUCTION ########################################################################
-Log contains a typo from bad log-prefix assignment, it will be fixed later and you can repeat recorder test and analysis.
+CUCM:							10.51.51.34
+APAS (SIP trunk endpoint):		10.51.51.122
+Recorded phone:					10.122.188.166
 
 
+Call ID:		sip23988/1
+Call leg ID:	27971218
+DB ID:			200
 
+Time:			2020-08-14 14:12:35,005 - 2020-08-14 14:12:59,758  :  24 sec(s)
+Calling party:	+36110009100 (SEP100000009100)
+Called party:	+36110009020 (SEPA45630BB1748)
+RTP 1 (calling):	10.51.51.122:44899
+RTP 2 (called):		10.51.51.122:46119
 
-######################################################################## OLD ########################################################################
-
-Call ID:		sip21172/1
-Call leg ID:	25252351
-DB ID:			90
-
-Time:			2020-02-28 07:47:09 - 2020-02-28 07:47:21  :  12 sec(s)
-Calling party:	+36110009100			SEP100000009030
-Called party:	+36110009020			SEPA45630BB1748
-RTP 1 (calling):	10.51.51.122:47793
-RTP 2 (called):		10.51.51.122:41899
-
-
-RECORDING[0][sip21172/1, SEPA45630BB1748] : 2020-02-28 07:47:09 - 2020-02-28 07:47:21, DB:104
+RECORDING[0][sip23988/1, SEPA45630BB1748] :  - , DB:200, DiskThread:true 
    - callingPartyName=
-   - srcIP=10.51.51.122
-   - callID=sip21172/1
+   - srcIP=10.51.51.122																		<<<<<<<< it's always the recorder IP
+   - callID=sip23988/1
    - calledPartyName=
    - stopOut=1
    - terminal=SEPA45630BB1748
    - originalCalledParty=+36110009020
-   - srcPort=40895
+   - srcPort=44899																			<<<<<<<< it's near-end stream port on recorder
    - initiated=false
-   - dstIP=10.51.51.122
+   - dstIP=10.51.51.122																		<<<<<<<< it's always the recorder IP
    - lastRedirectingParty=
    - callingParty=+36110009100
    - originalCallingParty=+36110009100
-   - dstPort=46610
+   - dstPort=46119																			<<<<<<<< it's far-end stream port on recorder
    - calledParty=+36110009020 
-	
-	
+
+
+Network information of RTP streams:   
+	srcIP:srcPort:		10.51.51.122:44899   		// network endpoint of near-end stream on APAS
+	dstIP:dstPort:		10.51.51.122:46119 			// networkendpoint of far-end stream on APAS (10.51.51.122)
+   
+   
+   
+   
+   
 -------------------------------------------------------------------------------------------------------------------------------------------
-XML messages
-============
-	From andphone.log:
-		[2020-02-28 07:47:09,789] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6cc178d7)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
-		[2020-02-28 07:47:09,797] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
-		[2020-02-28 07:47:10,038] [DEBUG] [APAS-defaultWorker-11] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" srcIP="10.51.51.122" srcPort="40895"/>]
-		[2020-02-28 07:47:10,040] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
-		[2020-02-28 07:47:10,065] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" dstIP="10.51.51.122" dstPort="46610"/>]
-		[2020-02-28 07:47:10,066] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip21172/1" dbID="104" state="1"/>
-		[2020-02-28 07:47:21,251] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6cc178d7)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" stopOut="1" />]
-		[2020-02-28 07:47:21,257] [DEBUG] [APAS-defaultWorker-15] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="csip25252351" stopOut="1" />]
-		[2020-02-28 07:47:21,258] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="100" string="Call removed"/>
-		[2020-02-28 07:47:21,261] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="404" string="Call not found for this terminal and callID"/>
-		[2020-02-28 07:47:21,273] [DEBUG] [APAS-defaultWorker-17] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="csip25252351" stopOut="1" />]
-		[2020-02-28 07:47:21,273] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="404" string="Call not found for this terminal and callID"/>
+recordCall
+========== 
+Pattern:	XML_SOCKET.*recordCall.*23988
+
+[2020-08-14 14:12:38,914] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@251148bb)] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+[2020-08-14 14:12:38,920] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
+[2020-08-14 14:12:39,318] [DEBUG] [APAS-defaultWorker-9] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" srcIP="10.51.51.122" srcPort="44899"/>]
+[2020-08-14 14:12:39,322] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
+[2020-08-14 14:12:39,382] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" dstIP="10.51.51.122" dstPort="46119"/>]
+[2020-08-14 14:12:39,384] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
+[2020-08-14 14:12:59,738] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@251148bb)] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" stopOut="1" />]   
 
 
-Message-1:	generated from call observer. 
+-------------------------------------------------------------------------------------------------------------------------------------------
+Protocoll explanation
+======================
 
-	<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+- [1] JTAPI
 
+	recordCall: APAS detects call by JTAPI and sends all basic information to Recorder:  terminal, callID, callingParty, calledParty, etc....
+	recordCallResponse: Recorder inserts a record into rec_call table and returns ID as dbId (it will be returned in all recordCallResponse later)
 
-	Retrieved information:
-
-		- Cisco call ID
-		- recorder terminal
-		- calling party (+ original, name)
-		- called party (+ original, name)
-		- last redirecting party
-
-		
-	Response:
+- [2] SIP ACK nearend
+{code}
+[2020-08-14 14:12:39,271] [DEBUG] [EventScannerThread] [SIPServer.java:218] - Request ACK received at SIPServer-3 with server transaction id gov.nist.javax.sip.stack.SIPServerTransaction@92d7a78e
+[2020-08-14 14:12:39,272] [DEBUG] [APAS-defaultWorker-9] [RecorderSipTrunk.java:249] - From=sip:+36110009020@10.51.51.34;x-nearend;x-refci=27971218;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=27971217;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100
+[2020-08-14 14:12:39,272] [DEBUG] [APAS-defaultWorker-9] [RecorderSipTrunk.java:272] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=27971218, stream=nearend
+[2020-08-14 14:12:39,318] [DEBUG] [APAS-defaultWorker-9] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" srcIP="10.51.51.122" srcPort="44899"/>]
+{code}	
+	recordCall: APAS gets media information from ACK and sends srcIP and srcPort of stream
 	
-		- DB ID added
-		
-		
-	DB ID will be contained by all subsequent responses till stopOut message.
-
-
-Message-2-3: generated from SIP ACK:
-
-	[2020-02-28 07:47:10,038] [DEBUG] [APAS-defaultWorker-11] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" srcIP="10.51.51.122" srcPort="40895"/>]
-
-		
-		
-Final message(s): stopOut
-		
-	[2020-02-28 07:47:21,251] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@6cc178d7)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip21172/1" stopOut="1" />]
-
-	Sometimes there are stopOut messages with ID: 'csip' + callLegId
+- [3] SIP ACK farend
+{code}	
+[2020-08-14 14:12:39,379] [DEBUG] [EventScannerThread] [SIPServer.java:218] - Request ACK received at SIPServer-3 with server transaction id gov.nist.javax.sip.stack.SIPServerTransaction@661271c7
+[2020-08-14 14:12:39,380] [DEBUG] [APAS-defaultWorker-13] [RecorderSipTrunk.java:249] - From=sip:+36110009020@10.51.51.34;x-farend;x-refci=27971218;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=27971217;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100
+[2020-08-14 14:12:39,380] [DEBUG] [APAS-defaultWorker-13] [RecorderSipTrunk.java:272] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=27971218, stream=farend
+[2020-08-14 14:12:39,382] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" dstIP="10.51.51.122" dstPort="46119"/>]	
+{code}	
+	recordCall: APAS gets media information from ACK and sends srcIP and srcPort of stream
 	
+*ALL INFORMATION AVAILABLE - AT THIS POINT RECORDER STARTS RECORDING*
+	
+- [4] SIP BYE
+{code}	
+[2020-08-14 14:12:59,739] [DEBUG] [EventScannerThread] [SIPServer.java:218] - Request BYE received at SIPServer-3 with server transaction id gov.nist.javax.sip.stack.SIPServerTransaction@75dd9151
+[2020-08-14 14:12:59,740] [DEBUG] [EventScannerThread] [SIPServer.java:916] - From=sip:+36110009020@10.51.51.34;x-nearend;x-refci=27971218;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=27971217;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100	
+[2020-08-14 14:12:59,740] [DEBUG] [EventScannerThread] [SIPServer.java:943] - Extracted header info: fromNumber=+36110009020, device=SEPA45630BB1748, callID=27971218, stream=nearend
+[2020-08-14 14:12:59,761] [DEBUG] [APAS-defaultWorker-17] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="csip27971218" stopOut="1" />]
+{code}
+	recordCall: APAS gets BYE from SIP trunk and it sends recordCall with 'stopOut' and recorder closes recorder file(s) and it post-processes recording.
+
+
 
 -------------------------------------------------------------------------------------------------------------------------------------------	
 recorder.logs
 =============
+[2020-08-14 14:12:39,319] [INFO] [110 ] [23988/1] [SIPTRUNK       ]  - SipTrunkRTPInEv [from: +36110009020, device: SEPA45630BB1748, call-id: 27971218]
+[2020-08-14 14:12:39,321] [INFO] [110 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id SEPA45630BB1748#23988/1
+[2020-08-14 14:12:39,321] [INFO] [110 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id does not exist in repository
+[2020-08-14 14:12:39,382] [INFO] [114 ] [23988/1] [SIPTRUNK       ]  - SipTrunkRTPOutEv [from: +36110009020, device: SEPA45630BB1748, call-id: 27971218]
+[2020-08-14 14:12:39,386] [INFO] [114 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id SEPA45630BB1748#23988/1
+[2020-08-14 14:12:39,386] [INFO] [114 ] [none] [REC_STATE      ] ---------- - startRecordingIfPossible, id does not exist in repository
+
+-------------------------------------------------------------------------------------------------------------------------------------------	
+SIP dialog
+==========
+SEE:	SIP-dialog-27971218.log
+
+SEE ALSO:	How to map calls with SIP trunc information.txt
+
+
+Times:
+	Nearend:
+		[2020-08-14 14:12:39,054] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009202@10.51.51.122:5060]
+			INVITE sip:+36110009202@10.51.51.122:5060 SIP/2.0
+		[2020-08-14 14:12:39,065] [SENT>] [SIPServer-3] [100 Trying]
+			SIP/2.0 100 Trying
+		[2020-08-14 14:12:39,073] [SENT>] [SIPServer-3] [200 OK]
+			SIP/2.0 200 OK
+		[2020-08-14 14:12:39,271] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+			ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+			
+		---------- RTP strems for 20 seconds --------------
+			
+		[2020-08-14 14:12:59,739] [>RECEIVED] [SIPServer-3] [BYE sip:APAS@10.51.51.122:5060;transport=udp]
+			BYE sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+		[2020-08-14 14:12:59,741] [SENT>] [SIPServer-3] [200 OK]
+			SIP/2.0 200 OK
+		[2020-08-14 14:12:59,742] [SENT>] [SIPServer-3] [200 OK]
+			SIP/2.0 200 OK
+
+	
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------	
+RTP streams
+===========
+- There are 2 streams:
+	- nearend (which initiated by recorded device - the agent)
+	- farend (which initiated by 'other' device - the customer)
+	
+- To examine RTP streams we need network information about streams (IP/port).
+	Where you can find media information:
+	
+	- andphone.log (MOST SIMPLE) filtered by call ID. Filter: 'XML_SOCKET.*recordCall.*' + callID
+	
+		for example:	
+	
+			XML_SOCKET.*recordCall.*23988
+	
+		'recordCall' messages contain IP and ports:
+		- near-end:
+			
+			[2020-08-14 14:12:39,318] [DEBUG] [APAS-defaultWorker-9] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" srcIP="10.51.51.122" srcPort="44899"/>]		
+			
+		- far-end
+		
+			[2020-08-14 14:12:39,382] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" dstIP="10.51.51.122" dstPort="46119"/>] 	
+
+	- if you have PCAP file of  network traffic	then you are able to identify streams and SIP conversation easily using Wireshark.
+	
+		WIRESHARK/Telephony/SIP Flows
+	
+		SEE ALSO:	SIP-nearend-flow.jpeg, SIP-farend-flow.jpeg
+		
+		Here you can see SIP ialog with IP addresses of participants:
+			- endpoints of SIP trunk: CUCM(10.51.51.34) and recorder (10.5.51.122, it's APAS)
+			- recorded device (10.122.188.166 - physical phone: +36110009020)
+		
+	- sip_protocol.log:
+	
+		This log contains SIP messages from SIP dialogs which walk through SIP trunk between CUCM and recorder (not our recorder process but APAS).
+		
+		TIP:	You can get a SIP dialog for your recording if you filter sections by callLegID (x-refci). 
+				Use these development script:	
+						- apas_trunk\development\log-analysis\getSipDialogByRefci.sh 
+						- d:\WORK\apas_trunk\development\log-analysis\getSipDialogByCallId.sh 
+						
+		To identify port information get lines from SIP traffic with this filter:		m=audio
+		
+		'm=audio' records are in body of SIP messages which are sent by CUCM or recorder to other endpoint about local ports of RTP endpoints
+
+		In this call:
+		
+			- [OK] APAS -> CUCM
+		
+				[2020-08-14 14:12:39,073] [SENT>] [SIPServer-3] [200 OK]
+				SIP/2.0 200 OK
+				Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK4e1e84db1a2cb
+				From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=27971218;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=27971217;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=1192544~0397bdeb-e9fe-44a2-8560-60f291557ddb-27971222
+				To: <sip:+36110009202@10.51.51.122>;tag=APAS6486
+				...
+				o=apas 16807 16807 IN IP4 10.51.51.122 s=session
+				c=IN IP4 10.51.51.122														<<<<<< APAS
+				...
+				m=audio 44899 RTP/AVP 0 8 9 18 101											<<<<<< 44899 is nearend port on APAS
+				
+			
+			- [ACK] CUCM -> APAS
+			
+				[2020-08-14 14:12:39,271] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+				ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+				Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK4e1ec2f8e4f95
+				From: <sip:+36110009020@10.51.51.34;x-nearend;x-refci=27971218;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=27971217;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=1192544~0397bdeb-e9fe-44a2-8560-60f291557ddb-27971222
+				To: <sip:+36110009202@10.51.51.122>;tag=APAS6486
+				...
+				o=CiscoSystemsCCM-SIP 1192544 1 IN IP4 10.51.51.34
+				s=SIP Call
+				c=IN IP4 10.122.188.166														<<<<<< recorded device
+				
+				...
+				m=audio 26632 RTP/AVP 9 101													<<<<<< 26632 is nearend port on recorded device
+				
+				
+			- APAS -> CUCM
+			
+				[2020-08-14 14:12:39,292] [SENT>] [SIPServer-3] [200 OK]
+				SIP/2.0 200 OK
+				Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK4e1ee45768f77
+				From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=27971218;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=27971217;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=1192548~0397bdeb-e9fe-44a2-8560-60f291557ddb-27971225
+				To: <sip:+36110009202@10.51.51.122>;tag=APAS1981
+				...
+				o=apas 16807 16807 IN IP4 10.51.51.122 s=session
+				c=IN IP4 10.51.51.122														<<<<<< APAS
+				...
+				m=audio 46119 RTP/AVP 0 8 9 18 101											<<<<<< 46119 is farend port on APAS
+				
+			
+			- CUCM -> APAS
+				[2020-08-14 14:12:39,379] [>RECEIVED] [SIPServer-3] [ACK sip:APAS@10.51.51.122:5060;transport=udp]
+				ACK sip:APAS@10.51.51.122:5060;transport=udp SIP/2.0
+				Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK4e1f14153f8d2
+				From: <sip:+36110009020@10.51.51.34;x-farend;x-refci=27971218;x-nearendclusterid=StandAloneCluster;x-nearenddevice=SEPA45630BB1748;x-nearendaddr=+36110009020;x-farendrefci=27971217;x-farendclusterid=StandAloneCluster;x-farenddevice=SEP100000009100;x-farendaddr=+36110009100>;tag=1192548~0397bdeb-e9fe-44a2-8560-60f291557ddb-27971225
+				To: <sip:+36110009202@10.51.51.122>;tag=APAS1981
+				...
+				o=CiscoSystemsCCM-SIP 1192548 1 IN IP4 10.51.51.34
+				s=SIP Call
+				c=IN IP4 10.122.188.166														<<<<<< recorded device
+				...
+				m=audio 24864 RTP/AVP 9 101													<<<<<< 24864 is nearend port on CUCM
+				
+		
+		
+		
 		
 		

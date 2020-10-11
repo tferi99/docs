@@ -1,6 +1,16 @@
 =========
 Recording
 =========
+
+SEE ALSO:
+- Call Recording Examples for Network-Based and Phone-Based Recording
+	https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cucm/configExamples/cucm_b_recording-use-cases.html
+- RTP payload formats
+	https://en.wikipedia.org/wiki/RTP_payload_formats
+
+					
+				
+				
 You need a configured recording environment (see more: APAS-FAQ.txt/Howto configure recorder?)
 
 Source code

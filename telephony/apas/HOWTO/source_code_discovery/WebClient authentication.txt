@@ -32,11 +32,11 @@ Authentication
                                 1          1              1             1 
 	    Authentication profile -------------- User pool ------------------ Client (web) profile
 	
-	
 	Data model:
 	
 		               1       1         1        1                    1   1
         auth_profiles ----------- pools ------------ webuser_profiles ------- generic_profiles
+                            (profile_id)        (userpoolid)   
 	
 NOTE:
 	There are not contraints in database to protect associations but APAS tries to force association rules.

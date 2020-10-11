@@ -2636,6 +2636,12 @@ Order of routes
 The order of routes is important because the Router uses a FIRST-MATCH WINS STRATEGY when matching routes, 
 so more specific routes should be placed above less specific routes. 
 
+!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!
+It also very important if you put the default and wildcard routes last in the main routing module (AppRoutingModule)
+and you have feature routing modules, too (routing modules imported by feature modules) then you have to import 
+AppRoutingModule at the end of imports. Otherwise feature routing won't be accessed (default not found entries will win in AppRoutingModule).
+!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!
+
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Passing/retrieving parameter with routing

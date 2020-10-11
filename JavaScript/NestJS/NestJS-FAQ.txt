@@ -567,14 +567,14 @@ Normal way:
 		
 but sometimes debuger not attached.
 
-In this case you can attachdebuger manually.
+In this case you can attach debugger manually.
 	1. go to 'Edit Configurations...' in the launch bar
 	2. add 'Attach to Node.js/Chrome' entry
 	3. specify port if not the default '9229'
-	4. start project first with Debug
+	4. start project (start:debug) first with Debug
 	5. start attach entry with Debug
 
-If project started with --watch and it reloaded on code change sometimes debugger shoul de re-attach (restart 5.).
+If project started with --watch and it reloaded on code change sometimes debugger shoul be re-attached (restart step 5).
 
 
 

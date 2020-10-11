@@ -25,14 +25,15 @@ GWT
 - GWT event handling
 - Calling APAS sidemenu and loading a page
 
-Calls/ACD
----------
+Calls/ACD/CallCenter
+--------------------
 - ACD calls
 - ACD history management
 - ACD Group categories and statistics reports - APAS4
 - Call classification
 - Call states changes
 - CallList
+- CallCenter callback
 
 Group
 -----

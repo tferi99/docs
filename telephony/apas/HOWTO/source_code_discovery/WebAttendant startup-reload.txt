@@ -9,38 +9,52 @@ WebAttendant startup-reload
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 Data initialization
 ===================
-There are 2 ways to initialize data with REST:
+There are 2 level of data initialization
 
-	1. /init/reload
-	2. Widget specific init REST
+1. Global
+	- can be triggered by sending:
+		- AppDataLoadRequestedAction
+	  OR
+		- AppDataReLoadRequested
 
-
-1. /init/reload
----------------
-This endpoint provides a lot of global initial data via REST in AppResource object:
-	- apasVersion
-	- user
-	- profile
-	- gridster
-	- phones
-	- calls
-	- settings
-	- queues
-	- lastOutgoingLines
-	- hotkeys
-
-2. Widget specific init REST
-----------------------------
-Widget (feature) specific data loaded during initialization by WidgetStatusManagerDirective only if widget instatiated.
-
-
-Widget specific actions and endpoints:
-- DirectoryInitAction => directoryApiService.getDirectories() => /directory/directories
-- CallListInitAction => CallListSearchRequestAction => callListService.getCalls() => /calllist/calls
-- CallCenterInitAction => CallCenterInitAction => nothing
-- CallCenterCallBackInitAction => callCenterCallBackService.getInitdata() => /callcenter/callbacks
-- GroupInitAction => groupService.getGroupList() => /group/getGroupList
+	- It calls a single endpoint: /init/reload			
+		- This endpoint provides a lot of global initial data via REST in AppResource object:
+			- apasVersion
+			- user
+			- profile
+			- gridster
+			- phones
+			- calls
+			- settings
+			- queues
+			- lastOutgoingLines
+			- hotkeys
+		
+		- then it sends a lot of ...LodedAction to perform feature specific side-effects
+		
+		- finially AppDataLoadedAction will be sent which performs the followings:
+			- re-subscribe Atmosphere connections
+			- it sends REST message about loaded presence items to refresh presence subscriptions
+			- it starts keep-alive loop in main component
+			- it calculates client-server time offset in global reducer and writes into global state (serverClientTimeOffset)
+		
+2. Widget instance initialization
+	This initialization actions are dispatched by WidgetStatusManager (injected into widget instances by WidgetStatusManagerDirective).
+	Directive objects are initialized by widget instances which are loaded in 'gridster' step of global initialization.
+	Here widget instances send widget specific actions and calls endpoints:
+		- DirectoryInitAction => directoryApiService.getDirectories() => /directory/directories
+		- CallListInitAction => CallListSearchRequestAction => callListService.getCalls() => /calllist/calls
+		- CallCenterInitAction => CallCenterInitAction => nothing
+		- CallCenterCallBackInitAction => callCenterCallBackService.getInitdata() => /callcenter/callbacks
+		- GroupInitAction => groupService.getGroupList() => /group/getGroupList
 	
+
+SUMMARY:
+
+	The full initailization can be triggered by sending 
+		- AppDataLoadRequestedAction (called application startup or F5)
+		OR 
+		- AppDataReLoadRequested (called when reqauired, for example on device/line change)
 	
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 Call flow

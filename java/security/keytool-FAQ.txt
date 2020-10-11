@@ -316,7 +316,9 @@ In details:
 
 		openssl genrsa [-des3] -out ca.key 4096
 		
-		Using -des3 you can encrypt/protect private key.
+		openssl genpkey -algorithm RSA -out $CA_KEY -pkeyopt rsa_keygen_bits:$KEY_SIZE [-aes-128-cbc -pass pass:$PWD]
+		
+		To encrypt/protect private key you can specify a cypher to encrypt the key.
 		
 	- generate self-signed CA certificate frm CA key
 
@@ -373,6 +375,12 @@ In details:
 
 	BEFORE TESTING import CA certificate into browser's Trusted Root Certificates.
 
+	
+SEE ALSO:
+	https://linux.die.net/man/1/genpkey
+	https://linux.die.net/man/1/req
+	https://linux.die.net/man/1/x509
+	
 ---------------------------------------------------------------------------------------------------------------------------------
 Certificates for SSL
 ====================

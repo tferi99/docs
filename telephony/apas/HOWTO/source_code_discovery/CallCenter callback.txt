@@ -1,0 +1,35 @@
+===================
+CallCenter callback
+===================
+
+SEE ALSO:		Howto configure CallCenter callback
+
+
+- CallCenter callback in WAC
+
+-------------------------------------------------------------------------------------------------------------------------
+CallCenter callback in WAC
+==========================
+
+Queue selector dropdown:
+
+	Dropdown contains queues which:
+	- contains agent assigned to WAC as agent
+	- if 'CallCenter collback' is enabled to this agent (LAST CHECKBOX in agent list of queue !!! )
+
+	CallCenterCallBackComponent.callbackQueues$	
+		<-- selectAllCallbackQueues() 
+			<-- /callcentercallback/callbackQueues
+				<== CallCenterCallBackInitDoneAction.payload.availableCallbackQueues
+					<== CallCenterCallBackInitAction
+						--> callCenterCallBackService.getInitdata()
+							--> REST GET: /callcenter/callbacks
+								--> com.andtek.andphone.webmvc.webattendant.controllers.CallcenterController.getCallBacks()
+									--> conn = getConnection()
+									--> WebCallCenterCallback callback = CallCenterServiceImpl.getCallBacks(conn)
+										--> lines = conn.getControlledTelephoneNumbers()													// lines assigned to WAC connection
+										--> requests = service.findActiveRequestsWithAgentOrSupervisor(lines)
+										--> availableCallbackQueues = service.findAvailableCallbackQueues(lines)
+										<== WebCallCenterCallback(requests, availableCallbackQueues)
+
+	

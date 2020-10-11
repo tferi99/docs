@@ -2,9 +2,32 @@
 OpenSSL FAQ
 ===========
 
+General
+-------
 - Features
+
+Configuration
+--------------
+- How to get location of default configuration file?
+- Using configuration file
+
+SSL/TLS
+-------
 - Prototype for testing SSL
+- Testing SSL/TLS with OpenSSL
+- Howto use multiple CA certificates from filesystem with s_client?
+- How to validate corresponding privatekey/publickey/certificate/CSR?
+
+Wireshark
+---------
 - SSL cannot decrypted with Wireshark
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Reference
+=========
+man opensssl 		: https://linux.die.net/man/1/openssl
+openssl.conf		: https://www.phildev.net/ssl/opensslconf.html
 
 -------------------------------------------------------------------------------------------------------------------------------------
 Features
@@ -88,4 +111,145 @@ SSL cannot decrypted with Wireshark
 	This means you can't decrypt this session with wireshark by providing the private key.
 	
 	
+---------------------------------------------------------------------------------------------------------------------------------
+Testing SSL/TLS with OpenSSL
+============================
+- Simple connect
+	This is the most simple scenario. CA keys are accessible via network from CA.
 	
+		openssl s_client <host>:<port>
+	
+	for example:	openssl s_client index.hu:443
+
+NOTE:	
+	The s_client tool reports but otherwise ignores certificate issues:
+	
+	
+			$ openssl s_client -state ceerd-ftoth-apas1.andtek.cee.cs.eilab.biz:8443
+			CONNECTED(00000004)
+			SSL_connect:before SSL initialization
+			SSL_connect:SSLv3/TLS write client hello
+			SSL_connect:SSLv3/TLS write client hello
+			SSL_connect:SSLv3/TLS read server hello
+			depth=0 C = HU, ST = vp, L = bfured, O = andtek, OU = development, CN = ceerd-ftoth-apas1.andtek.cee.cs.eilab.biz
+			verify error:num=20:unable to get local issuer certificate																			<<<<<<< error here
+			verify return:1
+			depth=0 C = HU, ST = vp, L = bfured, O = andtek, OU = development, CN = ceerd-ftoth-apas1.andtek.cee.cs.eilab.biz
+			verify error:num=21:unable to verify the first certificate																			<<<<<<< and here
+			verify return:1
+			SSL_connect:SSLv3/TLS read server certificate
+			SSL_connect:SSLv3/TLS read server key exchange
+			.....
+				
+	
+- Connect with CA certificate file
+	CA keys are not accessible via network but downloaded as file into local filesystem:
+	
+		 openssl s_client -CAfile <CA cert file> <host>:<port>
+	
+	for exaple:	  openssl s_client -CAfile CA-CERT.pem ceerd-ftoth-apas1.andtek.cee.cs.eilab.biz:8443
+	
+
+- Connect with printing SSL/TLS handshaking steps:
+	
+		openssl s_client <host>:<port> -state
+
+	
+	
+	
+	
+- print all options for s_client module:
+
+	openssl s_client -help
+	
+	
+SEE ALSO:	https://linux.die.net/man/1/s_client
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+Howto use multiple CA certificates from filesystem with s_client?
+=================================================================
+- CApath
+	- Many files: In a special folder structure. 
+	- One file per certificate with regular names like Verisign-CA.pem. (This is so that humans can understand the cert store.) They are named for a hash value of the certificate file. (This is so that OpenSSL can understand the cert store. More info: man page for openssl verify.) 
+	- If you want to add a cert, you just drop the file in the directory and run a script that creates the symlink for you.
+	- use this directory with CApath
+	
+	
+	NOTE: in Linux such certifiate directory can be found here:
+	
+		/etc/ssl/certs
+		
+- CAfile
+	- Single file: Concaenate all CA certificates together in a PEM bundle (put PEMs into a single file separated with empty lines).
+	- use this single file with CAfile, for example:
+	
+		openssl s_client -CAfile <CA cert file> <host>:<port>
+	
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------
+How to get location of default configuration file?
+==================================================
+Just call openssl 'ca' module without any other parameter:
+
+	$ openssl.exe ca
+	Using configuration from /etc/pki/tls/openssl.cnf																								<<<<<<<<<<<< HERE
+	Can't open /etc/pki/CA/private/cakey.pem for reading, No such file or directory
+	34359738384:error:02001002:system library:fopen:No such file or directory:crypto/bio/bss_file.c:69:fopen('/etc/pki/CA/private/cakey.pem','r'
+	)
+	34359738384:error:2006D080:BIO routines:BIO_new_file:no such file:crypto/bio/bss_file.c:76:
+	unable to load CA private key
+
+	
+---------------------------------------------------------------------------------------------------------------------------------
+Using configuration file
+========================
+- The task of managing options of OenSSL is made considerably simpler using configuration files.
+
+- OpenSSL includes a default configuration file that is normally used unless an alternate one is specified.
+	The location of the default configuration file varies greatly, depending on the operating system that you're using and
+	how OpenSSL was built and installed. So
+	
+	SEE ALSO:	How to get location of default configuration file?
+	
+- Unfortunately, only 3 of the many commands supported by the command-line tool make any use of the configuration file:
+	- ca
+	- req
+	- x509
+	
+- structure of configuration file:
+	- configuration file is organized in sections. 
+	- Each section contains a set of keys, 
+	- and each key has an associated value.
+	- comments:		any content in line beginning with '#'
+	
+	For example:
+	
+		[ ca ]
+		default_ca = CA_default # The default ca section	
+		
+		[ CA_default ]
+		dir = ./demoCA # Where everything is kept
+		certs = $dir/certs # Where the issued certs are kept
+		crl_dir = $dir/crl # Where the issued crl are		
+		
+
+---------------------------------------------------------------------------------------------------------------------------------
+How to validate corresponding privatekey/publickey/certificate/CSR?
+===================================================================
+Print the md5 hash of the SSL Certificate modulus:
+
+Certificate/public key:
+
+	openssl x509 -noout -modulus -in CERTIFICATE.crt | openssl md5
+
+CSR:
+	
+	openssl req -noout -modulus -in CSR.csr | openssl md5
+
+Private key:
+
+	openssl rsa -noout -modulus -in PRIVATEKEY.key | openssl md5
+

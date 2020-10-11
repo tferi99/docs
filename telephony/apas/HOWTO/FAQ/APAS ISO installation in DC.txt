@@ -1,0 +1,59 @@
+===========================
+APAS ISO installation in DC
+===========================
+How to install APAS in DataCenter?
+
+- create a new virtual machine
+	- choose: Deploy from template
+	- 'Data Center' tab
+	- Shared Cluseter/IMG Global PM.../TEMPLATES/APAS6-Default...
+	
+- start machine
+
+- in 'Summary/[VM Hardware]/CD/DVD' connect an ISO image with 'Connect to datastore ISO file' from ISOs/APAS/apas-6.1.1-disk1...
+
+- Send CtrlAltDel on console window to restart machine and press F2 to stat BIOS config
+
+- Set CD/DVD as 1st boot device
+
+- restart machine
+
+- follow instructions and install 1st ISO
+
+- finally click 'Reboot'
+
+- console window to restart machine and press F2 to stat BIOS config
+
+- Set hard drive as 1st boot device
+
+- after loading APAS login as: admin
+
+- set keyboard layout to 'us'
+
+- finally change to ISO disk2 and install, then reboot
+	- in 'Summary/[VM Hardware]/CD/DVD' connect an ISO image with 'Connect to datastore ISO file' from ISOs/APAS/apas-6.1.1-disk2...
+
+- still go to virtual achine console and login as: admin
+
+	- configure network:
+		- IP address, e.g:		10.51.51.123
+		- network mask, e.g:	255.255.255.0
+		- default gateway:		10.51.51.1
+		
+		
+- login into APAS in SSH as 'root'
+			
+	- change password:		passwd
+		
+	- su admin
+		
+	- configure system settings:
+		- hostname, e.g.: 		ceerd-ftoth-apas3.andtek.cee.cs.eilab.biz
+		
+		
+- login into APAS Admin WEB page as 'admin'
+
+	- add license (for dev: E4KAA-H8LBD-HPZJ6-NSBES-KGLAA)
+	
+	
+	

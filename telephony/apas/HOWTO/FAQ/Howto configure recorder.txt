@@ -179,79 +179,10 @@ APAS again:
 
 		
 ---------------------------------------------------------------------------------------------------------------------------------		
-Secured SIP Trunk Recording Configuration		
+Secured SIP Trunk Recording Configuration
 =========================================
-SEE MORE: 	telephony\Apas\doc\recorder\AND_Phone_Recorder_Configuration_Guide_612.pdf
+SEE HERE:	Security configurations
 
-This configuration is necessary to encrypt SIP communication between CUCM and APAS in order to allow the recording of encrypted calls (sRTP). 
-The central task to enable secure SIP is to exchange valid certificates between CUCM and APAS.
-
-Configure a non-secure configuration, except:
-
-- CUCM should be in mixed mode (VERY IMPORTANT)
-
-	To get mode:	CUCM/System/Enterprise Parameters/[Security Parameters]/(Cluster Security Mode)		: 1 (means mixed mode; 0: means non-secure mode)
-
-- Create Secure SIP Encrypted Phone Security Profile (see PDF doc) for every recorded phone type if it does not exist yet.
-	
-- Set security profile for phones with profile created before:
-
-	APAS/Device/Phone//[Protocol Specific Information]/(Device Security Profile)
-	
-- Create APAS certificate (if missing or expired) and import into CUCM:
-	- APAS/Global/Security/[Certificate List]/(Create APAS Certificate)
-	- APAS/Global/Security/[Certificate List]/Export (icon on items)
-	- CUCM OS Admin/Security/Certificate Management/(Upload certificate)	
-		- Certificate Name: Select Callmanager-trust
-		- Description: Unique description for this certificate
-		- Upload File: Upload the .pem file which was earlier downloaded from the APAS.
-	
-- Export CallManager cert from CUCM and import into APAS
-
-		- CUCM OS Admin/Security/Certificate Management/[Certificate List]		
-			- Choose item 'Callmanager'
-			- click button 'Download .PEM file' in dialog
-		- APAS/Global/Security/[Certificat List]/(Import Trusted Certificate)
-
-- SIP Trunk Security Profile
-
-		- Name : Unique name
-		- Device Security Profile : Encrypted
-		- Incoming Transport Type :TLS
-		- Outgoing Transport Type: TLS
-		- X.509 Subject name: Must be the CN value. (APAS IP ADDRESS)
-		- In our example CN=192.168.150.196, which is the IP address of the APAS
-		- Incoming Port : 5061
-
-- SIP Trunk	
-	- Device Protocol > SIP
-	- Device Pool: select a device pool which uses G711 to the APAS
-	- Destination Address: IP address of the APAS
-	- Destination Port: 5061 or above
-	- SIP Trunk Security Profile > Secure SIP TLS Trunk Profile (this profile was configured previously)
-	- SRTP Allowed: SRTP must be checked.
-	- SIP Profile: Standard SIP Profile
-	- Enable Recording gateway:
-			
-			Recording Information:		This trunk connects to a recording-enabled gateway
-
-NOTE:
-	Port in SIP TRunk and SIP Trunk Security Profile should be 5061. 
-	Other port does not work in my environment.
-	
-- Create recording profile and route pattern as you create it for non-secure recording
-	and associate them together and to trunk.
-
-Phones: same as non-secure, but:
-	- Device security profile: select device specific SIP SECURE profile
-
-APAS: SIP configuration same as non-secure, except:
-	- Port: 5061
-	- Username: choose user configured for secure recording
-	- Transport: TLS
-	- Use SSL: unchecked (This setting is typically used for SFTP)
-	- Priority: Multiple Servers can be configured under a single SIP Server and priority can be set for each server.
-	- Local Port: 5061	
 
 ---------------------------------------------------------------------------------------------------------------------------------		
 Cleanup recordings
@@ -434,32 +365,44 @@ Check the followings:
 	
 	4. Check SIP Trunk with server connection
 	
-		APAS/Global/Servers/[Recorder SIP Trunk]
+		- You can check SIP trunk by pressing button:
 
-		Connection test should be completed successfully.	
-		NOTE: if you change server parameters, save data before retry test.
+				APAS/Global/Servers/<Recorder SIP Trunk>/(Test Connection)
 
-		You can validate SIP with SIP protocol log (/var/log/apas/sip_protocol.log).
-		It should contain a ping request-response:
-		
-			[2015-06-10 11:49:07,211] [SENT>] [SIPServer-2] [OPTIONS sip:PING@192.168.150.17:50036]
-			...
-			[2015-06-10 11:49:07,249] [>RECEIVED] [SIPServer-2] [200 OK]
+
+			Connection test should be completed successfully.	
+			NOTE: if you change server parameters, save data before retry test.
+
+			You can validate SIP with SIP protocol log (/var/log/apas/sip_protocol.log).
+			It should contain a ping request-response:
+			
+				[2015-06-10 11:49:07,211] [SENT>] [SIPServer-2] [OPTIONS sip:PING@192.168.150.17:50036]
+				...
+				[2015-06-10 11:49:07,249] [>RECEIVED] [SIPServer-2] [200 OK]
 		
 			
-		If test is unsuccessful:
-			- Check consistency of host and port settings in APAS and in CUCM SIP security profile and SIP trunk
+		- If test is unsuccessful:
+			- IP and ports
+			
+				Check consistency of host and port settings in APAS and in CUCM SIP security profile and SIP trunk
 				(see above: 'Addresses, ports between APAS (external application) and CUCM SIP trunk')
 				
-			- Check local host setting of APAS (Global/Configuration)
+			- IP/name
+			
+				Check local host setting of APAS (Global/Configuration). It should contain IP or hostname of APAS.
 				
 				NOTE: Sometimes old host setting remains in /etc/hosts and APAS will overwrite APAS config variables with this bad value
-					during startup. In this case SIP connection will use this bad value as APAS endpoint.
-					In this case SIP logs won't help you because these files will be empty.
+					during startup. In this case:
+						- SIP connection will use this bad value as APAS endpoint.
+						- SIP logs won't help you because these files will be empty.
 		
-			- Check  Calling Search Space (CSS) for Inbound Calls in SIP Trunk
+			- CSS for Inbound Calls
 			
-			- If sip_protocol.log contains:
+				Check  Calling Search Space (CSS) for Inbound Calls in SIP Trunk
+			
+			- 401 Unauthorized in log
+			
+				If sip_protocol.log contains:
 			
 					[2017-06-19 13:38:22,130] [>RECEIVED] [SIPServer-3] [401 Unauthorized]
 					SIP/2.0 401 Unauthorized
@@ -472,7 +415,9 @@ Check the followings:
 					- Enable Application level authorization		OFF
 			
 			
-			- Check UDP ports on APAS, maybe ports are reserved by other application/function:
+			- Reserved ports
+			
+				Check UDP ports on APAS, maybe ports are reserved by other application/function:
 			
 					netstat -an | grep <port for SIP trunk>
 					

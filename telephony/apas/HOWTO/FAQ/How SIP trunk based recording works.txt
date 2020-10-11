@@ -2,16 +2,31 @@
 How SIP trunk based recordings works?
 =====================================
 
-SOURCE: 	Cisco Unified Communications Manager - Feature Services Guide - 9.1.1.pdf	
-
 - Basics
+- APAS recording implementation
 - SIP details
 - SIP in APAS
+
+
+
+SEE ALSO: 	
+- Cisco Unified Communications Manager - Feature Services Guide - 9.1.1.pdf	
+- Call Recording Examples for Network-Based and Phone-Based Recording
+	https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cucm/configExamples/cucm_b_recording-use-cases.html
+- RTP payload formats
+	https://en.wikipedia.org/wiki/RTP_payload_formats
+- UNDERSTANDING SIP TRACES
+	https://community.cisco.com/t5/collaboration-voice-and-video/understanding-sip-traces/ta-p/3137704
+
 
 ----------------------------------------------------------------------------------------------------------------
 Basics
 ======
 - In IP phone-based call recording, recording streams are forked from an agent IP phone to the recorder.
+- It forks both 
+	- NEAREND (it's own) and
+	- FAREND (not-recorded) streams 
+	and sends to recorder.
 - The agent voice and the customer voice are sent separately.
 - The administrator configures the recorder in Cisco Unified Communications Manager as a SIP trunk device.
 - The administrator configures the recording option and recording profile on the agent line appearance. 
@@ -22,8 +37,39 @@ Basics
 	- Recording Calling Search Space
 	- Recording Destination Address.
 
-- NEAR end:	which recorded
-- FAR end: other endpoint (calling/called party)	
+- NEAR end:	which recorded (agent)
+- FAR end: other endpoint (customer - calling/called party)	
+
+
+----------------------------------------------------------------------------------------------------------------
+APAS recording implementation
+=============================
+In theory recorder is application which connected to CUCM with SIP trunk. It gets control messages via SIP trunk 
+and it receives RTP packages from streams.
+
+In APAS recording implemented in 2 separated processes because of performance considerations.
+APAS implemented as a Java WEB application, it cannot perform high-performance data processing. 
+
+In APAS recording splitted up 2 separated processes:
+	1. APAS 
+		It receives control messages from SIP trunk and connected to streams, but it doesn't read stream data itself.
+		It sends control messages to separated recorder process.
+		
+	2. Recorder process implemented in C. It commnicates with APAS with XML messages. It is not connected to stream 
+		(APAS has stream endpoints) but it gets RTP (UDP) packets with sniffing the network traffic.
+
+
+
+----------------------------------------------------------------------------------------------------------------
+Data flow
+=========
+
+
+
+
+
+
+
 
 
 ----------------------------------------------------------------------------------------------------------------

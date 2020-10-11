@@ -1,0 +1,25 @@
+====================================
+Howto configure CallCenter callback?
+====================================
+
+- create a queue with agents:
+
+	APAS/CallCenter/Queues
+		
+- add a CallCenter Callback rule:
+
+	APAS/CallCenter/Callback Rules
+	
+	For automatical callback detection DON'T CHECK 'Manual Callback Request Creation'.
+	
+	
+- in a queue:
+	- select a callback rule in: 'Callback Rule' dropdown
+	
+	- Add the permission to access callback requests to individual agents by enabling the LAST CHECKBOX in the agent entry.
+	
+	
+SEE ALSO:
+
+	SVN\andtek_docs\Version 6\Published 6.2.1\AND_Call_Center_Configuration_Guide_621.pdf
+		

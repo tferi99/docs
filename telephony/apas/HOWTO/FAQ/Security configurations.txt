@@ -1,0 +1,100 @@
+=======================
+Security configurations
+=======================
+- Basics
+- How to configure secure JTAPI
+- Secured SIP Trunk Recording Configuration
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Basics
+======
+The Cisco IP telephony network establishes and maintains:
+- authenticated communication streams
+- digitally signs files before transferring the file to the phone
+- encrypts media streams
+- encrypts call signaling between Cisco Unified IP Phones
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+How to configure secure JTAPI
+=============================
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Secured SIP Trunk Recording Configuration
+=========================================
+This configuration is necessary to encrypt SIP communication between CUCM and APAS in order to allow the recording of encrypted calls (sRTP). 
+The central task to enable secure SIP is to exchange valid certificates between CUCM and APAS.
+
+Configure a non-secure configuration, except:
+
+- CUCM should be in mixed mode (VERY IMPORTANT)
+
+	To get mode:	CUCM/System/Enterprise Parameters/[Security Parameters]/(Cluster Security Mode)		: 1 (means mixed mode; 0: means non-secure mode)
+
+- Create Secure SIP Encrypted Phone Security Profile (see PDF doc) for every recorded phone type if it does not exist yet.
+	
+- Set security profile for phones with profile created before:
+
+	APAS/Device/Phone//[Protocol Specific Information]/(Device Security Profile)
+	
+- Create APAS certificate (if missing or expired) and import into CUCM:
+	- APAS/Global/Security/[Certificate List]/(Create APAS Certificate)
+	- APAS/Global/Security/[Certificate List]/Export (icon on items)
+	- CUCM OS Admin/Security/Certificate Management/(Upload certificate)	
+		- Certificate Name: Select Callmanager-trust
+		- Description: Unique description for this certificate
+		- Upload File: Upload the .pem file which was earlier downloaded from the APAS.
+	
+- Export CallManager cert from CUCM and import into APAS
+
+		- CUCM OS Admin/Security/Certificate Management/[Certificate List]		
+			- Choose item 'Callmanager'
+			- click button 'Download .PEM file' in dialog
+		- APAS/Global/Security/[Certificat List]/(Import Trusted Certificate)
+
+- SIP Trunk Security Profile
+
+		- Name : Unique name
+		- Device Security Profile : Encrypted
+		- Incoming Transport Type :TLS
+		- Outgoing Transport Type: TLS
+		- X.509 Subject name: Must be the CN value. (APAS IP ADDRESS)
+		- In our example CN=192.168.150.196, which is the IP address of the APAS
+		- Incoming Port : 5061
+
+- SIP Trunk	
+	- Device Protocol > SIP
+	- Device Pool: select a device pool which uses G711 to the APAS
+	- Destination Address: IP address of the APAS
+	- Destination Port: 5061 or above
+	- SIP Trunk Security Profile > Secure SIP TLS Trunk Profile (this profile was configured previously)
+	- SRTP Allowed: SRTP must be checked.
+	- SIP Profile: Standard SIP Profile
+	- Enable Recording gateway:
+			
+			Recording Information:		This trunk connects to a recording-enabled gateway
+
+NOTE:
+	Port in SIP TRunk and SIP Trunk Security Profile should be 5061. 
+	Other port does not work in my environment.
+	
+- Create recording profile and route pattern as you create it for non-secure recording
+	and associate them together and to trunk.
+
+Phones: same as non-secure, but:
+	- Device security profile: select device specific SIP SECURE profile
+
+APAS: SIP configuration same as non-secure, except:
+	- Port: 5061
+	- Username: choose user configured for secure recording
+	- Transport: TLS
+	- Use SSL: unchecked (This setting is typically used for SFTP)
+	- Priority: Multiple Servers can be configured under a single SIP Server and priority can be set for each server.
+	- Local Port: 5061	
+
+
+SEE ALSO: 	andtek_docs\Version 6\Published 6.2.2\AND_Phone_Recorder_Configuration_Guide_622.pdf /7: CUCM configuration/Secure SIP trunk recording configuration
+			Cisco Unified Communications Manager Security Guide - 9.1.1.pdf
+

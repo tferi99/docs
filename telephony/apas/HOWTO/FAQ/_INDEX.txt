@@ -15,7 +15,6 @@ General
 JTAPI
 -----
 - Observers in APAS
-- How to configure secure JTAPI?
 - Howto enable-disable observers?
 
 Configuration
@@ -54,10 +53,12 @@ Directory
 - How to configure directory mapping and notes?
 - How directories are merged in directory groups?
 
-ACD
----
+CallCenter/ACD
+--------------
 - Howto configure ACD?
 - Queue and pre-queue
+- Howto configure CallCenter callback?
+
 
 Recording
 ---------
@@ -77,6 +78,7 @@ Network/Security
 - How to trace PassThroughRequest messages sent by APAS to phones?
 - Phone authentication URL
 - How to access APAS services behind a firewall?
+- Security configurations
 
 Troubleshooting
 ---------------
@@ -109,6 +111,7 @@ Development
 
 ISO
 ---
+- APAS ISO installation in DC
 - APAS 4 ISO configuration details
 - Where are ISO images stored?
 - Howto use update packages?
