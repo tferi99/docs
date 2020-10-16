@@ -11,8 +11,7 @@ SSL/TLS FAQ
 
 - TLS record
 - TLS handshake
-- Testing SSL/TLS
-- Testing SSL/TLS with OpenSSL
+- Testing SSL/TLS			!!!!!!!!!!!!!!! UNDER COSTRUCTION !!!!!!!!!!!!!!!
 - TLS alerts
 - Certificates for SSL
 - How to get SSL certificate from a server?
@@ -439,8 +438,18 @@ Tools
 	SEE MORE:	doc\software\network\ssl_tls\OpenSSL-FAQ.txt
 	
 
+	
+- ssltap 
+
+	!!!!!!!!!!!!!!! UNDER COSTRUCTION !!!!!!!!!!!!!!!
+
+
+- ssldump	
+	
+	!!!!!!!!!!!!!!! UNDER COSTRUCTION !!!!!!!!!!!!!!!
+	
 SEE ALSO:
-	doc\software\network\ssl_tls\OpenSSL-FAQ.txt
+	doc\software\network\ssl_tls\OpenSSL-FAQ.txt/Testing SSL/TLS with OpenSSL
 	
 	
 	

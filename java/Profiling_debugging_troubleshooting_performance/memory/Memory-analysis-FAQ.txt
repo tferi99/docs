@@ -68,7 +68,7 @@ How to create heap dump?
 	- com.sun.management/HotspotDiagnostic/Operations/[dumpHeap]
 	- Fill in p0 parameter to name the Heap Dump method
 	- press the dumpHeap button
-	- 
+
 	
 - VisualVM
 
