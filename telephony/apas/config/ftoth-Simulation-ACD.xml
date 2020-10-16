@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CallSimulator name="Test FToth">
+
+<Parameters>
+	<Parameter name="serverIP" value="192.168.5.17" comment="IP address of CUCM server"/>
+	<Parameter name="serverPort" value="2000" comment="Port where CUCM server listens for SCCP connections"/>
+	<Parameter name="start" value="10" comment="Start simulation 10 seconds after clients are connected"/>
+	<Parameter name="end" value="6000" comment="End simulation after 6000 seconds"/>
+	<Parameter name="notext" value="Hello, this is %a from the ANDPhone automatic call simulator calling %d. If you received this call unintended you may hangup and ask your administrator for further information." comment="Text to be played using text to speech"/>
+<Parameter name="phoneServiceURL" value="http://192.168.5.113:8080/andphone/PhoneMenu?dev=#DEVICENAME#&amp;menuid=1" />
+</Parameters>
+
+<PhonePool name="Agents">
+	<Parameters>
+	<Parameter name="callLength" minValue="1200" maxValue="2000"/>
+	<Parameter name="callAnswerDelay" minValue="20" maxValue="40"/>
+	</Parameters>
+
+	<PhoneRange type="7970" startMac="113000009010" endMac="113000009019"/>
+</PhonePool>
+
+</CallSimulator>

@@ -9,10 +9,16 @@ Config
 - How to create a local repository?
 - Most important configuration options
 
+Conflicts
+---------
+- What are BACKUP, BASE, LOCAL, and REMOTE files that are generated?
+
+
 Commands
 --------
 - How to add remote origin?
 - How to commit changes automatically?
+
 
 Troubleshooting
 ---------------
@@ -151,3 +157,13 @@ FIX:
 	The problem should be solved now and you should be able to carry on working as normally.
 	
 	
+	
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+What are BACKUP, BASE, LOCAL, and REMOTE files that are generated?
+==================================================================
+- foo.LOCAL: the "ours" side of the conflict - ie, your branch (HEAD) that will contain the results of the merge
+- foo.REMOTE: the "theirs" side of the conflict - the branch you are merging into HEAD
+- foo.BASE: the common ancestor. useful for feeding into a three-way merge tool
+- foo.BACKUP: the contents of file before invoking the merge tool, will be kept on the filesystem if mergetool.keepBackup = true.
+
+
