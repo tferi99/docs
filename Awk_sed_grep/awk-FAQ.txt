@@ -1,6 +1,11 @@
 ========
 Awk FAQ
 ========
+
+General
+-------
+AWK patterns
+
 Functions
 ---------
 - How to define functions?
@@ -99,4 +104,66 @@ same operator (‘in’) that is used for single dimensional arrays. Write the whole
 of indices in parentheses, separated by commas, as the left operand:
 
 	(subscript1, subscript2, ...) in array
+	
+
+	
+--------------------------------------------------------------------------------------------------
+AWK patterns
+============
+AWK script contains pattern handlers (action):
+
+	pattern1 {
+		action1
+	}
+	pattern2 {
+		action2
+	}
+	...
+	patternN {
+		actionN
+	}
+
+Pattern can be:
+- expression:
+
+	x < y	True if x is less than y
+	x <= y	True if x is less than or equal to y
+	x > y	True if x is greater than y
+	x >= y	True if x is greater than or equal to y
+	x == y	True if x is equal to y
+	x != y	True if x is not equal to y
+	x ~ y	True if the string x matches the regexp denoted by y
+	x !~ y	True if the string x does not match the regexp denoted by y
+	subscript in array	True if the array array has an element with the subscript subscript
+
+- regex
+	/regex/
+	
+NOTE:	
+	String comparisons and regular expression comparisons are very different. For example:
+
+		x == "foo"
+		
+	has the value one, or is true if the variable x is precisely ‘foo’. By contrast:
+
+		x ~ /foo/	
+	
+How to get regex value from variable?
+-------------------------------------
+Just set regex as string value but don't add prefix and suffix '/'.
+For example:
+
+	v = '[0-9]+.*[a-z]+'
+	
+and call action with this filter:
+
+	$0 ~ v {
+		...
+		...
+	}
+	
+
+	
+	
+SEE ALSO:	https://www.gnu.org/software/gawk/manual/html_node/Expression-Patterns.html	
 	

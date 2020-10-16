@@ -50,7 +50,6 @@ Network/Security
 - Packet sniffing
 - Handling encryption keys in recorder 
 
-
 Database
 --------
 - Writing/changing rec_call table
@@ -564,6 +563,74 @@ Here are messages between APAS and recorder APAS:
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Handling encryption keys in recorder 
 ====================================
+Sample call:
+
+	RECORDING[482][sip13777821/2, CSFFalticko] : 2020-10-06 13:37:35 - 2020-10-06 13:37:51, DB:826586
+	RECORDING[1140][sip13777821/2, CSFFalticko] :  - , DB:826586, DiskThread:true 
+	   - callingPartyName=Anonymous
+	   - srcIP=172.18.97.30
+	   - callID=sip13777821/2
+	   - calledPartyName=FALTICKO Pavol
+	   - stopOut=1
+	   - terminal=CSFFalticko
+	   - originalCalledParty=+43508115233
+	   - srcPort=59807
+	   - initiated=false
+	   - keyIn=812d8277be43ed034bf6ebea77f8ef4c75760167b3128dbcef2af46d4e90 (gS2Cd75D7QNL9uvqd/jvTHV2AWezEo287yr0bU6Q)
+	   - dstIP=172.18.97.30
+	   - lastRedirectingParty=
+	   - callingParty=Anonymous
+	   - originalCallingParty=Anonymous
+	   - dstPort=42160
+	   - keyOut=7030691a81552d2d51dcfd8671d3f01d1aff9d59b4f2c469d469a5e3358b (cDBpGoFVLS1R3P2GcdPwHRr/nVm08sRp1Gml4zWL)
+	   - calledParty=+43508115233 
+
+	[2020-10-06 13:37:35,108] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@21c68aee)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFalticko" callID="sip13777821/2" callingParty="Anonymous" calledParty="+43508115233" callingPartyName="Anonymous" calledPartyName="FALTICKO Pavol" originalCallingParty="Anonymous" originalCalledParty="+43508115233" lastRedirectingParty="" initiated="false"/>]
+	[2020-10-06 13:37:35,111] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip13777821/2" dbID="826586" state="1"/>
+	[2020-10-06 13:37:35,766] [DEBUG] [APAS-defaultWorker-17] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFalticko" callID="sip13777821/2" srcIP="172.18.97.30" srcPort="59807"/>]
+	[2020-10-06 13:37:35,796] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip13777821/2" dbID="826586" state="1"/>
+	[2020-10-06 13:37:35,797] [DEBUG] [APAS-defaultWorker-17] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFalticko" callID="sip13777821/2" keyOut="7030691a81552d2d51dcfd8671d3f01d1aff9d59b4f2c469d469a5e3358b" />]
+	[2020-10-06 13:37:35,798] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip13777821/2" dbID="826586" state="1"/>
+	[2020-10-06 13:37:35,978] [DEBUG] [APAS-defaultWorker-25] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFalticko" callID="sip13777821/2" dstIP="172.18.97.30" dstPort="42160"/>]
+	[2020-10-06 13:37:35,978] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip13777821/2" dbID="826586" state="1"/>
+	[2020-10-06 13:37:35,978] [DEBUG] [APAS-defaultWorker-25] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFalticko" callID="sip13777821/2" keyIn="812d8277be43ed034bf6ebea77f8ef4c75760167b3128dbcef2af46d4e90" />]
+	[2020-10-06 13:37:35,983] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip13777821/2" dbID="826586" state="1"/>
+	[2020-10-06 13:37:51,934] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@21c68aee)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFalticko" callID="sip13777821/2" stopOut="1" />]   
+	   
+
+- How to get keys from SIP conversation?
+
+	Nearend:
+
+		CUCM				  APAS
+		  |------ INVITE ------>|
+		  |<---- Trying --------|
+		  |<------ OK ----------|
+					m=audio 59807 RTP/SAVP 0 8 9 18 101																		// local port to receive RTP from nearend device
+					a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:GpdRQofAGOXkvQQv+rNfL22n3P6ai4iToYpMffor 						// APAS sends local hardcoded key to CUCM - never used (since we don't send RTP to CUCM)
+		  |------- ACK -------->|
+					m=audio 23386 RTP/SAVP 8 101																			// endpoint of RTP stream on CUCM (not used by recording, only APAS port used for packet identification)
+					a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:cDBpGoFVLS1R3P2GcdPwHRr/nVm08sRp1Gml4zWL 						// key which used by recorded (nearend) device when RTP sent to other endpoint (keyOut)
+		  |-------- BYE ------->|
+		  |<-------- OK --------|
+		  
+	Farend:
+	
+		CUCM				  APAS
+		  |------ INVITE ------>|
+		  |<---- Trying --------|
+		  |<------ OK ----------|
+					m=audio 42160 RTP/SAVP 0 8 9 18 101																		// local port to receive RTP from nearend device
+					a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:GpdRQofAGOXkvQQv+rNfL22n3P6ai4iToYpMffor 						// APAS sends local hardcoded key to CUCM - never used (since we don't send RTP to CUCM)
+		  |------- ACK -------->|
+					m=audio 17868 RTP/SAVP 8 101																			// endpoint of RTP stream on CUCM (not used by recording, only APAS port used for packet identification)
+					a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:gS2Cd75D7QNL9uvqd/jvTHV2AWezEo287yr0bU6Q						// key which used by not-recorded (farend) device when RTP sent nearend (keyIn)
+		  |-------- BYE ------->|
+		  |<-------- OK --------|
+
+
+
+
 How to create/get SRTP keys?
 	- SRTP out key is ALWAYS the same HARDCODED value:	RecorderSipTrunk.SRTP_OUT_KEY
 	- SRTP in key retrieved from SIP ACK SDP message:
@@ -574,7 +641,7 @@ How to create/get SRTP keys?
 		a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:YeMbPF3M4z1/kANIEZGtXJ1e++W0uTgFws2zhKoo
 		...
 		
-During a secure call (when both of terminals has a Secure Device Profile) phones sends payload in SRTP.
+During a secure call (when both of terminals has a Secure Device Profile) phones send payload in SRTP.
 To encrypt data terminals have security key-pairs.
 
 	Terminal A incoming key --------------- Terminal B outgoing key
@@ -588,8 +655,8 @@ To get encryption information there are 4 (!!!!) ways in APAS:
 SIP ships keys in SDP layer. You can trace SIP data in sip_protocol.log:
 
 	...
-	m=audio 40953 RTP/SAVP 0 8 9 18 101^M
-	a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:GpdRQofAGOXkvQQv+rNfL22n3P6ai4iToYpMffor^M
+	m=audio 40953 RTP/SAVP 0 8 9 18 101
+	a=crypto:1 AES_CM_128_HMAC_SHA1_32 inline:GpdRQofAGOXkvQQv+rNfL22n3P6ai4iToYpMffor
 	...
 	
 	Call flow of ACK handler to get keys:
@@ -604,7 +671,7 @@ SIP ships keys in SDP layer. You can trace SIP data in sip_protocol.log:
 						
 							Keys are in base64 encoded format in SDP and will be written into RecorderSipTrunkApplicationData (data).
 						
-						--> data.setEncryptionKeyIn(StringUtils.toHexString(Base64.decode(key), ""));
+						--> data.setEncryptionKeyIn(StringUtils.toHexString(Base64.decode(key), ""));							<<<<<< keys are encoded with Base64 in SIP protocol
 							data.setSrtp(true);
 
 						--> sendStartRecordToRecorder(data, fromNumber, deviceName, callID, dir, call)

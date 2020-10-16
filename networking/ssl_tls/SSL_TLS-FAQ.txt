@@ -585,7 +585,12 @@ Possible causes:
 ---------------------------------------------------------------------------------------------------------------------------------
 How to create intermediate key for CA?
 ======================================
-https://jamielinux.com/docs/openssl-certificate-authority/index.html
+SEE HERE:
+	https://jamielinux.com/docs/openssl-certificate-authority/index.html
+SEE ALSO:
+	Scripts in:
+		- tools_and_languages\networking\ssl_tls\OpenSSL\create-ca
+		- apas_trunk\development\keystore-tools\keystore-tools 
 
 		
 ---------------------------------------------------------------------------------------------------------------------------------

@@ -11,4 +11,7 @@ NOTE:
 	If you want to reset recorder 1, delete this record (and NOT update).
 	
 	
+Deactivate:	
+	
+	delete from config where param = 'useRecorder2';
 	

@@ -2,7 +2,7 @@
 Howto configure recorder?
 =========================
 
-- Basics
+- Supported recordings
 - SIP Trunk Recording Configuration
 - Secured SIP Trunk Recording Configuration
 - Cleanup recordings
@@ -20,6 +20,9 @@ Basics
 ---------------------------------------------------------------------------------------------------------------------------------
 Supported recordings
 ====================
+
+NOTE: Now only SIP Trunk recording is supported by APAS.
+
 Supported recordings:
 	- SIP Trunk + JTAPI (Active, Built-in-Bridge)
 	
@@ -69,11 +72,14 @@ Dependencies in configuration of recording
 ------------------------------------------	
 	- recording configuration elements:
 	
-		Recording rule  -(1)->  line  -(2)->   Recording profile  -(3)->   Route pattern  -(4)->   SIP Trunk   -(5)->   SIP Trunk Security Profile
-	
+			Recording rule  -(1)->  line  -(2)->   Recording profile  -(3)->   Route pattern  -(4)->   SIP Trunk   -(5)->   SIP Trunk Security Profile
+		
 		(1) : recording rule matches to a line
 		(2) : recording profile associated to line
 		(3) : same DN in 'Recording Destination Address' of Recording Profile as route pattern
+				
+				NOTE: Profile and pattern are lazy coupled - Recording profile only contains a phone number, Pattern not referred directly.
+
 		(4) : 'Gateway/Route List' field of route patter points to a SIP trunk
 		(5) : 'SIP Trunk Security Profile' field of SIP trunk points to a profile
 	
