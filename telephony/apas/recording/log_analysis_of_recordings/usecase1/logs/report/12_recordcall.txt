@@ -1,0 +1,3 @@
+#callId|dbID|terminal|callingParty|calledParty|srcIP|srcPort|dstIP|dstPort|keyIn|keyOut
+sip23988/1|200|SEPA45630BB1748|+36110009100|+36110009020|10.51.51.122|44899|10.51.51.122|46119||
+csip27971218||SEPA45630BB1748||||||||

@@ -398,6 +398,55 @@ Testing SSL/TLS
 
 Tools
 -----
+- OpenSSL (RECOMMENDED)
+
+	Test connection with OpenSSL:
+
+		openssl s_client <host>:<port>
+	
+	SEE ALSO:	doc\software\network\ssl_tls\OpenSSL-FAQ.txt
+				doc\software\network\ssl_tls\OpenSSL-FAQ.txt/Testing SSL/TLS with OpenSSL
+	
+- ssltap 
+	The ssltap command opens a socket on a rendezvous port and waits for an incoming connection from the client side. 
+	It works as a proxy which calls the input host:port if you make a request to default port (1924).
+	
+	- Installation:		
+	
+		apt-get install libnss3-tools
+	
+	- Usage:
+		- On proxy specify target host:port :
+		
+			ssltap -s -x -f index.hu:443
+			
+		- In Client browser call:
+		
+			https://PROXY_HOST:1924
+		
+
+	It prints SSL/TLS handshaking and saves certificates into DER files into local directory of proxy.
+	
+	HINTS:
+	- Often, you'll find that the server certificate does not get transferred, or other parts of the handshake do not happen. This is because the browser is taking advantage 
+		of session-id-reuse (using the handshake results from a previous session). If you restart the browser, it'll clear the session id cache.
+	- If you run the ssltap on a different machine that the ssl server you're trying to connect to, the browser will complain that the host name you're trying
+		to connect to is different to the certificate, but it will still let you connect, after showing you a dialog.	
+	
+	
+	SEE ALSO:
+		http://web.mit.edu/Ghudson/dev/third/mozilla/security/nss/cmd/ssltap/ssltap-manual.html
+		https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/tools/NSS_Tools_ssltap
+
+- Wireshark
+
+	You can trace TLS handhaking if you set appropriate filter, e.g:
+	
+		ip.addr == 10.51.51.124 && ssl
+		
+	Then make a HTTPS connection to target host in a local browser.
+		
+
 - SSLScan
 	
 	SSLScan is a fast SSL port scanner. SSLScan connects to SSL ports and determines 
@@ -429,28 +478,6 @@ Tools
 		- The Certificate Details for SSL/TLS Connection dialog will appear.
 		- After viewing the details acknowledge the dialog by pressing the OK button.
 
-- OpenSSL (RECOMMENDED)
-
-	Test connection with OpenSSL:
-
-		openssl s_client <host>:<port>
-	
-	SEE MORE:	doc\software\network\ssl_tls\OpenSSL-FAQ.txt
-	
-
-	
-- ssltap 
-
-	!!!!!!!!!!!!!!! UNDER COSTRUCTION !!!!!!!!!!!!!!!
-
-
-- ssldump	
-	
-	!!!!!!!!!!!!!!! UNDER COSTRUCTION !!!!!!!!!!!!!!!
-	
-SEE ALSO:
-	doc\software\network\ssl_tls\OpenSSL-FAQ.txt/Testing SSL/TLS with OpenSSL
-	
 	
 	
 ---------------------------------------------------------------------------------------------------------------------------------
