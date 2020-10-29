@@ -2,13 +2,162 @@
 How to managed licenses?
 ========================
 
+- How APAS does store module licenses?
+- How to extract information from liense key?
+- Fetching licenses
+- Adding/saving license
+
+
+--------------------------------------------------------------------------------------------------------------------------
+How APAS does store module licenses?
+====================================
+- License keys are stored into configuration per modules:
+
+	Config[module/LicenseKey]
+
+- License counters are stored into configuration per modules:
+
+	Config[module/LicCounter]
+
+- License values are stored into:
+
+	Config[module/LicValue]
+	
+	It's the value returned by JTAPIThread.getTime():
+	
+		License available if the returned value >=0 (it's a time information)
+		0 = free license
+		-1 = license not available
+		-2 = demo expired
+		-3 = license absolute time expired
+		-4 = license not valid for this module version
+		-5 = license revoked
+			
+- Module names are in:
+
+		com.andtek.andphone.utils.Modules.sw_module_names[s][i]
+		
+--------------------------------------------------------------------------------------------------------------------------
+How to extract information from liense key?
+===========================================
+Extracting license information:
+
+		v[] = extractString(String lic)
+	
+	
+	- Values in returned array are integers, where indexes:
+	
+		SWID = 0				// software ID
+		MDID = 1				// module ID
+		COUNT = 2
+		MAXVER = 3
+		TIME = 4
+		DEMO = 5
+		CUSTID = 6
+		CLUSTERID = 7
+
+	- Software IDs and module IDs are indexes in:		 Modules.sw_module_names[swIdx][modIdx]
+		
+		
+--------------------------------------------------------------------------------------------------------------------------
+Fetching licenses
+=================
+--> com.andtek.andphone.global.gwtapp.client.license_gwtappMain.onModuleLoad()
+	--> RemoteGetLicenseGWTinitBean()
+		RPC --> RPCglobalServiceImpl.RemoteGetLicenseGWTinitBean
+				--> rcode = ATimer.isActivated()
+					
+					return:
+							LicenseGWTInitBean {
+								String HardwareID
+								boolean enableActivationButton
+								String baseLicenseKey
+								boolean HWIDChanged
+							}
+				
+			--> onSuccess()
+				--> initGetAllLicensesData(serverAction)
+					--> initGetAllLicensesData(...)
+						RPC --> RPCglobalServiceImpl.RemoteGetAllLicensesData(...)
+								--> licenses =  LicenseHelper.getAllLicensesData(getThreadLocalRequest(), true)
+									- module names are in: Modules.sw_module_names[][] 														// 2 dimension array of module names
+									
+									-------------------------------------- loop on Modules.sw_module_names[] as s --------------------------------------------------------
+										-------------------------------------- loop on Modules.sw_module_names[][] as i --------------------------------------------------------
+											--> moduleName = Modules.sw_module_names[s][i]
+											--> res=JTAPIThread.getTime(moduleName)
+												--> getTime(module, bundles=true, checkLicenseRevoke=true)
+													!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+													IT'S NOT JUST A GETTER BUT:
+														- It checks if license is available and decrements license counter with 1.
+														- Finally it writes license counter and status into:
+																- Config[module/LicCounter]
+																- Config[module/LicValue]
+													!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+													--------------- if LicenseHelper.isFreeLicense(module) -----------------------
+														--> return 0													// unlimited
+													
+													--> lc = get license counter from Config[module/LicCounter]
+													------------------------- if lc > 1 ------------------------------------
+														--> lc--															// decrement counter with 1
+														--> write ls into Config[module/LicCounter]
+														--> get license value from Config[module/LicValue]
+														--> return license value
+													
+													--> getting key from Config[(module/LicenseKey]						// first get module license
+													--> if module license not found or found or invalid (by length) => use global module license
+													--> if global module license not found or invalid -> use empty
+													
+													--> checking revocation list
+														--------------------- if lic on revocation list ---------------------
+														--> return -5													// revoked
+													
+													--> v[] = getTimeInfo(module, bundles, checkLicenseRevoke)
+														--> checking module license and return if any problem found:
+																-1 : license not available
+																-2 : demo expired
+																-3 : license absolute time expired
+																-4 : license not valid for this module version
+													
+													
+													--> writing counter and status into:
+																- Config[module/LicCounter]
+																- Config[module/LicValue]
+													
+													--> return res
+													
+															Values:
+																>0 : valid: 
+																 0 : free license (unlimited)
+																-1 : license not available
+																-2 : demo expired
+																-3 : license absolute time expired
+																-4 : license not valid for this module version
+																-5 : license revoked
+												
+												
+												
+											--> record.setModule(SWmoduleName)										// modulename
+																											
+											
+											
+									
+									
+							--> onSuccess()
+								--> buildDynamicListGrid(datarows, getServerActionResult())
+									...
+	
+
+
+
 --------------------------------------------------------------------------------------------------------------------------
 Adding/saving license
 =====================
 
 - APAS/Global/licenses/[Add New License]  --> form --> OK
 
-	--> RPCglobalServiceImpl.RemoteSaveLicensesData(...)
-		--> ATimer.extractString(String lic)
+	--> RPCglobalServiceImpl.RemoteSaveLicensesData	(...)
+		--> ATimer.extractString(String lic)							// extracting values from license
+		
 		
 		

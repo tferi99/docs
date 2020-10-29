@@ -164,6 +164,11 @@ Usable tools:
 	- order by retained heap
 
 - Threads	
+
+
+SEE ALSO:
+	https://www.vogella.com/tutorials/EclipseMemoryAnalyzer/article.html
+
 -------------------------------------------------------------------------------------------------	
 Eclipse MAT OQL
 ===============

@@ -1,6 +1,6 @@
-============================
-Sceduled queue configuration
-============================
+=============================
+Scheduled queue configuration
+====-========================
 
 1. Add a queue (Call Center/Queues)
 

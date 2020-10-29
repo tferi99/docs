@@ -1,0 +1,283 @@
+===========
+TypeORM-FAQ
+===========
+
+Basics
+------
+- DataMapper vs ActiveRecord method
+
+Entity
+------
+- How to implement a unique database field?
+- How to use enum types in a column?
+- How to store JSON into database?
+- How to create nullable column?
+
+Query
+-----
+- How to specify LIKE query?
+
+Table data
+----------
+- How to delete all the data from from table?
+- How to count records in a table?
+
+Troubleshooting
+---------------
+- ERROR: No metadata for "..." was found. EntityMetadataNotFound: No metadata for ""..." was found.
+
+NestJS
+------
+- How to add TypeORM to a NestJS project?
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+DataMapper vs ActiveRecord method
+=================================
+- ActiveRecord
+	Using the Active Record approach, you define all your query methods INSIDE THE MODEL ITSELF, and you save, remove, and load objects using model methods.
+	
+	
+	@Entity()
+	export class User extends BaseEntity {
+
+		@PrimaryGeneratedColumn()
+		id: number;
+
+		@Column()
+		firstName: string;
+
+		@Column()
+		lastName: string;
+
+		@Column()
+		isActive: boolean;
+	}	
+	
+	
+	const user = new User();
+	user.firstName = "Timber";
+	user.lastName = "Saw";
+	user.isActive = true;
+	await user.save();	
+	
+	
+- DataMapper
+	Using the Data Mapper approach, you define all your query methods IN SEPARATE CLASSES called "repositories", and you save, remove, and load objects using repositories. 
+	In data mapper your entities are very dumb - they just define their properties and may have some "dummy" methods.
+
+
+	
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+How to specify LIKE query?
+==========================
+
+	@EntityRepository(Cat)
+	export class CatRepository extends Repository<Cat> {
+
+	  async search(filter: CatFilterDto): Promise<Cat[]> {
+		const {name, color} = filter;
+		const query = this.createQueryBuilder('cat');
+
+		if (name) {
+		  query.andWhere('cat.name like :name', {name: `%${name}%`});			<<<<<<<<<<<<<<<<<<<<<<<
+		}
+
+		if (color) {
+		  query.andWhere('cat.color = :color', {color});
+		}
+
+		return await query.getMany();
+	  }
+	  ...
+	}
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+ERROR: No metadata for "..." was found. EntityMetadataNotFound: No metadata for ""..." was found.
+=================================================================================================
+- You have created an Entity
+- You have created an EntityRepository for Entity
+
+and you have this error during startup.
+
+Solution:
+	- Maybe you have created a configuration for TypeORM and added to AppModule:
+	
+		typeorm.config.ts:
+		
+			export const typeOrmConfig: TypeOrmModuleOptions = {
+			  type: 'postgres',
+			  host: 'localhost',
+			  port: 5432,
+			  username: 'postgres',
+			  password: 'postgres',
+			  database: 'my-nestjs-demo',
+			  entities: [Cat],								<<<<<<<<<<<<<<<< HERE
+			  synchronize: true,
+			  // logging: true,
+			};
+		
+			
+	app.module.ts:
+	
+			@Module({
+				imports: [
+					TypeOrmModule.forRoot(typeOrmConfig),
+					...
+				],
+				...
+			})
+			export class AppModule {
+			  constructor(private readonly connection: Connection) {}
+			}
+
+	- This configuration contains an 'entities' array.
+	
+		Add your new entity to this array.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to implement a unique database field?
+=========================================
+Method 1: check existing values in repository before saving entity:
+
+    const exist = await this.findOne({username});
+    if (exist) {
+      throw new ConflictException('User already exists');
+    }
+
+Method 2 (RECOMMENDED): unique constraint:
+
+	Annotate entity:
+	
+		@Entity('appuser')
+		@Unique(['username'])     						<<<<<<<<<<<< unique constraint
+		export class User extends BaseEntity {
+		  @PrimaryGeneratedColumn()
+		  id: number;
+
+		  @Column()
+		  username: string;
+
+		  @Column()
+		  password: string;
+		}
+
+	Handle error in repository:
+	
+		try {
+		  return await user.save();
+		} catch (e) {
+		  console.log(`Error code: ${e.code}`);
+		  if (e.code === '23505') {
+			throw new ConflictException('User already exists');
+		  } else {
+			throw new InternalServerErrorException();
+		  }
+		
+
+	NOTE:	You have to use ENTITY FIELD NAME not a DB column name!
+		
+		
+--------------------------------------------------------------------------------------------------------------------------------------
+How to delete all the data from from table?
+===========================================
+Use Repository.clear()
+
+- Clears all the data from the given table/collection (truncates/drops it).
+- Note: this method uses TRUNCATE and may not work as you expect in transactions on some platforms.
+
+SEE ALSO:
+	https://typeorm.io/#/repository-api
+	https://typeorm.delightful.studio/classes/_repository_repository_.repository.html#clear
+	https://www.geeksforgeeks.org/difference-between-delete-and-truncate/
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+How to count records in a table?
+================================
+Use Repository.count(options)
+
+	const count = await repository.count({ firstName: "Timber" });
+
+https://typeorm.io/#/repository-api
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to use enum types in a column?
+==================================
+enum column type is supported by postgres and mysql.
+
+
+	export enum UserRole {
+		ADMIN = "admin",
+		EDITOR = "editor",
+		GHOST = "ghost"
+	}
+
+	@Entity()
+	export class User {
+
+		@PrimaryGeneratedColumn()
+		id: number;
+
+		@Column({
+			type: "enum",
+			enum: UserRole,
+			default: UserRole.GHOST
+		})
+		role: UserRole
+	}
+
+
+SEE ALSO:	https://typeorm.io/#/entities/enum-column-type
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+How to store JSON into database?
+================================
+Very useful when you do not have json type in your database and you want to store and load object without any hassle.
+
+	- entity:
+	
+		@Entity()
+		export class User {
+
+			@PrimaryGeneratedColumn()
+			id: number;
+
+			@Column("simple-json")
+			profile: { name: string, nickname: string };
+
+		}
+
+	- usage:
+	
+		const user = new User();
+		user.profile = { name: "John", nickname: "Malkovich" };		
+
+
+SEE ALSO:	https://typeorm.io/#/entities/simple-json-column-type
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to create nullable column?
+==============================
+
+	export class User {
+	  @PrimaryGeneratedColumn()
+	  id: number;
+
+	  @Column({nullable: true})				<<<<< options
+	  email: string;
+	}
+
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+How to add TypeORM to a NestJS project?
+=======================================
+

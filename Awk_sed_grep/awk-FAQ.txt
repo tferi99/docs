@@ -21,6 +21,9 @@ Arrays
 - How to enumerate array elements?
 - How to check if an item contained by an array?
 
+Print
+-----
+- How to print single quote in Awk?
 
 ********************************************************************************************************************************
 ********************************************************************************************************************************
@@ -166,4 +169,25 @@ and call action with this filter:
 	
 	
 SEE ALSO:	https://www.gnu.org/software/gawk/manual/html_node/Expression-Patterns.html	
+	
+	
+--------------------------------------------------------------------------------------------------
+How to print single quote in Awk?
+=================================
+- from external variable:
+
+	awk -v q="'" '{print "value is" q $2 q}' inputfile
+	
+	
+- from escape character:
+
+	awk '{print "value is \x27" $2 "\x27"}' inputfile
+
+
+- escape in string:
+
+	awk '{ print "value is '"'"'" $2 "'"'"'" }' inputfile
+	OR
+	awk '{ print "value is","'\''" $2 "'\''" }' inputfile
+
 	
