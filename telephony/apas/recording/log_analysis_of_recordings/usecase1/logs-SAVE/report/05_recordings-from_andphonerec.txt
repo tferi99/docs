@@ -1,0 +1,23 @@
+From: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone_record.log*
+START: sip23988/1, SEPA45630BB1748 - 
+2020-08-14 14:12:38,915: 1: ->recordCall: <recordCall terminal="SEPA45630BB1748" callID="sip23988/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>
+END: sip23988/1, SEPA45630BB1748 - 
+END: csip27971218, SEPA45630BB1748 - 
+END: csip27971218, SEPA45630BB1748 - 
+=======================================
+RECORDING[0][sip23988/1, SEPA45630BB1748] :  - , DB:200, DiskThread:true 
+   - callingPartyName=
+   - srcIP=10.51.51.122
+   - callID=sip23988/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=44899
+   - initiated=false
+   - dstIP=10.51.51.122
+   - lastRedirectingParty=
+   - callingParty=+36110009100
+   - originalCallingParty=+36110009100
+   - dstPort=46119
+   - calledParty=+36110009020

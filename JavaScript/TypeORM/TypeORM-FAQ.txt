@@ -25,6 +25,7 @@ Table data
 Troubleshooting
 ---------------
 - ERROR: No metadata for "..." was found. EntityMetadataNotFound: No metadata for ""..." was found.
+- How to clean orphan tables?
 
 NestJS
 ------
@@ -280,4 +281,60 @@ How to create nullable column?
 --------------------------------------------------------------------------------------------------------------------------------------
 How to add TypeORM to a NestJS project?
 =======================================
+- create nest project
+
+	nest new <project>
+	
+- add TypeORM + database (e.g. PostgreSQL):
+
+	$ npm install --save @nestjs/typeorm typeorm pg
+
+- create config class or config file
+
+- import TypeORM into AppModule:
+
+	app.module.ts:
+
+		@Module({
+		  imports: [
+			...
+			TypeOrmModule.forRoot(createTypeOrmConfig()),
+		  ],
+		  ...
+		})
+		export class AppModule {}
+		  
+
+	 typeorm.consig.ts:
+	 
+		export function createTypeOrmConfig(): TypeOrmModuleOptions {
+		  return {
+			type: 'postgres',
+			host: 'localhost',
+			port: 5432,
+			username: 'postgres',
+			password: 'postgres',
+			database: 'easytrader',
+			entities: [__dirname + '/../**/*.entity.{js,ts}'],
+			synchronize: process.env.DB_ORM_SYNC === 'true',				<<<< from .env and .env.development
+			logging: process.env.DEV ? 'all' : ['error'],					<<<< from .env and .env.development
+			logger: 'file'
+		  }
+		};
+
+			 
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to clean orphan tables?
+===========================
+If synchronize is 'true' in TypeORM configuration tables and columns are automatically created for entities.
+If you rename an entity sometimes tables of old entities are not deleted but new tables are created.
+If you drop them from they are re-generated during next startup. Why?
+
+'dist' directory still contains old entities so tables will be generated again during next startup.
+
+How to solve the problem?
+- Delete old entities from 'dist'
+OR
+- Delete the whole 'dist' directory and retart application - RECOMMENDED !!!
 

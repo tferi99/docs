@@ -1,0 +1,118 @@
+========
+.Net-FAQ
+========
+
+Classic .Net
+------------
+- Classic .Net architecture
+- Classic .Net build process
+
+Mono
+----
+- Mono architecture
+
+.Net Core
+----------
+- .Net Core architecture
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Classic .Net architecture
+==========================
+	OS - CLR - BCL - ... - 
+
+
+- BCL:	Base Class Library
+	
+- CLR:	Common Language Runtime
+
+- CTS:	Common Type System				: It describes all data types and all related constructs which supported by runtime
+
+- CLS:	Common Language Specification	: a subset of CTS, it defines a set of rules and restrictions that every language must follow which runs under.NET framework.
+
+- CIL:	Common Intermediate Language
+
+- FCL:	Framework Class Library
+
+- MSIL:	MS Intermediate Language		: 
+		- When we compile our .NET program it’s not converted into the executable binary code but to an intermediate code, called MSIL or IL,
+		- which is understandable by CLR
+		- MSIL is an OS and H/W independent code
+
+
+
+SEE ALSO:	
+	https://medium.com/@v.cheshmi/clr-bcl-cil-and-assemblies-in-net-framework-3de8bf09e781
+	doc\tools_and_languages\.Net\.Net-Framework Class Library(FCL).png
+
+	
+-----------------------------------------------------------------------------------------------------------------------------------
+Classic .Net build process
+==========================
+Classic .Net is tied to Windows.
+
+	C#/F#/VB --- compile ---> MSIL --- OS loader ---> CLR --- JIT ---> machine code
+
+- write C# code
+
+- compile with csc.exe to MSIL byte-code (intermediate, platform-independent) into EXE or DLL
+
+- when we run it OS system loader will instantiate CLR and it compiles MSIL into machine-dependent code with JIT
+
+This architecture allows us writing programs in different languages (all programs compiled into same, common IL language).
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+But CLR is coupled to Windows =====> Programming in C# using BCL in 99% of cases ties you to Windows.
+due to fact that most part of BCL are implpemented on native Windows API.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Mono architecture
+=================
+Mono is cross-platform, can run on:
+	- Windows
+	- Linux
+	- MacOS
+
+It has its own:
+	- runtime
+	- compilers
+	- BCL
+
+But:
+
+	:)
+	- CLR on Windows can run Mono compiled apps
+	and vica-versa
+	- Mono can run assemblies compiled by classic .Net compiler on any supported platforms
+
+	:(
+	- Mono does not provide full power of Classic .Net.
+	- Mono compiler is not optimized as Classic .Net compiler => API and performance of Classic .Net platform is MUCH BETTER.
+	
+	
+-----------------------------------------------------------------------------------------------------------------------------------
+.Net Core architecture
+======================
+- runtime:		Core CLR		: cross-platform, common language, compiled into System.Private.CoreLib.dll
+								Corresponds to CLR of Classic .NET 
+
+				CoreRT			: .NET Core RT that is optimized for AOT scenarios.
+				
+									Compile the CIL code into binary code and integrate any required .NET framework components to produce a single-file 
+									self-contained executable whose performance is closer to code written native languages. This technology is 
+									called .NET Native. CoreRT is an open-source implementation of this technology. T
+								
+- compiler:		RyuJIT
+
+- BCL:			CoreXF			: open source, CoreFX API != old BCL API
+
+- supports 4 cross-platform scenarios:
+	- ASP.NET Core web apps
+	- command-line apps
+	- libraries (.NET Standard)
+	- UWP (Universal Windows Platform) apps
+	
+- .Net Core contains packages and NOT assemblies
+- it is modular (developers deal with NuGet packages instead of assemblies)	
+- it updated more frequently based on packages (Classic .Net life-cycle was based on big releases)

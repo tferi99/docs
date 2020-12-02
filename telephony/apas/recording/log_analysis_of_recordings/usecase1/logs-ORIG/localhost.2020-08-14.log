@@ -1,0 +1,51 @@
+14-Aug-2020 13:50:38.968 INFO [http-nio-8080-exec-5] org.apache.catalina.core.ApplicationContext.log RPCglobalServiceImpl: ERROR: The serialization policy file '/gwt/ver6.2.3-13372/com.andtek.andphone.global.gwtapp.restart_gwtappMain/093AD5CA30977509D93AFFD0CC82A222.gwt.rpc' was not found; did you forget to include it in this deployment?
+14-Aug-2020 13:50:38.968 INFO [http-nio-8080-exec-5] org.apache.catalina.core.ApplicationContext.log RPCglobalServiceImpl: WARNING: Failed to get the SerializationPolicy '093AD5CA30977509D93AFFD0CC82A222' for module 'http://apasdev.com:8080/andphone/gwt/ver6.2.3-13372/com.andtek.andphone.global.gwtapp.restart_gwtappMain/'; a legacy, 1.3.3 compatible, serialization policy will be used.  You may experience SerializationExceptions as a result.
+14-Aug-2020 14:05:26.438 SEVERE [http-nio-8080-exec-23] org.apache.catalina.core.StandardWrapperValve.invoke Servlet.service() for servlet [Admin] in context with path [/andphone] threw exception
+ java.lang.NullPointerException
+	at org.securityfilter.filter.SecurityRequestWrapper.getUserPrincipal(SecurityRequestWrapper.java:208)
+	at com.andtek.andphone.utils.Admin.getRequestStrings(Admin.java:105)
+	at com.andtek.andphone.utils.Admin.getModuleAdminPage(Admin.java:404)
+	at com.andtek.andphone.Admin.doGet(Admin.java:252)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:729)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:292)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:207)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:240)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:207)
+	at org.displaytag.filter.ResponseOverrideFilter.doFilter(ResponseOverrideFilter.java:137)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:240)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:207)
+	at org.securityfilter.filter.SecurityFilter.doFilter(SecurityFilter.java:188)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:240)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:207)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:212)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:106)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:141)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:79)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:88)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:528)
+	at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:1099)
+	at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:672)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1520)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.run(NioEndpoint.java:1476)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:748)
+
+14-Aug-2020 14:09:30.830 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing AtmosphereFramework
+14-Aug-2020 14:09:31.618 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log No Spring WebApplicationInitializer types detected on classpath
+14-Aug-2020 14:09:31.638 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring root WebApplicationContext
+14-Aug-2020 14:09:38.635 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring DispatcherServlet 'springAdminGuiRestAPI'
+14-Aug-2020 14:09:39.881 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring DispatcherServlet 'springCommunicator'
+14-Aug-2020 14:09:40.128 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring DispatcherServlet 'springApasRestAPI'
+14-Aug-2020 14:09:41.642 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring DispatcherServlet 'springWebattendantAPI'
+14-Aug-2020 14:09:44.700 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring DispatcherServlet 'springRecorder'
+14-Aug-2020 14:09:44.847 INFO [localhost-startStop-1] org.apache.catalina.core.ApplicationContext.log Initializing Spring DispatcherServlet 'springWebClientAPI'
+14-Aug-2020 14:09:45.842 INFO [http-nio-8080-exec-8] org.apache.catalina.core.ApplicationContext.log RPCglobalServiceImpl: ERROR: The serialization policy file '/gwt/ver6.2.3-13372/com.andtek.andphone.global.gwtapp.gwtframework_gwtappMain/093AD5CA30977509D93AFFD0CC82A222.gwt.rpc' was not found; did you forget to include it in this deployment?
+14-Aug-2020 14:09:45.856 INFO [http-nio-8080-exec-8] org.apache.catalina.core.ApplicationContext.log RPCglobalServiceImpl: WARNING: Failed to get the SerializationPolicy '093AD5CA30977509D93AFFD0CC82A222' for module 'http://apasdev.com:8080/andphone/gwt/ver6.2.3-13372/com.andtek.andphone.global.gwtapp.gwtframework_gwtappMain/'; a legacy, 1.3.3 compatible, serialization policy will be used.  You may experience SerializationExceptions as a result.
+14-Aug-2020 14:09:47.760 INFO [http-nio-8080-exec-6] org.apache.catalina.core.ApplicationContext.log RPCglobalServiceImpl: ERROR: The serialization policy file '/gwt/ver6.2.3-13372/com.andtek.andphone.global.gwtapp.login_gwtappMain/093AD5CA30977509D93AFFD0CC82A222.gwt.rpc' was not found; did you forget to include it in this deployment?
+14-Aug-2020 14:09:47.760 INFO [http-nio-8080-exec-6] org.apache.catalina.core.ApplicationContext.log RPCglobalServiceImpl: WARNING: Failed to get the SerializationPolicy '093AD5CA30977509D93AFFD0CC82A222' for module 'http://apasdev.com:8080/andphone/gwt/ver6.2.3-13372/com.andtek.andphone.global.gwtapp.login_gwtappMain/'; a legacy, 1.3.3 compatible, serialization policy will be used.  You may experience SerializationExceptions as a result.
+14-Aug-2020 14:11:10.582 INFO [http-nio-8080-exec-6] org.apache.catalina.core.ApplicationContext.log RPCglobalServiceImpl: ERROR: The serialization policy file '/gwt/ver6.2.3-13372/com.andtek.andphone.global.gwtapp.mainPage_gwtappMain/093AD5CA30977509D93AFFD0CC82A222.gwt.rpc' was not found; did you forget to include it in this deployment?
+14-Aug-2020 14:11:10.582 INFO [http-nio-8080-exec-6] org.apache.catalina.core.ApplicationContext.log RPCglobalServiceImpl: WARNING: Failed to get the SerializationPolicy '093AD5CA30977509D93AFFD0CC82A222' for module 'http://apasdev.com:8080/andphone/gwt/ver6.2.3-13372/com.andtek.andphone.global.gwtapp.mainPage_gwtappMain/'; a legacy, 1.3.3 compatible, serialization policy will be used.  You may experience SerializationExceptions as a result.

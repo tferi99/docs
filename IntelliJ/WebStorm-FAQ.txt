@@ -4,6 +4,7 @@ WebStorm-FAQ
 
 - NPM tool window is missing
 - Tricks
+- Howto set single quote in TypeScript code?
 
 ------------------------------------------------------------------------------------------------------------------------------------
 NPM tool window is missing
@@ -15,3 +16,16 @@ Fix:	package.json/Right-mouse/Show npm Scripts
 Tricks
 ======
 Jump to CSS class definition:		point with mouse and Ctrl-Shift-i
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+Howto set single quote in TypeScript code?
+==========================================
+Auto import generates double quote by default. To change it to single quote:
+
+	- Settings/Preferences
+	- Editor | Code Style | TypeScript
+	- "Punctuation" tab | Generated code -> Quote marks
+
+SEE ALSO:	https://stackoverflow.com/a/39779498/783119
+

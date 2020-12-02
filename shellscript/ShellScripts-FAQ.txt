@@ -244,6 +244,25 @@ Looping
 		...
 	done
 
+	NOTE:
+		However, the following will not work !!!!!!!!:
+
+		#!/bin/bash
+		START=1
+		END=5
+		for i in {$START..$END}
+		do
+		   echo "$i"
+		done	
+
+	Try this:
+	
+		for (( i=$START; i<=$END; i++ ))
+		do
+			echo "$i"
+		done
+ 	
+	
 	With step:
 	
 	for i in {1..5..2}				{from..to..step}		-> 1 3 5

@@ -1,0 +1,61 @@
+MODE: verbose
+#--------------------------- andphone.log* ----------------------------------
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone.log|2020-08-14 14:09:31,810|2020-08-14 14:14:30,035|
+=====================================================================================================================================
+LOG TIME RANGE: 2020-08-14 14:09:31 - 2020-08-14 14:14:30 : 299 sec(s) = 0 day(s) 0 hour(s) 4 minute(s) 59 second(s)
+=====================================================================================================================================
+
+#--------------------------- andphone_error.log* ----------------------------------
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone_error.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone_error.log|2020-08-14 14:09:42,686|2020-08-14 14:14:00,064|
+=====================================================================================================================================
+LOG TIME RANGE: 2020-08-14 14:09:42 - 2020-08-14 14:14:00 : 258 sec(s) = 0 day(s) 0 hour(s) 4 minute(s) 18 second(s)
+=====================================================================================================================================
+
+#--------------------------- andphone-bg.log* ----------------------------------
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone-bg.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone-bg.log|2020-08-14 14:09:38,246|2020-08-14 14:14:23,931|
+=====================================================================================================================================
+LOG TIME RANGE: 2020-08-14 14:09:38 - 2020-08-14 14:14:23 : 285 sec(s) = 0 day(s) 0 hour(s) 4 minute(s) 45 second(s)
+=====================================================================================================================================
+
+#--------------------------- CiscoJtapi*.log ----------------------------------
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/CiscoJtapi01.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/CiscoJtapi01.log|||
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/CiscoJtapi02.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/CiscoJtapi02.log|2020-08-14 14:09:57|2020-08-14 14:14:28|
+=====================================================================================================================================
+LOG TIME RANGE: 2020-08-14 14:09:57 - 2020-08-14 14:14:28 : 271 sec(s) = 0 day(s) 0 hour(s) 4 minute(s) 31 second(s)
+=====================================================================================================================================
+
+#--------------------------- sip_protocol.log* ----------------------------------
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/sip_protocol.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/sip_protocol.log|2020-08-14 14:09:55,016|2020-08-14 14:14:06,417|
+=====================================================================================================================================
+LOG TIME RANGE: 2020-08-14 14:09:55 - 2020-08-14 14:14:06 : 251 sec(s) = 0 day(s) 0 hour(s) 4 minute(s) 11 second(s)
+=====================================================================================================================================
+
+#--------------------------- andphone_record.log* ----------------------------------
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone_record.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone_record.log|2020-08-14 14:08:18,245|2020-08-14 14:14:30,034|
+=====================================================================================================================================
+LOG TIME RANGE: 2020-08-14 14:08:18 - 2020-08-14 14:14:30 : 372 sec(s) = 0 day(s) 0 hour(s) 6 minute(s) 12 second(s)
+=====================================================================================================================================
+
+#--------------------------- catalina.* ----------------------------------
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/catalina.2020-08-14.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/catalina.2020-08-14.log|2020-08-14 14:08:05,017|2020-08-14 14:09:45,441|
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/catalina.out
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/catalina.out|2020-08-14 14:08:16,733|2020-08-14 14:09:45,441|
+=====================================================================================================================================
+LOG TIME RANGE: 2020-08-14 14:08:05 - 2020-08-14 14:09:45 : 100 sec(s) = 0 day(s) 0 hour(s) 1 minute(s) 40 second(s)
+=====================================================================================================================================
+
+#--------------------------- ews_trace.log* ----------------------------------
+LOG: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/ews_trace.log
+/cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/ews_trace.log|||
+=====================================================================================================================================
+LOG TIME RANGE: no data
+=====================================================================================================================================
+

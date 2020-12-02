@@ -9,7 +9,7 @@ npm FAQ
 - How to create package.json?
 - How to query versions?
 - How to update packages?
-
+- How npm link works?
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 What is npm?
@@ -154,6 +154,53 @@ npm view <package> version		: show specified package’s version in the registry
 npm view <package>@* version	: show all the published versions of a package (include pre-releases)
 
 
+---------------------------------------------------------------------------------------------------------------------------------------------
+How npm link works?
+===================
+- There are 2 steps:
+	1. npm link
+	2. npm link <module name>
 
 
+	1. In library dist/<lib> directory:
+	
+		npm link	
+		
+				symlink in global node_modules ===> lib directory in project-local node_modules
 
+			When you run npm link in a module’s root directory, npm creates a symbolic link from your 'global node_modules'
+			directory (where 'npm install -g' are stored) to the local module’s directory.
+			
+			You can find the path to your global node_modules directory by running:
+			
+				npm root -g
+				
+					
+	2. In project directory:
+		
+		npm link <module-name>		
+
+		
+			symlink in project-local node_modules ===> global node_modules/<module-name>
+		
+		When you run npm link <module-name> in a project’s directory, npm creates a symbolic link 
+		from ./node_modules/<module-name> to <global_node_modules>/<module-name>.
+
+
+	It links an external local module into your project.
+
+
+- How to delete links?
+	1. in external lib directory:
+		
+			npm unlink
+			
+	2. in project directory
+	
+			npm unlink <module-name>
+			
+SEE ALSO:
+			https://medium.com/@alexishevia/the-magic-behind-npm-link-d94dcb3a81af
+			https://docs.npmjs.com/cli/v6/commands/npm-link
+
+	

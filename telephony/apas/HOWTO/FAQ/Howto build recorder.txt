@@ -54,7 +54,7 @@ Step for build environment:
 				mount -t cifs -o username=ftoth,port=50445 //127.0.0.1/andphone_record /mnt/ftoth/andphone_record
 				
 		NOTE: 
-			You can add permanent configuratin to /et/fstab:
+			You can add permanent configuratin to /etc/fstab:
 		
 				//127.0.0.1/andphone_record     /mnt/ftoth/andphone_record      cifs    user,uid=1000,rw,suid,port=50445,username=ftoth,noauto 0 0
 			

@@ -29,7 +29,14 @@ To install SVGA driver you have to install VMWare Tools.
 ---------------------------------------------------------------------------------------------------------------------------------------------	
 Network configuration
 =====================
-Bridged network:
+- There are two network adapters:
+	- VMNet1 (Host-Only) 
+	- VMNet8 (NAT) network. 
+	
+These are host virtual adapters. The host virtual adapter is a virtual Ethernet adapter that appears to your host operating system as a VMware 
+virtual Ethernet adapter on a Windows host and as a host-only interface on a Linux host.
+
+- Bridged network:
 	- you need (at least) 2 network card
 	- set IP address of card2 to any free address in your network (or leave it empty)
 	- install network driver in virtual machine

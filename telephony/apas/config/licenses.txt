@@ -1,8 +1,53 @@
 APAS
 ----
 
--------------------------------------------------------- 5.x ----------------------------------------------------------------
+-------------------------------------------------------- GLOBAL ----------------------------------------------------------------
 Global/licenses:		E4KAA-H8LBD-HPZJ6-NSBES-KGLAA
+
+-------------------------------------------------------- 6.x ----------------------------------------------------------------
+From Jens:
+
+A8NSA-ABYKD-DQF4J-ESBE4-BPEAA – Base, can be activated 20 times
+
+
+Hardware ID			AUBQGS
+Activation Key		A4D364
+
+
+ALDSA-KAMKH-HPV2J-ACBA2-JPYBA – Directory
+EPAEC-BEMKH-BGF2J-AABA4-JPEJA – Guard Lockout
+E33AS-JAMKD-HFZ4B-ASAE2-JPWAA – CallCenter
+A8MSS-BATSD-FFVJB-ESJE2-BKEBE – Desktop AC
+E64WC-AEVSD-TGF4A-ESKAL-APEAA – Desktop SV
+EJLAA-KE3JH-TQB2A-ESJE2-JKGKE – Group
+A3RAU-BA5KH-DQBLJ-ASAAL-KPGAA – Callback
+A45WA-BAMBH-ZPZJK-ASJE4-APEBA – Settings
+AJPSC-AA3KD-FEZ4K-AAKAJ-BPEKE – Recorder
+E8BAS-BECSH-DRB42-C4JFS-VHQJE – Software Update Service (valid)
+EQJAA-KAA2D-DRFJG-YABAM-Q32AA – Software Update Service (invalid)
+
+From ATimer:
+Base: 						ENESS-KMKSD-FPVJ6-JUBES
+Settings:					A2USC-BABJH-XEZLB-AABAA
+Desktop AC: 				A65AS-AQGKD-XPVJJ-ESAAS
+Directory (300): 			E2DSS-LGNJD-ZEZ2G-GCBAA
+Guard Lookup: 				AQZAC-ARM2D-FFZLJ-ESBAA
+Guard Redirect: 			A88WU-KAESD-FPZJA-EUKAA
+Guard Lockout: 				E7KEA-KADBD-HFVLB-AABAS
+Guard Lockout 2: 			E7AAS-JEDAH-FNZ2B-PCBEA
+Guard Whitelist: 			EPJWA-KEGSD-HPZLJ-ESBEA
+Call routing + directory: 	ALZES-KLEAH-FPVJA-ACKEA
+Normal Lockout: 			ALJSC-KAT2D-FFZ4U-YSJES
+Partner: 					ALMEA-KRM3H-FEV4V-UUKEA
+Recorder: 					A2NSS-FC52H-FFZJA-ACJEA
+Another Recorder: 			EJNWS-J3RBD-HNV4J-EUAAA
+Recordermgmt: 				E2QAS-FC33H-FPZ2J-ESKAA
+CallList: 					A3XEA-EC32D-HFZ4A-AAAEA
+Provisioning: 				A49SA-PGMTD-ZPVJA-AUJAA
+Emergency Response Mapper:	E7DWA-ALGKH-FNZ2A-ECKAA
+
+-------------------------------------------------------- 5.x ----------------------------------------------------------------
+
 Base (till v.5.9.9):	E6PSS-AAUSC-PGM4A-EAKAJ-JPGAE
 HA license:				A3FSS-ALYAH-PL54K-AAAAV-W98AA 
 
@@ -26,19 +71,24 @@ Base License:			AQFSC-AEA2G-YN72E-QJKAS-KG2JE
 Directory License: 		EJLSS-KAMJC-FSHLN-L4BAC-AGLAA
 
 
-Demo License (valid 2016.07.14 4.99)
-ELJEU-KF7AC-HTH2H-F2AAS-AGLKA
-
-
-
+-------------------------------------------------------- From ZBal ----------------------------------------------------------------
+Demo License (valid 2016.07.14 4.99)	ELJEU-KF7AC-HTH2H-F2AAS-AGLKA
 Demo license for 4 phones (80 days):	ALJAC-KAWKG-J5XLP-WAKAU-AG2KE
+base                                    A8NWS-JA5JC-Z3DLD-4AJEA-KGJBA       (base license)                    [Act.Key: A8B866 , AMSB6Y]       [HWID: AZSJ6W]
+remotecontrol                  			AL5AD-L2GKJ-7BM2J-ACKA4             (unlimited)
+swus                                   	A8JEU-JE3AG-XTD4L-8CBAC-BC2AE		(valid until 08.01.2010; until v4.9.9i)
+settings                              	A4VWS-KFYKB-PS9JB-EUBA4				(valid until v3.9.9i)
+ivr                                     A5TSU-KAKKC-XSDP9-D2JAA-JECAE      	(valid until v4.9.9i)                                        AMTWA-KQWJH-ZEVL6-JAKES-BCLAE
+dirlight                                EN6SA-AEKBC-EE72P-MAAEU-KCJJA       (evaulation)
+midlets                               	ENTEC-JTFAG-FSHLA-EUJEV-598JA
 
 
+Irber Andreas: E4BAC-BCDSC-WP7LE-QLAEA-FXGKE
 
 
-TeamViewer
-----------
-09-31204-479922-181713 
-
-Otthoni használatra nem jó!
+andguardlockout							E9JAA-BA5AC-PQRJH-B2BEL-KKEKE		(valid until 17.07.2016 until 5.9.9)
+andguard (lookup)           			EQYES-JEKBC-RGRJG-FLBA2-JKEKE       (valid until 17.07.2016 until 5.9.9)
+andguardredirect                        AQZSU-KEMBC-7GMLG-FJKA4-AKWKA       (valid until 17.07.2016 until 5.9.9)
+emergencymapping                        E7DWA-ALGKH-FNZ2A-ECKAA             (valid until 6.9.9, not demo)
+callrouting/blakclist                   ALZES-KLEAH-FPVJA-ACKEA             (valid until 6.9.9, not demo)
 

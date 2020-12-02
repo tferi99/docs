@@ -4,8 +4,12 @@ How to managed licenses?
 
 - How APAS does store module licenses?
 - How to extract information from liense key?
-- Fetching licenses
+- Fetching licenses by modules
 - Adding/saving license
+- Delete licenses
+- License related functions in APAS
+- Activate base license
+- How to get bundle licenses recursively?
 
 
 --------------------------------------------------------------------------------------------------------------------------
@@ -60,33 +64,41 @@ Extracting license information:
 		
 		
 --------------------------------------------------------------------------------------------------------------------------
-Fetching licenses
-=================
+Fetching licenses by modules
+============================
 --> com.andtek.andphone.global.gwtapp.client.license_gwtappMain.onModuleLoad()
 	--> RemoteGetLicenseGWTinitBean()
 		RPC --> RPCglobalServiceImpl.RemoteGetLicenseGWTinitBean
-				--> rcode = ATimer.isActivated()
-					
-					return:
-							LicenseGWTInitBean {
-								String HardwareID
-								boolean enableActivationButton
-								String baseLicenseKey
-								boolean HWIDChanged
-							}
+				--> rcode = ATimer.isActivated() => result.enabledButton 
+				--> HWID = ATimer.generateHWIDWithMacAddress() => result.hardwareID
+				- return result:
+					LicenseGWTInitBean {
+						String HardwareID
+						boolean enableActivationButton
+						String baseLicenseKey
+						boolean HWIDChanged
+					}
 				
 			--> onSuccess()
 				--> initGetAllLicensesData(serverAction)
 					--> initGetAllLicensesData(...)
 						RPC --> RPCglobalServiceImpl.RemoteGetAllLicensesData(...)
+						
+								############################################################### GETTING LICENSES BY MODULES ###############################################################
 								--> licenses =  LicenseHelper.getAllLicensesData(getThreadLocalRequest(), true)
+								
 									- module names are in: Modules.sw_module_names[][] 														// 2 dimension array of module names
 									
-									-------------------------------------- loop on Modules.sw_module_names[] as s --------------------------------------------------------
-										-------------------------------------- loop on Modules.sw_module_names[][] as i --------------------------------------------------------
+									-------------------------------------- loop on softwares (Modules.sw_module_names[] as s) --------------------------------------------------------
+										-------------------------------------- loop on modules in a software (Modules.sw_module_names[][] as i) --------------------------------------------------------
 											--> moduleName = Modules.sw_module_names[s][i]
 											--> res=JTAPIThread.getTime(moduleName)
 												--> getTime(module, bundles=true, checkLicenseRevoke=true)
+													--> moduleID = Modules.getModuleID(module)						// getting module ID
+														---------------------- loop on softwares in Modules.sw_module_names ------------------------
+															---------------------- loop on modules of a software ------------------------
+														
+												
 													!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 													IT'S NOT JUST A GETTER BUT:
 														- It checks if license is available and decrements license counter with 1.
@@ -95,14 +107,19 @@ Fetching licenses
 																- Config[module/LicValue]
 													!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 													--------------- if LicenseHelper.isFreeLicense(module) -----------------------
+													- if module in ["testing", "phonemenu", "webuser"] then 																							
 														--> return 0													// unlimited
 													
 													--> lc = get license counter from Config[module/LicCounter]
+													
+???????????????????????????? WTF is this this is a getter method, why it changes the state ???????????????????????													
 													------------------------- if lc > 1 ------------------------------------
+													
 														--> lc--															// decrement counter with 1
 														--> write ls into Config[module/LicCounter]
 														--> get license value from Config[module/LicValue]
 														--> return license value
+??????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 													
 													--> getting key from Config[(module/LicenseKey]						// first get module license
 													--> if module license not found or found or invalid (by length) => use global module license
@@ -112,7 +129,7 @@ Fetching licenses
 														--------------------- if lic on revocation list ---------------------
 														--> return -5													// revoked
 													
-													--> v[] = getTimeInfo(module, bundles, checkLicenseRevoke)
+													--> v[] = getTimeInfo(module, bundles, checkLicenseRevoke)				// extracting license info for module
 														--> checking module license and return if any problem found:
 																-1 : license not available
 																-2 : demo expired
@@ -154,10 +171,152 @@ Fetching licenses
 Adding/saving license
 =====================
 
+It just saves a license key to module retrieved from:
+
+	getTime(module)
+	
+and it performs some validations.
+
+But it does not persist any changes related to bundle licenses.	
+
 - APAS/Global/licenses/[Add New License]  --> form --> OK
 
 	--> RPCglobalServiceImpl.RemoteSaveLicensesData	(...)
-		--> ATimer.extractString(String lic)							// extracting values from license
+		--> v[] = ATimer.extractString(String lic)							// extracting values from license
+			--> key validation
+				==> The license key entered is invalid
+				==> The license key entered is not for ANDPhone
+				==> The license key entered is not valid for any ANDPhone module
+			--> module = from sw_module_names with SWID and MDID
+			--> status = getTime(module)
+			--> checking status 
+			--> check: if base already installed don't install demo
+			------------------------- if current license is base ---------------------------------
+				--> JTAPIThread.deleteAllDemoLicense()
+			--> set Config[module/LicenseKey]
+			-------------------------- if module == 'global' ------------------------------
+				-------------------------- loop on sw_module_names -----------------------
+					--> reset counters for all modules (Config[m, Modules.sw_module_names[v[ATimer.SWID]][m]/LicCounter] = 0)
+			--> jtapi.verifyAvailability()
+			-------------------- if all fine ------------------------
+				--> Modules.init(jtapi, module)
+				--> Modules.initJTAPI(jtapi, module)
 		
 		
 		
+--------------------------------------------------------------------------------------------------------------------------
+Delete licenses
+===============
+BUTTON: 'Delete Licenses'
+
+--> license_gwtappMain.LocalDeleteLicensesData(getKeys())
+	--> RPCglobalServiceImpl.RemoteDeleteLicensesData(keys, ...)
+		--> RPCglobalServiceImpl.deleteLicensesData(keys, ...)
+			
+
+		
+		
+
+--------------------------------------------------------------------------------------------------------------------------
+License related functions in APAS
+=================================
+- Getting all installed module-licenses:
+	List<LicenseRecordBean> LicenseHelper.getAllLicensesData(...)
+	
+- Getting single time info about module license:
+
+	int ATimer.getTime(String module)
+	
+		/* It returns license status of a module.
+		 * It also checks if license is available and decrements license counter with 1. 
+		 * Finally license counter and license values are written into: 
+		 *		- Config[module/LicCounter]
+		 *		- Config[module/LicValue]
+		 *
+		 * Return:
+		 * License available if the returned value >=0 (it's a time information)
+		 * 0 = free license
+		 * -1 = license not available
+		 * -2 = demo expired
+		 * -3 = license absolute time expired
+		 * -4 = license not valid for this module version
+		 * -5 = license revoked
+		 */	
+		
+- Getting detailed information about module license:
+
+	int[] getTimeInfo(String module)
+	
+	
+	Array indexes (from ATimer.java):
+	
+		// key extraction array member indexes
+		public final static int SWID = 0;
+		public final static int MDID = 1;
+		public final static int COUNT = 2;
+		public final static int MAXVER = 3;
+		public final static int TIME = 4;
+		public final static int DEMO = 5;
+		public final static int CUSTID = 6;
+		public final static int CLUSTERID = 7;
+		
+	
+- Encoding timing information array into license key:
+
+	String getString(int SoftwareID, int ModuleID, int count, int maxver, int validtime, int demo, int CustomerID);
+	String getString(int SoftwareID, int ModuleID, int count, int maxver, int validtime, int demo, int CustomerID, int type);
+	
+	
+- Extracts licensing Information from a given license key. It returns "null"
+
+		--> v[] = ATimer.extractString(String lic)
+			--> removing separators
+			--> detecting type from lengts (KEY_TYPE_SHORT/KEY_TYPE_LONG)
+			--> getting elements of v[] 
+
+			return:
+			
+				vals[SWID], vals[MDID], vals[COUNT], vals[MAXVER], vals[TIME], vals[DEMO], vals[CUSTID]
+			  OR
+				vals[SWID], vals[MDID], vals[COUNT], vals[MAXVER], vals[TIME], vals[DEMO], vals[CUSTID], vals[CLUSTERID]
+				
+				
+--------------------------------------------------------------------------------------------------------------------------
+Activate base license
+=====================
+- APAS/Global/Licenses/(License Activation)/(Activate)
+	-->LicenseActivationWindow.buildLicenseActivationPage()
+		--> okbutton.onClick()										// "Acticate"
+			--> RemoteLicenseActivate(activationCode)
+				-- RPC --> com.andtek.andphone.global.gwtapp.server.RPCglobalServiceImpl.RemoteLicenseActivate()
+					
+Button is enabled if return code is BASELIC_STAT_ACTIVATED (0) during initial license fetch.
+	--> rcode = ATimer.isActivated()
+		
+SEE ALSO:	Fetching licenses
+
+
+--------------------------------------------------------------------------------------------------------------------------
+How to get bundle licenses recursively?
+=======================================
+To get bundle modules of a module APAS walks through com.andtek.andphone.utils.bundles array,
+following this logic:
+
+com.andtek.andphone.JTAPIThread.LicenseHelper.getModuleBundles(String module)
+
+NOTE:
+	Previously: 	com.andtek.andphone.JTAPIThread..getModuleBundles(String module)
+	
+	
+It gets a list of module names contained by a bundle.
+
+Bundle resolution logic (how getModuleBundles collects module names):
+	- first add current module
+	- get all bundles where current module is NOT the owner (so it's NOT the 1st bundle module) but it is a member in bundle
+	- get bundle owner and check license, if it's valid then call this method RECURSIVELY with bundle owner module 
+
+
+
+
+
+					

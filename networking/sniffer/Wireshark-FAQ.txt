@@ -16,7 +16,7 @@ Filters
 Protocols
 ---------
 - How Wireshark identifies RTP?
-
+- How to recognize if this is RTP or SRTP packet?
 
 -------------------------------------------------------------------------------------------------------------------------------------
 Whow to decrypt SSL/TLS traffic with Wireshark?
@@ -114,10 +114,12 @@ OR use tshark. E.g:
 ------------------------------------------------------------------------------------------------------------------------------
 How to capture tcpdump remotely?
 ================================
-	
 ssh user@host "tcpdump -s0 -w -" | wireshark -k -i -
 
-
-
+------------------------------------------------------------------------------------------------------------------------------
+How to recognize if this is RTP or SRTP packet?
+===============================================
+Actually you cannot differentiate between SRTP and RTP packets as they have the exact same headers.
+So even if the packet is encrypted the header is not. So you will still see them as rtp packets in Wireshark!
 
 

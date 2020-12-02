@@ -1,0 +1,2 @@
+From: /cygdrive/d/GIT/doc/tools_and_languages/telephony/apas/recording/log_analysis_of_recordings/usecase1/logs/andphone.log*
+=======================================

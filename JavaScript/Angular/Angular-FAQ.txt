@@ -28,30 +28,37 @@ Configuration
 
 Scaffolding
 -----------
+- Angular CLI functions
 - Schematics
 - How to set default schematics collection?
+- How to generate components?
 
-Directives, Components
-----------------------
-- What is a directive? Directive vs component
+
+Components
+----------
 - How to set CSS class of host element from component code?
 - How to change the default prefix of component to stop tslint warnings
 - How to set component input with a literal value?
 - How to set component input with a boolean value?
 - Parent-child component interaction
 
+Directives 
+----------
+- What is a directive? Directive vs component
+- Templating - structural directives explained
+- How to create structural directive?
+- What is ViewContainerRef?
+
 Templating
 ----------
 - How to use interpolation (template expression)?
-- Templating - structural directives
 - Templating expressions
 - ng-template directive
-- ng-content directive
+- ng-content directive (how to pass dynamic content to child component?)
 - ERROR: Can't have multiple template bindings on one element
 - ng-container directive
 - ngTemplateOutlet
 - Howto inject a template into a component (template reference)?
-- How to project content from parent to child component?
 - @ViewChild vs @ContentChild
 - Bindings:
 	- Property binding or interpolation?
@@ -60,17 +67,22 @@ Templating
 	- Style binding
 	- Event binding
 	- Data binding
+- How to render Date?
 
-
+Pipes
+-----
+- ERROR in template with pipes: invalid number of arguments, expected 2
+	
 Data input, Forms
 -----------------
 - How to use forms
+- How to map data to/from reactive forms?
 - How to use ngModel?
+- Validation:
+	- Form validation basics
+	- Form styling tips for validation
 - How to prevent adding NgForm to forms automatically?
-- How to control form UI by validation status?
-- Validation hints
 - How Angular store control state information to CSS class?
-- Form styling tips for validation
 - How can you reference a FormControl behind an input field?
 - How to group input values in model?
 - Radio button
@@ -129,15 +141,19 @@ HTTP, Rest
 - How to prototype test Rest services?
 - How to test HTTPS(SSL) in development environment?
 
-Development
------------
-- How to debug Angular?
-- How to generate components?
-- Angular CLI functions
 
 Deployment
 ----------
 - How to deploy for production?
+
+Debug
+-----
+- How to debug Angular?
+
+Workspace
+---------
+- How to create libraries?
+- How to add libraries to a project?
 
 Troubleshooting
 ---------------
@@ -149,6 +165,7 @@ Troubleshooting
 - Property 'map' does not exist on type 'Observable<...>'
 - ERROR: Can't bind to 'formGroup' since it isn't a known property of 'form'
 - ERROR: No provider for ControlContainer ("[ERROR ->]<form...
+- ERROR: No provider for TemplateRef found
 - ERROR: Uncaught Error: Unexpected directive '...' imported by the module '...'. Please add a @NgModule annotation
 - ERROR: Error: ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked.
 - ERROR: Uncaught Error: Can't resolve all parameters for ...
@@ -156,6 +173,9 @@ Troubleshooting
 - ERROR: Module not found: Error: Can't resolve 'cache-manager' in '.....\node_modules\@nestjs\common\cache'
 - How to dump any (even async) variable from template?
 - ERROR: The Angular Compiler requires TypeScript >=X and <Y but Z was found instead
+- ERROR: Please consider adding ... to 'peerDependencies' or remove it from 'dependencies'.
+- ERROR: No provider for ControlContainer found in NodeInjector
+    
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Angular CLI functions
 =====================
@@ -987,7 +1007,7 @@ Form management based on a common ancestor class:
 
 	Ho to use it?
 	-------------
-		- create a FormGroup property in controller (a group of FormControllers)
+		- create a FormGroup property in controller (a group of FormControls)
 		- import  ReactiveFormsModule (and you DON'T need the FormsModule)
 		- create form controls in controller. FormGroup is an object where field names are the property keys.
 		- add validators to FormControl in the controller
@@ -1137,14 +1157,6 @@ Print to template with JSON pipe:
 
 	<h5>Form value: {{form.value | json}}</h5>
 
-
---------------------------------------------------------------------------------------------------------------------------------------------------
-How to control form UI by validation status?
-============================================
-
-- Disable submit button if form is not valid:
-
-	<button type="submit" [disabled]="!form.valid">OK</button>
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1303,6 +1315,10 @@ CHILD =======> PARENT
 		parent:
 			<app-voter *ngFor="let voter of voters" (voted)="onVoted($event)"></app-voter>		
 	
+
+		onVoted(event) {
+			console.log('### voted: ', event);
+		}
 	
 	- Parent interacts with child via local variable
 		parent:
@@ -1978,8 +1994,8 @@ Expression context (where it's evaluating) is typically the component instance.
 
 		
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Templating - structural directives
-==================================
+Templating - structural directives explained
+============================================
 - Structural directives are easy to recognize. An asterisk (*) precedes the directive attribute name as in this example.
 - What is '*' prefix?
 
@@ -2000,7 +2016,106 @@ For example *ngIf:
 		</ng-template>
 			
 			
-NgIf, NgFor, and NgSwitch use the same pattern under the hood.
+	NgIf, NgFor, and NgSwitch use the same pattern under the hood.
+
+- variables can be injected:
+	- TemplateRef		: As the name suggest the TemplateRef is just a reference to the ng-template.
+	- ViewContainerRef	: points to container where Angular 'puts' processed template
+
+
+	
+SEE ALSO:	https://netbasal.com/the-power-of-structural-directives-in-angular-bfe4d8c44fb1	
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to create structural directive?
+===================================
+- create a directive:
+
+	ng generate directive ngLoop
+
+- inject TemplateRef and ViewContainerRef into constructor of generated class:
+
+	In Angular a view container is a special type of container where ONE OR MORE Views can be attached. 
+
+
+	Directive TS:
+	
+		import { Directive } from '@angular/core';
+
+		@Directive({
+		  selector: '[appNgLoop]'
+		})
+		export class NgLoopDirective {
+		  constructor(
+			private template: TemplateRef<any>,
+			private container: ViewContainerRef
+		  ) { }
+		}
+					
+- use in template:
+
+	The second thing we’re going to need is a REFERENCE TO A TEMPLATE. We want our directive to repeat the element that we’re attaching 
+	it to so we want to get a reference to this element in order to create multiple embedded views with it.
+
+	<div *appNgLoop>FASZ</div>
+			
+	NOTE: if you forget add '*'	prefix to directive in template then you have error in browser: No provider for TemplateRef found
+	
+	Now COMPONENT IS NOT DISPLAYED sinse structural directive converts host tag into <ng-template> and it does not have any 
+	implementation how to create template.
+	
+- create view for directive (where template will be generated):
+
+	ngOnInit(): void {
+		this.container.createEmbeddedView(this.template);
+	}
+	
+	Now the ORIGINAL CONTENT of tag is rendered once.
+	if you would use it twice...
+	
+	ngOnInit(): void {
+		this.container.createEmbeddedView(this.template);
+		this.container.createEmbeddedView(this.template);
+	}
+	
+	then the template would be rendered twice.
+	
+- add some input to directive:
+
+	@Input() appNgLoop: Array<any>;
+	
+	If you use the same name as your directive then the usage is very simle. Directive is itself the input argument.
+	Otherwise target element will have (also) additional argumants.
+	
+- add OnChanges handler to directive
+
+	It (re)renders the view each time our input changes.
+	
+- clear container before rendering content.
+
+		ngOnChanges(changes: SimpleChanges): void {
+			this.container.clear();
+			...
+		}
+
+	If we don’t do this, each time the input changes we’ll add more embedded views to the container, which could also be useful in some scenarios.	
+	
+SEE ALSO:
+	Templating - structural directives explained
+	https://blog.cloudboost.io/creating-structural-directives-in-angular-ff17211c7b28
+	ERROR: No provider for TemplateRef found
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: No provider for TemplateRef found
+========================================
+If you use a structural directive in a template but you forget to add '*' prefix.
+For example:
+
+	<div ngIf="valid"></div>					// missing '*' prefix at ngIf
+	
+	
 
 			
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2037,9 +2152,10 @@ Common use of ng-template:
 		
 		
 --------------------------------------------------------------------------------------------------------------------------------------------------
-ng-content directive
-====================
-Dynamic content. That is the simplest way to explain what ng-content provides. 
+ng-content directive (how to pass dynamic content to child component?)
+======================================================================
+Dynamic content from parent template. That is the simplest way to explain what ng-content provides. 
+
 You use the <ng-content></ng-content> tag as a placeholder for that dynamic content, 
 then when the template is parsed Angular will replace that placeholder tag with your content. 
 
@@ -2053,8 +2169,7 @@ Component <add-button>:
 Usage of component:
 
 		<add-button>
-			Add new item
-			
+			Add new item						<<<<< this is content which added to child in <ng-content> placeholder
 		</add-button>
 		
 
@@ -2063,11 +2178,6 @@ https://medium.com/@joshblf/wtf-is-ng-content-8382b2a664e1
 https://www.freecodecamp.org/news/everything-you-need-to-know-about-ng-template-ng-content-ng-container-and-ngtemplateoutlet-4b7b51223691/
 
 
---------------------------------------------------------------------------------------------------------------------------------------------------
-How to project content from parent to child component?
-======================================================		
-SEE ALSO:	ng-content directive		
-		
 --------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR: Can't have multiple template bindings on one element		
 ===========================================================
@@ -2268,8 +2378,8 @@ Example howto use ngModel on a standalone control:
 	
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
-Validation hints
-================
+Form validation basics
+======================
 - Validation handled by Angular automatically
 - Validation flags generated by form and formControl level in NgForm
 - Validation flags are managed automatically by Angular during navigating on form. 
@@ -2328,6 +2438,10 @@ Form styling tips for validation
 
 	<input type="email" class="form-control" ngModel name="email" required #email="ngModel">				<------- local reference to model
 	<span class="help-block" *ngIf="!email.valid && email.touched">Please enter a valid email!</span>
+	
+- Disable submit button if form is not valid:
+
+	<button type="submit" [disabled]="!form.valid">OK</button>
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How can you reference a FormControl behind an input field?
@@ -2587,6 +2701,14 @@ Howto use datepicker?
 	export class AppModule(){}
 
 
+- add 'bsDatepicker' directive to input tag:
+	
+	
+      <div class="col-md-4 mb-3">
+        <label for="email">Birth</label>
+        <input type="text" class="form-control" id="birth" [formControl]="birth" [ngClass]="{'is-invalid' : birth.invalid}" placeholder="Birth" bsDatepicker [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }">
+        <div class="invalid-feedback" *ngIf="birth.errors">{{getFormControlErrorMessage(birth)}}</div>
+      </div>
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to go back to previous page?
@@ -2843,8 +2965,8 @@ const routes: Routes = [
 --------------------------------------------------------------------------------------------------------------------------------------------------
 @ViewChild vs @ContentChild
 ===========================
-With @ViewChild you can refer an element of the current component template.
-With @ContentChild you also refer and elemet on the current component but in the content pushed from the parent into <ng-content>
+- With @ViewChild you can refer an element of the current component template.
+- With @ContentChild you also refer and elemet on the current component but in the content pushed from the parent into <ng-content>
 
 
 Child:	
@@ -3065,8 +3187,256 @@ ERROR: The Angular Compiler requires TypeScript >=X and <Y but Z was found inste
 npm install typescript@">=X <Y" 
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR in template with pipes: invalid number of arguments, expected 2
+=====================================================================
+If you have a custom pipe and you have this error in template reported by IDE?
+
+Is your template inside your .ts file ? If yes I doupt you use some pipe without specify all parameters ? 
+If it is the case you can make parameters of pipe as optional like:
 
 
+	@Pipe({name: 'licenseKeySort'})
+	export class LicenseKeySortPipe  implements PipeTransform {
+	  transform(arr:  LicenseKey[], args?: any): LicenseKey[] {					<<<<<< 2nd paramater is optional
+		return arr.sort((a, b) => {
+		  if (a.type === LicenseType.BASE) {
+			return -1;
+		  }
+		});
+	  }
+	}
+
+SEE ALSO:	https://github.com/angular/angular-cli/issues/14553	
 
 
 	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to create libraries?
+========================
+- Create library:
+	- Create a workspace and a library:
+
+		ng new my-workspace --create-application=false
+		cd my-workspace
+		ng generate library my-lib
+
+		
+	NOTE: 
+		In a workspace you have only a single packages.json which used by applications.
+		But a library has its own packages.json .
+		
+	- Changes:
+		- it creates ./projects/my-lib with its own packages.json
+		- it adds ng-packagr to packages.json
+		- it adds a new section to 'projects' of angular.json
+		- it adds path entries to GLOBAL tsconfig.json:
+		
+			    "paths": {
+				  "my-lib": [
+					"dist/my-lib/my-lib",
+					"dist/my-lib"
+				  ]
+				}
+		
+	- While developing a library, you must install all PEER DEPENDENCIES through devDependencies to ensure that the library compiles properly. 
+		So add your devendencies to packages.json of library here:
+			- peerDependencies
+				This section only contains dependencies but it does not install them.
+				Don't put it into 'normal' dependencies to avoid duplicated installation - consumer application's responsibility to install dependencied)
+				
+			- devDependencies
+				But you want to build it in development time, you can install it only for development if you put here.
+		
+		####################################################################################################
+		WHERE DEPENDENCIES SHOULD BE REGISTERED?
+		
+			- workspace:
+				- dependency in:	dependencies
+			- lib:
+				- dependency in:	peerDependencies and devDependencies
+				
+		####################################################################################################
+		
+		
+	- build it:
+
+		ng build my-lib
+
+Use a library:
+
+	Method 1:
+		- publish as NMP (optional):
+
+			ng build my-lib --prod
+			cd dist/my-lib
+			npm publish	
+
+			The key is to publish from your compiled library directory (dist). DON'T PUBLISH FROM YOUR LIBRARY CODEBASE in projects/my-lib.
+		
+		- The last step to use your library is to run 
+		
+				npm install my-lib 
+			
+			in an Angular application. The name of the library is the one defined in the package.json.
+	
+	Method 2:
+		- To use library in your own workspace:
+
+			- You don't have to publish your library to the npm package manager in order to use it in your own apps, but you do have to build it first.
+			
+				ng build my-lib
+				
+	
+SEE ALSO:	
+	https://angular.io/guide/creating-libraries	
+	https://indepth.dev/create-your-standalone-angular-library-in-10-minutes
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to add libraries to a project?
+==================================
+Binary library from global repository
+-------------------------------------
+- For most published Angular libraries, you can use the Angular CLI command:
+
+		ng add <lib_name>
+	
+	The ng add command:
+	- uses a PACKAGE MANAGER such as npm or yarn to install the library package, 
+	- and INVOKES SCHEMATICS that are included in the package to other scaffolding within the project code, 
+		such as adding import statements, fonts, themes, and so on.
+
+- You can do it also manually, install package and typings (if it has any):
+	for example:
+
+		npm install d3 --save
+		npm install @types/d3 --save-dev
+
+		
+Your local library from source
+------------------------------		
+Method 1:	all in a workspace
+
+	Create a workspace and create your application(s) and library(ies) into workspace.
+	All libraries will be accesible by default since 'ng generate library <lib>' will setup all configuration:
+		- libraries will be built into ./dist
+		- 'paths' entries are added to GLOBAL tsconfig.json to access libraries from applications
+
+		
+Method 2:	npm link
+	You can create links to external libraries which reside on your filesystem.
+
+	- create links:
+		- in ./dist/<lib>
+				
+			nmp link
+				
+		- in application project directory:
+	
+			npm link <lib>
+	
+	- continous build of library:
+	
+			ng build <lib> --watch
+
+			
+		NOTE: Build deletes 'dist' directory, you have to release it: close console apps - but you don't have to remove links.
+	
+	SEE MORE:	
+		doc\tools_and_languages\JavaScript\NodeJS\npm-FAQ.txt\How npm link works?
+		https://indepth.dev/create-your-standalone-angular-library-in-10-minutes
+		
+		
+SEE ALSO:	
+	https://angular.io/guide/using-libraries
+	How to create libraries?
+	https://medium.com/@alexishevia/the-magic-behind-npm-link-d94dcb3a81af
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Please consider adding ... to 'peerDependencies' or remove it from 'dependencies'.
+=========================================================================================
+If you have a library and you adds a dependency directly to (with nmp install) then you have this error message during build (ng build).
+
+Reason:
+
+In angular the application has the responsibility of providing the dependencies to libraries. 
+The main reason is to avoid having the same package in the app and in the library with a different version.
+
+Solution:
+
+	WHERE DEPENDENCIES SHOULD BE REGISTERED?
+
+		- workspace:
+			- dependency in:	dependencies
+		- lib:
+			- dependency in:	peerDependencies and devDependencies
+
+		NOTE:
+			PeerDependies just register dependencies but they don't install anything.
+			You need devDependencies if you want to use dependencies in a library in development time (e.g for code completion or building).
+
+		
+SEE ALSO:	https://nodejs.org/uk/blog/npm/peer-dependencies/		
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: No provider for ControlContainer found in NodeInjector
+=============================================================
+The ControlContainer is a abstract class which is extended by the AbstractFormGroupDirective inside the ReactiveFormsModule.
+The error is thrown if you're using the ReactiveFormsModule and a <form>-element without a FormGroup bound to it via [formGroup]="myForm".
+
+To fix this error you have to create a FormGroup and bind it to your form:
+
+	<form class="container" [formGroup]="myForm" (ngSubmit)="update()">
+	
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to map data to/from reactive forms?
+=======================================
+- Model -> Form:
+
+	this.form.patchValue(data);
+
+- Form -> Model:
+
+	data = this.form.getRawValue()
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+What is ViewContainerRef?
+=========================
+A DOM element (container) where I can put your newly created component as a SIBLING to this element.
+
+In Angular a view container is a special type of container where ONE OR MORE Views can be attached. 
+
+The ViewContainer provides an API that makes changes or dynamic updates to an View safe. 
+It contains two types of Views:
+	- Embedded: Views created from a TemplateRef instance.
+	- Host: Views created using a component factory.
+
+How to get ViewContainer? There are 2 options:
+
+	1. Annotate the reference like this:
+
+	   @ViewChild('viewcontainer', {read: ViewContainerRef})
+	   viewContainer: ViewContainerRef;	
+		
+	2. Inject via constructor:
+
+		constructor(private vc: ViewContainerRef) {}
+
+
+	
+SEE ALSO:	
+	https://netbasal.com/angular-2-understanding-viewcontainerref-acc183f3b682
+	https://fireflysemantics.medium.com/what-is-an-angular-view-container-a385e893573c
+	
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to render Date?
+===================
+Use DatePipe in interpolation. For example:
+
+	{{p.birth | date: 'yyyy-MM-dd'}}

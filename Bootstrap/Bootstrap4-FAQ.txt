@@ -3,7 +3,7 @@ Bootstrap 4 FAQ
 ===============
 
 - How to use Bootstrap 4 with Angular?
-
+- Comparing bootstrap vs. ng-bootstrap vs. ngx-bootstrap
 
 Fonts
 -----
@@ -11,28 +11,18 @@ Fonts
 - How to use fixed width icon?
 - How to add an icon placeholder?
 
+ngx-bootstrap
+-------------
+- ngx-datepicker
+
 ----------------------------------------------------------------------------------------------------------------------------------
 How to use Bootstrap 4 with Angular?
 ====================================
-METHOD 1 - install ng-bootstrap instead of simple Bootstrap:
+METHOD 1 - install ngx-bootstrap instead of simple Bootstrap:
 
-	- npm:
-	
-		ng add @ng-bootstrap/schematics
-	
-	- import module:
-	
-		import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+	ng add ngx-bootstrap  --component componentName
 
-		@NgModule({
-		  ...
-		  imports: [NgbModule, ...],
-		  ...
-		})
-		export class YourAppModule {
-		}	
-
-	SEE ALSO:	https://ng-bootstrap.github.io/#/getting-started
+	SEE ALSO:	https://valor-software.com/ngx-bootstrap/#/documentation#getting-started
 		
 
 METHOD 2:
@@ -43,15 +33,15 @@ METHOD 2:
 
 	- install Bootstrap:
 
-		npm install bootstrap jquery popper
+		npm install bootstrap jquery
 
-	- add Bootstrap CSS:
+	- add Bootstrap CSS and JS:
 
-		"styles": [
-			"src/styles.scss",
-			"node_modules/bootstrap/dist/css/bootstrap.min.css"
-		],
-		
+		node_modules/bootstrap/dist/css/bootstrap.css in the projects->architect->build->styles array,
+		node_modules/bootstrap/dist/js/bootstrap.js in the projects->architect->build->scripts array,
+		node_modules/bootstrap/dist/js/bootstrap.js in the projects->architect->build->scripts array,	
+	
+	
 
 ----------------------------------------------------------------------------------------------------------------------------------
 Input group with FontAwesome icon
@@ -103,3 +93,30 @@ Use fixed with icons and if you don't want to show an icon you just add a fixed 
 
 
 SEE ALSO:	How to use fixed width icon?
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+Comparing bootstrap vs. ng-bootstrap vs. ngx-bootstrap
+======================================================
+- Bootstrap depends on the jQuery and popper.js libraries, and if you don’t include them in your project, 
+	any Bootstrap components that rely on JavaScript will not work.
+	
+- Why not include those libs? 
+	For Angular, it’s better to avoid using libraries that make direct manipulation of the DOM (like jQuery) and let Angular handle that.
+
+- A better way is to use component libraries created for the sake of making Bootstrap work seamlessly with Angular such as ng-bootstrap andngx-bootstrap
+
+SEE ALSO:
+	https://www.techiediaries.com/angular-bootstrap/
+	https://npmcompare.com/compare/bootstrap,ng-bootstrap,ngx-bootstrap
+	
+	
+----------------------------------------------------------------------------------------------------------------------------------
+ngx-datepicker
+==============
+IMPORTANT NOTE:		add to all modules where you want to use datepicker:
+
+	BsDatepickerModule.forRoot(),
+	
+	
+	

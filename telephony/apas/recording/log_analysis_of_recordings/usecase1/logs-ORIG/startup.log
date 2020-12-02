@@ -1,0 +1,370 @@
+[2020-08-14 14:09:31,810] [INFO] [localhost-startStop-1] [Config.java:120] - #--------------------------------------------------------------
+[2020-08-14 14:09:31,812] [INFO] [localhost-startStop-1] [Config.java:121] - Reading CONFIGURATION from DB
+[2020-08-14 14:09:31,812] [INFO] [localhost-startStop-1] [Config.java:122] - #--------------------------------------------------------------
+[2020-08-14 14:09:31,823] [INFO] [localhost-startStop-1] [Config.java:354] - APASBase is APAS_6.0.0a_LINUX_SEL7.3_x86-64
+[2020-08-14 14:09:33,049] [INFO] [localhost-startStop-1] [Config.java:1162] - MIDLET: MIDLET_FILES_URI=/midlets, MIDLET_FILES_PATH=/var/lib/tomcat/webapps/andphone/midlets
+[2020-08-14 14:09:33,050] [INFO] [localhost-startStop-1] [Config.java:1329] - Got parameter from perl config file: SNMP_trapcommunity = public
+[2020-08-14 14:09:33,050] [INFO] [localhost-startStop-1] [Config.java:1329] - Got parameter from perl config file: SNMP_trapserver = 
+[2020-08-14 14:09:33,634] [INFO] [localhost-startStop-1] [Config.java:1603] - Config in DB is currently: 
+got version: global:6230
+
+[2020-08-14 14:09:33,679] [INFO] [localhost-startStop-1] [Config.java:143] - CONFIGURATION created/read.
+[2020-08-14 14:09:42,109] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:330] - #--------------------------------------------------------------
+[2020-08-14 14:09:42,110] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:331] - # APAS START UP ...
+[2020-08-14 14:09:42,111] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:332] - #   Version: 6.2.3-13372
+[2020-08-14 14:09:42,111] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:333] - #--------------------------------------------------------------
+[2020-08-14 14:09:42,687] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3541] - log directory is /var/log/apas
+[2020-08-14 14:09:42,687] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3542] - keystore is /var/lib/tomcat/.keystore
+[2020-08-14 14:09:42,822] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3554] - #--------------------------------------------------------------
+[2020-08-14 14:09:42,822] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3555] - Initalizing JMF...
+[2020-08-14 14:09:42,822] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3556] - #--------------------------------------------------------------
+[2020-08-14 14:09:43,259] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3563] - #--------------------------------------------------------------
+[2020-08-14 14:09:43,259] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3564] - Setting up syslog ...
+[2020-08-14 14:09:43,259] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3565] - #--------------------------------------------------------------
+[2020-08-14 14:09:44,409] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3594] - #--------------------------------------------------------------
+[2020-08-14 14:09:44,409] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3595] - Performing database migration/Updating schema...
+[2020-08-14 14:09:44,409] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3596] - #--------------------------------------------------------------
+[2020-08-14 14:09:46,844] [INFO] [APAS-JTAPIThread] [ModuleDB.java:45] - Starting to migrate mcast database schema
+[2020-08-14 14:09:46,907] [INFO] [APAS-JTAPIThread] [ModuleDB.java:47] - Starting to migrate recorder database schema
+[2020-08-14 14:09:47,048] [FATAL] [APAS-JTAPIThread] [ModuleDB.java:41] - Failed to migrate or create the recorder database schema!
+com.googlecode.flyway.core.api.FlywayException: Unable to determine URL for classpath location: com/andtek/andphone/recorder/migrations (ClassLoader: WebappClassLoader
+  context: andphone
+  delegate: false
+----------> Parent Classloader:
+java.net.URLClassLoader@515f550a
+)
+	at com.googlecode.flyway.core.util.scanner.classpath.ClassPathScanner.getLocationUrlsForPath(ClassPathScanner.java:179) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.util.scanner.classpath.ClassPathScanner.findResourceNames(ClassPathScanner.java:135) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.util.scanner.classpath.ClassPathScanner.scanForResources(ClassPathScanner.java:60) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.resolver.sql.SqlMigrationResolver.resolveMigrations(SqlMigrationResolver.java:90) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.resolver.CompositeMigrationResolver.collectMigrations(CompositeMigrationResolver.java:158) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.resolver.CompositeMigrationResolver.doFindAvailableMigrations(CompositeMigrationResolver.java:140) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.resolver.CompositeMigrationResolver.resolveMigrations(CompositeMigrationResolver.java:112) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.info.MigrationInfoServiceImpl.refresh(MigrationInfoServiceImpl.java:87) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.command.DbMigrate$1.doInTransaction(DbMigrate.java:144) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.command.DbMigrate$1.doInTransaction(DbMigrate.java:138) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.util.jdbc.TransactionTemplate.execute(TransactionTemplate.java:54) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.command.DbMigrate.migrate(DbMigrate.java:137) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.Flyway$1.execute(Flyway.java:862) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.Flyway$1.execute(Flyway.java:815) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.Flyway.execute(Flyway.java:1177) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.Flyway.migrate(Flyway.java:815) ~[flyway-core-2.1.1.jar:?]
+	at com.andtek.andphone.utils.db.FlywayUtil.initModule(FlywayUtil.java:38) ~[classes/:?]
+	at com.andtek.andphone.recorder.ModuleDB.internalCreate(ModuleDB.java:49) ~[classes/:?]
+	at com.andtek.andphone.recorder.ModuleDB.create(ModuleDB.java:39) [classes/:?]
+	at com.andtek.andphone.utils.ModuleDBUtils.createDB(ModuleDBUtils.java:977) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3597) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:364) [classes/:?]
+[2020-08-14 14:09:47,051] [INFO] [APAS-JTAPIThread] [ModuleDB.java:36] - Starting to migrate recordermgmt database schema
+[2020-08-14 14:09:47,349] [INFO] [APAS-JTAPIThread] [ModuleDB.java:51] - Starting to migrate communicator database schema
+[2020-08-14 14:09:53,296] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3598] - Database schema update done.
+[2020-08-14 14:09:53,578] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Setting up default AXL server group
+[2020-08-14 14:09:53,579] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3661] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,579] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3662] - Starting JTAPI updater thread...
+[2020-08-14 14:09:53,579] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3663] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,586] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3666] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,586] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3667] - Initalizing AXL...
+[2020-08-14 14:09:53,586] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3668] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,851] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3684] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,851] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3685] - Initalizing Group Module ...
+[2020-08-14 14:09:53,851] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:3686] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,863] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:369] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,863] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:370] - Reading blacklists ...
+[2020-08-14 14:09:53,863] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:371] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,887] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:377] - Blacklist initialized
+[2020-08-14 14:09:53,887] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:380] - #--------------------------------------------------------------
+[2020-08-14 14:09:53,887] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:381] - Initializing modules ...
+[2020-08-14 14:09:53,887] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:382] - #--------------------------------------------------------------
+[2020-08-14 14:09:54,017] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module global
+[2020-08-14 14:09:54,137] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Setting up authentication servers
+[2020-08-14 14:09:54,183] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Loading monitor servers from DB
+[2020-08-14 14:09:54,185] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Loading pools from DB
+[2020-08-14 14:09:54,213] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Loading schedules from DB
+[2020-08-14 14:09:54,251] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Loading regexs from DB
+[2020-08-14 14:09:54,264] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Loading locales from DB
+[2020-08-14 14:09:54,286] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Loading AD authentication info from DB
+[2020-08-14 14:09:54,288] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Setting up firewall rules
+[2020-08-14 14:09:54,314] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Cleanup support directory
+[2020-08-14 14:09:54,315] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Starting SNMP Agent
+[2020-08-14 14:09:54,746] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module global done.
+[2020-08-14 14:09:54,746] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module lockout
+[2020-08-14 14:09:54,773] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module lockout done.
+[2020-08-14 14:09:54,773] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module partner
+[2020-08-14 14:09:54,797] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module partner done.
+[2020-08-14 14:09:54,797] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module ldap
+[2020-08-14 14:09:54,800] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module ldap done.
+[2020-08-14 14:09:54,800] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module mcast
+[2020-08-14 14:09:54,800] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module mcast done.
+[2020-08-14 14:09:54,800] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module recorder
+[2020-08-14 14:09:54,901] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module recorder done.
+[2020-08-14 14:09:54,901] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module recordermgmt
+[2020-08-14 14:09:54,915] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module recordermgmt done.
+[2020-08-14 14:09:54,915] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module client
+[2020-08-14 14:09:54,915] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module client done.
+[2020-08-14 14:09:54,915] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module dialer
+[2020-08-14 14:09:54,915] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module dialer done.
+[2020-08-14 14:09:54,915] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module observer
+[2020-08-14 14:09:54,915] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module observer done.
+[2020-08-14 14:09:54,916] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module testing
+[2020-08-14 14:09:54,916] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module testing done.
+[2020-08-14 14:09:54,916] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module settings
+[2020-08-14 14:09:54,917] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module settings done.
+[2020-08-14 14:09:54,917] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module attendant
+[2020-08-14 14:09:54,917] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module attendant done.
+[2020-08-14 14:09:54,917] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module io
+[2020-08-14 14:09:54,917] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module io done.
+[2020-08-14 14:09:54,917] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module blacklist
+[2020-08-14 14:09:54,917] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module blacklist done.
+[2020-08-14 14:09:54,917] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module provisioning
+[2020-08-14 14:09:55,960] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module provisioning done.
+[2020-08-14 14:09:55,960] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module monitoring
+[2020-08-14 14:09:55,960] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module monitoring done.
+[2020-08-14 14:09:55,960] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module apps
+[2020-08-14 14:09:55,960] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module apps done.
+[2020-08-14 14:09:55,960] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktop
+[2020-08-14 14:09:55,960] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktop done.
+[2020-08-14 14:09:55,961] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module groupma
+[2020-08-14 14:09:55,961] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module groupma done.
+[2020-08-14 14:09:55,961] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module dect
+[2020-08-14 14:09:55,961] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module dect done.
+[2020-08-14 14:09:55,961] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module highavailability
+[2020-08-14 14:09:55,971] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module highavailability done.
+[2020-08-14 14:09:55,971] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module callrouting
+[2020-08-14 14:09:55,974] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module callrouting done.
+[2020-08-14 14:09:55,974] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module communicator
+[2020-08-14 14:09:56,084] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module communicator done.
+[2020-08-14 14:09:56,084] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module groupacd
+[2020-08-14 14:09:56,234] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module groupacd done.
+[2020-08-14 14:09:56,234] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module ivr
+[2020-08-14 14:09:56,234] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module ivr done.
+[2020-08-14 14:09:56,234] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module reports
+[2020-08-14 14:09:56,241] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module reports done.
+[2020-08-14 14:09:56,242] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module phonemenu
+[2020-08-14 14:09:56,245] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module phonemenu done.
+[2020-08-14 14:09:56,245] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module calllist
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module calllist done.
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module inout
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module inout done.
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module reserved
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module reserved done.
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andmobile
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andmobile done.
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module swus
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module swus done.
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopctd
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopctd done.
+[2020-08-14 14:09:56,246] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopcti
+[2020-08-14 14:09:56,247] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopcti done.
+[2020-08-14 14:09:56,247] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopac
+[2020-08-14 14:09:56,247] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopac done.
+[2020-08-14 14:09:56,247] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module recorderha
+[2020-08-14 14:09:56,247] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module recorderha done.
+[2020-08-14 14:09:56,247] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module base
+[2020-08-14 14:09:56,247] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module base done.
+[2020-08-14 14:09:56,247] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module metadirectory
+[2020-08-14 14:09:56,248] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module metadirectory done.
+[2020-08-14 14:09:56,248] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module webclient
+[2020-08-14 14:09:56,249] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module webclient done.
+[2020-08-14 14:09:56,249] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module midlet
+[2020-08-14 14:09:56,249] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module midlet done.
+[2020-08-14 14:09:56,249] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module presence
+[2020-08-14 14:09:56,254] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module presence done.
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopcc
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopcc done.
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopsv
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module desktopsv done.
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module android
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module android done.
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module directorylight
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module directorylight done.
+[2020-08-14 14:09:56,255] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andguard
+[2020-08-14 14:09:56,663] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andguard done.
+[2020-08-14 14:09:56,663] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andguardredirect
+[2020-08-14 14:09:56,663] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andguardredirect done.
+[2020-08-14 14:09:56,663] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andguardlockout
+[2020-08-14 14:09:56,663] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andguardlockout done.
+[2020-08-14 14:09:56,664] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andguardwhitelist
+[2020-08-14 14:09:56,664] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module andguardwhitelist done.
+[2020-08-14 14:09:56,664] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module webattendant
+[2020-08-14 14:09:56,666] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module webattendant done.
+[2020-08-14 14:09:56,666] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module emergencymapping
+[2020-08-14 14:09:56,666] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initialization of module emergencymapping done.
+[2020-08-14 14:09:56,666] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:384] - Modules initialized.
+[2020-08-14 14:09:56,666] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:387] - #--------------------------------------------------------------
+[2020-08-14 14:09:56,666] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:388] - RRD setup for all modules ...
+[2020-08-14 14:09:56,666] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:389] - #--------------------------------------------------------------
+[2020-08-14 14:09:56,712] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:391] - RRD initialized.
+[2020-08-14 14:09:56,712] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:394] - #--------------------------------------------------------------
+[2020-08-14 14:09:56,712] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:395] - Initializing JTAPI ...
+[2020-08-14 14:09:56,712] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:396] - #--------------------------------------------------------------
+[2020-08-14 14:09:56,814] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:2599] - Opening 10.51.51.34;login=FTOTH_APAS2;passwd=XXXXXX;appinfo=ANDPhone;InstanceID=andphone1...
+[2020-08-14 14:09:57,146] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:2611] - Enabled JTAPI support for hunt list
+[2020-08-14 14:09:57,736] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:2639] - initJtapi(): starting
+[2020-08-14 14:09:57,740] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:2646] - Provider name: 10.51.51.34
+
+[2020-08-14 14:09:57,791] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - Initializing DeviceListX cache and executing ScanForNewDevices.
+[2020-08-14 14:10:07,799] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module global
+[2020-08-14 14:10:07,799] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module global done.
+[2020-08-14 14:10:07,800] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module lockout
+[2020-08-14 14:10:07,800] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module lockout done.
+[2020-08-14 14:10:07,800] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module partner
+[2020-08-14 14:10:07,800] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - initJTAPI - initializing Manager RPs and Group RPs
+[2020-08-14 14:10:07,801] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - initJTAPI - initializing Group Members
+[2020-08-14 14:10:07,802] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module partner done.
+[2020-08-14 14:10:07,803] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module ldap
+[2020-08-14 14:10:07,820] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module ldap done.
+[2020-08-14 14:10:07,821] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module mcast
+[2020-08-14 14:10:07,823] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module mcast done.
+[2020-08-14 14:10:07,823] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module recorder
+[2020-08-14 14:10:07,858] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module recorder done.
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module recordermgmt
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module recordermgmt done.
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module client
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module client done.
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module dialer
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module dialer done.
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module observer
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module observer done.
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module testing
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module testing done.
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module settings
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module settings done.
+[2020-08-14 14:10:07,859] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module attendant
+[2020-08-14 14:10:07,860] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module attendant done.
+[2020-08-14 14:10:07,860] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module io
+[2020-08-14 14:10:07,860] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module io done.
+[2020-08-14 14:10:07,860] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module blacklist
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module blacklist done.
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module provisioning
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module provisioning done.
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module monitoring
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module monitoring done.
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module apps
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module apps done.
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktop
+[2020-08-14 14:10:07,895] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktop done.
+[2020-08-14 14:10:07,896] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module groupma
+[2020-08-14 14:10:07,896] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module groupma done.
+[2020-08-14 14:10:07,896] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module dect
+[2020-08-14 14:10:07,896] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module dect done.
+[2020-08-14 14:10:07,896] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module highavailability
+[2020-08-14 14:10:07,896] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module highavailability done.
+[2020-08-14 14:10:07,896] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module callrouting
+[2020-08-14 14:10:07,903] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module callrouting
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal  is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
+	at com.andtek.andphone.callrouting.CTIPortObserver.observe(CTIPortObserver.java:164) ~[classes/:?]
+	at com.andtek.andphone.callrouting.Module.initJTAPI(Module.java:671) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2020-08-14 14:10:07,904] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module callrouting done.
+[2020-08-14 14:10:07,904] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module communicator
+[2020-08-14 14:10:07,905] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module communicator
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_COMM is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.communicator.Module.setupRouteCallBack(Module.java:435) ~[classes/:?]
+	at com.andtek.andphone.communicator.Module.initJTAPI(Module.java:715) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2020-08-14 14:10:07,906] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module communicator done.
+[2020-08-14 14:10:07,906] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module groupacd
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module groupacd done.
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module ivr
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module ivr done.
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module reports
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module reports done.
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module phonemenu
+[2020-08-14 14:10:07,910] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module phonemenu
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_MENU is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.phonemenu.Module.initJTAPI(Module.java:52) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module phonemenu done.
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module calllist
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module calllist done.
+[2020-08-14 14:10:07,910] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module inout
+[2020-08-14 14:10:07,911] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module inout done.
+[2020-08-14 14:10:07,911] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module reserved
+[2020-08-14 14:10:07,911] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module reserved done.
+[2020-08-14 14:10:07,911] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andmobile
+[2020-08-14 14:10:07,911] [ERROR] [APAS-JTAPIThread] [Modules.java:759] - Exception while initializing JTAPI for module andmobile
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_CP_MOBILE is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
+	at com.andtek.andphone.andmobile.CTIPortObserver.observe(CTIPortObserver.java:185) ~[classes/:?]
+	at com.andtek.andphone.andmobile.Module.initJTAPI(Module.java:108) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:755) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:740) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2758) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2511) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andmobile done.
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module swus
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module swus done.
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopctd
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopctd done.
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopcti
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopcti done.
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopac
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopac done.
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module recorderha
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module recorderha done.
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module base
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module base done.
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module metadirectory
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module metadirectory done.
+[2020-08-14 14:10:07,912] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module webclient
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module webclient done.
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module midlet
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module midlet done.
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module presence
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module presence done.
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopcc
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopcc done.
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopsv
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module desktopsv done.
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module android
+[2020-08-14 14:10:07,913] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module android done.
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module directorylight
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module directorylight done.
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andguard
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andguard done.
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andguardredirect
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andguardredirect done.
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andguardlockout
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andguardlockout done.
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andguardwhitelist
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module andguardwhitelist done.
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module webattendant
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module webattendant done.
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module emergencymapping
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [Modules.java:1033] - JTAPI initialization of module emergencymapping done.
+[2020-08-14 14:10:07,914] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:2815] - Setting up SIPTrunkMA ...
+[2020-08-14 14:10:07,920] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:2823] - Done: Setting up SIPTrunkMA
+[2020-08-14 14:10:07,944] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:2784] - initJtapi(): done in 10 seconds and 3 AXL requests
+[2020-08-14 14:10:07,944] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:398] - JTAPI initialized.
+[2020-08-14 14:10:08,602] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:411] - #--------------------------------------------------------------
+[2020-08-14 14:10:08,602] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:412] - Initializing Mary TTS ...
+[2020-08-14 14:10:08,602] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:413] - #--------------------------------------------------------------
+[2020-08-14 14:10:12,295] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:415] - Mary Text to Speech system initialized.
+[2020-08-14 14:10:12,295] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:426] - #--------------------------------------------------------------
+[2020-08-14 14:10:12,295] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:427] -  APAS STARTUP COMPLETED. NOW ENTERING RUN LOOP...
+[2020-08-14 14:10:12,295] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:428] - #--------------------------------------------------------------
+[2020-08-14 14:10:12,295] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:532] - New thread count maximum reached: 234
+[2020-08-14 14:10:12,295] [WARN] [APAS-JTAPIThread] [JTAPIThread.java:526] - Provider went out of service 1
+[2020-08-14 14:12:42,334] [INFO] [APAS-JTAPIThread] [JTAPIThread.java:532] - New thread count maximum reached: 239

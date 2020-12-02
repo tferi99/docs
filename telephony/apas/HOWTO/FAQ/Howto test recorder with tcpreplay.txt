@@ -2,6 +2,14 @@
 Howto test recorder with tcpreplay?
 ===================================
 
+- Basics
+- Replay recordings with SIP trunk recording
+- How to install tcpreplay?
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Basics
+======
+
 Customer often send PCAP file whish can help us to reproduce problems
 if you replay it to your local recorder.
 
@@ -10,7 +18,7 @@ You have to build it from source code.
 
 tcpreplay - replays pcap files at arbitrary speeds onto the network
 
-	tcpreplay -t -i <interface>
+	tcpreplay -i <interface>
 
 
 Only question how to trigger recorder to capture RTP streams?
@@ -72,3 +80,76 @@ CSeq: 1 OPTIONS
 Warning: 399 BAL-CUCM-01 "Unable to find a device handler for the request received on port 5060 from 192.168.5.33"
 Content-Length: 0 
 
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Replay recordings with SIP trunk recording
+==========================================
+
+- Pre-requisites:
+	- configured SIP trunk recording
+	- installed tcpreplay on APAS linux
+
+
+- To replay a recording of a call the steps are the followings:
+	- get recordCall entries from andphone.log filtering by callID, for example:
+
+		XML_SOCKET.*recordCall.*49225031
+		
+	- clean log lines, leave only XML messages in file
+
+	- get nearend and farend treams as PCAP file from original PCAP by filtering with port information retrieved from recordCall messages:
+		
+		- nearend filter for Wireshark:		udp && udp.port == <srcPort>
+		- farend filter for Wireshark:		udp && udp.port == <dstPort>
+
+
+	- create CMD files from messages with createReplayCmd.sh
+
+		It creates files from every single line and adds a binary '0x00' terminatour.
+		
+		NOTE: recorder waiting for XML messages which are terminated by 0 byte
+
+	- create a replay script which:
+		1. send XML messages to recorder with NetCat - not all, all which does not contain stopOut="1"
+		2. tcpreplay -i <strem PCAP>
+		3. wait 2-3 seconds
+		4. finally send XML messages to recorder with NetCat - which contains stopOut="1"
+		
+	- add recording rule to APAS where 'Calling or Called party' is any calling or caled party from 1st recordCall message
+
+	- copy replay stream PCAP files, CMD files and replay script to APAS linux
+
+	- call replay script
+
+		Debug recording:
+			- watch 'Recordes Status' debug page
+			- tail andphone_record.log
+				
+
+----------------------------------------------------------------------------------------------------------------------------------------------------				
+How to install tcpreplay?
+=========================
+- install general build tools, git and libpcap libs:
+
+	yum groupinstall 'Development Tools'
+	yum install libpcap-devel.x86_64
+	
+
+- download latest release source (not from GitHub, it has a different build), e.g:
+
+	Latest release:	tcpreplay-4.3.3.tar.xz
+	
+- extract source package:
+
+	tar xf tcpreplay-4.3.3.tar.xz
+	
+- build and install:
+
+	./configure
+	make
+	sudo make install
+	
+	
+SEE ALSO:
+	http://tcpreplay.appneta.com/wiki/tcpreplay
+	http://tcpreplay.appneta.com/wiki/installation.html
+	
