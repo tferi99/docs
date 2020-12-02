@@ -1,0 +1,268 @@
+==============
+PostgreSQL FAQ
+==============
+
+Maintenance
+-----------
+- Howto get location of current config file?
+- Howto backup/restore?
+- Howto configure server?
+- How to set owner of a database/table?
+- ERROR:  must be owner of relation
+- How to get the current configuration settings?
+- How to show structure of table (desc)?
+- How to get size informations from PostgreSQL?
+
+System tables
+-------------
+- Important system tables
+
+Security
+--------
+- Howto change password of a user?
+- Howto create read-only user on a database?
+
+Command line
+------------
+- Howto call PSQL commmand from command line?
+- Howto insert non-ascii characters with PSQL?
+
+Development
+-----------
+- How to log Postgres SQL queries?
+
+
+-------------------------------------------------------------------------------------------------------
+Howto get location of current config file?
+==========================================
+
+postgres=# SHOW config_file;
+               config_file
+------------------------------------------
+ /etc/postgresql/9.3/main/postgresql.conf
+
+
+postgres=# SHOW data_directory;
+        data_directory
+------------------------------
+ /var/lib/postgresql/9.3/main 
+ 
+ 
+-------------------------------------------------------------------------------------------------------
+Howto change password of a user?
+================================
+
+ALTER USER <user> [[UN]ENCRYPTED] PASSWORD 'password'
+
+e.g.
+
+	alter user john password 'smith'
+	
+	
+
+-------------------------------------------------------------------------------------------------------
+Important system tables
+=======================
+
+	pg_settings	: session runtime parameters
+	pg_tables : tables
+
+
+-------------------------------------------------------------------------------------------------------
+Howto backup/restore?
+=====================
+Backup:
+
+	pg_dump database > file
+
+Restore:
+
+	createdb <database>
+	psql database < file
+
+
+-------------------------------------------------------------------------------------------------------
+Howto configure server?
+=======================
+Configuration file:
+	 /usr/local/pgsql/data/postgresql.conf
+
+Setting maximal number of connections:
+	- change max_connections
+	- change shared_buffers = max_connections * 2
+
+	(maybe you have to restart Cygwin)
+
+
+-------------------------------------------------------------------------------------------------------
+How to set owner of a database/table?
+=====================================
+ALTER DATABASE name OWNER TO new_owner;
+ALTER TABLE name OWNER TO new_owner;
+
+-------------------------------------------------------------------------------------------------------
+ERROR:  must be owner of relation
+=================================
+To alter a table you have to be the owner of this table.
+
+List tables with:
+
+	\d
+	
+Set owner:
+
+	ALTER TABLE name OWNER TO new_owner;
+
+-------------------------------------------------------------------------------------------------------
+Howto call PSQL commmand from command line?
+===========================================
+psql -c 'command'
+
+Additional options:
+	-P param		: set parameters
+		-P pager	: toggle (switch off) pager
+		-P t		: tupple only mode (only data, no header, footer)
+	-A 				: not aligned mode
+
+For example listing database tables:
+	
+	psql jiradb -P pager -P t -c "\dt" -A
+
+-------------------------------------------------------------------------------------------------------
+Howto create read-only user on a database?
+==========================================
+GRANT USAGE ON SCHEMA public TO <user>;
+
+psql -U postgres -qAt -c "select 'grant select on ' || tablename || ' to \"<user>\";' from pg_tables where schemaname = 'public'" <db> | psql -U postgres <db>
+
+-------------------------------------------------------------------------------------------------------
+How to log Postgres SQL queries?
+================================
+In your data/postgresql.conf file, change the log_statement setting to 'all'.
+
+
+-------------------------------------------------------------------------------------------------------
+Howto insert non-ascii characters with PSQL?
+============================================
+If you want to insert non-ascii (e.g. Hungarian) characters into UTF8 database, do the followings:
+
+- create UTF8 database
+- Write SQL script with ASCII enciding.
+- add encoding to the 1st line of script
+
+E.g.:
+
+	SET CLIENT_ENCODING TO 'WIN1250';
+	insert into country(name, shortname, officelocation) values('Hungary', 'HUN', 'Balatonfüred');
+	
+
+-------------------------------------------------------------------------------------------------------
+How to get the current configuration settings?
+==============================================
+General settings:
+
+	'pg_settings' table contains configuration settings.
+	For  example to get autovacuum state:
+
+		select * from pg_settings 
+		where name like 'autovacuum%';
+
+Table specific settings:
+
+	select relname, reloptions
+	from pg_class
+
+
+-------------------------------------------------------------------------------------------------------
+How to show structure of table (desc)?
+======================================
+List databases:		\l
+	
+Connect:			\c
+	
+List tables:		\d
+	
+Desc tables:		\d <table>
+	
+
+-------------------------------------------------------------------------------------------------------
+How to get size informations from PostgreSQL?
+=============================================
+- General Table Size Information:
+
+	SELECT *, pg_size_pretty(total_bytes) AS total
+		, pg_size_pretty(index_bytes) AS INDEX
+		, pg_size_pretty(toast_bytes) AS toast
+		, pg_size_pretty(table_bytes) AS TABLE
+	  FROM (
+	  SELECT *, total_bytes-index_bytes-COALESCE(toast_bytes,0) AS table_bytes FROM (
+		  SELECT c.oid,nspname AS table_schema, relname AS TABLE_NAME
+				  , c.reltuples AS row_estimate
+				  , pg_total_relation_size(c.oid) AS total_bytes
+				  , pg_indexes_size(c.oid) AS index_bytes
+				  , pg_total_relation_size(reltoastrelid) AS toast_bytes
+			  FROM pg_class c
+			  LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+			  WHERE relkind = 'r'
+	  ) a
+	) a;
+	
+  OPTIMIZED:
+  
+	SELECT *, pg_size_pretty(total_bytes) AS total
+			, pg_size_pretty(index_bytes) AS INDEX
+			, pg_size_pretty(toast_bytes) AS toast
+			, pg_size_pretty(table_bytes) AS TABLE
+		  FROM (
+		  SELECT *, total_bytes-index_bytes-COALESCE(toast_bytes,0) AS table_bytes FROM (
+			  SELECT c.oid,nspname AS table_schema, relname AS TABLE_NAME
+					  , c.reltuples AS row_estimate
+					  , pg_total_relation_size(c.oid) AS total_bytes
+					  , pg_indexes_size(c.oid) AS index_bytes
+					  , pg_total_relation_size(reltoastrelid) AS toast_bytes
+				  FROM pg_class c
+				  LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+				  WHERE relkind = 'r' and nspname = 'public'
+		  ) a
+		) a order by total_bytes desc  
+	
+	
+	
+- Finding the largest databases in your cluster:
+
+	SELECT d.datname AS Name,  pg_catalog.pg_get_userbyid(d.datdba) AS Owner,
+		CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT')
+			THEN pg_catalog.pg_size_pretty(pg_catalog.pg_database_size(d.datname))
+			ELSE 'No Access'
+		END AS SIZE
+	FROM pg_catalog.pg_database d
+		ORDER BY
+		CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT')
+			THEN pg_catalog.pg_database_size(d.datname)
+			ELSE NULL
+		END DESC -- nulls first
+		LIMIT 20		
+
+
+- Finding the size of your biggest relations:
+
+	SELECT nspname || '.' || relname AS "relation",
+		pg_size_pretty(pg_relation_size(C.oid)) AS "size"
+	  FROM pg_class C
+	  LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+	  WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+	  ORDER BY pg_relation_size(C.oid) DESC
+	  LIMIT 20;
+	  
+- Finding the total size of your biggest tables:
+
+	SELECT nspname || '.' || relname AS "relation",
+		pg_size_pretty(pg_total_relation_size(C.oid)) AS "total_size"
+	  FROM pg_class C
+	  LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+	  WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+		AND C.relkind <> 'i'
+		AND nspname !~ '^pg_toast'
+	  ORDER BY pg_total_relation_size(C.oid) DESC
+	  LIMIT 20;	
+	  

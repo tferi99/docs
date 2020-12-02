@@ -1,0 +1,12 @@
+====================
+SmartBootManager FAQ
+====================
+
+-------------------------------------------------------------------------------------------------------------------------------------
+Howto install a menu to launch multiple OSs?
+============================================
+
+- Start SBM (SmartBootManager) from Hiren's CD
+	You can find it in the main menu.
+	
+	

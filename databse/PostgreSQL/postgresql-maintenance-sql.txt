@@ -1,0 +1,55 @@
+Add:
+----
+ALTER TABLE <table> ADD COLUMN <column> <type>;
+UPDATE <table> SET <column> = <value>;
+ALTER TABLE <table> ALTER COLUMN <column> SET NOT NULL;
+
+Remove:
+-------
+ALTER TABLE <table> DROP COLUMN <column>;
+ALTER TABLE <table> ALTER COLUMN <column> DROP NOT NULL;
+
+Adding serial column:
+---------------------
+ALTER TABLE <table> ADD COLUMN <column> INTEGER;
+ALTER TABLE <table> ALTER COLUMN <column> SET DEFAULT nextval('<table>_<column>_seq')
+
+
+Adding serial column as primary key:
+------------------------------------
+Adding serial column +
+
+ALTER TABLE <table> ALTER COLUMN <column> SET NOT NULL; 
+
+
+Rename
+------
+ALTER TABLE products RENAME COLUMN product_no TO product_number;
+ALTER TABLE products RENAME TO items;
+
+
+Resizing varchar columns
+------------------------
+Getting length (this is length + 4):
+
+	SELECT atttypmod FROM pg_attribute
+	WHERE attrelid = 'TABLE1'::regclass
+	AND attname = 'COL1';
+	
+Resizing:
+
+	UPDATE pg_attribute SET atttypmod = <length + 4>
+	WHERE attrelid = '<TABLE_NAME>'::regclass
+	AND attname = '<COL_NAME>';
+	
+	e.g.
+	
+	UPDATE pg_attribute SET atttypmod = 2048+4
+	WHERE attrelid = 'serviceorderitem'::regclass
+	AND attname = 'serviceoptions';
+
+Sequence
+--------
+CREATE SEQUENCE <table>_<column>_seq;
+SELECT nextval('<seq>')
+SELECT setval('<seq>' [, newval-1])

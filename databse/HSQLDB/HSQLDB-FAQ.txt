@@ -1,0 +1,43 @@
+==========
+HSQLDB FAQ
+==========
+
+Setup
+-----
+- JDBC setup
+
+Troubleshooting
+---------------
+- 'UNIQUE constraint already exists' message during exporting schema with Hibernate
+
+-------------------------------------------------------------------------------------------------------------
+JDBC setup
+==========
+In memory: 
+
+	hibernate.dialect=org.hibernate.dialect.HSQLDialect
+	hibernate.connection.driver_class=org.hsqldb.jdbcDriver
+	hibernate.connection.url=jdbc:hsqldb:mem:timetrac
+	hibernate.connection.username=sa
+	hibernate.connection.password=
+
+	hibernate.format_sql=false
+	hibernate.show_sql=true
+	hibernate.hbm2ddl.auto=create
+
+Server:
+
+	<hibernate.connection.url>jdbc:hsqldb:hsql://localhost:9001</hibernate.connection.url>
+
+Local file:
+
+	<hibernate.connection.url>jdbc:hsqldb:file:/tmp/hsqldb/timetrac</hibernate.connection.url>
+	
+-------------------------------------------------------------------------------------------------------------
+'UNIQUE constraint already exists' message during exporting schema with Hibernate
+=================================================================================
+
+You need to use Hibernate 3.5.6 together with HSQLDB 2.0.1 snapshot jar (or older). 
+Older Hibernate jars work with HSQLDB 1.8.x. 
+
+

@@ -1,0 +1,35 @@
+===========
+MongoDB-FAQ
+===========
+
+- Howto install?
+
+----------------------------------------------------------------------------------------------------------
+Howto install?
+==============
+- Download and install MongoDB
+
+- Create a MongoDB config file, it’s just a text file, for example C:\mongodb\mongo.config
+
+	#store data here
+	dbpath=C:\mongodb\data
+
+	\\all output go here
+	logpath=C:\mongodb\log\mongo.log
+
+	\\log read and write operations
+	diaglog=3
+	
+- Run MongoDB server
+
+	mongod.exe --config C:\mongodb\mongo.config
+
+- Connect to MongoDB
+	
+	Uses mongo.exe to connect to the started MongoDB server.
+
+	C:\mongodb\bin>mongo MongoDB shell version: 2.2.3 connecting to: test
+
+	//mongodb shell
+	
+- 	

@@ -1,0 +1,94 @@
+=========
+MySQL FAQ
+=========
+
+Setup
+-----
+How to setup MySQL server on Windows?
+
+Administration
+--------------
+- Howto connect to database?
+- Howto create a database?
+- Howto rename a database?
+- Howto use mysql console?
+- Howto create a user?
+- Howto list users?
+- Howto show variables?
+
+---------------------------------------------------------------------------------------------------------------------------------
+Howto create a database?
+=========================
+	mysql -u <user> -p
+	create database <database>;
+
+OR
+
+	CREATE SCHEMA `andphone` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+
+---------------------------------------------------------------------------------------------------------------------------------
+Howto connect to database?
+==========================
+mysql -u <user> [-h <host>] -p 
+
+---------------------------------------------------------------------------------------------------------------------------------
+Howto rename a database?
+========================
+
+Method 1:
+---------
+	mysqldump -u username -p -v olddatabase > olddbdump.sql
+	mysqladmin -u username -p drop newdatabase
+	mysqladmin -u username -p create newdatabase
+	mysql -u username -p newdatabase < olddbdump.sql
+	
+---------------------------------------------------------------------------------------------------------------------------------
+Howto use mysql console?
+========================
+Connect:
+
+	mysql -u username -p <database>
+	
+List databases:
+
+	show databases;
+	
+Switch schema:
+
+	use <database>;
+	
+Getting information about database:
+
+	status;
+	
+---------------------------------------------------------------------------------------------------------------------------------
+How to setup MySQL server on Windows?
+=====================================
+- Go to skysql.com
+- Download MSI
+- Follow this tutorial:
+
+	http://www.youtube.com/watch?v=AqQc3YqfelE
+	
+	
+---------------------------------------------------------------------------------------------------------------------------------
+Howto create a user?
+====================
+CREATE USER 'jeffrey'@'localhost' IDENTIFIED BY 'mypass';	
+GRANT ALL PRIVILEGES ON 'somedatabase.*' TO 'jeffrey'@'localhost';
+
+---------------------------------------------------------------------------------------------------------------------------------
+Howto list users?
+=================
+Users:
+
+	select user,host from mysql.user;
+
+Privileges:
+
+	
+---------------------------------------------------------------------------------------------------------------------------------
+Howto show variables?
+=====================
+show variables;	
+

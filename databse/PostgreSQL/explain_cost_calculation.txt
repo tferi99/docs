@@ -1,0 +1,224 @@
+Explain plan calculation tips
+=============================
+1. Calculation of cost
+2. More info about objects
+3. Execution operators
+
+1. Calculation of cost
+----------------------
+Calculation in draft:
+
+	cost = pages + .01 * tuples
+	
+	where tuples: rows
+	pages: pages to read
+
+Query to get exact information:
+
+	SELECT relpages, reltuples 
+		FROM pg_class 
+		RELNAME = '<table name>';
+
+For example:
+
+	> explain select * from projects
+	
+	
+		QUERY PLAN                                                  
+	 ----------------------------------------------------------- 
+	 Seq Scan on projects  (cost=0.00..16.23 rows=523 width=126) 
+
+	 1 record(s) selected [Fetch MetaData: 0/ms] [Fetch Data: 0/ms] 
+
+	 [Executed: 2007.06.19. 12:52:26 CEST ] [Execution: 0/ms] 
+
+	 
+	
+	> select relpages, reltuples from pg_class where relname = 'projects';
+	
+	relpages     reltuples    
+	 -----------  ------------ 
+	 11           523          
+
+
+	-----------> cost: 11 + 523 * .01 = 16.23
+	
+	
+2. More info about objects
+==========================
+You can get more information from 'pg_class' table since it contains statistics about 
+al of database objects (e.g indexes):
+
+	SELECT relname, relkind, reltuples, relpages 
+	FROM pg_class 
+	WHERE relname LIKE '%<table>%';
+
+For example:
+	SELECT relname, relkind, reltuples, relpages 
+	FROM pg_class 
+	WHERE relname LIKE '%projects%';
+
+	
+	relname                     relkind     reltuples     relpages    
+	 --------------------------  ----------  ------------  ----------- 
+	 projects_calendar           r           909           5           
+	 projects                    r           523           11          
+	 projects_id_seq             S           1             1           
+	 projects_users              r           1294          7           
+	 projects_activities_id_seq  S           1             1           
+	 projects_calendar_id_seq    S           1             1           
+	 projects_users_id_seq       S           1             1           
+	 projects_activities         r           1068          6           
+	 idx_projects_calendar       i           909           5           
+	 pk_projects                 i           523           4           
+	 pk_projects_activities      i           1068          5           
+	 pk_projects_calendar        i           909           4           
+	 pk_projects_users           i           1294          5         	
+	
+This way you can get info about affected rows and pages of indexes (where relkind=i) - if your index
+names contain name of table.
+
+As you expected, indexes are smaller than tables.
+
+	
+	
+SEE ALSO:
+
+		file://localhost/D:/doc/software/database/PostgreSQL/postgresql_sql_tuning/cost.html
+		file://localhost/D:/doc/software/database/PostgreSQL/postgresql_sql_tuning/ops.html
+		
+		
+3. Execution operators
+----------------------
+(from Sams - PostgreSQL, 2nd Edition (2005).chm)	 
+
+Operator			Associated With								Startup cost?
+--------			---------------								-------------
+Seq Scan  			almost anything  	  							No  
+Sort  	  			ORDER BY, other operators (e.g. Unique)			Yes  
+Index Scan  		any non-hash index  	  						No  
+Result  			non-table queries, WHERE constants  	  		No  
+Unique  			DISTINCT, UNION  	  							Yes  
+Limit  	  			LIMIT, OFFSET  	  								Yes (if OFFSET >0)  
+Aggregate  	  		COUNT, SUM, MIN, MAX, AVG, STDDEV, VARIANCE  	Yes  
+Group  	  			GROUP BY clause  	  							Yes  
+Append  	  		UNION, inheritance  	  						No  
+Nested Loop  	  	INNER JOIN, LEFT OUTER JOIN  	  				No  
+Merge Join  	  	INNER JOIN, LEFT OUTER JOIN, RIGHT OUTER JOIN  	Yes  
+Hash  	  			Hash Join operator  	  						Yes  
+Hash Join  	  		INNER JOIN, LEFT OUTER JOIN  	  				Yes  
+Subquery Scan  	  	UNION  	  										No  
+Tid Scan  	  		"ctid =" in the query  	  						No  
+Materialize  	  	subselects, other operators  	  				Yes  
+Function Scan  	  	functions  	  									No  
+SetOp Intersect  	INTERSECT  	  									Yes  
+SetOp Intersect All INTERSECT ALL  	  								Yes  
+SetOp Except  	  	EXCEPT  	  									Yes  
+SetOp Except All  	EXCEPT ALL  	  								Yes  
+
+
+3.1 Seq Scan
+------------
+- Most basic, simply scans from start to end
+- Width (oid), Rows (tuples)
+- Startup cost is 0
+- choosen if there are no indexes or decided that it would be less expensive 
+
+3.2 Sort
+--------
+- it orders a result set 
+- A Sort operator never reduces the size of the result setit does not remove rows or columns.
+- Unlike Seq Scan and Index Scan, the Sort operator must process the entire input set before it can return the first row.
+
+
+3.3 Index scan
+--------------
+- it works by traversing an index structure
+- Not all indexes are scannable. 
+	- B-Tree, R-Tree, and GiST index types can be scanned; 
+	- Hash index cannot.
+
+3.4 Result
+----------
+- Result operator is used to execute a query that DOES NOT RETRIEVE data from a table
+- in WHERE:
+	- If the expression evaluates to FALSE, no further processing is required 
+	- If the expression evaluates to TRUE, Result will return its input set
+
+3.5 Unique
+----------
+- The Unique operator eliminates duplicate values from the input set. 
+- The input set must be ordered by the columns, and the columns must be unique.
+- The Unique operator removes only rows, it does not remove columns and it does not change the ordering of the result set.
+- Unique can return the first row in the result set before it has finished processing the input set.
+	
+3.6 Limit
+---------	
+- The LIMIT operator is used to limit the size of a result set. 
+- The LIMIT operator never removes columns from the result set, but it obviously removes rows.
+- the LIMIT operator can return the first row before it processes the entire set.
+
+3.7 Aggregate
+-------------
+3.8 Group
+--------- 			
+3.9 Append
+----------
+  		
+3.10 Nested Loop
+----------------
+- The Nested Loop operator is used to perform a join between two tables.
+- A Nested Loop operator requires two input sets:
+	- outer: FETCHED EACH ROW from one of the input sets 
+	- inner: For each row in the outer table, the other input (called the inner table) is SEARCHED FOR A ROW THAT MEETS THE JOIN QUALIFIER.
+
+1. THE OUTER TABLE IS ALWAYS LISTED FIRST IN THE QUERY PLAN. To execute this plan, the Nested Loop operator will read each row 
+   (meeting constraints)in the rentals table. 
+2. For each row from outer, Nested Loop reads the corresponding inner row.
+	
+- Because Nested Loop does not process the entire inner table, IT CAN'T BE USED for other join types (full, right join, and so on).
+
+
+3.11 Merge Join
+---------------
+- The Merge Join operator also joins two tables. 
+- Like the Nested Loop operator, Merge Join REQUIRES TWO INPUT SETS: 
+	- an outer table and an inner table. 
+- Each input set MUST BE ORDERED BY THE JOIN COLUMNS.
+
+1. Merge Join starts reading the first row from each table
+2. If the join columns are equal, Merge Join CREATES A NEW ROW containing the necessary columns from each input table and 
+	returns the new row. 
+3. Merge Join then MOVES TO THE NEXT row in the outer table and joins it with the corresponding row in the inner table.
+
+- Merge Join works by WALKING THROUGH TWO SORTED TABLES and finding matches the trick is in keeping the pointers synchronized.
+
+
+3.12 Hash, Hash join
+---------
+- The Hash and Hash Join operators work together:
+- The Hash Join operator requires two input sets:
+	- again called the outer 
+	- and inner tables. 
+- Unlike other join operators, Hash Join DOES NOT REQUIRE EITHER INPUT SET TO BE ORDERED by the join column. 
+	Instead, THE INNER TABLE IS ALWAYS A HASH TABLE, and the ordering of the outer table is not important.
+
+1. The Hash Join operator starts by creating its inner table using the Hash operator. 
+2. The Hash operator creates a temporary Hash index that covers the join column in the inner table.
+3. Once the hash table (that is, the inner table) has been created, Hash Join reads EACH ROW IN THE OUTER TABLE, 
+	hashes the join column (from the outer table), and searches the temporary Hash index for a matching value.
+
+
+
+
+3.13 
+--------------	
+
+
+
+
+ 
+ 
+	 
+  
+  

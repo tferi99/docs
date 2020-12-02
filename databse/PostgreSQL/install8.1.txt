@@ -1,0 +1,44 @@
+PostgreSQL 8.1 installation  from source
+========================================
+
+=====
+Linux
+=====
+Requirements:
+	C compiler
+	Libs: readline, zlib
+
+Installation:
+	extract postgresql-8.1.4.tar.gz
+	./configure		(or ./configure --prefix=<install_destdir>, where destdir for example: /usr/local/pgsql81 )
+	make
+	su
+	make install
+	adduser postgres
+	mkdir /usr/local/pgsql/data
+	chown postgres /usr/local/pgsql/data
+	su - postgres
+	/usr/local/pgsql/bin/initdb -E UTF8 -D /usr/local/pgsql/data 
+	
+		--> your data directory is data and default charset is UTF8
+
+	Starting:
+	/usr/local/pgsql/bin/postmaster -D /usr/local/pgsql/data >logfile 2>&1 &
+Testing:
+	/usr/local/pgsql/bin/createdb test
+	/usr/local/pgsql/bin/psql test
+
+(see more in INSTALL)
+
+Troubleshooting
+---------------
+Error durind initdb: could not create semaphores: no space on device
+
+It may be necessary to increase cygserver's system wide maximum number of
+semaphores (SEMMNS).  This change is affected by editing /etc/cygserver.conf,
+setting the following parameter:
+
+    kern.ipc.semmns 100
+
+and RESTARTING cygserver (In services).  
+

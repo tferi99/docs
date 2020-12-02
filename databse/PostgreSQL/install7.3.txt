@@ -1,0 +1,152 @@
+Postgres 7.3.1 installation
+===========================
+
+Server installation from source
+===============================
+
+=====
+Linux
+=====
+Requirements:
+	C compiler
+	Libs: readline, zlib
+
+Installation:
+	extract postgresql-docs-7.3.1.tar.gz		(e.g. in /usr/source)
+	./configure		(or ./configure --prefix=<install_destdir>, where destdir for example: /usr/local/pgsql73 )
+	make
+	su
+	make install
+	adduser postgres	(if Linux user not created yet)
+	mkdir /usr/local/pgsql73/data
+	chown postgres /usr/local/pgsql73/data
+	su - postgres
+		
+Starting:
+	/usr/local/pgsql73/bin/postmaster -D /usr/local/pgsql73/data >logfile 2>&1 &
+Testing:
+	/usr/local/pgsql73/bin/createdb test
+	/usr/local/pgsql73/bin/psql test
+
+(see more in INSTALL)
+
+
+
+
+======
+Cygwin
+======
+1. Install cygwin (1.3.16)
+2. Install cygipc - if it isn't contained by cygwin (exctract in / in cygwin)
+3. Extract postgresql-7.3.2 in /usr/src
+4. Go to postgresql-7.3.2 directory
+5. Call ./configure 		(or ./configure --prefix=<install_destdir>)
+   NOTE:
+	Before calling it maybe you have to add libcygipc.a to library list, or 
+	copy it from /usr/local/lib into /lib
+
+
+
+6. make
+7. make install
+
+8. Initializing database:
+	ipc-daemon &			(or Cygserver)
+	/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
+
+   'ipc-daemon' is necessary for PostgreSQL.
+	NOTE: Newer versions of Cygwin provide IPC functions 
+              by cygserver (see above).
+   'initdb' creates /usr/local/pgsql/data directory for database.
+
+NOTE:
+	Maybe you have to add these directories to PATH:
+		/usr/local/pgsql/bin
+		/usr/local/pgsql/lib
+
+Testing:
+
+First start ipc-domain (if it isn't running) and postmaster (lisk to postgres) with '-i' parameter.
+It starts engine with TCP/IP listener.
+
+Starting engine:
+	ipc-daemon &			(or Cygserver)
+	postmaster -i &
+
+Create a database:
+	createdb testdb
+
+SQL client:
+	psql testdb
+
+If you would like to connect to the database from an external host, you have to add a host entry to 
+/usr/local/pgsql/data/pg_hba.conf, for example:
+
+host        all     192.168.0.113   255.255.255.0   trust
+
+
+=====================
+Cygwin with cygserver
+=====================
+Newer versions of Cygwin provide IPC functions by cygserver (see above).
+
+At the first call initalize Cyserver:
+
+	cygserver-config
+
+This can install Cyserver as service. Start Cyserver before starting Postgres.
+
+The Cygserver services are used by Cygwin applications only if you set the environment
+variable CYGWIN to contain the string "server". You must do this before
+starting the application.
+
+	export CYGWIN=server
+
+
+
+JAVA clients
+============
+There are 2 JDBC package:
+
+	pgjdbc1.jar	: for JAVA1
+	pgjdbc2.jar	: for JAVA2
+
+You can get these drivers by building postgres with java option:
+
+	$> ./configure --with-java
+
+,or simpy download drinvers from Internet.
+
+
+Name of driver class:
+
+	org.postgresql.Driver
+
+URL for connection one of the followings:
+
+	jdbc:postgresql:database
+	jdbc:postgresql://host/database
+	jdbc:postgresql://host:port/database
+
+NOTE:
+	You don't have to install additional PosgreSQL client before using JDBC drivers, because these are
+	'thin' drivers.
+
+See more: posgres_jdbc.html
+
+
+
+Troubleshooting
+---------------
+If you get this error message during make (mainly in Cygwin):
+
+	libpq/SUBSYS.o(.text+0x201b):crypt.c: undefined reference to `_crypt'
+
+than you have to install crypt package and run installation from start 
+(so call also 'configure' again).
+
+
+--------------- End of document -------------------
+TFeri
+2006.05.04
+---------------------------------------------------
