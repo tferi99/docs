@@ -133,7 +133,7 @@ WebClient
 
 AdminGui
 --------
-- How to start AdminGui in APAS developmnet environment?
+- How to start AdminGui in APAS development environment?
 
 WEB services
 ------------

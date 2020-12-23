@@ -7,6 +7,8 @@ Wireshark FAQ
 - HTTP SSL protocol not recognized
 - How to capture packets with tcpdump for Wireshark?
 - How to capture tcpdump remotely?
+- How to recognize if this is RTP or SRTP packet?
+
 
 Filters
 -------
@@ -21,14 +23,34 @@ Protocols
 -------------------------------------------------------------------------------------------------------------------------------------
 Whow to decrypt SSL/TLS traffic with Wireshark?
 ===============================================
-- First get cypher suite of server - since the Diffie Hellman (DHE) ciphers cannot be decrypted. 
+- obsolete method: RSA keys
 
-	The server certificate cipher suite can be seen in the server hello/certificate frame during the SSL handshake.
+	- go to Wireshark/Edit/Preferences/RSA Keys
+	- upload private keys (because sender used public key of receiver to encrypt)
+
+	Why obsolete?
 	
-- 	
+		"The reason decrypting SSL with an RSA key isn’t commonly used anymore is that Perfect Forward Encryption (PFE) 
+		has made it obsolete. Sessions negotiated with Diffie-Hellman don’t use the RSA key directly; instead they generate 
+		a one-time key, stored only in RAM, that is encrypted using the key on disk."
 
+- using SSLKEYLOGFILE
+
+	- set SSLKEYLOGFILE, specify output log files
+	- restart system (or just source applications)
+	- browsers (Chrome, Firefox) will write dynamically generated DHE keys
+		- start a browser and connect to HTTPS resource you want to decrypt
+	- configure Wireshark to use it:
+		- go to Wireshark/Edit/Preferences/Protocols/TLS
+		- in (Pre)-Master-Secret log filename browse to the log file created by source applications
+	- reload pre-captured file or capture new 
 	
-
+	- troubleshooting:
+		- go to Wireshark/Edit/Preferences/Protocols/TLS
+		- specify 'TLS debug file'
+			This file will contain decrypting steps
+	
+SEE ALSO:	https://www.comparitech.com/net-admin/decrypt-ssl-with-wireshark/
 
 -------------------------------------------------------------------------------------------------------------------------------------
 SSL cannot decrypted with Wireshark
@@ -43,10 +65,21 @@ SSL cannot decrypted with Wireshark
 
 	Best practice is to start capturing before you start up the browser. 
 	
-- If The SSL session is using a DiffieHellman cipher (0x39 = TLS_DHE_RSA_WITH_AES_256_CBC_SHA). 
+- If the SSL/TLS session is using a DiffieHellman cipher (0x39 = TLS_DHE_RSA_WITH_AES_256_CBC_SHA). 
 	This means the session key is transferred encrypted with a dynamically generated keypair (instead of encrypted with the public key from the certificate). 
 	This means you can't decrypt this session with wireshark by providing the private key.
+
+	"The reason decrypting SSL with an RSA key isn’t commonly used anymore is that Perfect Forward Encryption (PFE) 
+	has made it obsolete. Sessions negotiated with Diffie-Hellman don’t use the RSA key directly; instead they generate 
+	a one-time key, stored only in RAM, that is encrypted using the key on disk."
 	
+	
+	UPDATE: using SSLKEYLOGFILE client writes dynamic keys into a log-file which can be used by Wireshark
+		SEE MORE:	https://www.comparitech.com/net-admin/decrypt-ssl-with-wireshark/
+	
+SEE ALSO:	
+	Whow to decrypt SSL/TLS traffic with Wireshark?
+	https://www.comparitech.com/net-admin/decrypt-ssl-with-wireshark/
 	
 -------------------------------------------------------------------------------------------------------------------------------------
 BER Error: This field lies beyond the end of the known sequence definition.
@@ -115,6 +148,9 @@ OR use tshark. E.g:
 How to capture tcpdump remotely?
 ================================
 ssh user@host "tcpdump -s0 -w -" | wireshark -k -i -
+
+
+NOTE:	Wireshark GUI will be started but watch the console in the background, password prompt is waiting.
 
 ------------------------------------------------------------------------------------------------------------------------------
 How to recognize if this is RTP or SRTP packet?

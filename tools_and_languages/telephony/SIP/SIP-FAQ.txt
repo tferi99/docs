@@ -2,11 +2,13 @@
 SIP FAQ
 =======
 
-- How to config X-Lite in CUCM?
+- How to config X-Lite as SIP client?
+- How to monitor SIP dialogs on CUCM?
+
 
 -----------------------------------------------------------------------------------------------------------------
-How to config X-Lite?
-=====================
+How to config X-Lite as SIP client?
+===================================
 CUCM:
 	- Add a '3rd party basic SIP' phone and assign a line
 	- Specify an end user as owner of this phone
@@ -36,3 +38,31 @@ MicroSIP account:
 	- Public Address:	Auto
 	
 SEE ALSO:	telephony/sip/images/microsip-account.jpg
+
+
+-----------------------------------------------------------------------------------------------------------------
+How to monitor SIP dialogs on CUCM?
+===================================
+- install Cisco Unified Real-Time Monitoring Tool (RTMT)
+	- Download from: CUCM/Application/Plugins
+	
+- Enable trace logging:
+
+	CUCM/System/Enterprisse Paramaters Configuration/[Call Trace Log Configuration]/(Enable Call Trace Log)
+	
+- Open RTMT
+	- open 'Voice/Video' left-side tab
+	
+- To tracing SIP activity DblClick on 'SIP Activity'
+
+- To visualize SIP dialog:
+
+	- Session Trace Log View/Real Time Data
+	- specify filters
+	- Run
+	- DblClick on call entry
+	
+SEE ALSO:	
+	https://community.cisco.com/t5/collaboration-voice-and-video/taking-sip-call-trace-on-cisco-unified-cm-using-rtmt/ta-p/3161200
+	images/CUCM-RTMT_SIP_analysis.png
+	

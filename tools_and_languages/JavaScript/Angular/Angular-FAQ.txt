@@ -36,6 +36,7 @@ Scaffolding
 
 Components
 ----------
+- Conditional class
 - How to set CSS class of host element from component code?
 - How to change the default prefix of component to stop tslint warnings
 - How to set component input with a literal value?
@@ -92,6 +93,8 @@ Data input, Forms
 - Howto use datepicker?
 - Howto initialize reactive form from route resolver?
 - How to save form content without submitting (no save button)?
+- How can I listen for keypress event on the whole page?
+
 
 Observables
 -----------
@@ -111,14 +114,16 @@ Design, CSS
 Routing, navigation
 -------------------
 - Order of routes
+- How to navigate from a template?
 - How to navigate from a controller code?
 - Nested routing with Multiple RouterOutlet RouterModule
 - How to go back to previous page?
 - Passing/retrieving parameter with routing							!!! UNDER CONSTRUCTION !!!
 - Howto preserve query parameters for the next navigation?
-- Passing data to route
+- How to pass data to routed component?
 - How to prevent user from accidentaly navigating away?
 - Howto specify default child route?
+- How to debug router?
 
 Other Tips
 ----------
@@ -154,6 +159,11 @@ Workspace
 ---------
 - How to create libraries?
 - How to add libraries to a project?
+
+OO
+--
+- How to inherit components?
+
 
 Troubleshooting
 ---------------
@@ -300,8 +310,11 @@ Optional:
 	FontAwesome:
 		Method 1 - npm:
 			
-			ng add @fortawesome/angular-fontawesome
-	
+			$ npm install @fortawesome/fontawesome-svg-core
+			$ npm install @fortawesome/free-solid-svg-icons
+			# See Compatibility table below to choose a correct version
+			$ npm install @fortawesome/angular-fontawesome@<version>
+			
 		Method 2 - npm:
 			- install:
 				
@@ -545,10 +558,7 @@ Service:
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to configure TS?
 ====================
-There are multiple tsconfig*.json in hierarchy (in inheritance):
-
-
-
+There are multiple tsconfig*.json in hierarchy (in inheritance).
 
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1710,6 +1720,17 @@ After this 	you will be able to call schematics from default collection without 
 	ng g my-schematic-name
 	
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to navigate from a template?
+================================
+- anchor:
+
+	<a routerLink="/router-path" routerLinkActive="active">Jump here</a>
+
+- button:
+
+	<button routerLink="/parson">Person</button>
+	
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to navigate from a controller code?
 =======================================
@@ -2893,58 +2914,10 @@ this.router.navigate(['edit'], {relativeTo: route, queryParamHandling: 'preserve
 - merge:		same as before + new params
 
 
---------------------------------------------------------------------------------------------------------------------------------------------------
-Passing data to route
-=====================
-Static (specifying data in route)
----------------------------------
-- add static data to route:
-
-	{ path: 'not-found', component: ErrorPageComponent, data: {message: 'Page not found'}}
-	{ path: 'bad-value', component: ErrorPageComponent, data: {message: 'Bad value'}}
-	
-- retrieve this data in component:
-
-	ngOnInit() {
-		this.errorMessage = this.route.snapshot.data['message'];
-		this.route.data.subscribe(
-			(data: Data) => {
-				this.errorMessage = data['message'];
-			}
-		);
-	}
-	
-	
-Dynamic (fetching data during routing)
---------------------------------------
-- create a resolver (ServerResolver)
-	
-	It's a class implementing Resolve<T>.
-
-- add to route:
-
-	{ path: 'edit/%id', component: EditServerComponent, resolve: {server: ServerResolver}}
-	
-	
-- retrieve data in component:
-
-	EditServerComponent:
-
-		constr
-	
-		ngOnInit() {
-			this.route.data.subscribe(
-				(data: Data) => {
-					this.server = data['server'];
-				}
-			);
-		}
-
-	
+--------------------------------------------------------------------------------------------------------------------------------------------------		
 How to prevent user from accidentaly navigating away?
------------------------------------------------------
+=====================================================
 Use canDeactivate guard.
-
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -3440,3 +3413,222 @@ How to render Date?
 Use DatePipe in interpolation. For example:
 
 	{{p.birth | date: 'yyyy-MM-dd'}}
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Conditional class
+=================
+- method 1: single class
+
+	[class.<class-name>]="<condition>"
+	
+- method 2: multiple classes with conditions
+
+[ngClass]="{'class1': condition1, 'class2': condition2, ...}"
+
+- method 3: multiple classes with conditions and else
+
+[ngClass]="(condition1)? 'class1' : 'other-class1', ..."
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to pass data to routed component?
+=====================================
+- Static (specifying data in route)
+	- add static data to route:
+
+		{ path: 'not-found', component: ErrorPageComponent, data: {message: 'Page not found'}}
+		{ path: 'bad-value', component: ErrorPageComponent, data: {message: 'Bad value'}}
+		
+	- retrieve this data in component:
+
+		ngOnInit() {
+			this.errorMessage = this.route.snapshot.data['message'];					<<<< if component called once
+			this.route.data.subscribe(													<<<< if it called more than once					
+				(data: Data) => {
+					this.errorMessage = data['message'];
+				}
+			);
+		}
+		
+		
+	
+- Dynamic (fetching data during routing)
+	- Method 1: resolver
+		- create a resolver (ServerResolver)
+			
+			It's a class implementing Resolve<T>:
+			
+				export class PersonResolverService implements Resolve<Person> {
+					...
+				}
+
+		- to pass data to router:
+		
+			Implement resolve() and return a value:
+			
+			  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Person> {
+				const id = route.params.id;
+				return this.personService.get(id);
+			  }
+
+		- add to route:
+
+			{path: 'person/:id/edit', component: PersonFormComponent, resolve: {person: PersonResolverService}},
+
+		- fetch data in component:
+
+			ngOnInit() {
+				this.route.data.subscribe(
+					(data: Data) => {
+						this.server = data['server'];
+					}
+				);
+			}
+
+	- Method 2: state
+
+		- pass:
+				<a [routerLink]=”/somepage” [state]="someObject">Go to B</a>
+			
+			OR
+				this.router.navigateByUrl('/somepage', {state: {some-object}});
+
+		- fetch:
+		
+			const inputData = history.state;
+
+- How to debug passed data?
+
+	SEE:	How to debug router?
+	
+		
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to debug router?
+====================
+- Add 'enableTracing' option:
+
+		@NgModule({
+		  imports: [
+			RouterModule.forRoot(routes, {
+				enableTracing: true							// enable tracing router
+			})
+		  ],
+		  exports: [RouterModule]
+		})
+		export class AppRoutingModule { }
+
+	Router events are dumped to console.
+
+
+- How to debug passed data?
+
+	- activate debugging of router (see above)
+	
+	- data passed by a resolver:
+
+		ActivateEnd.snapshot.data
+		
+	- data passed in NavigationExtras.state:		???
+
+
+SEE ALSO:	https://medium.com/@TheAkshayKolte/angular-routing-events-e914478c9c
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How can I listen for keypress event on the whole page?
+======================================================
+Use @HostListener decorator within your component (or in a directive).
+
+	@Directive({
+	  selector: '[appOnEscape]'
+	})
+	export class OnEscapeDirective {
+	  @Output() appOnEscape = new EventEmitter<string>();
+	  constructor() { }
+
+	  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(event: KeyboardEvent): void {
+		this.appOnEscape.emit('0');
+	  }
+	}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+How to inherit components?
+==========================
+Components are TS classes so they can have inheritance 
+But what if base component has injected members? In this case:
+	- all child components should inject the same services 
+	- and should pass them to super()
+	- if a base constructor changed all child constructors and super() should be also changed 
+
+How this pattern cn be simplified?
+Solution --> inject services into base classes manually.
+
+- Create a global injector service. But don't inject it into base class since this way you are in the same trap.
+	Store injector into this service statically:
+
+	@Injectable({
+	  providedIn: 'root'
+	})
+	export class AppInjector {
+
+	  private static injector: Injector;
+
+	  static setInjector = (injector: Injector) => {
+		AppInjector.injector = injector;
+	  }
+
+	  static getInjector(): Injector {
+		return AppInjector.injector;
+	  }
+	}
+
+- Set this static injector during application bootstrap:
+
+	main.ts:
+	
+		platformBrowserDynamic().bootstrapModule(AppModule)
+		  .then((moduleRef) => AppInjector.setInjector(moduleRef.injector))					<<<<<<<
+		  .catch(err => console.error(err));
+			
+
+- Use injector in base class:
+
+	export class CrudBaseService<T, IDT> {
+	  apiBasePath: string;
+	  http: HttpClient;
+
+	  constructor(
+		apiBasePath: string,
+	  ) {
+		this.apiBasePath = apiBasePath;
+
+		const injector = AppInjector.getInjector();						<<<<<<< get injector
+		this.http = injector.get(HttpClient);							<<<<<<< inject manually
+	  }
+
+	  get(id: IDT): Observable<T> {
+		return this.http.get<T>(SERVER_API_CONTEXT_PATH + this.apiBasePath + '/' + id);
+	  }
+
+	  getAll(): Observable<T[]> {
+		return this.http.get<T[]>(SERVER_API_CONTEXT_PATH + this.apiBasePath);
+	  }
+
+	  ...
+	}
+		
+- Inherit class:
+
+	@Injectable({
+	  providedIn: 'root'
+	})
+	export class PersonService extends CrudBaseService<PersonDto, number> {
+	  constructor() {
+		super('/person-dm');
+	  }
+	}
+
+		

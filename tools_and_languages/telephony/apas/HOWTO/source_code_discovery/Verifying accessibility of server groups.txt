@@ -98,13 +98,14 @@ RPCglobalServiceImpl.RemoteGetServerByID(int serverGroupID)			<<<<<< USECASE: ca
 					--> [1]
 					
 					
------------------------------[2] : TestSIPConnection(SIPServer server) --------------------------------------------
-- RPCglobalServiceImpl.RemoteGetServerByID(int serverGroupID)			<<<<<< USECASE: calling/saving servers dialog
-	--> RPCglobalServiceImpl.checkSIPServer(AndGWTServerGroup gwtsg, SIPServer server, AndGwtSIPServer gwtServer)
-		--> [2] 
+[2] -->
+	----------------------------- : TestSIPConnection(SIPServer server) --------------------------------------------
+	- RPCglobalServiceImpl.RemoteGetServerByID(int serverGroupID)			<<<<<< USECASE: calling/saving servers dialog
+		--> RPCglobalServiceImpl.checkSIPServer(AndGWTServerGroup gwtsg, SIPServer server, AndGwtSIPServer gwtServer)
+			--> [2] 
 
-- RemoteTestServerConnection(AndGWTGenericServerIF gwtserver)			<<<<<< USECASE: clicking Test button on servers dialog
-	--> [2]
-	
+	- RemoteTestServerConnection(AndGWTGenericServerIF gwtserver)			<<<<<< USECASE: clicking Test button on servers dialog
+		--> [2]
+		
 
 	

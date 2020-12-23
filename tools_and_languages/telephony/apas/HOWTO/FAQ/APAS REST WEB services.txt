@@ -2,7 +2,11 @@
 APAS REST WEB services
 ======================
 
-REST services are implemented as Spring MVC controllers. Controllers are registered as servlets in web.xml where implementation is 
+REST services are implemented as Spring MVC controllers. Controllers are registered as servlets in:
+
+	web.xml 
+	
+where implementation is:
 
 	org.springframework.web.servlet.DispatcherServlet
 	
@@ -12,6 +16,8 @@ WEB services are:
 	- Communicator
 	- Recorder
 	- WebClient API
+	- AdminGui
+	- WebAttendant
 
 	
 General REST API
@@ -43,3 +49,16 @@ Component scan base:	com.andtek.andphone.restapi.web
 						com.andtek.andphone.restapi
 						com.andtek.andphone.andmobile
 URI  pattern:			/rest-api/*
+
+
+AdminGui
+--------
+Config:					springAdminGuiRestAPI-servlet.xml
+Component scan base:	com.andtek.andphone.admingui
+URI  pattern:			/admingui/*
+
+WebAttendant
+------------
+Config:					
+Component scan base:	
+URI  pattern:			

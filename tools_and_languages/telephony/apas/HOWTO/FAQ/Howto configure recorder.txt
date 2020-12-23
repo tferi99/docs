@@ -379,14 +379,33 @@ Check the followings:
 			Connection test should be completed successfully.	
 			NOTE: if you change server parameters, save data before retry test.
 
-			You can validate SIP with SIP protocol log (/var/log/apas/sip_protocol.log).
-			It should contain a ping request-response:
+			Tracing SIP messages:
 			
-				[2015-06-10 11:49:07,211] [SENT>] [SIPServer-2] [OPTIONS sip:PING@192.168.150.17:50036]
-				...
-				[2015-06-10 11:49:07,249] [>RECEIVED] [SIPServer-2] [200 OK]
-		
+			- from APAS log:
 			
+				You can validate SIP with SIP protocol log (/var/log/apas/sip_protocol.log).
+				It should contain a ping request-response:
+			
+					[2015-06-10 11:49:07,211] [SENT>] [SIPServer-2] [OPTIONS sip:PING@192.168.150.17:50036]
+					...
+					[2015-06-10 11:49:07,249] [>RECEIVED] [SIPServer-2] [200 OK]
+
+			- on CUCM
+				
+				- go to Admin CLI and call command:
+				
+					utils network capture host ip 10.51.51.123 port 5060
+					
+						admin:utils network capture host ip 10.51.51.123 port 5060
+						Executing command with options:
+						 size=128                count=1000              interface=eth0
+						 src=                    dest=                   port=5060
+						 ip=10.51.51.123
+						13:50:14.485241 IP CEERD-FTOTH-APAS3.andtek.cee.cs.eilab.biz.sip > ceerd-cucm12.andtek.cee.cs.eilab.biz.sip: SIP: OPTIONS sip:PING@10.51.51.32:5060 SIP/2.0
+						13:50:14.485890 IP ceerd-cucm12.andtek.cee.cs.eilab.biz.sip > CEERD-FTOTH-APAS3.andtek.cee.cs.eilab.biz.sip: SIP: SIP/2.0 200 OK
+
+
+					
 		- If test is unsuccessful:
 			- IP and ports
 			

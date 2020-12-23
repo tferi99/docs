@@ -16,6 +16,9 @@ Entity
 Query
 -----
 - How to specify LIKE query?
+- How to order result from Entity.find()?
+- How to limit query result from Entity.find()?
+- How to specify result columns from Entity.find()?
 
 Table data
 ----------
@@ -26,11 +29,16 @@ Troubleshooting
 ---------------
 - ERROR: No metadata for "..." was found. EntityMetadataNotFound: No metadata for ""..." was found.
 - How to clean orphan tables?
+- ERROR: Error: Entity metadata for ... was not found. Check if you specified a correct entity object and if it's connected in the connection options
 
 NestJS
 ------
 - How to add TypeORM to a NestJS project?
 
+Associations
+------------
+- OneToMany
+- ManyToOne
 
 --------------------------------------------------------------------------------------------------------------------------------------
 DataMapper vs ActiveRecord method
@@ -337,4 +345,79 @@ How to solve the problem?
 - Delete old entities from 'dist'
 OR
 - Delete the whole 'dist' directory and retart application - RECOMMENDED !!!
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to order result from Entity.find()?
+How to specify result columns from Entity.find()?
+How to limit query result from Entity.find()?
+=============================================
+Use find(options):
+
+	@Injectable()
+	export class PersonDmService {
+	  constructor(
+		@InjectRepository(PersonDm)
+		private repo: Repository<PersonDm>        // custom repository was not created explicitly, only injected repo from TypeOrm
+	  ) {}
+
+	  async getAll(): Promise<PersonDm[]> {
+		return this.repo.find({
+		  select: ['id', 'name'],							<<<<< columns
+		  order: {name: 'ASC'},								<<<<< order
+		  take: 3											<<<<< limit
+		});
+	  }
+
+	  ...
+	}
+
+SEE ALSO:	https://github.com/typeorm/typeorm/blob/master/docs/find-options.md
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+OneToMany
+=========
+Rules:
+- If you want to use @OneToMany, @ManyToOne is required. However, the inverse is not required.
+
+- Where you set @ManyToOne - its related entity will have "relation id" and foreign key.
+
+--------------------------------------------------------------------------------------------------------------------------------------
+ManyToOne
+=========
+Rules:
+- If you want to use @OneToMany, @ManyToOne is required. However, the inverse is not required.
+	If you only care about the @ManyToOne relationship, you can define it without having @OneToMany on the related entity.
+
+- Where you set @ManyToOne - its related entity will have "relation id" and foreign key.
+	
+Options in RelationOptions:
+
+	
+--------------------------------------------------------------------------------------------------------------------------------------
+ERROR: Error: Entity metadata for ... was not found. Check if you specified a correct entity object and if it's connected in the connection options
+===================================================================================================================================================
+This just means that your entities are either not loading, or are loading incorrectly
+You need to fix the loading of your entities. Entities will usually be loaded from the ormconfig file:
+
+	export function createTypeOrmConfig(): TypeOrmModuleOptions {
+	  return {
+		type: 'postgres',
+		host: 'localhost',
+		port: 5432,
+		username: 'postgres',
+		password: 'postgres',
+		database: 'mytypeormdemo',
+		entities: [__dirname + '/../**/*.entity.{js,ts}'],
+		synchronize: true,
+		logging: 'all',
+		logger: 'advanced-console'
+	  };
+	}
+
+
+Just check ORM config, maybe an entity file TS does not match to 'entities' pattern.
+
 

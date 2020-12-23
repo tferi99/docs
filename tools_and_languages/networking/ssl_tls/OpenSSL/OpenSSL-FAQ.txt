@@ -17,6 +17,7 @@ SSL/TLS
 - Testing SSL/TLS with OpenSSL
 - Howto use multiple CA certificates from filesystem with s_client?
 - How to validate corresponding privatekey/publickey/certificate/CSR?
+- Which are valid keyUsage and extendedKeyUsage values for a certificate?
 
 Wireshark
 ---------
@@ -253,3 +254,42 @@ Private key:
 
 	openssl rsa -noout -modulus -in PRIVATEKEY.key | openssl md5
 
+
+---------------------------------------------------------------------------------------------------------------------------------
+Which are valid keyUsage and extendedKeyUsage values for a certificate?
+=======================================================================
+- Key Usage:	is a multi valued extension consisting of a list of names of the permitted key usages.
+	
+	digitalSignature
+	nonRepudiation
+	keyEncipherment
+	dataEncipherment
+	keyAgreement
+	keyCertSign
+	cRLSign
+	encipherOnly
+	decipherOnly
+
+
+- Extended Key Usage.
+	- This extensions consists of a list of usages indicating purposes for which the certificate public key can be used for.
+	- These can either be:
+		- object short names or 
+		- the dotted numerical form of OIDs. 
+		
+	 Value                  Meaning
+	 -----                  -------
+	 serverAuth             SSL/TLS Web Server Authentication.
+	 clientAuth             SSL/TLS Web Client Authentication.
+	 codeSigning            Code signing.
+	 emailProtection        E-mail Protection (S/MIME).
+	 timeStamping           Trusted Timestamping
+	 OCSPSigning            OCSP Signing
+	 ipsecIKE               ipsec Internet Key Exchange
+	 msCodeInd              Microsoft Individual Code Signing (authenticode)
+	 msCodeCom              Microsoft Commercial Code Signing (authenticode)
+	 msCTLSign              Microsoft Trust List Signing
+	 msEFS                  Microsoft Encrypted File System		
+
+
+SEE ALSO:	https://www.openssl.org/docs/man1.1.0/man5/x509v3_config.html

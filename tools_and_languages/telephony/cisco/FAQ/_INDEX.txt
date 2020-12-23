@@ -48,7 +48,7 @@ Troubleshooting
 - Error - Address X is not in providers domain
 - Busy signal when you call a device
 - CTI Route Point unregistered
-- How to run general troubleshooting on CUCM?
+- Troubleshooting on CUCM
 - CUCM Administration webpage access very slow
 
 

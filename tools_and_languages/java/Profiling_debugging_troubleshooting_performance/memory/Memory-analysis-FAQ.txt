@@ -60,13 +60,21 @@ How to create heap dump?
 	then it might be worth trying the -F switch. You would have to balance down-time against the value of understanding the root cause of the problem.
 	
 	
+- jcmd
+	
+	jcmd <pid> GC.heap_dump <file-path>
+	
+		Apply -F - simirarly to jmap - if socket cannot be 
 	
 - JConsole
 
 	- Connect to your JMX enabled instance
 	- go to MBeans tab
 	- com.sun.management/HotspotDiagnostic/Operations/[dumpHeap]
-	- Fill in p0 parameter to name the Heap Dump method
+	- Fill in p0 parameter to name the Heap Dump method, for example:
+	
+			dumpHeap (p0 /tmp/apas.hprof p1 true)
+			
 	- press the dumpHeap button
 
 	
@@ -100,6 +108,25 @@ How to create heap dump?
 	
 	ECLIPSE/File/New/Other.../Other/Heap Dump
 
+	
+- programmatically:
+
+	The other way to use the HotSpotDiagnostic MBean is by invoking it programmatically from Java code.
+
+		public static void dumpHeap(String filePath, boolean live) throws IOException {
+			MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+			HotSpotDiagnosticMXBean mxBean = ManagementFactory.newPlatformMXBeanProxy(
+			  server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
+			mxBean.dumpHeap(filePath, live);
+		}
+		
+	Notice that an hprof file cannot be overwritten. If we fail to do so we'll get an exception:
+
+		Exception in thread "main" java.io.IOException: File exists
+			at sun.management.HotSpotDiagnostic.dumpHeap0(Native Method)
+			at sun.management.HotSpotDiagnostic.dumpHeap(HotSpotDiagnostic.java:60)	
+
+SEE ALSO:	https://www.baeldung.com/java-heap-dump-capture	
 	
 -------------------------------------------------------------------------------------------------	
 How to analyse heap dump?
@@ -155,6 +182,7 @@ Memory analysis with Eclipse MAT
 Usable tools:
 
 - Histogram - to get get shallow and retained heap grouped by class/superclass/class loader/package
+
 	Tips:
 	- order by retained heap
 	- open a second histogram and click 'Compare to another Heap Dump'
@@ -167,7 +195,7 @@ Usable tools:
 
 
 SEE ALSO:
-	https://www.vogella.com/tutorials/EclipseMemoryAnalyzer/article.html
+	https://eclipsesource.com/blogs/2013/01/21/10-tips-for-using-the-eclipse-memory-analyzer/
 
 -------------------------------------------------------------------------------------------------	
 Eclipse MAT OQL

@@ -18,6 +18,8 @@ SSL/TLS FAQ
 - How to eliminate certificate alerts in a browser?
 - How to create intermediate key for CA?
 - OpenSSL tips
+- How to filter Wireshark for TLS traffic?
+- How to get certificates which are exchanged during TLS handshake?
 
 ---------------------------------------------------------------------------------------------------------------------------------
 PKI basics
@@ -635,3 +637,54 @@ OpenSSL tips
 SEE MORE: https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs		
 
 
+---------------------------------------------------------------------------------------------------------------------------------
+How to filter Wireshark for TLS traffic?
+========================================
+Simple:				tls
+
+Handshake type:		tls && 	ssl.handshake.type == X
+
+	where type: 
+	
+		0	HelloRequest
+		1	ClientHello
+		2	ServerHello
+		4	NewSessionTicket
+		8	EncryptedExtensions (TLS 1.3 only)
+		11	Certificate
+		12	ServerKeyExchange
+		13	CertificateRequest
+		14	ServerHelloDone
+		15	CertificateVerify
+		16	ClientKeyExchange
+		20	Finished	
+
+
+SEE ALSO:
+	https://davidwzhang.com/2018/03/16/wireshark-filter-for-ssl-traffic/
+	https://tools.ietf.org/html/rfc5246
+
+	
+---------------------------------------------------------------------------------------------------------------------------------
+How to get certificates which are exchanged during TLS handshake?
+=================================================================
+- collect packets with Wireshark
+
+- add filter:	tls && ssl.handshake.type == 11
+
+	SEE: How to filter Wireshark for TLS traffic?
+
+	TLS handshaking packets are where Handshake type: Certificate (11)
+	
+- open protocol details:
+		- Transport Layer Security
+			- TLSv.. Reecord Layer
+				- Handshake Protocol: Certificate
+					- Certificates
+						- Certificate
+						
+- RighClick / Export packet bytes...
+
+- save into SomeName.cer file
+
+							

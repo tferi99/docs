@@ -2,7 +2,9 @@
 Security configurations
 =======================
 - Basics
-- How to configure secure JTAPI
+- Security in CUCM
+- How mixed mode works?
+- How to configure secure JTAPI 					UNDER CONSTRUCTION !!!!!!!
 - Secured SIP Trunk Recording Configuration
 
 
@@ -15,10 +17,103 @@ The Cisco IP telephony network establishes and maintains:
 - encrypts media streams
 - encrypts call signaling between Cisco Unified IP Phones
 
+----------------------------------------------------------------------------------------------------------------------------------------------------
+Security in CUCM
+================
+- CUCM provides the following secure transport protocols:
+	- TLS (Transport Layer Security) : can be utilized to secure SIP and SCCP signaling. 
+	
+		- TLS provides secure and reliable data transfer between two systems or devices, by using secure ports and certificate exchange. 
+		- CUCM utilizes TLS to secure the CONTROL CHANNEL of:
+			- SIP (Session Initiation Protocol) 
+				or 
+			- SCCP (Skinny Client Control Protocol) 
+			endpoints to prevent access to the voice domain.
+			
+		- This is achieved by setting the CUCM in MIXED (SECURE) MODE.
+	
+	- IPSec (IP Security) : for GATEWAYS
+
+		- IP Security (IPSec) provides secure and reliable data transfer between CUCM and gateways. 
+
+- Next level of security:	SRTP		
+		
+	- You can add secure RTP (SRTP) to 
+		- TLS 
+		- IPSec 
+		transport services for the next level of security.  
+		
+	- SRTP authenticates and encrypts the media stream (voice packets)
+	- SRTP adds protection against replay attacks
+	- CUCM 9.0 provides TLS/SRTP support for dual-mode smart phones. 
+	
+
+SEE ALSO:	
+	https://tools.cisco.com/security/center/resources/ip_phone_certificates
+	doc\software\tools_and_languages\telephony\cisco\cisco-9.1\Cisco Unified Communications Manager Security Guide - 9.1.1.pdf / TLS and IPSec
+
+	
+----------------------------------------------------------------------------------------------------------------------------------------------------
+How mixed mode works?
+=====================
+- In mixed mode these are permitted to connect to CUCM:
+	- devices with secure/non-secure profiles 
+	- RTP/SRTP media
+	
+- In order to use CUCM in mixed mode, the Certificate Trust List (CTL) client and USB security tokens are required.
+
+- Elements of secure call:
+		1. TLS channel for SIP/SCCP control messages (key exhcange for SRTP also performed here)
+			NOTE: or control messages can be encrypted with a VPN on gateways or external phones
+			
+		2. SRTP for secure voice streams
+
+	|----------|                          [1]                        |------|
+	|IP phone 1|<------------------ TLS negotiation ---------------->| CUCM |
+	|----------|                  SIP over TLS (5061)                |------|
+	      |
+		  |     [2]      |----------|
+		  |---- SRTP ----|IP phone 2|
+		                 |----------|
+
+	- [1] When a Cisco IP phone requests a call, the phone creates an initial encrypted TLS channel with CUCM utilizing SIP messages 
+			to establish communications with the desired Cisco IP phone. SIP-TLS uses port 5061.
+		
+			SIP and SCCP leverage TLS to establish an encrypted channel. 
+			Signaling communications are encrypted using the SYMMETRIC KEY negotiated in TLS.
+
+	- [2] The encrypted channel's purpose is to EXCHANGE CALL SIGNALING MESSAGES and establish secure voice (SRTP) streams.
+			SRTP utilizes also SYMMETRIC KEY CRYPTOGRAPHY to provide encryption, integrity, authentication and anti-replay protection for voice streams (RTP).
+			For Cisco IP phones, the SRTP keying information is negotiated over secure SIP, SCCP, or other signaling channels. 
+	
+						 
+						 
+- Certificates
+		
+	- When the phone receives the certificate from the server, it is required to verify if it should trust CUCM public key 
+		that is contained within the certificate in order to continue TLS negotiation. 
+		
+	- The Cisco IP phone authenticates server certificates based on the Cisco Certificate Trust List (CTL) file. 
+	
+	- The Cisco IP phone will download the CTL file via Trivial File Transfer Protocol (TFTP) during the initial boot and retain it through subsequent reboots. 
+	
+	- Once the download is complete, the Cisco IP phone will recognize all trusted certificate issuers. 
+	
+						 
+SEE ALSO:
+	images/CUCM-secure_call.jpg
+	https://tools.cisco.com/security/center/resources/ip_phone_certificates
+	doc\software\tools_and_languages\telephony\cisco\Cisco IP Phone Certificates and Secure Communications.pdf
+	Cisco Unified Communications Manager Security Guide - 9.1.1.pdf
+			/ TLS and IPSec
+			/ Certificates
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 How to configure secure JTAPI
 =============================
+
+UNDER CONSTRUCTION !!!!!!!
+
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -40,6 +135,7 @@ Configure a non-secure configuration, except:
 	APAS/Device/Phone//[Protocol Specific Information]/(Device Security Profile)
 	
 - Create APAS certificate (if missing or expired) and import into CUCM:
+
 	- APAS/Global/Security/[Certificate List]/(Create APAS Certificate)
 	- APAS/Global/Security/[Certificate List]/Export (icon on items)
 	- CUCM OS Admin/Security/Certificate Management/(Upload certificate)	
@@ -50,9 +146,11 @@ Configure a non-secure configuration, except:
 - Export CallManager cert from CUCM and import into APAS
 
 		- CUCM OS Admin/Security/Certificate Management/[Certificate List]		
-			- Choose item 'Callmanager'
+			- Choose item 'CallManager'
 			- click button 'Download .PEM file' in dialog
-		- APAS/Global/Security/[Certificat List]/(Import Trusted Certificate)
+		- APAS/Global/Security/[Certificate List]/(Import Trusted Certificate)
+			- General certificate
+			- Trust Certificate Type
 
 - SIP Trunk Security Profile
 
@@ -96,5 +194,5 @@ APAS: SIP configuration same as non-secure, except:
 
 
 SEE ALSO: 	andtek_docs\Version 6\Published 6.2.2\AND_Phone_Recorder_Configuration_Guide_622.pdf /7: CUCM configuration/Secure SIP trunk recording configuration
-			Cisco Unified Communications Manager Security Guide - 9.1.1.pdf
+			doc\software\tools_and_languages\telephony\cisco\cisco-9.1\Cisco Unified Communications Manager Security Guide - 9.1.1.pdf
 
