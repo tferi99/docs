@@ -1,0 +1,47 @@
+========
+AdminGUI
+========
+
+Startup
+-------
+- Show wizard first time automatically
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Show wizard first time automatically
+====================================
+If 
+
+	InitComponent.wizardHidden === true
+	
+during AdminGui startup wizard will be displayed automatically.
+Only once, flag permitted database to deactivate it here:
+
+	config[global/wizardHidden]
+
+
+- Call flow:	
+	SUBJECT: initInfoSubject.wizardHidden	====> InitComponent.wizardHidden
+		
+	--> LoginComponent.login()
+		--> authService.login.subscribe()
+			--> authService.init_csrf().subscribe()
+			--> sharedDataService.initInfoSubject.subscribe()														<<<<< subscribe to init subject
+				----------------------- if ! initData.wizardHidden ---------------------------
+					returnUrl = '/page/wizard/init'
+				---------------------- else --------------------------------------------------
+					returnUrl = '/welcome'		(or route.snapshot.queryParams['returnUrl'])
+				--> router.navigate returnUrl
+			--> SharedDataService.loadInitData()
+				--> api.getInitInfo().subscribe()	REST: /andphone/admingui/welcome/initInfo
+					--> initInfoSubject.next()
+		
+	- REST: /andphone/admingui/welcome/initInfo
+		--> com.andtek.andphone.admingui.rest.controllers.WelcomePageController.getInitInfo(...)
+			--> principal = current user from Spring 
+			--> userName = GuiLoginInfoService.getLoggedUsername(principal)
+			--> superAdmin = GuiLoginInfoService.isSuperAdmin(principal)
+			--> wizardHidden = GuiLoginInfoService.isWizardHidden()
+				return --> hidden = config[global/wizardHidden]
+			

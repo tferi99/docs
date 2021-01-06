@@ -1,0 +1,30 @@
+======================================================
+How to start AdminGui in APAS developmnet environment?
+======================================================
+
+- Go to APAS/admin-gui
+
+- Load dependencies:		
+
+	npm i
+	
+- Build productive:
+
+	npm run bp
+	
+- Refresh APAS project in Eclipse (F5)
+
+- Build project
+	
+- Start APAS in Eclipse
+
+- Call AdminGui:
+
+		http://localhost:8080/andphone/
+		
+		OR 
+		
+		http://localhost:8080/andphone/adminweb
+		
+		
+	

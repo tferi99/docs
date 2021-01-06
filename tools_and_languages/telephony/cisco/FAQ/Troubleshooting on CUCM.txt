@@ -1,0 +1,26 @@
+=======================
+Troubleshooting on CUCM
+=======================
+
+- General test
+
+Network
+-------
+- Ping from CUCM
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+General test
+============
+- SSH into CUCM (admin/and33phone)
+
+- Call:
+	utils diagnose test
+	
+It will be validate disk-, tomcat-, network-related serviceas and functions.
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Ping from CUCM
+==============
+on Admin CLI:
+
+	utils network ping <destination> [count] [size]

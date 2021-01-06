@@ -3192,8 +3192,14 @@ How to create libraries?
 
 		ng new my-workspace --create-application=false
 		cd my-workspace
+		
+	- Create a library:
+	
 		ng generate library my-lib
 
+	- Create an applocation (OPTIONAL):
+	
+		ng generate application my-app
 		
 	NOTE: 
 		In a workspace you have only a single packages.json which used by applications.
@@ -3256,13 +3262,11 @@ Use a library:
 	Method 2:
 		- To use library in your own workspace:
 
-			- You don't have to publish your library to the npm package manager in order to use it in your own apps, but you do have to build it first.
-			
-				ng build my-lib
-				
+			SEE:	How to add libraries to a project?
 	
 SEE ALSO:	
-	https://angular.io/guide/creating-libraries	
+	https://angular.io/guide/file-structure
+	https://angular.io/guide/creating-libraries
 	https://indepth.dev/create-your-standalone-angular-library-in-10-minutes
 	
 	
