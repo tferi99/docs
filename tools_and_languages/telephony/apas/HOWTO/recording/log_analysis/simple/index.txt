@@ -1,0 +1,4 @@
+- usecase1:		only 1 endpoint is recorded (called party), so 1 terminal involved into recording
+- usecase2: 	2 endpoints are recorded
+
+
