@@ -1,0 +1,26 @@
+============
+MikroORM FAQ
+============
+
+Troubleshooting
+---------------
+- ERROR: TypeError: Cannot read property '...' of undefined
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: TypeError: Cannot read property '...' of undefined
+=========================================================
+If you hava this error related to an association then you have likely a circular dependency.
+
+If you encounter this, you have basically 2 options:
+
+1. Entities array
+	Use entity references in entities array to have control over the order of discovery. 
+	You might need to play with the actual order you provide here, or possibly with the order of import statements.
+
+2. Use strings instead of references in annotations	
+	Use strings instead of references (e.g. @OneToMany('Book', 'author')). 
+	The downside here is that you will lose the typechecking capabilities of the decorators.
+	
