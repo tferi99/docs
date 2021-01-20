@@ -316,7 +316,9 @@ WebClient Login
 [2] -->  WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
 	--> connection = getConnection(userId)
 	--------------------------------- if cache is valid ---------------------------------
-
+		- devs = connection.getDevices(onlyRegistered)
+		- return devs
+	--------------------------------- if cache NOT valid ---------------------------------
 		--> PhoneServiceImpl.devicesForUser(userId, false)
 			--> phones = getAssociatedDevicesForUser(userId)
 				--> docUser = JTAPIServlet.getDefaultJTAPI().axl.sendRequest("getUser", "<userid>" + userid + "</userid>") 				// getting end-user info with AXL
@@ -465,12 +467,8 @@ Provider events:
 			
 	Logout:
 	
-	AndtekProvider.CiscoProvTerminalUnRegisteredEvID	()
+		CiscoProvTerminalUnRegisteredEvID
 
-	
-	
-	
-	
 	
 	--> CiscoJtapiProviderObserver.providerChangedEvent(ProvEv [] eventList)
 		--> NEW THREAD ProviderEventProcessor.run()
@@ -478,15 +476,23 @@ Provider events:
 				-------------------------------- loop on events -----------------------------------------
 				--> com.andtek.andphone.utils.Modules.providerEvent(jtapi, eventList[i])
 					--> com.andtek.andphone.web.common.WebModuleBase.providerEvent(ProvEv provEv)
-						--> notifyWebApplications(...)
-							--> emLoggedUser = ct.getEMLoginUsername()
-							----------------------------- if emLoggedUser is not empty -----------------------------------------------
-								--> WebConnectionService.notifyWebOnEMLogin(terminal, user, true/false)
-								
-									--> WebClientConnectionService.notifyWebOnEMLogin(terminal, user, true/false)
-										--> conn.invalidateDeviceCache();																					<<<<<<< cache is invalidated here (but refreshed only during next reload)
-										--> event = new PhoneAddRemoveWebEvt(...)													// without lines
-										--> EventBroadcaster.broadcast(conn.getUsername().toLowerCase(), event, this.clientType)
+						-------------------------- if activeConnection and terminal ----------------------------------------
+							--> notifyWebApplications(...)
+								--> emLoggedUser = ct.getEMLoginUsername()
+								----------------------------- if emLoggedUser is not empty -----------------------------------------------
+									--> WebConnectionService.notifyWebOnEMLogin(terminal, user, true/false)
+											- ev == CiscoProvTerminalRegisteredEvID ===> addphone = true
+											- ev == CiscoProvTerminalUnRegisteredEvID ===> addphone = false
+										--> WebConnectionServiceBaseImpl.notifyWebOnEMLogin(terminal, user, addphone)	
+											- lines = phoneService.linesForDevice(dev.getId());
+											- devLine = new DeviceLineImpl(dev, lines);										
+											
+											--> conn.invalidateDeviceCache();																					<<<<<<< cache is invalidated here (but refreshed only during next reload)
+											--> collectDevicesWithLinesForConnection(userId, onlyRegistered=true)
+												[2]
+											
+											--> event = new PhoneAddRemoveWebEvt(...)													// without lines
+											--> EventBroadcaster.broadcast(conn.getUsername().toLowerCase(), event, this.clientType)
 
 	
 	--> WebAttendantConnectionService.notifyWebOnEMLogin(terminal, user, true/false)

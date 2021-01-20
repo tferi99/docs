@@ -1,17 +1,22 @@
 ==========================
 How to activate recorder2?
 ==========================
+- Getting status:
 
-APAS 5 :
+		select * from config where module = 'recorder' and param = 'useRecorder2'
+
+	If no record found then no Recorder-2 activated.
+
  
-	insert into config (module, param, val) values ('recorder', 'useRecorder2', true);
+- activating: 
+ 
+		insert into config (module, param, val) values ('recorder', 'useRecorder2', 'abc');
 	
-NOTE:
-	With current implementation the value of variable is not relevant.
-	If you want to reset recorder 1, delete this record (and NOT update).
+	NOTE:
+		APAS only checks the exintence of this variable but value can be anything.
 	
 	
-Deactivate:	
+- deactivating
 	
 	delete from config where param = 'useRecorder2';
 	

@@ -127,21 +127,21 @@ APAS:
 		'regex match' :		9.*
 		
 CUCM:		
-	- Configure SIP trunk 
-		- Create a new SIP Trunk Security Profile (System->Security Profile->SIP Trunk Security Profile), use UDP
-		
-			Enable Digest Authentication					OFF
-			Enable Application level authorization			OFF
-			Other											ON
-		
-		- Create a new SIP Trunk (Device->Trunk)
-				Type: SIP // Protocol: SIP // (none/Standard)
-				"Destination Address" Configure the IP of APAS!
-				"SIP Trunk Security Profile" Use the Profile created before
+	- Create a new SIP Trunk Security Profile (System->Security Profile->SIP Trunk Security Profile), use UDP
+	
+		Enable Digest Authentication					OFF
+		Enable Application level authorization			OFF
+		Other											ON
+
+	
+	- Create a new SIP Trunk (Device->Trunk)
+			Type: SIP // Protocol: SIP // (none/Standard)
+			"Destination Address" Configure the IP of APAS!
+			"SIP Trunk Security Profile" Use the Profile created before
 		- Set Calling Search Space (CSS) for Inbound Calls in SIP Trunk
-		
+	
 		TIP: you can connect to this SIP Trunk from APAS from Servers dialog
-		
+	
 		SEE ALSO: doc\software\tools_and_languages\telephony\Apas\config\02_ADMIN-REC_4-3-1c_enA4.pdf 
 		
 	- Configure route pattern, where 
@@ -172,7 +172,7 @@ APAS again:
 
 		Global/Servers
 		
-	- Add playback route point to playback 
+	- Add playback route point to playback (OPTIONAL - only for playback)
 		- Go to Recorder/Configuration/Phone Playback Configuration
 		- Specify route point and add it to CUCM
 		- Specify a line for RP DN which can be called an still not reserved.
@@ -180,6 +180,7 @@ APAS again:
 
 	
 - Test
+	- call route pattern and watch sip_protocol.log
 	- Call target phone from another phone
 	- Call Start/Stop service (you can see notification message)
 
@@ -337,10 +338,17 @@ Check the followings:
 		NOTE:	You can list observed terminals on 'Recorder Status' debug page, too.
 		
 		If you dont have observer:
-			- maybe terminal not assigned to application user
+			- maybe terminal not assigned to application user 
 			- or there is no recording role which matches with your DN
+		
+			Check JTAPI debug page if 
+			
+				- com.andtek.andphone.recorder.PhoneCallObserver
+				OR
+				- com.andtek.andphone.recorder2.impl.RecorderCallObserver
 	
-	
+			is assigned to your recorded devices.
+			
 	2. Check recorder process 
 	
 		ps ax | grep andphone_record
@@ -371,14 +379,32 @@ Check the followings:
 	
 	4. Check SIP Trunk with server connection
 	
+		!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!
+		Connection test doesn't validate Transport Protocol properly.
+		It works with different Transport Type, too (????).
+	
+	
 		- You can check SIP trunk by pressing button:
 
 				APAS/Global/Servers/<Recorder SIP Trunk>/(Test Connection)
 
 
 			Connection test should be completed successfully.	
-			NOTE: if you change server parameters, save data before retry test.
+			
+			NOTE: 
+				If you change server parameters, save data before retry test.
 
+				
+			!!!!!!!!!!!!!!!!!!! IMPORTANT NOTE 	!!!!!!!!!!!!!!!!!!!
+			
+				APAS connection test DOES NOT TEST Transport protocol.
+				It work with bad transport protocol settings (at least with CUCM12)
+				
+				Connection can be fully tested by calling assigned Route Pattern and checking sip_protocol.log
+				or checking SIP trunk status in CUCM (with PING option enabled).
+				
+			!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				
 			Tracing SIP messages:
 			
 			- from APAS log:
@@ -464,22 +490,42 @@ Check the followings:
 					
 	5. Check Route pattern and SIP Trunk
 	
+		EXPLANATION:
+			Route Pattern can be called only if assigned SIP Trunk works properly. It can work if endpoint IP addresses, port numbers 
+			and Transport Protocol values are fine.
+			
+			You can check SIP Trunk status also in CUCM SIP trunk device list (if PING option is enabled in SIP Profile assigned to trunk).
+			If this status is 'No service' then Route Pattern cannot be called (even if APAS connection test works - it doesn't validate Transport Protocol properly!!!)
+	
+	
 		- Call route pattern DN from a phone and check SIP protocol log.
 			
 			If recording configured properly you can call this number, it rings once - and NO BUSY.
+			
 			You can trace SIP traffic here:
 			
-		
-			- /var/log/apas/sip_protocol.log
+				- /var/log/apas/sip_protocol.log
+				
+					It should contain a SIP handshaking:
 			
-				It should contain a SIP handshaking:
-		
-					[2015-06-10 11:54:03,929] [>RECEIVED] [SIPServer-2] [INVITE sip:9036@192.168.5.36:50036]
-					INVITE sip:9036@192.168.5.36:50036 SIP/2.0
-					Via: SIP/2.0/UDP 192.168.150.17:50036;branch=z9hG4bKe6f576cb991
-					...
+						[2015-06-10 11:54:03,929] [>RECEIVED] [SIPServer-2] [INVITE sip:9036@192.168.5.36:50036]
+						INVITE sip:9036@192.168.5.36:50036 SIP/2.0
+						Via: SIP/2.0/UDP 192.168.150.17:50036;branch=z9hG4bKe6f576cb991
+						...
+						
+						+ MEDIA INFO
+			
+				NOTE: 
+					Route pattern test SHOULD WITHOUT ANY RECORDING PROFILE. If you call a route pattern assigned to a SIP trunk
+					all SIP traffic from caller phone should be sent to SIP trunk which will be logged by APAS:
 					
-					+ MEDIA INFO
+						[2021-01-19 08:25:36,303] [>RECEIVED] [SIPServer-3] [INVITE sip:+36110009999@10.51.51.122:5060]				<<<<< ROUTE_PATTERN@APAS:5060
+						INVITE sip:+36110009999@10.51.51.122:5060 SIP/2.0															
+						Via: SIP/2.0/UDP 10.51.51.34:5060;branch=z9hG4bK1a773387b2a4e
+						From: <sip:+36110009101@10.51.51.34>;tag=349610~0397bdeb-e9fe-44a2-8560-60f291557ddb-18716187				<<<<< CALLER_PHONE@CUCM
+						To: <sip:+36110009999@10.51.51.122>
+						...
+			
 			
 			- /var/log/apas/andphone_record.log
 			
@@ -494,10 +540,26 @@ Check the followings:
 			
 		- In APAS Recorder Status debug page you can see an active recording and this recording can be searched and playbacked by APAS.
 
-		- If route pattern gives busy during call check SIP security profile, maybe Transport Type (Incoming or Outgoing) is wrong.
-				Incoming Transport Type:	TCP+UDP
-				Outgoing Transport Type:	UDP
-		
+		- If route pattern gives busy during call check SIP security profile then check Transport Type in APAS and CUCM SIP Security profile.
+			- maybe Transport Type (Incoming or Outgoing) is different in APAS and CUCM, they SHOLD BE THE SAME:
+			
+				CUCM SIP Security profile:
+					Incoming Transport Type:	TCP+UDP
+					Outgoing Transport Type:	UDP						<<<<<<<<<<< should be same as APAS
+				
+				APAS:
+					Transport:					UDP						<<<<<<<<<<< should be same as CUCM
+					
+			
+			- maybe configured Transport Type (UDP) cannot work then change both side to TCP
+
+				CUCM SIP Security profile:
+					Incoming Transport Type:	TCP+UDP
+					Outgoing Transport Type:	TCP
+				
+				APAS:
+					Transport:					TCP
+			
 
 			
 	6. Testing recording on call

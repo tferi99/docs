@@ -13,7 +13,8 @@ Depending on Services you use on AND Phone Server:
 	- Standard CTI Allow Reception of SRTP Key Material (for secure recording)
 	- Standard CTI Allow Control of All Devices (if you want to control ALL devices on CUCM)
 	- Standard EM Authentication Proxy Rights
-	- Standard RealtimeAndTraceCollection (for RIS service)
+	- Standard RealtimeAndTraceCollection (for RIS service and PhoneControl (APAS/Testing/Phone Control))
+	- Standard Packet Sniffer Users (for and PhoneControl (APAS/Testing/Phone Control))
 
 Extra groups for 8961 / 9951 and 9971 phones:
 	- Standard CTI Allow Control of Phones supporting Rollover Mode
@@ -24,4 +25,7 @@ SEE ALSO:
 - 01_ADMIN-BASE-Installation_5.6_enA4.pdf
 	
 	
-	
+!!!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!
+To activate group changes restart APAS
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+

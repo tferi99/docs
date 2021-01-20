@@ -46,6 +46,7 @@ Configuration
 - Howto configure CUPS presence?
 - How to configure XML service?
 - Admin CLI
+- Call forward-transfer scenarios
 
 Directory
 ---------
@@ -68,6 +69,7 @@ Recording
 - Howto configure recorder announcement?
 - Howto test recorder with tcpreplay?
 - How to map calls with SIP trunc information?
+- Reorder issues
 
 Network/Security
 ----------------
@@ -91,6 +93,7 @@ Troubleshooting
 - Error - User connected on an invalid port
 - How to enable JMX on APAS?
 - Debugging RTP streams
+- How to configure PhoneControl?
 
 Development
 -----------
@@ -125,7 +128,7 @@ Desktop Client
 - How connects Desktop Client to the system?	
 - How CDP dynamic association works on Desktop Client?
 - How to activate developer widget?
-- Desktop CLient Tweaks
+- Desktop Client Tweaks
 	
 WebClient
 ---------

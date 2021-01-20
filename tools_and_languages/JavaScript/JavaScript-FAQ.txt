@@ -43,6 +43,10 @@ Tips
 - Howto call a function asynchronously by timer?
 - Three dots ( … ) in JavaScript
 
+Promise
+-------
+- How to create a delay promise?
+
 Debug, log, trace
 -----------------
 - How to log to (Firebug) JS console
@@ -867,4 +871,36 @@ Use Array.Map()
 	// expected output: Array [2, 8, 18, 32]
 
 
+------------------------------------------------------------------------------------------------
+How to create a delay promise?
+==============================
+	var promise = new Promise((resolve, reject) => {
+		setTimeout(() => {
+		  console.log("Async is done!");
+		  resolve();
+		}, 1500);
+	});
 
+	A little bit more sophisticated:
+	
+		export const createWaitPromise = (action, waitBeforeMsecs, waitAfterMsecs?):Promise<any> => {
+		  return new Promise((resolve, reject) => {
+			setTimeout(() => {
+			  const ret = action();
+			  if (waitAfterMsecs) {
+				setTimeout(() => resolve(ret), waitAfterMsecs);
+			  } else {
+				resolve(ret);
+			  }
+			}, waitBeforeMsecs)
+		  });
+		}
+
+	Usage:
+	
+		createWaitPromise(
+		  () => doSomething(),
+		  2000,
+		  3000
+		);
+			

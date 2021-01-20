@@ -565,7 +565,7 @@ Normal way:
 		For help, see: https://nodejs.org/en/docs/inspector
 		Debugger attached.
 		
-but sometimes debuger not attached.
+but sometimes debugger not attached.
 
 In this case you can attach debugger manually.
 	1. go to 'Edit Configurations...' in the launch bar

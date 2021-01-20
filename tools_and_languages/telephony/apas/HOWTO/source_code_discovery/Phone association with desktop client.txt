@@ -1,6 +1,7 @@
 =====================================
 Phone association with desktop client
 =====================================
+- Configuration
 - Usecase for testing
 - XML communication
 - Association by calling an RP
@@ -12,6 +13,24 @@ Phone association with desktop client
 There are two methods to associate desktop client to a phone:
 1. CDP - associating phone by detecting it via physical network interface
 2. Calling an RP during association from physical phone
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+- create RoutePoint with a line in:
+
+	APAS/Client/Configuration/[Desktop Configuration]/(Route Point)
+	
+		e.g. FTOTH_RP_COMM
+		
+- assign RoutePoint to APAS application user
+
+- set pools and users in user profile:
+
+	- [Client Pool]/(Phone Pool) = All Phones
+	- [Client Pool]/(User Pool) = All Users
+	
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 Usecase for testing
@@ -142,6 +161,13 @@ Troubleshooting association by calling an RP
 							
 	and compare log with fragment above.
 	
+- if you have error dialog in DesktopClient then check andphone.log, maybe you have this message:
+
+	[2021-01-13 09:21:53,520] [ERROR] [APAS-DesktopMsgQueueWorker-7] [Module.java:522] - Unable to create code for client to phone association. Please check if the communicator route point has been configured correctly.
+
+	In this case check RoutePoint configuration. 
+	
+		SEE ALSO:	Configuration
 	
 ------------------------------------------------------------------------------------------------------------------------------------------
 Association with CDP

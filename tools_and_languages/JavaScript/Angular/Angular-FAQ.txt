@@ -3197,7 +3197,7 @@ How to create libraries?
 	
 		ng generate library my-lib
 
-	- Create an applocation (OPTIONAL):
+	- Create an application (OPTIONAL):
 	
 		ng generate application my-app
 		
@@ -3561,13 +3561,14 @@ Use @HostListener decorator within your component (or in a directive).
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to inherit components?
 ==========================
-Components are TS classes so they can have inheritance 
+Components are TS classes so they can have inheritance.
+
 But what if base component has injected members? In this case:
 	- all child components should inject the same services 
 	- and should pass them to super()
 	- if a base constructor changed all child constructors and super() should be also changed 
 
-How this pattern cn be simplified?
+How this pattern can be simplified?
 Solution --> inject services into base classes manually.
 
 - Create a global injector service. But don't inject it into base class since this way you are in the same trap.

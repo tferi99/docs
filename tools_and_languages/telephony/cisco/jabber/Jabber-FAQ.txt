@@ -65,7 +65,9 @@ Setup/Configure
 	IMPORTANT NOTE: If you want to use Jabber with multiple users you have to create multiple CSF devices.
 
 	
-SEE ALSO:	zbal-jabber1 on CUCM-12
+SEE ALSO:	
+	zbal-jabber1 on CUCM-12
+	jabber-settings1.png, jabber-settings2.png
 	
 ------------------------------------------------------------------------------------------------------------------------------------------
 How to change user in Jabber with SSO?
@@ -80,7 +82,7 @@ How to change user in Jabber with SSO?
 
 - Set network manually again in Advanced settings (Cisco Communication Manager 9 or later/IP of CUCM - and NOT of CIMP).
 
-- Specify another end user (which associated to a CSF device) with long (domain) format in Jabber login page. (e.g. ssotest1@andtek.cee.eilab.biz)
+- Specify another end user (which associated to a CSF device) with long (domain) format in Jabber login page. (e.g. ftothjab@andtek.cee.eilab.biz)
 
 	NOTE: This user will be saved by Jabber, next time you don't have to specify again.
 	

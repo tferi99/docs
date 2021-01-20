@@ -2,10 +2,102 @@
 MikroORM FAQ
 ============
 
+- Fundamentals
+
+
+Entities
+--------
+- Entity properties
+
+
+UnitOfWork
+----------
+- How to enumerate UnitOfWork identity map?
+- How to clear identity map cache?
+
+Fetching data
+-------------
+- How to get entity by primary key?
+
+Data manipulation
+-----------------
+- How to delete by primary key?
+
+Schema management
+-----------------
+- How to generate/update DB schema?
+
 Troubleshooting
 ---------------
 - ERROR: TypeError: Cannot read property '...' of undefined
 
+NestJS
+------
+- How to configure NestJS?
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+Fundamentals
+============
+- Managed entity:
+	Entity is managed if 
+		- it’s fetched from the database							2 options to create managed objects:
+			- via em.find(), em.findOne() 								- fetch existing objects from DB
+			- or via other managed entity) 								- em.persist() new objects
+		- or registered as new through em.persist()
+
+- MikroORM uses identity map in background so you will always get the SAME INSTANCE OF ONE ENTITY.		
+		
+- Unit of Work
+	- MikroORM uses the Identity Map pattern to track objects. Whenever you fetch an object from the database, 
+		MikroORM will keep a reference to this object inside its UnitOfWork.
+		
+		Instead of creating a second object MikroORM first gets the primary key from the query result row and checks if it already has an object 
+		inside the UnitOfWork with that primary key.		
+	
+	- If different fetch operations returns the same object only one entry will be created for this object in UnitOfWork.
+	
+- Change detection
+	Whenever you call em.flush() MikroORM will iterate over all entities you previously marked for persisting via em.persist(). 
+	For each object it will compare the original property and association values with the values that are currently set on the object. 
+	If changes are detected then the object is queued for a UPDATE operation. Only the fields that actually changed are updated.	
+	
+------------------------------------------------------------------------------------------------------------------------------------------------
+How to generate/update DB schema?
+=================================
+Use MkroORM CLI.
+
+- prerequisite:
+	- install:		npm install --save-dev npm install --save-dev
+	
+	- config: you need mikro-orm.config.ts for CLI
+	
+		import { UnderscoreNamingStrategy } from '@mikro-orm/core';
+		import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
+		import { logger } from '@mikro-orm/nestjs';
+
+		export default {
+		  type: 'postgresql',
+		  dbName: 'mymikroormdemo',
+		  entitiesTs: ['./src/entities'],
+		  entities: ['./dist/entities'],
+		  autoLoadEntities: true,
+		  discovery: {
+			warnWhenNoEntities: true
+		  },
+		  namingStrategy: UnderscoreNamingStrategy ,
+		  highlighter: new SqlHighlighter(),
+		  debug: true,
+		  logger: logger.log.bind(logger)
+		};
+		
+
+- run manually:
+	
+	node_modules/.bin/mikro-orm schema:update --fk-checks -r
+
+- add to package.json:
+
+	"db-update": "node_modules/.bin/mikro-orm schema:update --fk-checks -r",
 
 
 
@@ -24,3 +116,248 @@ If you encounter this, you have basically 2 options:
 	Use strings instead of references (e.g. @OneToMany('Book', 'author')). 
 	The downside here is that you will lose the typechecking capabilities of the decorators.
 	
+	
+------------------------------------------------------------------------------------------------------------------------------------------------
+Entity properties
+=================
+- auto-increment PK:
+
+	@PrimaryKey()
+	id!: number; // auto increment PK in SQL drivers
+	
+- Optional values (null)
+	
+	When you define the property as optional (marked with ?), this will be automatically considered as nullable property (mainly for SQL schema generator).	
+	
+		@Property()
+		age?: number;
+	
+- Mandatory values (not null)
+	
+	Define property with '!':
+	
+		@Property()
+		title!: string;
+
+- Default values:
+
+	- runtime default:
+	
+		This approach should be preferred as long as you are NOT USING ANY NATIVE DATABASE function like now(). 
+		With this approach your entities will have the default value set even before it is actually persisted into the database
+		(e.g. when you instantiate new entity via new Author() or em.create(Author, { ... }).
+		
+			@Property()
+			foo!: number = 1;
+		
+	- database default:
+	
+		This way the actual default value will be provided by the database, and automatically mapped to the entity property after 
+		it is being persisted (after flush). To use SQL functions like now(), use defaultRaw.
+		
+			@Property({ default: 1 })
+			foo!: number;
+
+			@Property({ default: 'abc' })
+			bar!: string;
+
+			@Property({ defaultRaw: 'now' })
+			baz!: Date;		
+
+- Enums:
+
+			@Enum()
+			role!: UserRole; // string enum
+
+			@Enum()
+			status!: UserStatus; // numeric enum
+
+			@Enum(() => OutsideEnum)
+			outside!: OutsideEnum; // string enum defined outside of this file
+
+			@Enum({ items: () => OutsideNullableEnum, nullable: true })
+			outsideNullable?: OutsideNullableEnum; // string enum defined outside of this file, may be null
+			
+			export enum UserRole {
+			  ADMIN = 'admin',
+			  MODERATOR = 'moderator',
+			  USER = 'user',
+			}
+
+			export const enum UserStatus {
+			  DISABLED,
+			  ACTIVE,
+			}			
+			
+- map to PK:
+
+	number:
+	
+		@ManyToOne(() => User, { mapToPk: true })
+		user: number;
+		
+	composite:
+	
+		@ManyToOne(() => User, { mapToPk: true })
+		user: [string, string]; // [first_name, last_name]
+		
+		
+SEE ALSO:	https://mikro-orm.io/docs/defining-entities
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+How to configure NestJS?
+========================
+- install:
+
+	$ npm i -s @mikro-orm/core @mikro-orm/nestjs @mikro-orm/postgresql  # for postgresql
+
+- config EntityManager:
+
+	With this config the EntityManager will be available to inject across entire project (without importing any module elsewhere).
+
+	- Method 1:	config in src/mikro-orm.config.ts:
+
+			import { UnderscoreNamingStrategy } from '@mikro-orm/core';
+			import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
+			import { logger } from '@mikro-orm/nestjs';
+
+			export default {
+			  type: 'postgresql',
+			  dbName: 'mymikroormdemo',
+			  entitiesTs: ['./src/entities'],
+			  entities: ['./dist/entities'],
+			  autoLoadEntities: true,
+			  discovery: {
+				warnWhenNoEntities: true
+			  },
+			  namingStrategy: UnderscoreNamingStrategy ,
+			  highlighter: new SqlHighlighter(),
+			  debug: true,
+			  logger: logger.log.bind(logger)
+			};
+		
+		
+	- Method 2: config in AppModule:
+
+			@Module({
+			  imports: [
+				MikroOrmModule.forRoot({
+				  entities: ['./dist/entities'],
+				  entitiesTs: ['./src/entities'],
+				  dbName: 'my-db-name.sqlite3',
+				  type: 'sqlite',
+				}),
+			  ],
+			  controllers: [AppController],
+			  providers: [AppService],
+			})
+			export class AppModule {}
+			
+			
+		NOTE: 
+			If you have src/mikro-orm.config.ts you don't need any configuration in AppModule,
+			you can omit config param from MikroOrmModule.forRoot()
+		
+- config EntityRepository:
+
+	To define which repositories shall be registered in the current scope you can use the forFeature() method. For example, in this way:
+	
+		// photo.module.ts
+
+		@Module({
+		  imports: [MikroOrmModule.forFeature([Photo])],
+		  providers: [PhotoService],
+		  controllers: [PhotoController],
+		})
+		export class PhotoModule {}
+		
+	and import it into the root AppModule:
+
+		// app.module.ts
+		@Module({
+		  imports: [
+			MikroOrmModule.forRoot(...),
+			PhotoModule],
+		})
+		export class AppModule {}	
+	
+	
+	In this way we can inject the PhotoRepository to the PhotoService using the @InjectRepository() decorator:
+
+		@Injectable()
+		export class PhotoService {
+		  constructor(
+			@InjectRepository(Photo)
+			private readonly photoRepository: EntityRepository<Photo>
+		  ) {}
+
+		  // ...
+		}	
+		
+	NOTE:
+		You should not register your base entities via forFeature(), as there are no repositories for those. 
+		On the other hand, base entities need to be part of the list in forRoot() (or in the ORM config in general).
+	
+SEE ALSO:	https://mikro-orm.io/docs/usage-with-nestjs	
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+How to enumerate UnitOfWork identity map?
+=========================================
+UnitOfWork can e retrieved from EntityManager.
+You can read content of it directly by enumerating map entries:
+
+	constructor(
+		private readonly em: EntityManager,
+	) {}
+	...
+	test() {
+		const uw = this.em.getUnitOfWork();
+		const im = uw.getIdentityMap();
+		const keys = im.keys();
+		for (const key of keys) {
+		  console.log('UoW[' + key + ']: ', im.get(key));
+		}
+	}
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+How to get entity by primary key?
+=================================
+- simple entity:
+
+  async get(id: number): Promise<User> {
+    return this.repo.findOne({id});
+  }
+
+- entity extends BaseEntity (@mikro-orm/core):
+
+  async get(id: number): Promise<User> {
+    const u = this.repo.getReference(id);
+    return u.init();
+  }
+	
+
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------------
+How to delete by primary key?
+=============================
+- get entity reference
+- call EntityReposiory.remove()
+
+Example:
+
+	async delete(id: number) {
+		const u = this.repo.getReference(id);
+		await this.repo.removeAndFlush(u);
+	}
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------------
+How to clear identity map cache?
+================================
+
+	em.clear();

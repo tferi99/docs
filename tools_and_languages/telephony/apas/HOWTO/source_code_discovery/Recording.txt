@@ -10,7 +10,6 @@ SEE ALSO:
 
 					
 				
-				
 You need a configured recording environment (see more: APAS-FAQ.txt/Howto configure recorder?)
 
 Source code
@@ -1487,9 +1486,14 @@ How calls are identified by independent <recordCall> messages?
 
 		find_jtapi_terminal_call(const char *terminal, const char *jtapi_callID, int doref)
 
-	which compares incoming callID and terminal with cached entries in the chain.
+	which compares incoming callID and terminal with cached entries in the chain. THIS COMPARATION IS CASE-SENSITIVE:
 	
-		THIS COMPARATION IS CASE-SENSITIVE! (till v 6.2.2)
+	
+		if(call->type == CALLTYPE_JTAPI && ((findRec && call->duplicate == 0) || (!findRec && strcmp(call->terminal,terminal) == 0))) {					<<<<< CASE SENSITIVE COMPARISON OF TERMINAL !!!!!!!
+		
+		
+		NOTE: This problem generated APAS-1184.
+
 		
 	--> recordCall(...)
 		--> call = find_jtapi_terminal_call(terminal, callID, true)
@@ -1498,12 +1502,12 @@ How calls are identified by independent <recordCall> messages?
 				2020-05-07 08:03:52,190: 4: ->find_jtapi_terminal_call(CSFABOEHLKE,sip1963074/1)
 			
 			--> lock_calls();
-			----------------- enumeration of calls chain -------------------
+			----------------- loop on calls chain -------------------
 				- LOG:		find_jtapi_terminal_call check for call (
 			
 					2020-05-07 08:03:52,190: 4:   find_jtapi_terminal_call check for call (CSFSDrescher,sip1963066/1,0)
 				
-				---------------- if call->type == CALLTYPE_JTAPI and incoming terminal == call->terminal
+				---------------- if call->type == CALLTYPE_JTAPI and incoming terminal == call->terminal								<<<<<<< CASE SENSITIVE COMPARISON OF TERMINAL !!!!!!!
 					-------------------- if incoming jtapi_callID == call->jtapi_callID ---------------------
 						--> exit from loop: FOUND
 					- 'csip' call check - LOG:	find_jtapi_terminal_call found csip call for same terminal (...
@@ -1530,7 +1534,18 @@ If 2nd recordCall contains the same callID but different terminal then call cann
 	[2020-05-07 08:03:54,138] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip1963074/1" dbID="0" state="0"/>
 	...
 
-and in this case a new call created 	
+and in this case a new call created into call cache:
+
+
+Here is the evidence, later on checking another call sip1963074 call added twice. Once with CSFABOEHLKE and later with CSFABoehlke:
+
+	2020-05-07 08:04:06,177: 4: ->find_jtapi_terminal_call(SEP34DBFDCD8EC7,sip1963077/1)
+	2020-05-07 08:04:06,177: 4:   find_jtapi_terminal_call check for call (CSFABoehlke,sip1963074/1,0)					<<<<<<<<<<<<
+	2020-05-07 08:04:06,177: 4:   find_jtapi_terminal_call check for call (CSFABOEHLKE,sip1963074/1,0)					<<<<<<<<<<<<
+	2020-05-07 08:04:06,177: 4:   find_jtapi_terminal_call check for call (CSFSDrescher,sip1963066/1,0)
+	...
+
+
 
 -------------------------------------------------------------------------------------------------------------------------------------
 Writing recording to file

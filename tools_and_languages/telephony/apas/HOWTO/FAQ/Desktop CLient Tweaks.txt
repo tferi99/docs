@@ -1,12 +1,12 @@
 =====================
-Desktop CLient Tweaks
+Desktop Client Tweaks
 =====================
 
-- How to activate developeer widget?
+- How to activate developer widget?
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------
-How to activate developeer widget?
+How to activate developer widget?
 ==================================
 Add 'Internal' into config under 'Advanced' and restart:
 

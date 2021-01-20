@@ -119,8 +119,11 @@ Initial data loading
 										--> startKeepalive()
 										
 									--> GlobalEffects.appDataLoaded$
-										--> initService.subscribeToAtmosphere(data.payload)
+										--> atmosphereService.reSubscribe
 											--> atmosphereService.subscribe(atmSubsString)
+												--> unsubscribe()
+												--> subscribe(data)
+											--> presenceService.forcePushPresenceItems().subscribe()				GET: /presence/pushPresenceItems
 										
 									--> global.reducer - case GlobalActionTypes.AppDataLoadedAction
 										info to store:

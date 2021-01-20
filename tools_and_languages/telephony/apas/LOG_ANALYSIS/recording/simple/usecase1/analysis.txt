@@ -4,7 +4,12 @@ Analysis of use case 1: non-secure, only called party recorded
 
 - Description
 - Call info
-- XML messages
+- Protocoll explanation
+- recordCall
+- recorder.logs
+- SIP dialog
+- RTP streams
+- CiscoJtapi.log
 
 -------------------------------------------------------------------------------------------------------------------------------------------
 Description
@@ -64,21 +69,6 @@ Network information of RTP streams:
    
    
    
-   
-   
--------------------------------------------------------------------------------------------------------------------------------------------
-recordCall
-========== 
-Pattern:	XML_SOCKET.*recordCall.*23988
-
-[2020-08-14 14:12:38,914] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@251148bb)] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
-[2020-08-14 14:12:38,920] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
-[2020-08-14 14:12:39,318] [DEBUG] [APAS-defaultWorker-9] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" srcIP="10.51.51.122" srcPort="44899"/>]
-[2020-08-14 14:12:39,322] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
-[2020-08-14 14:12:39,382] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" dstIP="10.51.51.122" dstPort="46119"/>]
-[2020-08-14 14:12:39,384] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
-[2020-08-14 14:12:59,738] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@251148bb)] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" stopOut="1" />]   
-
 
 -------------------------------------------------------------------------------------------------------------------------------------------
 Protocoll explanation
@@ -119,7 +109,20 @@ Protocoll explanation
 	recordCall: APAS gets BYE from SIP trunk and it sends recordCall with 'stopOut' and recorder closes recorder file(s) and it post-processes recording.
 
 
+   
+-------------------------------------------------------------------------------------------------------------------------------------------
+recordCall
+========== 
+Pattern:	XML_SOCKET.*recordCall.*23988
 
+[2020-08-14 14:12:38,914] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@251148bb)] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" callingParty="+36110009100" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+[2020-08-14 14:12:38,920] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
+[2020-08-14 14:12:39,318] [DEBUG] [APAS-defaultWorker-9] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" srcIP="10.51.51.122" srcPort="44899"/>]
+[2020-08-14 14:12:39,322] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
+[2020-08-14 14:12:39,382] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" dstIP="10.51.51.122" dstPort="46119"/>]
+[2020-08-14 14:12:39,384] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET::received message: <recordCallResponse code="0" string="OK" callID="sip23988/1" dbID="200" state="1"/>
+[2020-08-14 14:12:59,738] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@251148bb)] [XMLSocket.java:285] - XML_SOCKET::sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip23988/1" stopOut="1" />]   
+	
 -------------------------------------------------------------------------------------------------------------------------------------------	
 recorder.logs
 =============
@@ -272,6 +275,188 @@ RTP streams
 				
 		
 		
+-------------------------------------------------------------------------------------------------------------------------------------------
+CiscoJtapi.log
+==============
+You can identify a lot of call- and recording-related information in CiscoJtapi.log.
+
+To idntify new calls search for sections beginning line contains 'NewCallEvent'
+
+
+493: 2020-08-14 14:12:34 CEST %JTAPI-PROTOCOL-7-UNK:(P1-10.51.51.34) received Event: com.cisco.cti.protocol.NewCallEvent {
+  eventSequence                        = 9
+  lineCallManagerID                    = 1
+  lineID                               = 7472
+  lineHandleSpecified                  = true
+  deviceName                           = SEPA45630BB1748
+  callCallManagerID                    = 1
+  callLegID                            = 27971218																	<<<<<<<<<<<<<<<<<<<<< call leg
+  globalCallManagerID                  = 1
+  callID                               = 23988
+  callingParty                         = +36110009100
+  calledParty                          = +36110009020
+  originalCalledParty                  = +36110009020
+  state                                = 2
+  origin                               = 1
+  userData                             = null
+  auxiliaryData                        = 1
+  farEndpointCallManagerID             = 1
+  farEndpointType                      = 1
+  reason                               = 1
+  callingPartyName                     = 
+  calledPartyName                      = 
+  originalPartyName                    = 
+  lastRedirectingParty                 = 
+  lastRedirectingPartyName             = 
+  callingPartyDeviceName               = SEP100000009100
+  bRemoteInUse                         = false
+  parentCallManagerID                  = 0
+  parentCallID                         = 0
+  bPrivacy                             = false
+  mediaDeviceName                      = 
+  mediaResourceId                      = 0
+  unModifiedCallingParty               = +36110009100
+  unModifiedCalledParty                = +36110009020
+  unModifiedOriginalCalledParty        = +36110009020
+  unModifiedLastRedirectingParty       = 
+  callingPartyPi                       = true
+  callingPartyNamePi                   = true
+  calledPartyPi                        = true
+  calledPartyNamePi                    = true
+  originalCalledPartyPi                = true
+  originalCalledPartyNamePi            = true
+  lastRedirectingPartyPi               = true
+  lastRedirectingPartyNamePi           = true
+  unicodeCallingPartyName              = com.cisco.cti.protocol.UnicodeString {
+  unicodedisplayName = 
+  count              = 0
+  sizeofElement      = 2
+  }
+  unicodeCalledPartyName               = com.cisco.cti.protocol.UnicodeString {
+  unicodedisplayName = 
+  count              = 0
+  sizeofElement      = 2
+  }
+  unicodeOriginalCalledPartyName       = com.cisco.cti.protocol.UnicodeString {
+  unicodedisplayName = 
+  count              = 0
+  sizeofElement      = 2
+  }
+  unicodelastRedirectingPartyName      = com.cisco.cti.protocol.UnicodeString {
+  unicodedisplayName = 
+  count              = 0
+  sizeofElement      = 2
+  }
+  unicodeCallingPartyLocale            = 1
+  unicodeCalledPartyLocale             = 1
+  unicodeOriginalCalledPartyLocale     = 1
+  unicodeLastRedirectingPartyLocale    = 1
+  callingPartyDNInfo                   = com.cisco.cti.protocol.PartyDNInfo {
+  sipUrl           = com.cisco.cti.protocol.SIPUrl {
+  user         = 
+  host         = 
+  port         = 0
+  transportTye = 0
+  urlType      = 0
+  }
+  unModifiedsipUrl = com.cisco.cti.protocol.SIPUrl {
+  user         = 
+  host         = 
+  port         = 0
+  transportTye = 0
+  urlType      = 0
+  }
+  partition        = FTOTH_Phones
+  voiceMailbox     = 
+  numberType       = 0
+  }
+  calledPartyDNInfo                    = com.cisco.cti.protocol.PartyDNInfo {
+  sipUrl           = com.cisco.cti.protocol.SIPUrl {
+  user         = 
+  host         = 
+  port         = 0
+  transportTye = 0
+  urlType      = 0
+  }
+  unModifiedsipUrl = com.cisco.cti.protocol.SIPUrl {
+  user         = 
+  host         = 
+  port         = 0
+  transportTye = 0
+  urlType      = 0
+  }
+  partition        = FTOTH_Phones
+  voiceMailbox     = 
+  numberType       = 0
+  }
+  originalCalledPartyDNInfo            = com.cisco.cti.protocol.PartyDNInfo {
+  sipUrl           = com.cisco.cti.protocol.SIPUrl {
+  user         = 
+  host         = 
+  port         = 0
+  transportTye = 0
+  urlType      = 0
+  }
+  unModifiedsipUrl = com.cisco.cti.protocol.SIPUrl {
+  user         = 
+  host         = 
+  port         = 0
+  transportTye = 0
+  urlType      = 0
+  }
+  partition        = FTOTH_Phones
+  voiceMailbox     = 
+  numberType       = 0
+  }
+  lastRedirectingPartyDNInfo           = com.cisco.cti.protocol.PartyDNInfo {
+  sipUrl           = com.cisco.cti.protocol.SIPUrl {
+  user         = 
+  host         = 
+  port         = 0
+  transportTye = 0
+  urlType      = 0
+  }
+  unModifiedsipUrl = com.cisco.cti.protocol.SIPUrl {
+  user         = 
+  host         = 
+  port         = 0
+  transportTye = 0
+  urlType      = 0
+  }
+  partition        = 
+  voiceMailbox     = 
+  numberType       = 0
+  }
+  ctiCallType                          = 0
+  callingPartyIpAddr                   = 1341469194
+  farEndLineIdDN                       = +36110009100
+  farEndLineIdPartition                = FTOTH_Phones
+  callPresentable                      = true
+  featurePriority                      = 1
+  globalizedCallingParty               = +36110009100
+  callingPartyIpAddr_v6                = null
+  callingPartyIpAddressingMode         = 0
+  bIsRolloverCall                      = false
+  uniqueProtocolCallReference          = 0000000000005DB401AACE9200000000
+  cgpnHuntMemberDN                     = 
+  cgpnHuntMemberPartition              = 
+  cgpnPatternUsage                     = 2
+  cdpnPatternUsage                     = 2
+  callingPartyMultiMediaCapBitMask     = 3
+  calledPartyMultiMediaCapBitMask      = 3
+  callingPartyMultiMediaCapabilityInfo = com.cisco.cti.protocol.DeviceMultiMediaCapability {
+  videoCapability  = 0
+  telepresenceInfo = 0
+  screenCount      = 0
+  }
+  calledPartyMultiMediaCapabilityInfo  = com.cisco.cti.protocol.DeviceMultiMediaCapability {
+  videoCapability  = 0
+  telepresenceInfo = 0
+  screenCount      = 0
+  }
+  deviceUUID                           = 
+  peerUUID                             = 7649a3e4eb036c89418a63faa1192537
+  }
 		
 		
 		
