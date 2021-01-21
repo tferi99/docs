@@ -3,8 +3,13 @@ MikroORM FAQ
 ============
 
 - Fundamentals
-
-
+	- Managed entity
+	- Unit of Work
+	- Change detection
+	- Modeling Entity Relationships
+	
+- Modeling Entity Relationships		
+	
 Entities
 --------
 - Entity properties
@@ -60,7 +65,30 @@ Fundamentals
 	Whenever you call em.flush() MikroORM will iterate over all entities you previously marked for persisting via em.persist(). 
 	For each object it will compare the original property and association values with the values that are currently set on the object. 
 	If changes are detected then the object is queued for a UPDATE operation. Only the fields that actually changed are updated.	
+
 	
+------------------------------------------------------------------------------------------------------------------------------------------------
+Modeling Entity Relationships
+=============================
+
+- Relations can be unidirectional and bidirectional.
+
+- Unidirectional are defined only on one side (the owning side). 
+
+- Bidirectional are defined on both sides, while one is 
+	- OWNING SIDE (where references are store), 
+	- marked by inversedBy attribute pointing to the INVERSE SIDE. 
+	
+- On the inversed side we define it with mappedBy attribute pointing back to the owner:	
+	When modeling bidirectional relationship, you can also omit the inversedBy attribute, defining mappedBy on the inverse side is enough as it will be auto-wired.	
+
+		OWNING SIDE --------------------- INVERSE SIDE
+			[inversedBy] <------------> mappedBy 
+			
+			ManyToOne					OneToMany
+			
+
+
 ------------------------------------------------------------------------------------------------------------------------------------------------
 How to generate/update DB schema?
 =================================
