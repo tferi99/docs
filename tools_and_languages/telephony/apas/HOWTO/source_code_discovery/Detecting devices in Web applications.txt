@@ -316,14 +316,16 @@ WebClient Login
 [2] -->  WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
 	--> connection = getConnection(userId)
 	--------------------------------- if cache is valid ---------------------------------
-		- devs = connection.getDevices(onlyRegistered)
-		- return devs
+		--> fixActiveDeviceSetting()
+		- return connection.getDevices(onlyRegistered)
 	--------------------------------- if cache NOT valid ---------------------------------
+		--> collectConnectionDevices(userId, connection, ...)
+		--> fixActiveDeviceSetting()
 		--> PhoneServiceImpl.devicesForUser(userId, false)
 			--> phones = getAssociatedDevicesForUser(userId)
 				--> docUser = JTAPIServlet.getDefaultJTAPI().axl.sendRequest("getUser", "<userid>" + userid + "</userid>") 				// getting end-user info with AXL
-				
-				--> getEMPhones(docUser)																							<<<<<<<<<<<<<<<<<<<<< getting EM phone
+				--> getAssociatedPhones(docUser)					// getting direct associated devices from docUser AXL response
+				--> getEMPhones(docUser)																								<<<<<<<<<<<<<<<<<<<<< getting EM phone
 					- getting associated devices for end-user with AXL
 						--> jtapi.axl.sendRequest("executeSQLQuery", AXLquery);
 								
@@ -333,10 +335,10 @@ WebClient Login
 					- then getting phones by retrieved device ID with JTAPI
 						--> JTAPIServlet.getPhone(deviceName)
 					
-				--> getAssociatedPhones(docUser)					// getting direct associated devices from docUser AXL response
+				
 				
 			--> jtapiDevices = onlyKeepJtapiTerminals(phones, userId)		
-			
+		- return connection.getDevices(onlyRegistered)
 ----------------------------------------------------------------------------------------------
 WebClient Logout
 ================
