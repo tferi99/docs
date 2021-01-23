@@ -1,0 +1,117 @@
+=================
+Lint/Prettier FAQ
+=================
+SEE:	
+	https://eslint.org/docs/rules/
+	https://prettier.io/docs/en/options.html	
+
+
+- Eslint/prettier customization
+- How to setup prettier for WebStorm?
+
+Lint rules
+----------
+- How to specify maximum lenght of line?
+
+Prettier rules
+--------------
+- How to config line wrapping?
+- How to disable bracket spacing?
+
+------------------------------------------------------------------------------------------------------------------------
+Eslint/prettier customization
+=============================
+You can install it globally and configure it in your project, by adding the corresponding 
+
+	.prettierrc file 
+	
+or 
+	
+	"prettier" section in project package.json.
+
+
+For example to deny spaces before/after brackets in .prettierrc:
+	
+	{
+		"bracketSpacing": false
+	}
+
+
+SEE ALSO:	
+	https://stackoverflow.com/questions/49586279/making-webstorm-use-single-quotes-for-prettier
+	https://www.jetbrains.com/help/webstorm/prettier.html
+
+------------------------------------------------------------------------------------------------------------------------
+How to setup prettier for WebStorm?
+===================================
+- Install:
+
+		npm install --save-dev --save-exact prettier
+	or
+		npm install --global prettier
+
+		
+- Configure:
+
+	File/Preferences/
+		
+- Reformat code with Prettier manually:
+
+	Ctrl+Alt+Shift+P (or select Reformat with Prettier)
+	
+- Reformat code with Prettier automatically:	
+		
+SEE ALSO:	https://www.jetbrains.com/help/webstorm/prettier.html#prettier_before_you_start
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to specify maximum lenght of line?
+======================================
+Default: 80
+
+Use max-len in .eslintrc.js/rules:
+	
+	rules {
+		'max-len': ["error", {'code': 200}]
+		...
+	}
+
+
+NOTE: 
+	If you set this value then maybe you have to set 'printWidth' value of Prettier.
+	See 'Print width'
+	
+SEE ALSO:	https://eslint.org/docs/2.0.0/rules/max-len
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to config line wrapping?
+============================
+Prettier:
+
+{
+	"printWidth": 200
+	...
+}
+	
+Default: 80
+
+Don’t try to use printWidth as if it was ESLint’s max-len – they’re not the same. 
+	- max-len: Lint just says what the maximum allowed line length is, but not what the generally preferred length is – which is what printWidth specifies.
+	- printWidth: Specify the line length that the printer will wrap on.
+
+SEE ALSO:	https://prettier.io/docs/en/options.html
+
+
+------------------------------------------------------------------------------------------------------------------------
+How to disable bracket spacing?
+===============================
+Prettier: 
+{
+	"bracketSpacing": false,
+	...
+}
+
+Default: true
+
+SEE ALSO:	https://prettier.io/docs/en/options.html

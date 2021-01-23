@@ -1,0 +1,55 @@
+==============
+Reorder issues
+==============
+
+- dbId changed to 0
+
+------------------------------------------------------------------------------------------------------------------------------------
+dbId changed to 0
+=================
+APAS-1184
+
+Problem:
+Call detected properly and a valid dbId returned first. But later it will be 0.
+
+	[2020-10-26 10:23:08,480] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@2076c091)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFSDRESCHER" callID="sip3472361/2" callingParty="916314721005" calledParty="2231" callingPartyName="New York " calledPartyName="Samantha Drescher" originalCallingParty="916314721005" originalCalledParty="4787" lastRedirectingParty="4787" initiated="false"/>]
+	[2020-10-26 10:23:08,482] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip3472361/2" dbID="1758388" state="1"/>
+	[2020-10-26 10:23:08,483] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip3472361/2 dbID=1758388 OK
+	 
+	[2020-10-26 10:23:09,082] [DEBUG] [APAS-defaultWorker-5] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFSDrescher" callID="sip3472361/2" srcIP="192.168.1.94" srcPort="37777"/>]
+	[2020-10-26 10:23:09,083] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip3472361/2" dbID="0" state="0"/>
+	[2020-10-26 10:23:09,084] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip3472361/2 dbID=0 OK
+	 
+	[2020-10-26 10:23:09,346] [DEBUG] [APAS-defaultWorker-9] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFSDrescher" callID="sip3472361/2" dstIP="192.168.1.94" dstPort="55618"/>]
+	[2020-10-26 10:23:09,346] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:426] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip3472361/2" dbID="0" state="0"/>
+	[2020-10-26 10:23:09,347] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip3472361/2 dbID=0 OK
+	[2020-10-26 10:25:23,051] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@2076c091)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="SEP189C5D20B0F1" callID="sip3472361/2" stopOut="1" />]
+	[2020-10-26 10:25:23,052] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@2076c091)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFSDRESCHER" callID="sip3472361/2" stopOut="1" />]
+	
+Explanation:
+	Recorder identifies a call by call ID and terminal. During this call terminal not changed but terminal name in XML first sent with capital 
+	but later it has been sent with mixed-case letters.
+	
+Root cause:
+	APAS retrieves terminal names from JTAPI onverted to upper-case but from SIP name retrieved with original chanracters.
+	If customer has custom terminal names (e.g. for Jabber devices - CSF...) then this issue activated.
+
+
+Status:
+	- Problem has been fixed in 6.2.1-13228 and 6.2.2-13227 (APAS-1184).
+	- Recorder2 not suffered from this problem. It converts all terminal names to upper-case.
+	
+NOTE:
+	Very strange that I cannot reproduce this issue IN OUR LAB. Here all terminal names ALWAYS retrieved with original letters (CUCM11).
+	
+		[2021-01-18 14:37:49,252] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@29239eab)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFToth9110" callID="sip25419/1" callingParty="+36110009100" calledParty="+36110009110" callingPartyName="" calledPartyName="" originalCallingParty="+36110009100" originalCalledParty="+36110009110" lastRedirectingParty="" initiated="false"/>]
+		[2021-01-18 14:37:50,632] [DEBUG] [APAS-defaultWorker-9] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFToth9110" callID="sip25419/1" srcIP="10.51.51.122" srcPort="33090"/>]
+		[2021-01-18 14:37:50,777] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFToth9110" callID="sip25419/1" dstIP="10.51.51.122" dstPort="51631"/>]
+		[2021-01-18 14:38:30,584] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@29239eab)] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFToth9110" callID="sip25419/1" stopOut="1" />]
+		[2021-01-18 14:38:30,608] [DEBUG] [APAS-defaultWorker-15] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFToth9110" callID="csip18715991" stopOut="1" />]
+		[2021-01-18 14:38:30,613] [DEBUG] [APAS-defaultWorker-17] [XMLSocket.java:426] - XML_SOCKET:sending XML [<recordCall terminal="CSFFToth9110" callID="csip18715991" stopOut="1" />]
+	
+SEE ALSO:
+	source_code_discovery/Recording.txt/dbID=0 on the 2nd recordCall
+	source_code_discovery/Recording.txt/How calls are identified by independent <recordCall> messages?
+	

@@ -1,0 +1,774 @@
+[2021-01-08 10:45:19,270] [WARN] [APAS-JTAPIThread] [ANDProperties.java:147] - Sent HUP to Sniffer to reread config. Message from Sniffer: 
+[2021-01-08 10:45:19,935] [WARN] [APAS-JTAPIThread] [Admin.java:6176] - APAS version: 6.3.1-13581 (Appliance-64bit)
+[2021-01-08 10:45:20,588] [ERROR] [APAS-JTAPIThread] [Module.java:1352] - Unable to set smbpasswd for user backup, does the user have global_backup permissions?
+[2021-01-08 10:45:23,418] [FATAL] [APAS-JTAPIThread] [ModuleDB.java:42] - Failed to migrate or create the recorder database schema!
+com.googlecode.flyway.core.api.FlywayException: Unable to determine URL for classpath location: com/andtek/andphone/recorder/migrations (ClassLoader: WebappClassLoader
+  context: andphone
+  delegate: false
+----------> Parent Classloader:
+java.net.URLClassLoader@515f550a
+)
+	at com.googlecode.flyway.core.util.scanner.classpath.ClassPathScanner.getLocationUrlsForPath(ClassPathScanner.java:179) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.util.scanner.classpath.ClassPathScanner.findResourceNames(ClassPathScanner.java:135) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.util.scanner.classpath.ClassPathScanner.scanForResources(ClassPathScanner.java:60) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.resolver.sql.SqlMigrationResolver.resolveMigrations(SqlMigrationResolver.java:90) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.resolver.CompositeMigrationResolver.collectMigrations(CompositeMigrationResolver.java:158) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.resolver.CompositeMigrationResolver.doFindAvailableMigrations(CompositeMigrationResolver.java:140) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.resolver.CompositeMigrationResolver.resolveMigrations(CompositeMigrationResolver.java:112) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.info.MigrationInfoServiceImpl.refresh(MigrationInfoServiceImpl.java:87) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.command.DbMigrate$1.doInTransaction(DbMigrate.java:144) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.command.DbMigrate$1.doInTransaction(DbMigrate.java:138) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.util.jdbc.TransactionTemplate.execute(TransactionTemplate.java:54) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.command.DbMigrate.migrate(DbMigrate.java:137) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.Flyway$1.execute(Flyway.java:862) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.Flyway$1.execute(Flyway.java:815) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.Flyway.execute(Flyway.java:1177) ~[flyway-core-2.1.1.jar:?]
+	at com.googlecode.flyway.core.Flyway.migrate(Flyway.java:815) ~[flyway-core-2.1.1.jar:?]
+	at com.andtek.andphone.utils.db.FlywayUtil.initModule(FlywayUtil.java:38) ~[classes/:?]
+	at com.andtek.andphone.recorder.ModuleDB.internalCreate(ModuleDB.java:50) ~[classes/:?]
+	at com.andtek.andphone.recorder.ModuleDB.create(ModuleDB.java:40) [classes/:?]
+	at com.andtek.andphone.utils.ModuleDBUtils.createDB(ModuleDBUtils.java:977) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3627) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:364) [classes/:?]
+[2021-01-08 10:45:23,604] [ERROR] [http-nio-8080-exec-14] [EventLog.java:298] - RECORDER: Sniffer process (andphone_record) went out of service (status=DISCONNECTED).
+[2021-01-08 10:45:23,601] [ERROR] [http-nio-8080-exec-18] [EventLog.java:298] - RECORDER: Sniffer process (andphone_record) went out of service (status=DISCONNECTED).
+[2021-01-08 10:45:23,657] [ERROR] [http-nio-8080-exec-1] [EventLog.java:298] - RECORDER: Sniffer process (andphone_record) went out of service (status=DISCONNECTED).
+[2021-01-08 10:45:24,172] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:45:24,185] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize global.Menu_mainPage. Using default: !global.Menu_mainPage!
+[2021-01-08 10:45:24,202] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:45:24,202] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize lockout.Menu_mainPage. Using default: !lockout.Menu_mainPage!
+[2021-01-08 10:45:24,205] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:45:24,206] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize partner.Menu_mainPage. Using default: !partner.Menu_mainPage!
+[2021-01-08 10:45:24,181] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:45:24,223] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize global.Menu_mainPage. Using default: !global.Menu_mainPage!
+[2021-01-08 10:45:24,296] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:45:24,297] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize lockout.Menu_mainPage. Using default: !lockout.Menu_mainPage!
+[2021-01-08 10:45:24,300] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:45:24,300] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize partner.Menu_mainPage. Using default: !partner.Menu_mainPage!
+[2021-01-08 10:45:24,380] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:45:24,381] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize ldap.Menu_mainPage. Using default: !ldap.Menu_mainPage!
+[2021-01-08 10:45:24,402] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:45:24,403] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize ldap.Menu_mainPage. Using default: !ldap.Menu_mainPage!
+[2021-01-08 10:45:24,450] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:45:24,450] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize mcast.Menu_mainPage. Using default: !mcast.Menu_mainPage!
+[2021-01-08 10:45:24,475] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:45:24,488] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:45:24,514] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:45:24,525] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:45:24,526] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:45:24,526] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:45:24,530] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:45:24,562] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:45:24,565] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:45:24,575] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:45:24,615] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:45:24,630] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:45:24,634] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:45:24,645] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:45:24,682] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:45:24,685] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:45:24,641] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:45:24,694] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:45:24,721] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:45:24,761] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:45:24,779] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:45:24,792] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:45:24,830] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:45:24,855] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:45:24,856] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:45:24,857] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:45:24,869] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:45:24,872] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:45:24,873] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:45:24,882] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:45:24,888] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:45:24,897] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:45:24,901] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:45:24,904] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:45:24,907] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:45:24,911] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:45:24,923] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:45:24,924] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:45:24,924] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:45:24,925] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:45:24,925] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:45:24,926] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:45:24,930] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:45:24,921] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:45:24,936] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:45:24,940] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:45:24,943] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:45:24,944] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:45:24,945] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:45:24,949] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:45:24,952] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:45:24,958] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:45:24,961] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:45:24,965] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:45:24,967] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:45:24,968] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:45:24,969] [WARN] [http-nio-8080-exec-9] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:45:24,980] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:45:24,980] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:45:24,984] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:45:24,987] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:45:25,002] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:45:25,005] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:45:25,009] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:45:25,024] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:45:25,030] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:45:25,045] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:45:25,050] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:45:25,050] [WARN] [http-nio-8080-exec-6] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:45:26,620] [ERROR] [APAS-JTAPIThread] [ModuleDB.java:2082] - Adding comments to the view acd_call_classification_2_tag_view failed ([42703:0:ERROR: column "fk_acd_call_classification_id" of relation "acd_pilot_view" does not exist])  
+org.postgresql.util.PSQLException: ERROR: column "fk_acd_call_classification_id" of relation "acd_pilot_view" does not exist
+	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2578) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.core.v3.QueryExecutorImpl.processResults(QueryExecutorImpl.java:2313) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.core.v3.QueryExecutorImpl.execute(QueryExecutorImpl.java:331) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeInternal(PgStatement.java:448) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:369) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:310) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeCachedSql(PgStatement.java:296) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.executeWithFlags(PgStatement.java:273) ~[postgresql-jdbc.jar:42.2.11]
+	at org.postgresql.jdbc.PgStatement.execute(PgStatement.java:268) ~[postgresql-jdbc.jar:42.2.11]
+	at net.sf.log4jdbc.StatementSpy.execute(StatementSpy.java:842) ~[log4jdbc4-1.2.jar:?]
+	at com.andtek.andphone.partner.acd.ModuleDB.create(ModuleDB.java:2078) [classes/:?]
+	at com.andtek.andphone.utils.ModuleDBUtils.createDB(ModuleDBUtils.java:977) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.loadConfig(JTAPIThread.java:3627) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:364) [classes/:?]
+[2021-01-08 10:45:29,282] [ERROR] [APAS-JTAPIThread] [CommunicatorProfile.java:275] - Exception
+java.lang.NullPointerException
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:474) ~[classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:273) [classes/:?]
+	at com.andtek.andphone.clientcore.GenericProfile.load(GenericProfile.java:128) [classes/:?]
+	at com.andtek.andphone.clientcore.GenericProfile.getAllProfiles(GenericProfile.java:348) [classes/:?]
+	at com.andtek.andphone.clientcore.GenericProfile.getAllProfiles(GenericProfile.java:365) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.getPools(CommunicatorProfile.java:154) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.reLoadDefaultStatisticsTableColumns(CommunicatorProfile.java:427) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.AcdCategoryThresholdDefinitionsBase.initDefaultDefinitions(AcdCategoryThresholdDefinitionsBase.java:177) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.AcdCategoryThresholdDefinitionsBase.<init>(AcdCategoryThresholdDefinitionsBase.java:136) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.standard.StandardAcdCategoryThresholdDefinitions.<init>(StandardAcdCategoryThresholdDefinitions.java:11) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.standard.StandardAcdCalculationPlugin.init(StandardAcdCalculationPlugin.java:29) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.AcdCalculationPluginLocator.getPlugin(AcdCalculationPluginLocator.java:62) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:473) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:273) [classes/:?]
+	at com.andtek.andphone.clientcore.GenericProfile.load(GenericProfile.java:128) [classes/:?]
+	at com.andtek.andphone.global.Module.init(Module.java:357) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:554) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:534) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:383) [classes/:?]
+[2021-01-08 10:45:29,300] [ERROR] [APAS-JTAPIThread] [CommunicatorProfile.java:434] - Exception
+java.lang.NullPointerException
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:474) ~[classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.reLoadDefaultStatisticsTableColumns(CommunicatorProfile.java:432) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.AcdCategoryThresholdDefinitionsBase.initDefaultDefinitions(AcdCategoryThresholdDefinitionsBase.java:177) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.AcdCategoryThresholdDefinitionsBase.<init>(AcdCategoryThresholdDefinitionsBase.java:136) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.standard.StandardAcdCategoryThresholdDefinitions.<init>(StandardAcdCategoryThresholdDefinitions.java:11) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.standard.StandardAcdCalculationPlugin.init(StandardAcdCalculationPlugin.java:29) [classes/:?]
+	at com.andtek.andphone.partner.acd.plugins.AcdCalculationPluginLocator.getPlugin(AcdCalculationPluginLocator.java:62) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadDefaultStatisticsTableColumns(CommunicatorProfile.java:473) [classes/:?]
+	at com.andtek.andphone.communicator.CommunicatorProfile.loadAttributes(CommunicatorProfile.java:273) [classes/:?]
+	at com.andtek.andphone.clientcore.GenericProfile.load(GenericProfile.java:128) [classes/:?]
+	at com.andtek.andphone.global.Module.init(Module.java:357) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:554) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:534) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:383) [classes/:?]
+[2021-01-08 10:45:29,766] [ERROR] [APAS-JTAPIThread] [Module.java:224] - Unable to connect server
+javax.sip.ObjectInUseException: Provider already attached!
+	at gov.nist.javax.sip.SipStackImpl.createSipProvider(SipStackImpl.java:961) ~[jain-sip-ri-1.2.129-mod-SNAPSHOT.jar:?]
+	at com.andtek.andphone.sip.trunk.SIPServer.listen(SIPServer.java:1149) ~[classes/:?]
+	at com.andtek.andphone.recorder.Module.init(Module.java:222) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:554) [classes/:?]
+	at com.andtek.andphone.utils.Modules.init(Modules.java:534) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:383) [classes/:?]
+[2021-01-08 10:45:31,811] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:45:31,812] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:45:31,813] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:45:31,820] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:45:31,826] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:45:31,829] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:45:31,867] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:45:31,868] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:45:31,871] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:45:31,876] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:45:31,883] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:45:31,886] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:45:31,888] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:45:31,895] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:45:31,903] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:45:31,916] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:45:31,925] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:45:31,928] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:45:31,929] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:45:31,936] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:45:31,949] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:45:31,952] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:45:31,955] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:45:31,958] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:45:31,961] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:45:31,964] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:45:31,966] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:45:31,969] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:45:31,970] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:45:31,972] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:45:31,975] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:45:31,978] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:45:31,981] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:45:31,983] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:45:31,986] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:45:31,991] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:45:31,994] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:45:32,002] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:45:32,002] [WARN] [http-nio-8080-exec-14] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:45:32,452] [WARN] [APAS-JTAPIThread] [Admin.java:6176] - APAS version: 6.3.1-13581 (Appliance-64bit), Cisco Jtapi version: 11.5(1.10000)-1 Release
+[2021-01-08 10:45:33,067] [WARN] [ObserverThread(com.andtek.andphone.CiscoJtapiProviderObserver@35cdbc8f)] [CiscoJtapiProviderObserver.java:137] - ProvOutOfServiceEv
+[2021-01-08 10:45:41,835] [WARN] [APAS-TimerDaemon] [Admin.java:514] - InMaintenance changed from 2 to 0
+[2021-01-08 10:45:43,111] [WARN] [APAS-JTAPIThread] [JTAPIThread.java:2780] - WARNING: There are no groups defined
+[2021-01-08 10:45:43,122] [ERROR] [APAS-JTAPIThread] [Module.java:320] - Exception from the init process. 
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_CONF is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.mcast.Module.setupRouteCallBack(Module.java:137) ~[classes/:?]
+	at com.andtek.andphone.mcast.Module.initJTAPI(Module.java:316) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,220] [ERROR] [APAS-JTAPIThread] [Module.java:237] - Exception
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_ECR is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.blacklist.Module.initJTAPI(Module.java:212) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,232] [ERROR] [APAS-JTAPIThread] [Modules.java:769] - Exception while initializing JTAPI for module callrouting
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal  is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
+	at com.andtek.andphone.callrouting.CTIPortObserver.observe(CTIPortObserver.java:164) ~[classes/:?]
+	at com.andtek.andphone.callrouting.Module.initJTAPI(Module.java:677) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,234] [ERROR] [APAS-JTAPIThread] [Modules.java:769] - Exception while initializing JTAPI for module communicator
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_COMM is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.communicator.Module.setupRouteCallBack(Module.java:437) ~[classes/:?]
+	at com.andtek.andphone.communicator.Module.initJTAPI(Module.java:718) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,236] [ERROR] [APAS-JTAPIThread] [Module.java:674] - Exception
+java.lang.ClassCastException: com.cisco.jtapi.TerminalImpl cannot be cast to com.cisco.jtapi.extensions.CiscoRouteTerminal
+	at com.andtek.andphone.partner.acd.Module.initJTAPI(Module.java:664) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,237] [ERROR] [APAS-JTAPIThread] [Module.java:674] - Exception
+java.lang.ClassCastException: com.cisco.jtapi.TerminalImpl cannot be cast to com.cisco.jtapi.extensions.CiscoRouteTerminal
+	at com.andtek.andphone.partner.acd.Module.initJTAPI(Module.java:664) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,237] [ERROR] [APAS-JTAPIThread] [Module.java:674] - Exception
+java.lang.ClassCastException: com.cisco.jtapi.TerminalImpl cannot be cast to com.cisco.jtapi.extensions.CiscoRouteTerminal
+	at com.andtek.andphone.partner.acd.Module.initJTAPI(Module.java:664) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,239] [ERROR] [APAS-JTAPIThread] [Module.java:674] - Exception
+java.lang.ClassCastException: com.cisco.jtapi.TerminalImpl cannot be cast to com.cisco.jtapi.extensions.CiscoRouteTerminal
+	at com.andtek.andphone.partner.acd.Module.initJTAPI(Module.java:664) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,241] [ERROR] [APAS-JTAPIThread] [Modules.java:769] - Exception while initializing JTAPI for module phonemenu
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_MENU is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.phonemenu.Module.initJTAPI(Module.java:52) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,246] [ERROR] [APAS-JTAPIThread] [Modules.java:769] - Exception while initializing JTAPI for module andmobile
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_CP_MOBILE is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
+	at com.andtek.andphone.andmobile.CTIPortObserver.observe(CTIPortObserver.java:185) ~[classes/:?]
+	at com.andtek.andphone.andmobile.Module.initJTAPI(Module.java:108) ~[classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:43,249] [ERROR] [APAS-JTAPIThread] [Module.java:116] - Exception
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal APH_RP_LOGIN is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.web.webclient.Module.initJTAPI(Module.java:91) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:765) [classes/:?]
+	at com.andtek.andphone.utils.Modules.initJTAPI(Modules.java:750) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.doInitJtapi(JTAPIThread.java:2784) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.initJtapi(JTAPIThread.java:2537) [classes/:?]
+	at com.andtek.andphone.JTAPIThread.run(JTAPIThread.java:397) [classes/:?]
+[2021-01-08 10:45:47,720] [WARN] [APAS-JTAPIThread] [JTAPIThread.java:526] - Provider went out of service 1
+[2021-01-08 10:46:14,515] [WARN] [http-nio-8080-exec-6] [ANDRealm.java:168] - [SECURITY]: ANDRealm.authenticate(): Authentication failure: Verify username and password. | Profile: Web Client default authentication profile [type=CUCM AXL]
+[2021-01-08 10:46:14,803] [ERROR] [springTaskScheduler-1] [WackerPhoneNumberMgmtServiceImpl.java:59] - Log PhoneNumberMgmt - LDAP sync faild! Project : com.andtek.andphone.provisioning.project.Project@703059fe
+java.lang.NullPointerException
+	at com.andtek.andphone.provisioning.project.utils.wacker.cacheimpl.WackerLdapPhoneNumberCacheServiceImpl.runSync(WackerLdapPhoneNumberCacheServiceImpl.java:109) ~[classes/:?]
+	at com.andtek.andphone.provisioning.project.utils.wacker.cacheimpl.WackerPhoneNumberMgmtServiceImpl.sync(WackerPhoneNumberMgmtServiceImpl.java:57) [classes/:?]
+	at com.andtek.andphone.provisioning.project.task.ProvisioningSyncTask.executeTask(ProvisioningSyncTask.java:83) [classes/:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_144]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_144]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_144]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_144]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:84) [spring-context-5.2.5.RELEASE.jar:5.2.5.RELEASE]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) [spring-context-5.2.5.RELEASE.jar:5.2.5.RELEASE]
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511) [?:1.8.0_144]
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:308) [?:1.8.0_144]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$301(ScheduledThreadPoolExecutor.java:180) [?:1.8.0_144]
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:294) [?:1.8.0_144]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) [?:1.8.0_144]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) [?:1.8.0_144]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2021-01-08 10:46:14,804] [WARN] [springTaskScheduler-1] [WackerCucmPhoneNumberCacheServiceImpl.java:63] - Log PhoneNumberMgmt - Run sync failed for CUCM phone numbers - input location list is null or empty!
+[2021-01-08 10:47:00,014] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:47:00,015] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:47:00,019] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:47:00,029] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:47:00,035] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:47:00,041] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:47:00,047] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:47:00,048] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:47:00,049] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:47:00,051] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:47:00,053] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:47:00,054] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:47:00,055] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:47:00,058] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:47:00,060] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:47:00,065] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:47:00,068] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:47:00,069] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:47:00,070] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:47:00,071] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:47:00,074] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:47:00,075] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:47:00,076] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:47:00,077] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:47:00,079] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:47:00,081] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:47:00,082] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:47:00,083] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:47:00,084] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:47:00,085] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:47:00,086] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:47:00,087] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:47:00,088] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:47:00,089] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:47:00,091] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:47:00,092] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:47:00,093] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:47:00,095] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:47:00,096] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:47:49,044] [ERROR] [http-nio-8080-exec-17] [LockoutProfile.java:656] - LOCKOUT: No found lockout profile for device 'SEPA45630BB1748'. fallback to default profile. 
+[2021-01-08 10:47:49,113] [WARN] [http-nio-8080-exec-17] [LockoutProfile.java:699] - LOCKOUT: No found lockout profile for extension ''. fallback to default profile. 
+[2021-01-08 10:48:10,649] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@5eb923de)] [WebCallBuilder.java:104] - Unable to applyRegxCTI
+java.lang.NullPointerException
+	at com.andtek.andphone.web.common.utils.WebCallBuilder.buildWebCall(WebCallBuilder.java:99) [classes/:?]
+	at com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver.doHandleRingingOut(WebAttendantCallObserver.java:171) [classes/:?]
+	at com.andtek.andphone.web.common.observers.WebCallObserver.ringingOut(WebCallObserver.java:266) [classes/:?]
+	at com.andtek.andphone.web.common.observers.WebCallObserver.callChangedEvent(WebCallObserver.java:140) [classes/:?]
+	at com.cisco.jtapi.ObserverProxy.Z(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.jtapi.ObserverThread.messageReceived(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.append(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.CTQF(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.run(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+[2021-01-08 10:48:10,664] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@5eb923de)] [EventBroadcaster.java:98] - EVENT_BROADCASTER: Ignored broadcasting to ['webattendant_SEP64A0E714F271'] there is no active subscriber for this target
+[2021-01-08 10:48:10,763] [ERROR] [http-nio-8080-exec-5] [WebLookupThread.java:104] - no lookup directorygroup available or it does not contain any directory
+[2021-01-08 10:48:21,204] [ERROR] [http-nio-8080-exec-11] [WebLookupThread.java:104] - no lookup directorygroup available or it does not contain any directory
+[2021-01-08 10:48:21,275] [ERROR] [http-nio-8080-exec-4] [WebLookupThread.java:104] - no lookup directorygroup available or it does not contain any directory
+[2021-01-08 10:48:21,281] [ERROR] [APAS-defaultWorker-13] [RecorderSipTrunk.java:342] - Unable to find associated call in JTAPI for terminal SEP64A0E714F271
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal SEP64A0E714F271 is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.callFromFirstActiveTerminalConnection(RecorderSipTrunk.java:520) ~[classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.processAck(RecorderSipTrunk.java:339) [classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.sipServerEvent(RecorderSipTrunk.java:628) [classes/:?]
+	at com.andtek.andphone.sip.trunk.SIPServer.handleEvents(SIPServer.java:1680) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2021-01-08 10:48:21,286] [ERROR] [APAS-defaultWorker-11] [RecorderSipTrunk.java:342] - Unable to find associated call in JTAPI for terminal SEP64A0E714F271
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal SEP64A0E714F271 is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.callFromFirstActiveTerminalConnection(RecorderSipTrunk.java:520) ~[classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.processAck(RecorderSipTrunk.java:339) [classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.sipServerEvent(RecorderSipTrunk.java:628) [classes/:?]
+	at com.andtek.andphone.sip.trunk.SIPServer.handleEvents(SIPServer.java:1680) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2021-01-08 10:48:40,293] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2021-01-08 10:48:40,324] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@5eb923de)] [WebCallBuilder.java:104] - Unable to applyRegxCTI
+java.lang.NullPointerException
+	at com.andtek.andphone.web.common.utils.WebCallBuilder.buildWebCall(WebCallBuilder.java:99) [classes/:?]
+	at com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver.doHandleRingingOut(WebAttendantCallObserver.java:171) [classes/:?]
+	at com.andtek.andphone.web.common.observers.WebCallObserver.ringingOut(WebCallObserver.java:266) [classes/:?]
+	at com.andtek.andphone.web.common.observers.WebCallObserver.callChangedEvent(WebCallObserver.java:140) [classes/:?]
+	at com.cisco.jtapi.ObserverProxy.Z(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.jtapi.ObserverThread.messageReceived(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.append(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.CTQF(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.run(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+[2021-01-08 10:48:40,328] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@5eb923de)] [EventBroadcaster.java:98] - EVENT_BROADCASTER: Ignored broadcasting to ['webattendant_SEP64A0E714F271'] there is no active subscriber for this target
+[2021-01-08 10:48:40,329] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@5eb923de)] [WebCallBuilder.java:104] - Unable to applyRegxCTI
+java.lang.NullPointerException
+	at com.andtek.andphone.web.common.utils.WebCallBuilder.buildWebCall(WebCallBuilder.java:99) [classes/:?]
+	at com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver.doHandleRinging(WebAttendantCallObserver.java:152) [classes/:?]
+	at com.andtek.andphone.web.common.observers.WebCallObserver.ringing(WebCallObserver.java:234) [classes/:?]
+	at com.andtek.andphone.web.common.observers.WebCallObserver.callChangedEvent(WebCallObserver.java:119) [classes/:?]
+	at com.cisco.jtapi.ObserverProxy.Z(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.jtapi.ObserverThread.messageReceived(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.append(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.CTQF(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+	at com.cisco.cti.util.MessageThread.run(CTQF) [jtapi.jar:11.5(1.10000)-1 Release]
+[2021-01-08 10:48:40,331] [WARN] [ObserverThread(com.andtek.andphone.web.webattendant.observers.WebAttendantCallObserver@5eb923de)] [EventBroadcaster.java:98] - EVENT_BROADCASTER: Ignored broadcasting to ['webattendant_SEPA45630401BDA'] there is no active subscriber for this target
+[2021-01-08 10:48:40,376] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2021-01-08 10:48:40,377] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2021-01-08 10:48:40,415] [ERROR] [http-nio-8080-exec-18] [WebLookupThread.java:104] - no lookup directorygroup available or it does not contain any directory
+[2021-01-08 10:48:46,831] [ERROR] [APAS-defaultWorker-3] [RecorderSipTrunk.java:342] - Unable to find associated call in JTAPI for terminal SEP64A0E714F271
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal SEP64A0E714F271 is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.callFromFirstActiveTerminalConnection(RecorderSipTrunk.java:520) ~[classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.processAck(RecorderSipTrunk.java:339) [classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.sipServerEvent(RecorderSipTrunk.java:628) [classes/:?]
+	at com.andtek.andphone.sip.trunk.SIPServer.handleEvents(SIPServer.java:1680) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2021-01-08 10:48:46,849] [ERROR] [APAS-defaultWorker-5] [RecorderSipTrunk.java:342] - Unable to find associated call in JTAPI for terminal SEP64A0E714F271
+com.cisco.jtapi.InvalidArgumentExceptionImpl: Terminal SEP64A0E714F271 is not in provider's domain.
+	at com.cisco.jtapi.ProviderImpl.getTerminal(CTQF) ~[jtapi.jar:11.5(1.10000)-1 Release]
+	at com.andtek.andphone.ccm.AndtekProvider.getTerminal(AndtekProvider.java:500) ~[classes/:?]
+	at com.andtek.andphone.ccm.CCMPhone.getTerminal(CCMPhone.java:1989) ~[classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.callFromFirstActiveTerminalConnection(RecorderSipTrunk.java:520) ~[classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.processAck(RecorderSipTrunk.java:339) [classes/:?]
+	at com.andtek.andphone.recorder.RecorderSipTrunk.sipServerEvent(RecorderSipTrunk.java:628) [classes/:?]
+	at com.andtek.andphone.sip.trunk.SIPServer.handleEvents(SIPServer.java:1680) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.handleEvent(EventQueueWorker.java:117) [classes/:?]
+	at com.andtek.andphone.utils.events.EventQueueWorker.run(EventQueueWorker.java:89) [classes/:?]
+	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_144]
+[2021-01-08 10:49:00,016] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:49:00,017] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:49:00,018] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:49:00,027] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:49:00,032] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:49:00,034] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:49:00,039] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:49:00,041] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:49:00,042] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:49:00,043] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:49:00,045] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:49:00,046] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:49:00,048] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:49:00,050] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:49:00,053] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:49:00,057] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:49:00,059] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:49:00,061] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:49:00,061] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:49:00,062] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:49:00,066] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:49:00,067] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:49:00,068] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:49:00,069] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:49:00,070] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:49:00,072] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:49:00,073] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:49:00,074] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:49:00,074] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:49:00,075] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:49:00,077] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:49:00,078] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:49:00,079] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:49:00,080] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:49:00,081] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:49:00,083] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:49:00,085] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:49:00,087] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:49:00,088] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:49:06,173] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2021-01-08 10:49:06,230] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2021-01-08 10:49:06,232] [WARN] [APAS-SnifferConnection] [SnifferConnection.java:545] - recorder error response (404 = Call not found) - Call not found for this terminal and callID
+[2021-01-08 10:51:00,014] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:51:00,016] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:51:00,017] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:51:00,024] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:51:00,029] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:51:00,032] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:51:00,037] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:51:00,038] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:51:00,039] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:51:00,040] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:51:00,042] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:51:00,043] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:51:00,044] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:51:00,047] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:51:00,050] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:51:00,054] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:51:00,056] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:51:00,093] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:51:00,093] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:51:00,094] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:51:00,101] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:51:00,103] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:51:00,105] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:51:00,106] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:51:00,107] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:51:00,108] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:51:00,109] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:51:00,111] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:51:00,111] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:51:00,112] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:51:00,113] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:51:00,114] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:51:00,116] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:51:00,117] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:51:00,118] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:51:00,120] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:51:00,121] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:51:00,123] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:51:00,123] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:53:00,013] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:53:00,015] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:53:00,016] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:53:00,022] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:53:00,027] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:53:00,029] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:53:00,033] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:53:00,034] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:53:00,034] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:53:00,036] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:53:00,037] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:53:00,038] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:53:00,039] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:53:00,041] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:53:00,044] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:53:00,048] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:53:00,050] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:53:00,051] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:53:00,052] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:53:00,052] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:53:00,056] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:53:00,056] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:53:00,057] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:53:00,058] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:53:00,059] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:53:00,060] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:53:00,062] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:53:00,063] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:53:00,063] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:53:00,064] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:53:00,065] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:53:00,066] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:53:00,067] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:53:00,067] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:53:00,068] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:53:00,070] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:53:00,071] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:53:00,073] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:53:00,073] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:55:00,023] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:55:00,024] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:55:00,025] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:55:00,034] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:55:00,039] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:55:00,041] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:55:00,045] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:55:00,046] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:55:00,047] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:55:00,048] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:55:00,050] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:55:00,050] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:55:00,051] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:55:00,056] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:55:00,058] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:55:00,061] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:55:00,064] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:55:00,065] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:55:00,065] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:55:00,066] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:55:00,069] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:55:00,070] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:55:00,071] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:55:00,072] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:55:00,073] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:55:00,074] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:55:00,074] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:55:00,075] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:55:00,076] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:55:00,076] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:55:00,077] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:55:00,078] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:55:00,079] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:55:00,080] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:55:00,081] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:55:00,084] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:55:00,086] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:55:00,088] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:55:00,088] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:55:26,321] [ERROR] [APAS-TimerDaemon] [PresenceMemoryTestUtil.java:32] - ExchangeCalendar not found
+[2021-01-08 10:55:26,322] [ERROR] [APAS-TimerDaemon] [ExchangePresenceStatistics.java:64] - Error during calculating Notifications
+java.lang.NullPointerException
+	at com.andtek.andphone.developer.util.ExchangePresenceStatistics.getCountOfNotificationSubscriptions(ExchangePresenceStatistics.java:134) ~[classes/:?]
+	at com.andtek.andphone.developer.util.ExchangePresenceStatistics.calculate(ExchangePresenceStatistics.java:61) [classes/:?]
+	at com.andtek.andphone.developer.util.ExchangePresenceStatistics.printToLog(ExchangePresenceStatistics.java:99) [classes/:?]
+	at com.andtek.andphone.presence.Module.background(Module.java:108) [classes/:?]
+	at com.andtek.andphone.utils.Modules.background(Modules.java:809) [classes/:?]
+	at com.andtek.andphone.utils.Modules.background(Modules.java:787) [classes/:?]
+	at com.andtek.andphone.Admin.background(Admin.java:612) [classes/:?]
+	at com.andtek.andphone.TimerDaemon.run(TimerDaemon.java:32) [classes/:?]
+[2021-01-08 10:57:00,014] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:57:00,016] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:57:00,017] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:57:00,024] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:57:00,029] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:57:00,031] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:57:00,036] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:57:00,037] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:57:00,038] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:57:00,039] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:57:00,041] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:57:00,042] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:57:00,043] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:57:00,046] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:57:00,049] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:57:00,052] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:57:00,057] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:57:00,058] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:57:00,059] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:57:00,061] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:57:00,066] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:57:00,068] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:57:00,070] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:57:00,072] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:57:00,073] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:57:00,075] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:57:00,077] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:57:00,079] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:57:00,079] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:57:00,081] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:57:00,082] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:57:00,084] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:57:00,086] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:57:00,087] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:57:00,089] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:57:00,109] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:57:00,111] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:57:00,113] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:57:00,114] [WARN] [http-nio-8080-exec-7] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 10:59:00,024] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 10:59:00,025] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 10:59:00,026] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 10:59:00,037] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 10:59:00,043] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 10:59:00,054] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 10:59:00,070] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 10:59:00,072] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 10:59:00,074] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 10:59:00,077] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 10:59:00,080] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 10:59:00,081] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 10:59:00,083] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 10:59:00,085] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 10:59:00,088] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 10:59:00,092] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 10:59:00,094] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 10:59:00,095] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 10:59:00,096] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 10:59:00,097] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 10:59:00,100] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 10:59:00,101] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 10:59:00,102] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 10:59:00,103] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 10:59:00,104] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 10:59:00,105] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 10:59:00,106] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 10:59:00,107] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 10:59:00,108] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 10:59:00,108] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 10:59:00,119] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 10:59:00,120] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 10:59:00,121] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 10:59:00,122] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 10:59:00,123] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 10:59:00,125] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 10:59:00,126] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 10:59:00,127] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 10:59:00,128] [WARN] [http-nio-8080-exec-3] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!
+[2021-01-08 11:01:00,017] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize global.LicenseName. Using default: !global.LicenseName!
+[2021-01-08 11:01:00,018] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize lockout.LicenseName. Using default: !lockout.LicenseName!
+[2021-01-08 11:01:00,019] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize partner.LicenseName. Using default: !partner.LicenseName!
+[2021-01-08 11:01:00,026] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize ldap.LicenseName. Using default: !ldap.LicenseName!
+[2021-01-08 11:01:00,031] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize mcast.LicenseName. Using default: !mcast.LicenseName!
+[2021-01-08 11:01:00,033] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recorder.LicenseName. Using default: !recorder.LicenseName!
+[2021-01-08 11:01:00,038] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recordermgmt.LicenseName. Using default: !recordermgmt.LicenseName!
+[2021-01-08 11:01:00,039] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize testing.LicenseName. Using default: !testing.LicenseName!
+[2021-01-08 11:01:00,041] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize settings.LicenseName. Using default: !settings.LicenseName!
+[2021-01-08 11:01:00,043] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize blacklist.LicenseName. Using default: !blacklist.LicenseName!
+[2021-01-08 11:01:00,048] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize provisioning.LicenseName. Using default: !provisioning.LicenseName!
+[2021-01-08 11:01:00,065] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize apps.LicenseName. Using default: !apps.LicenseName!
+[2021-01-08 11:01:00,066] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize groupma.LicenseName. Using default: !groupma.LicenseName!
+[2021-01-08 11:01:00,073] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize callrouting.LicenseName. Using default: !callrouting.LicenseName!
+[2021-01-08 11:01:00,076] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize communicator.LicenseName. Using default: !communicator.LicenseName!
+[2021-01-08 11:01:00,080] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize groupacd.LicenseName. Using default: !groupacd.LicenseName!
+[2021-01-08 11:01:00,082] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize ivr.LicenseName. Using default: !ivr.LicenseName!
+[2021-01-08 11:01:00,083] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize reports.LicenseName. Using default: !reports.LicenseName!
+[2021-01-08 11:01:00,084] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize phonemenu.LicenseName. Using default: !phonemenu.LicenseName!
+[2021-01-08 11:01:00,085] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize calllist.LicenseName. Using default: !calllist.LicenseName!
+[2021-01-08 11:01:00,088] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andmobile.LicenseName. Using default: !andmobile.LicenseName!
+[2021-01-08 11:01:00,089] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize swus.LicenseName. Using default: !swus.LicenseName!
+[2021-01-08 11:01:00,090] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopctd.LicenseName. Using default: !desktopctd.LicenseName!
+[2021-01-08 11:01:00,091] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopcti.LicenseName. Using default: !desktopcti.LicenseName!
+[2021-01-08 11:01:00,092] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopac.LicenseName. Using default: !desktopac.LicenseName!
+[2021-01-08 11:01:00,092] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize recorderha.LicenseName. Using default: !recorderha.LicenseName!
+[2021-01-08 11:01:00,093] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize metadirectory.LicenseName. Using default: !metadirectory.LicenseName!
+[2021-01-08 11:01:00,094] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webclient.LicenseName. Using default: !webclient.LicenseName!
+[2021-01-08 11:01:00,095] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webclient.Menu_mainPage. Using default: !webclient.Menu_mainPage!
+[2021-01-08 11:01:00,095] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize midlet.LicenseName. Using default: !midlet.LicenseName!
+[2021-01-08 11:01:00,096] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize presence.LicenseName. Using default: !presence.LicenseName!
+[2021-01-08 11:01:00,097] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopcc.LicenseName. Using default: !desktopcc.LicenseName!
+[2021-01-08 11:01:00,098] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize desktopsv.LicenseName. Using default: !desktopsv.LicenseName!
+[2021-01-08 11:01:00,099] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize android.LicenseName. Using default: !android.LicenseName!
+[2021-01-08 11:01:00,100] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize directorylight.LicenseName. Using default: !directorylight.LicenseName!
+[2021-01-08 11:01:00,102] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andguardredirect.LicenseName. Using default: !andguardredirect.LicenseName!
+[2021-01-08 11:01:00,103] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize andguardlockout.LicenseName. Using default: !andguardlockout.LicenseName!
+[2021-01-08 11:01:00,105] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.LicenseName. Using default: !webattendant.LicenseName!
+[2021-01-08 11:01:00,105] [WARN] [http-nio-8080-exec-18] [ResourceBundleManager.java:175] - Don't know how to localize webattendant.Menu_mainPage. Using default: !webattendant.Menu_mainPage!

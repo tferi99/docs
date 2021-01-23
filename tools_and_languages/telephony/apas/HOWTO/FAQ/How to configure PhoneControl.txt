@@ -1,0 +1,81 @@
+==============================
+How to configure PhoneControl?
+==============================
+With this WEB application you can control you physical phones remotely.
+
+- Configuration
+- Run
+- Troubleshooting
+
+------------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+
+- CUCM config:
+	- running RIS service
+	
+		The Real-time Information Server (RIS) maintains real-time Cisco Unified Communications Manager information such as device registration status, 
+		performance counter statistics, and critical alarms generated. 
+		The Cisco RIS Data Collector service provides an interface for applications, such as Real-Time Monitoring Tool (RTMT), SOAP applications, 
+		Cisco Unified Communications Manager Administration and AlertMgrCollector (AMC) to retrieve the information that is stored in all RIS nodes in the cluster.
+
+	- activate WEB access of phone devices
+
+	- assign user to these groups to APAS application user in 
+	
+		CUCM/User Management/Application User/<choose a user>/[Permission Information]/(Add to Access Control Group):
+		
+		- Standard RealtimeAndTraceCollection			: for RIS service
+		- Standard Packet Sniffer Users
+		
+- APAS config:
+
+	- create a user pool
+	
+	- add phones to this pool
+	
+	
+------------------------------------------------------------------------------------------------------------------------	
+Run
+===
+
+	APAS/Testing/Phone Control
+	
+	Choose a pool then select phones you want to control remotely.
+		
+NOTE:	Only phones can be controlled with this feature which provide WEB access.
+		For example cannot access CIP (Cisco IP Communicator).
+		
+		
+------------------------------------------------------------------------------------------------------------------------			
+Troubleshooting
+===============
+- if phones cannot be accessed at all
+	- check application user groups (SEE: Configuration)
+	
+- if a single phone cannot be accessed:
+
+	- try to capture phone screen with this URL:
+	
+		http://USER:PASSWORD@PHONE_HOST/CGI/Screenshot
+		
+		e.g:
+		
+			http://FTOTH_APAS2:12345@10.122.188.160/CGI/Screenshot
+		
+		where user can be CUCM application user or end-user.
+
+	- validate phone permission with this URL:
+	
+		http://CUCM_HOST/ccmcip/authenticate.jsp?UserID=USER&Password=PASSWORD&devicename=PHONE_DEVICE
+		
+		e.g:
+		
+			http://10.51.51.34/ccmcip/authenticate.jsp?UserID=FTOTH_APAS2&Password=12345&devicename=SEPA45630401BDA
+		
+SEE ALSO:
+
+	source_code_discovery/Getting screenshot from phones
+		
+SEE ALSO:
+	https://secure.n-able.com/webhelp/nc_11-0-0_en/content/Help_20/Services/CUCM/Services_CUCM_Process_RisDC.htm

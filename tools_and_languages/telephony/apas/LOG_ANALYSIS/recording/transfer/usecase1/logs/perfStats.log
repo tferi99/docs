@@ -1,0 +1,487 @@
+Performance Statistics   2021-01-08 10:45:00 - 2021-01-08 10:45:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+global.events.add#                                       0.0           0           0         0.0          10
+global.events.dropped#                                   0.0           0           0         0.0           5
+global.events.enqueue#                                   0.0           0           0         0.0           5
+global.events.queues.APAS-defaultWorker-1~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-2~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-3~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-4~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-5~               1.0           1           1         0.0           1
+
+Performance Statistics   2021-01-08 10:45:00 - 2021-01-08 10:45:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.error                  1218.5        1185        1252        33.5           2
+api.non-authenticated.server.available.error           459.0         459         459         0.0           1
+axl.SOAPRequest.read.ok                                213.0          74         352       139.0           2
+axl.initialization.ok                                  360.0         360         360         0.0           1
+global.bg.ok                                            61.0           3         436       141.8           8
+global.event_dispatch.ok                                 1.2           0           6         2.4           5
+partner.initialization.ok                                1.0           1           1         0.0           1
+
+Performance Statistics   2021-01-08 10:45:30 - 2021-01-08 10:46:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.ok                      242.0         242         242         0.0           1
+axl.SOAPRequest.read.ok                                 62.0          62          62         0.0           1
+global.bg.ok                                             5.1           2          24         5.2          29
+global.jtapi.init.andmobile.error                        4.0           4           4         0.0           1
+global.jtapi.init.andmobile.ok                           4.0           4           4         0.0           1
+global.jtapi.init.android.ok                             0.0           0           0         0.0           1
+global.jtapi.init.apps.ok                                0.0           0           0         0.0           1
+global.jtapi.init.blacklist.ok                          10.0          10          10         0.0           1
+global.jtapi.init.calllist.ok                            0.0           0           0         0.0           1
+global.jtapi.init.callrouting.error                     10.0          10          10         0.0           1
+global.jtapi.init.callrouting.ok                        10.0          10          10         0.0           1
+global.jtapi.init.communicator.error                     1.0           1           1         0.0           1
+global.jtapi.init.communicator.ok                        1.0           1           1         0.0           1
+global.jtapi.init.dect.ok                                0.0           0           0         0.0           1
+global.jtapi.init.desktop.ok                             0.0           0           0         0.0           1
+global.jtapi.init.groupacd.ok                            4.0           4           4         0.0           1
+global.jtapi.init.inout.ok                               0.0           0           0         0.0           1
+global.jtapi.init.ldap.ok                                3.0           3           3         0.0           1
+global.jtapi.init.lockout.ok                             0.0           0           0         0.0           1
+global.jtapi.init.mcast.ok                               2.0           2           2         0.0           1
+global.jtapi.init.monitoring.ok                          0.0           0           0         0.0           1
+global.jtapi.init.partner.ok                             3.0           3           3         0.0           1
+global.jtapi.init.phonemenu.error                        0.0           0           0         0.0           1
+global.jtapi.init.phonemenu.ok                           0.0           0           0         0.0           1
+global.jtapi.init.provisioning.ok                        0.0           0           0         0.0           1
+global.jtapi.init.recorder.ok                           84.0          84          84         0.0           1
+global.jtapi.init.recordermgmt.ok                        0.0           0           0         0.0           1
+global.jtapi.init.webattendant.ok                        0.0           0           0         0.0           1
+global.jtapi.init.webclient.ok                           0.0           0           0         0.0           1
+global.jtapi.initialization.ok                       11128.0       11128       11128         0.0           1
+global.prov_ev.andmobile.ok                              0.0           0           0         0.0           3
+global.prov_ev.android.ok                                0.0           0           0         0.0           3
+global.prov_ev.apps.ok                                   0.0           0           0         0.0           3
+global.prov_ev.blacklist.ok                              0.0           0           0         0.0           3
+global.prov_ev.calllist.ok                               0.0           0           0         0.0           3
+global.prov_ev.callrouting.ok                            0.0           0           0         0.0           3
+global.prov_ev.communicator.ok                           0.7           0           2         0.9           3
+global.prov_ev.dect.ok                                   0.0           0           0         0.0           3
+global.prov_ev.desktop.ok                                0.0           0           0         0.0           3
+global.prov_ev.groupacd.ok                               1.0           1           1         0.0           3
+global.prov_ev.inout.ok                                  0.0           0           0         0.0           3
+global.prov_ev.ldap.ok                                   0.0           0           0         0.0           3
+global.prov_ev.lockout.ok                                0.0           0           0         0.0           3
+global.prov_ev.mcast.ok                                  0.0           0           0         0.0           3
+global.prov_ev.monitoring.ok                             0.0           0           0         0.0           3
+global.prov_ev.partner.ok                                1.0           1           1         0.0           3
+global.prov_ev.phonemenu.ok                              0.0           0           0         0.0           3
+global.prov_ev.provisioning.ok                           0.0           0           0         0.0           3
+global.prov_ev.recorder.ok                               0.0           0           0         0.0           3
+global.prov_ev.recordermgmt.ok                           0.0           0           0         0.0           3
+global.prov_ev.webattendant.ok                           0.0           0           0         0.0           3
+global.prov_ev.webclient.ok                              0.0           0           0         0.0           3
+startup.comm.modu.CTE.1                                  0.0           0           0         0.0           1
+startup.comm.modu.CTE.2                                  0.0           0           0         0.0           1
+startup.comm.modu.CTE.6                                  0.0           0           0         0.0           1
+startup.comm.modu.CTE.7                                  0.0           0           0         0.0           1
+startup.comm.modu.CTE.ok                                 0.0           0           0         0.0           1
+webattendant.providerEvent.OK                            0.0           0           0         0.0           3
+webuser.providerEvent.OK                                 0.0           0           0         0.0           3
+
+Performance Statistics   2021-01-08 10:45:30 - 2021-01-08 10:46:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+global.disk_util#                                        0.0           0           0         0.0           1
+global.events.add#                                       0.0           0           0         0.0           2
+global.events.dropped#                                   0.0           0           0         0.0           2
+global.jtapi.TermRegisteredEvt#                          0.0           0           0         0.0           1
+global.jtapi.provInServiceEvt#                           0.0           0           0         0.0           1
+global.jtapi.provOutServiceEvt#                          0.0           0           0         0.0           1
+global.threads~                                        246.0         246         246         0.0           1
+
+Performance Statistics   2021-01-08 10:46:00 - 2021-01-08 10:46:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 68.0          21         115        47.0           2
+global.bg.ok                                             5.0           2          51         8.8          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:46:00 - 2021-01-08 10:46:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:46:30 - 2021-01-08 10:47:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 46.0          46          46         0.0           1
+global.bg.ok                                             4.3           2          42         7.2          30
+
+Performance Statistics   2021-01-08 10:46:30 - 2021-01-08 10:47:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:47:00 - 2021-01-08 10:47:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.ok                       97.0          97          97         0.0           1
+axl.SOAPRequest.read.ok                                 31.0          31          31         0.0           1
+global.bg.ok                                             5.7           2          58        10.6          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:47:00 - 2021-01-08 10:47:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:47:30 - 2021-01-08 10:48:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                100.8          45         291        63.1          14
+global.bg.ok                                             3.2           2           6         1.3          29
+rest-api.event.broadcast_terminal.ok                     1.3           0           4         1.9           3
+startup.ccmphone.loadAttr.loadExt.ok                   151.0         151         151         0.0           1
+startup.ccmphone.loadAttr.loadPhone.ok                 366.0         366         366         0.0           1
+
+Performance Statistics   2021-01-08 10:47:30 - 2021-01-08 10:48:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:48:00 - 2021-01-08 10:48:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+global.events.add#                                       0.0           0           0         0.0          13
+global.events.dropped#                                   0.0           0           0         0.0           5
+global.events.enqueue#                                   0.0           0           0         0.0          16
+global.events.queues.APAS-defaultWorker-10~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-11~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-12~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-13~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-14~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-15~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-16~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-17~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-18~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-19~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-20~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-21~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-6~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-7~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-8~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-9~               1.0           1           1         0.0           1
+
+Performance Statistics   2021-01-08 10:48:00 - 2021-01-08 10:48:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 52.0          52          52         0.0           1
+global.bg.ok                                             4.0           2          26         4.5          30
+global.event_dispatch.ok                                 9.6           0          68        18.9          16
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+rest-api.event.broadcast_terminal.ok                     3.0           0           6         2.4           3
+
+Performance Statistics   2021-01-08 10:48:30 - 2021-01-08 10:49:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 39.0          39          39         0.0           1
+global.bg.ok                                             3.0           2           7         1.5          30
+global.event_dispatch.ok                                 1.1           0          11         2.2          24
+rest-api.event.broadcast_terminal.ok                     3.0           3           3         0.0           1
+
+Performance Statistics   2021-01-08 10:48:30 - 2021-01-08 10:49:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+global.events.add#                                       0.0           0           0         0.0          18
+global.events.dropped#                                   0.0           0           0         0.0           6
+global.events.enqueue#                                   0.0           0           0         0.0          24
+global.events.queues.APAS-defaultWorker-10~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-11~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-12~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-13~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-1~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-22~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-23~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-24~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-25~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-26~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-27~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-28~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-29~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-2~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-30~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-31~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-32~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-3~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-4~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-5~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-6~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-7~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-8~               1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-9~               1.0           1           1         0.0           1
+
+Performance Statistics   2021-01-08 10:49:00 - 2021-01-08 10:49:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.ok                       92.0          92          92         0.0           1
+axl.SOAPRequest.read.ok                                 47.0          47          47         0.0           1
+global.bg.ok                                             5.8           2          54        10.3          30
+global.event_dispatch.ok                                 2.6           0          15         4.8           8
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:49:00 - 2021-01-08 10:49:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+global.events.add#                                       0.0           0           0         0.0           5
+global.events.dropped#                                   0.0           0           0         0.0           1
+global.events.enqueue#                                   0.0           0           0         0.0           8
+global.events.queues.APAS-defaultWorker-14~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-15~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-16~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-17~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-18~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-19~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-20~              1.0           1           1         0.0           1
+global.events.queues.APAS-defaultWorker-21~              1.0           1           1         0.0           1
+
+Performance Statistics   2021-01-08 10:49:30 - 2021-01-08 10:50:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 41.0          41          41         0.0           1
+global.bg.ok                                             3.1           2           6         1.3          30
+
+Performance Statistics   2021-01-08 10:49:30 - 2021-01-08 10:50:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:50:00 - 2021-01-08 10:50:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.server.available.ok                1.0           1           1         0.0           1
+axl.SOAPRequest.read.ok                                 47.0          47          47         0.0           1
+global.bg.ok                                             8.4           2         162        28.6          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:50:00 - 2021-01-08 10:50:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+global.disk_util#                                        0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:50:30 - 2021-01-08 10:51:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 88.0          88          88         0.0           1
+global.bg.ok                                             3.2           2           8         1.8          29
+
+Performance Statistics   2021-01-08 10:50:30 - 2021-01-08 10:51:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:51:00 - 2021-01-08 10:51:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.ok                      125.0         125         125         0.0           1
+axl.SOAPRequest.read.ok                                 48.0          48          48         0.0           1
+global.bg.ok                                             3.5           2          24         4.1          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:51:00 - 2021-01-08 10:51:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:51:30 - 2021-01-08 10:52:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:51:30 - 2021-01-08 10:52:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 44.0          44          44         0.0           1
+global.bg.ok                                             3.1           2           6         1.4          30
+
+Performance Statistics   2021-01-08 10:52:00 - 2021-01-08 10:52:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 23.0          23          23         0.0           1
+global.bg.ok                                             4.7           2          27         5.8          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:52:00 - 2021-01-08 10:52:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:52:30 - 2021-01-08 10:53:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 25.0          25          25         0.0           1
+global.bg.ok                                             3.3           2          20         3.4          30
+
+Performance Statistics   2021-01-08 10:52:30 - 2021-01-08 10:53:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:53:00 - 2021-01-08 10:53:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.ok                       72.0          72          72         0.0           1
+global.bg.ok                                             4.3           2          26         5.1          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:53:00 - 2021-01-08 10:53:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:53:30 - 2021-01-08 10:54:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 65.0          65          65         0.0           1
+global.bg.ok                                             3.7           2          19         3.2          30
+
+Performance Statistics   2021-01-08 10:53:30 - 2021-01-08 10:54:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:54:00 - 2021-01-08 10:54:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 46.0          46          46         0.0           1
+global.bg.ok                                             4.1           2          24         5.0          29
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:54:00 - 2021-01-08 10:54:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:54:30 - 2021-01-08 10:55:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 18.0          18          18         0.0           1
+global.bg.ok                                             2.7           2           7         1.3          30
+
+Performance Statistics   2021-01-08 10:54:30 - 2021-01-08 10:55:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:55:00 - 2021-01-08 10:55:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+global.disk_util#                                        0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:55:00 - 2021-01-08 10:55:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.ok                       82.0          82          82         0.0           1
+api.non-authenticated.server.available.ok                1.0           1           1         0.0           1
+axl.SOAPRequest.read.ok                                 20.0          20          20         0.0           1
+global.bg.ok                                             4.9           2          57        10.1          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:55:30 - 2021-01-08 10:56:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 45.0          45          45         0.0           1
+global.bg.ok                                             3.0           2           6         1.3          30
+
+Performance Statistics   2021-01-08 10:55:30 - 2021-01-08 10:56:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:56:00 - 2021-01-08 10:56:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 47.0          47          47         0.0           1
+global.bg.ok                                             4.0           2          37         6.3          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:56:00 - 2021-01-08 10:56:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:56:30 - 2021-01-08 10:57:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 63.0          63          63         0.0           1
+global.bg.ok                                             2.8           2           6         1.3          30
+
+Performance Statistics   2021-01-08 10:56:30 - 2021-01-08 10:57:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:57:00 - 2021-01-08 10:57:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.ok                      112.0         112         112         0.0           1
+axl.SOAPRequest.read.ok                                 47.0          47          47         0.0           1
+global.bg.ok                                             3.2           2          22         3.6          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:57:00 - 2021-01-08 10:57:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:57:30 - 2021-01-08 10:58:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 20.0          20          20         0.0           1
+global.bg.ok                                             2.9           2           6         1.1          30
+
+Performance Statistics   2021-01-08 10:57:30 - 2021-01-08 10:58:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:58:00 - 2021-01-08 10:58:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 46.0          46          46         0.0           1
+global.bg.ok                                             4.2           2          25         5.0          29
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:58:00 - 2021-01-08 10:58:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:58:30 - 2021-01-08 10:59:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 42.0          42          42         0.0           1
+global.bg.ok                                             3.1           2           6         1.2          30
+
+Performance Statistics   2021-01-08 10:58:30 - 2021-01-08 10:59:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:59:00 - 2021-01-08 10:59:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.licenses.ok                      119.0         119         119         0.0           1
+axl.SOAPRequest.read.ok                                 44.0          44          44         0.0           1
+global.bg.ok                                             3.9           2          25         4.1          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 10:59:00 - 2021-01-08 10:59:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 10:59:30 - 2021-01-08 11:00:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 78.0          78          78         0.0           1
+global.bg.ok                                             3.1           2           8         1.4          30
+
+Performance Statistics   2021-01-08 10:59:30 - 2021-01-08 11:00:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+
+Performance Statistics   2021-01-08 11:00:00 - 2021-01-08 11:00:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+api.non-authenticated.server.available.ok                1.0           1           1         0.0           1
+axl.SOAPRequest.read.ok                                 45.0          45          45         0.0           1
+global.bg.ok                                             4.8           2          59        10.2          30
+presence.UsersGC.ok                                      0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 11:00:00 - 2021-01-08 11:00:30
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           3
+communicator.presence_gc~                              600.0         600         600         0.0           1
+global.disk_util#                                        0.0           0           0         0.0           1
+
+Performance Statistics   2021-01-08 11:00:30 - 2021-01-08 11:01:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+axl.SOAPRequest.read.ok                                 45.0          45          45         0.0           1
+global.bg.ok                                             2.9           2           6         1.2          30
+
+Performance Statistics   2021-01-08 11:00:30 - 2021-01-08 11:01:00
+Tag                                                  Avg(ms)         Min         Max     Std Dev       Count
+callrouting.cache_emailnotify_gc#                        0.0           0           0         0.0           2
+communicator.presence_gc~                              600.0         600         600         0.0           1
+

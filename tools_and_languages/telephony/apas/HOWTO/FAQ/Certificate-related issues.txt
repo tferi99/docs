@@ -1,0 +1,71 @@
+==========================
+Certificate-related issues
+==========================
+
+- SEC_ERROR_BAD_SIGNATURE
+
+
+--------------------------------------------------------------------------------------------------------
+SEC_ERROR_BAD_SIGNATURE
+=======================
+Analysis
+--------
+- I've investigated the problem. My strategy was simulating customers environment.
+
+- I retrieved keystores from binary backup (.keystore.jks, .trust_keystore.jks)
+- I've exported certificate chain from keystores
+- I've investigated certificates: there is a 3 level cert chain:
+	- root (T-Telesec GlobalRoot)
+	- CA (DFN-Verein CA 2)
+	- CA (DFN-Verein Global)
+	- andphone
+	
+- I validated CA certificates here:  https://www.lrz.de/services/pki/certs/
+	They are identical with I found in APAS.
+
+- I retrieved FQDN from andphone certificate for HTTP URL:              andtek.net.hrz.tu-darmstadt.de
+
+I had an APAS with working HTTPS, I replaced keystores with customers stores and restarted APAS
+I tried to connect with HTTPS - I had same error in browser then 
+	- I tested TLS traffic with Wireshark
+	- and TLS handshaking with OpenSSL
+	
+		In Wireshark I found that client drops a decrypt error after ServerHelloDone. 
+		It means it cannot decrypt data with server certificate (encrypted previously with servers private key) (wireshark-anal.jpgSSL_Handshake_10-Steps-1-err.png)
+
+	- then I extracted private and public keys from 'andphone' entry of keystore
+	- and verified keypair with my script (verifyKeyPair.sh) which extracts modulus from keys with OpenSSL:
+	
+		$ ./verifyKeyPair.sh key.pem andphone.pem cert
+		--- reading PK...
+		--- reading PUB...
+		PK : 1b3d16abf5b42805069c4a2b470625076dff00e6d49099058ccbdb40faf6d9cf *-
+		PUB: 58ac1bae2fb96fba6e512486ab527373ad75ec59568a609bc2ed5bacdd4b948d *-
+		==========================================================================
+		NOT MATCHING 
+		
+	but modulus values of a keypair SHOULD BE IDENTICAL!
+
+Problem
+-------
+How can be public and private key modulus values different?
+
+Keypairs are created APAS certificate is created in APAS/Global/Security with button 'Create APAS Certificate'. 
+If you call this function then one keypair generated. Next time a NEW KEYPAIR will be generated.
+
+Possible scenarios are:
+
+	- they sign CSR with CA but a new keypair created before imported signed APAS certificate
+	- they restored a binary backup before certificate import
+...or any other scenario where imported signed APAS certificate faced with inconsistent private key in keystore.
+
+I reproduced the same error with the 1st scenario.
+
+SEE ALSO:	https://uk-jira.enghouseinteractive.com/browse/APAS-1282
+	
+
+
+
+ 
+
+ 

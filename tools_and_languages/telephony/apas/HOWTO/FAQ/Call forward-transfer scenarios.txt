@@ -1,0 +1,54 @@
+===============================
+Call forward-transfer scenarios
+===============================
+
+SEE ALSO:	https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cucme/admin/configuration/manual/cmeadm/cmetrans.html
+
+- Call Forward (Cisco)
+- Call Transfer (Cisco) 
+- Call Transfer in APAS
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Call Forward (Cisco)
+====================
+
+Call forward feature diverts calls to a specified number under one or more of the following conditions:
+
+- All calls
+
+	When all-call call forwarding is activated by a phone user, all incoming calls are diverted. The target destination for diverted calls 
+	can be specified in the router configuration or by the phone user with a soft key or feature access code. The most recently entered destination 
+	is recognized by Cisco Unified CME, regardless of how it was entered.
+	
+- No answer
+
+	Incoming calls are diverted when the extension does not answer before the timeout expires. The target destination for diverted calls is specified 
+	in the router configuration.
+	
+- Busy
+
+	Incoming calls are diverted when the extension is busy and call waiting is not active. The target destination for diverted calls 
+	is specified in the router configuration.
+	
+- Night service
+
+	All incoming calls are automatically diverted during night-service hours. The target destination for diverted calls is specified 
+	in the router configuration.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Call Transfer (Cisco) 
+=====================
+When you are connected to another party, call transfer allows you to shift the connection of the other party to a different number.
+Call transfers can be 
+	- blind:	the transferring extension connects the caller to a destination extension before ringback begins. 
+	
+	- or consultative:	the transferring party 	
+		- either connects the caller to a ringing phone (ringback heard) 
+		- or speaks with the third party before connecting the caller to the third party.
+
+
+		
+---------------------------------------------------------------------------------------------------------------------------------------------
+Call Transfer in APAS
+=====================

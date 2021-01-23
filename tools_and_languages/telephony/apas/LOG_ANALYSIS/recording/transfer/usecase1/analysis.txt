@@ -1,0 +1,89 @@
+================================================================================================================================
+GOOD RECORDING (LAB):	sip25188/1		25188/1
+================================================================================================================================
+
+Scenario:
+
+	9000 ---> 9020			pickup, talk
+	9020 ===> 9021			forward
+	9000 ---> 9021			pickup, talk
+
+Identified recordings (from andphone.log):
+------------------------------------------		
+RECORDING[1][sip25188/1, SEPA45630BB1748] : 2021-01-08 10:48:21 - 2021-01-08 10:48:40, DB:308
+   - callingPartyName=
+   - srcIP=10.51.51.122
+   - callID=sip25188/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630BB1748
+   - originalCalledParty=+36110009020
+   - srcPort=58830
+   - initiated=false
+   - dstIP=10.51.51.122
+   - lastRedirectingParty=
+   - callingParty=+36110009000
+   - originalCallingParty=+36110009000
+   - dstPort=44349
+   - calledParty=+36110009020 
+   
+RECORDING[0][sip25188/1, SEPA45630401BDA] : 2021-01-08 10:48:46 - 2021-01-08 10:49:06, DB:309
+   - callingPartyName=
+   - srcIP=10.51.51.122
+   - callID=sip25188/1
+   - calledPartyName=
+   - stopOut=1
+   - terminal=SEPA45630401BDA
+   - originalCalledParty=+36110009020
+   - srcPort=39084
+   - initiated=false
+   - dstIP=10.51.51.122
+   - lastRedirectingParty=+36110009021
+   - callingParty=+36110009000
+   - originalCallingParty=+36110009000
+   - dstPort=54221
+   - calledParty=+36110009021
+
+   
+SIP mapping
+----------
+#callId|endpoint|created|CallLegId|device
+25188/1|NEAREND|[2021-01-08 10:48:21,406]|18715295|SEPA45630BB1748
+25188/1|FAREND|[2021-01-08 10:48:21,499]|18715295|SEPA45630BB1748
+25188/1|NEAREND|[2021-01-08 10:48:47,132]|18715310|SEPA45630401BDA
+25188/1|FAREND|[2021-01-08 10:48:47,256]|18715310|SEPA45630401BDA 
+
+
+recordCall
+----------
+call-1
+------
+[2021-01-08 10:48:21,190] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@1f9c44e3)] [XMLSocket.java:285] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip25188/1" callingParty="+36110009000" calledParty="+36110009020" callingPartyName="" calledPartyName="" originalCallingParty="+36110009000" originalCalledParty="+36110009020" lastRedirectingParty="" initiated="false"/>]
+[2021-01-08 10:48:21,210] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip25188/1" dbID="308" state="1"/>
+[2021-01-08 10:48:21,215] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip25188/1 dbID=308 OK
+[2021-01-08 10:48:21,411] [DEBUG] [APAS-defaultWorker-19] [XMLSocket.java:285] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip25188/1" srcIP="10.51.51.122" srcPort="58830"/>]
+[2021-01-08 10:48:21,414] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip25188/1" dbID="308" state="1"/>
+[2021-01-08 10:48:21,416] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip25188/1 dbID=308 OK
+[2021-01-08 10:48:21,501] [DEBUG] [APAS-defaultWorker-21] [XMLSocket.java:285] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip25188/1" dstIP="10.51.51.122" dstPort="44349"/>]
+[2021-01-08 10:48:21,506] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip25188/1" dbID="308" state="1"/>
+[2021-01-08 10:48:21,508] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip25188/1 dbID=308 OK
+[2021-01-08 10:48:40,344] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@1f9c44e3)] [XMLSocket.java:285] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630BB1748" callID="sip25188/1" stopOut="1" />]
+
+Recoded with dbID="308"
+
+call-2
+------
+[2021-01-08 10:48:46,893] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@1f9c44e3)] [XMLSocket.java:285] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630401BDA" callID="sip25188/1" callingParty="+36110009000" calledParty="+36110009021" callingPartyName="" calledPartyName="" originalCallingParty="+36110009000" originalCalledParty="+36110009020" lastRedirectingParty="+36110009021" initiated="false"/>]
+[2021-01-08 10:48:46,897] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip25188/1" dbID="309" state="1"/>
+[2021-01-08 10:48:46,901] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip25188/1 dbID=309 OK
+[2021-01-08 10:48:47,134] [DEBUG] [APAS-defaultWorker-9] [XMLSocket.java:285] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630401BDA" callID="sip25188/1" srcIP="10.51.51.122" srcPort="39084"/>]
+[2021-01-08 10:48:47,204] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip25188/1" dbID="309" state="1"/>
+[2021-01-08 10:48:47,207] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip25188/1 dbID=309 OK
+[2021-01-08 10:48:47,258] [DEBUG] [APAS-defaultWorker-13] [XMLSocket.java:285] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630401BDA" callID="sip25188/1" dstIP="10.51.51.122" dstPort="54221"/>]
+[2021-01-08 10:48:47,260] [DEBUG] [APAS-SnifferConnection] [XMLSocket.java:236] - XML_SOCKET:received message: <recordCallResponse code="0" string="OK" callID="sip25188/1" dbID="309" state="1"/>
+[2021-01-08 10:48:47,264] [DEBUG] [APAS-SnifferConnection] [SnifferConnection.java:565] - Recording call: recordCallResponse(0): callID=sip25188/1 dbID=309 OK
+[2021-01-08 10:49:06,219] [DEBUG] [ObserverThread(com.andtek.andphone.recorder.PhoneCallObserver@1f9c44e3)] [XMLSocket.java:285] - XML_SOCKET:sending XML [<recordCall terminal="SEPA45630401BDA" callID="sip25188/1" stopOut="1" />]   
+	
+Recoded with dbID="309"
+
+
