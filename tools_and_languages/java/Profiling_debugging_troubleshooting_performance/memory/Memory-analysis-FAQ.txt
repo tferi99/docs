@@ -2,18 +2,17 @@
 Memory analysis FAQ
 ===================
 
-- Memory analysis concept
-- Memory analysis tasks
+- Memory analysis basics
 - How to print memory info of JVM?
 - How to create heap dump?
 - How to analyse heap dump?
 - How to compare heap dumps?
 - Memory analysis with Eclipse MAT
-
+- How to add Verbose Garbage Collection to logs?
 
 -------------------------------------------------------------------------------------------------	
-Memory analysis concept
-=======================
+Memory analysis basics
+======================
 - Heap Dump
 	A heap dump is a snapshot of the memory of a Java process at a certain point of time. 
 	
@@ -163,6 +162,10 @@ Dinamic analysis
 	- Sampling		: not exact
 	- Profiling 	: big performance impact
 	
+Analyis with logs
+-----------------
+SEE ALSO:	How to add Verbose Garbage Collection to logs?
+	
 -------------------------------------------------------------------------------------------------	
 How to compare heap dumps?
 ==========================
@@ -215,3 +218,61 @@ Basic OQL syntax is as follows:
 	SELECT * FROM OBJECTS <class_name>
 
 
+-------------------------------------------------------------------------------------------------	
+How to add Verbose Garbage Collection to logs?	
+==============================================
+- To activate “simple” GC Logging add JVM start-up arguments:
+
+	-XX:+UseSerialGC -Xms1024m -Xmx1024m -verbose:gc
+
+	NOTE:
+		The important argument here is the -verbose:gc, which activates the logging of garbage collection information in its simplest form. 
+		
+		By default, the GC log is written to stdout and should output a line for every young generation GC and every full GC.
+		For the purposes of our example, we've specified the serial garbage collector, the simplest GC implementation, via the argument -XX:+UseSerialGC.
+
+		We've also set a minimal and maximal heap size of 1024mb, but there are, of course, more JVM parameters we can tune.
+
+- To activate the detailed GC logging, we use the argument 
+
+	-XX:+PrintGCDetails
+	
+  It provides:
+	- Size of the young and old generation before and after each GC
+	- The time it takes for a GC to happen in young and old generation
+	- The Size of objects promoted at every GC
+	- A summary of the size of the total heap	
+
+- Adding Date and Time Information:
+
+	-XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps
+	
+		OR from Java 9
+	
+	-Xlog:gc*::time
+	
+- Logging to a File:
+
+	-Xloggc:/path/to/file/gc.log
+	
+		OR from Java 9
+		
+	-Xlog:gc:/path/to/file/gc.log
+	
+	
+- Java 9: Unified JVM Logging:
+
+	-Xlog:gc
+	-Xlog:gc=debug
+	-Xlog:gc=debug:file=gc.txt
+	-Xlog:gc=debug::pid,time,uptime
+	
+	
+	A Tool to Analyze GC Logs:		Universal GC Log Analyzer:		https://gceasy.io/
+	
+SEE ALSO:	
+	https://www.baeldung.com/java-verbose-gc
+	JEP 158: Unified JVM Logging:	https://openjdk.java.net/jeps/158
+	
+	
+	
