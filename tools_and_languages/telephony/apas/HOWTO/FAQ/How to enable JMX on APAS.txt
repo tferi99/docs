@@ -2,12 +2,22 @@
 How to enable JMX on APAS?
 ==========================
 
+- Configuration
+- Tricks
+
+-----------------------------------------------------------------------------------------------------------------------------
+Configuration
+=============
+
 - Enable JMX on APAS firewall :
 
 	Go to AdminCLI and call menu: Troubleshooting  (7/7):
 		- 7) Troubleshooting
 			-  7) Enable/disable JMX port: Currently ...
 
+	
+	It opens/closes tcp port 9004 on firewall.
+	
 	
 - To monitor APAS start jconsole:
 		- host:9004
@@ -26,7 +36,45 @@ How to enable JMX on APAS?
 		yourAccount readwrite
 		
 		
+-----------------------------------------------------------------------------------------------------------------------------
+Tricks
+======
+- jstatd
 
+	If you start jtatd on remote server and you specifies 
 	
+	permissions.txt:
+		
+		grant {
+		  permission java.security.AllPermission;
+		};	
 	
+	start jstatd:
+	
+		jstatd -J-Djava.security.policy=permissions.txt [-p port]	
+		
+		
+- accessing it via SOCKS tunnel:
+		
+	1. ssh -D 9696 me@remote, and run jstatd as above on the remote command line. 
+		If you want jstatd to be on a different port than the default 1099, use the -p argument to jstatd.
 
+		NOTE: you can create dynamic tunneling in Putty, too
+		
+	2. run 
+	
+			visualvm.exe -J-Dnetbeans.system_socks_proxy=localhost:9696 -J-Djava.net.useSystemProxies=true 
+			
+		on the local machine
+
+	3. in visual vm: add new remote connection, and specify remote as host and the port for jstatd 
+		(1099 for default, or what you specified with -p when running jstatd)
+
+	You should now see the processes on the remote side in visualvm	
+	
+SEE ALSO:
+
+	https://stackoverflow.com/questions/1609961/visualvm-over-ssh
+	http://www.martinfromme.de/?p=330
+	https://blog.devolutions.net/2017/4/how-to-configure-an-ssh-tunnel-on-putty
+	

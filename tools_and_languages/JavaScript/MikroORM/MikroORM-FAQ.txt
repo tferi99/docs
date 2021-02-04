@@ -23,6 +23,7 @@ UnitOfWork
 Fetching data
 -------------
 - How to get entity by primary key?
+- Specifying loading strategy
 
 Data manipulation
 -----------------
@@ -31,10 +32,14 @@ Data manipulation
 Schema management
 -----------------
 - How to generate/update DB schema?
+- Howto check DB schema?
 
 Troubleshooting
 ---------------
 - ERROR: TypeError: Cannot read property '...' of undefined
+- ERROR: column ... is of type jsonb but expression is of type ...
+- ERROR: invalid input syntax for type json
+- ERROR: To use assign() on not managed entities, explicitly provide EM instance
 
 NestJS
 ------
@@ -95,7 +100,7 @@ How to generate/update DB schema?
 Use MkroORM CLI.
 
 - prerequisite:
-	- install:		npm install --save-dev npm install --save-dev
+	- install:		npm install --save-dev @mikro-orm/cli
 	
 	- config: you need mikro-orm.config.ts for CLI
 	
@@ -127,7 +132,29 @@ Use MkroORM CLI.
 
 	"db-update": "node_modules/.bin/mikro-orm schema:update --fk-checks -r",
 
+- in a script:
 
+	recreateDbWithSchema.bat:
+	
+		dropDb -U postgres mikroormnestts
+		createDb -U postgres mikroormnestts
+		call node_modules/.bin/mikro-orm schema:update --fk-checks -r
+
+		
+------------------------------------------------------------------------------------------------------------------------------------------------
+Howto check DB schema?
+======================
+- Method 1:	script
+
+	pg_dump -U postgres <db-name> > db.sql
+	
+	
+- Method 2: ER diagram
+
+	- create ER diagram in Aqua DB Studio with:				ER Modeler/Generate
+		
+	- format diagram with:									Sheet/Layout/Hierarchical (or Tree)
+	
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR: TypeError: Cannot read property '...' of undefined
@@ -389,3 +416,174 @@ How to clear identity map cache?
 ================================
 
 	em.clear();
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: column ... is of type jsonb but expression is of type ...	
+ERROR: invalid input syntax for type json
+================================================================
+
+previous error: insert into "author" ("created_at", "email", "id", "name", "terms_accepted", "updated_at") values ('2021-02-01T11:58:57.539Z', 'gj@hollywood.com', 0, 'George Lucas', false, '2021-02-01T11:58:57.539Z') returning "id" - column "terms_accepted" is of
+type jsonb but expression is of type boolean
+    at Parser.parseErrorMessage (D:\a\nestjs-example-app\node_modules\pg-protocol\src\parser.ts:357:11)
+    at Parser.handlePacket (D:\a\nestjs-example-app\node_modules\pg-protocol\src\parser.ts:186:21)
+    at Parser.parse (D:\a\nestjs-example-app\node_modules\pg-protocol\src\parser.ts:101:30)
+    at Socket.<anonymous> (D:\a\nestjs-example-app\node_modules\pg-protocol\src\index.ts:7:48)
+    at Socket.emit (events.js:315:20)
+    at Socket.EventEmitter.emit (domain.js:486:12)
+    at addChunk (_stream_readable.js:309:12)
+    at readableAddChunk (_stream_readable.js:284:9)
+    at Socket.Readable.push (_stream_readable.js:223:10)
+    at TCP.onStreamRead (internal/stream_base_commons.js:188:23)
+	
+previous error: insert into "author" ("created_at", "email", "name", "terms_accepted", "updated_at") values ('2021-02-01T12:35:03.632Z', 'gj@hollywood.com', 'George Lucas', false, '2021-02-01T12:35:03.632Z') returning "id" - invalid input syntax for type json
+    at Parser.parseErrorMessage (D:\a\nestjs-example-app\node_modules\pg-protocol\src\parser.ts:357:11)
+    at Parser.handlePacket (D:\a\nestjs-example-app\node_modules\pg-protocol\src\parser.ts:186:21)
+    at Parser.parse (D:\a\nestjs-example-app\node_modules\pg-protocol\src\parser.ts:101:30)
+    at Socket.<anonymous> (D:\a\nestjs-example-app\node_modules\pg-protocol\src\index.ts:7:48)
+    at Socket.emit (events.js:315:20)
+    at Socket.EventEmitter.emit (domain.js:486:12)
+    at addChunk (_stream_readable.js:309:12)
+    at readableAddChunk (_stream_readable.js:284:9)
+    at Socket.Readable.push (_stream_readable.js:223:10)
+    at TCP.onStreamRead (internal/stream_base_commons.js:188:23)	
+	
+In this case the possible reason of problem is that DB table contains fields with 'jsonb' type, as here:
+
+
+	CREATE TABLE public.author (
+		id integer NOT NULL,
+		created_at jsonb NOT NULL,									<<<<<
+		updated_at jsonb NOT NULL,									<<<<<
+		name character varying(255) NOT NULL,
+		email character varying(255) NOT NULL,
+		age integer NOT NULL,
+		terms_accepted jsonb NOT NULL,								<<<<<
+		born timestamp(0) with time zone NOT NULL,
+		favourite_book_id integer NOT NULL
+	);
+
+Problem:
+	Generally property types are not specified exactly:
+
+		@Entity()
+		export class Author {
+		  @PrimaryKey()
+		  id!: number;
+
+		  @Property()
+		  name: string;
+
+		  @Property()
+		  email: string;
+
+		  @Property()
+		  age?: number;
+
+		  @Property()
+		  termsAccepted = false;														<<< missing type
+
+		  @Property()
+		  born?: Date;
+
+		  @OneToMany(() => Book, b => b.author, { cascade: [Cascade.ALL] })
+		  books = new Collection<Book>(this);
+
+		  @ManyToOne(() => Book)
+		  favouriteBook?: Book;
+
+		  @Property()
+		  createdAt = new Date();														<<< missing type
+
+		  @Property({ onUpdate: () => new Date() })
+		  updatedAt = new Date();														<<< missing type
+		  
+		  constructor(name: string, email: string) {
+			super();
+			this.name = name;
+			this.email = email;
+		  }
+		}
+
+			
+	
+Fix:				
+
+		  @Property()
+		  termsAccepted: boolean = false;
+
+		  @Property()
+		  createdAt: Date = new Date();
+
+		  @Property({ onUpdate: () => new Date() })
+		  updatedAt: Date = new Date();
+
+
+		  
+    @mikro-orm/core @mikro-orm/nestjs @mikro-orm/postgresql @mikro-orm/reflection
+
+    "@mikro-orm/cli": "^4.0.0-rc.6",	
+	
+------------------------------------------------------------------------------------------------------------------------------------------------
+ERROR: To use assign() on not managed entities, explicitly provide EM instance	
+==============================================================================
+Error if you want to assign a not-managed class.
+
+- For example here we assign a data from REST to a weapped entity:
+
+		const author = new Author(body.name, body.email);
+		wrap(author).assign(body);
+		await this.authorRepository.persistAndFlush(author);
+
+	and you have this error message:
+
+		[Nest] 9848   - 2021. 02. 01. 14:34:36   [ExceptionsHandler] To use assign() on not managed entities, explicitly provide EM instance: wrap(entity).assign(data, { em: orm.em }) +32135ms
+		Error: To use assign() on not managed entities, explicitly provide EM instance: wrap(entity).assign(data, { em: orm.em })
+
+	
+- Fix:	
+	
+	
+------------------------------------------------------------------------------------------------------------------------------------------------
+Specifying loading strategy
+===========================
+- Strategies:
+	- LoadStrategy.SELECT_IN	: this strategy issues one additional SELECT statement per relation being loaded
+	- LoadStrategy.JOINED		: issued a single, joined SELECT
+
+- Default load strategy:		LoadStrategy.SELECT_IN
+
+- Specifying:
+
+	- globally:
+
+		You can use loadStrategy option in the ORM config:
+
+			MikroORM.init({
+			  loadStrategy: LoadStrategy.JOINED,
+			});	
+
+	- per entity relation:
+	
+		@Entity()
+		export class Author {
+		  @OneToMany({
+			entity: () => Book,
+			mappedBy: b => b.author,
+			strategy: LoadStrategy.JOINED,
+		  })
+		  books = new Collection<Book>(this);
+		}
+
+		WARNING: in cersion 4.4 it seems to BE NOT WORKING.
+		
+		
+	- per operation:
+	
+		const author = await this.em.findOne(Author, id, {populate: ['books']})												// default
+		const author = await this.em.findOne(Author, id, {populate: ['books'], strategy: LoadStrategy.JOINED})				// joined
+		
+		const author = await this.authorRepository.findOne(id, ['books']);													// default
+		const author = await this.authorRepository.findOne(id, { populate: ['books'], strategy: LoadStrategy.JOINED});		// joined
+		
+		
+		

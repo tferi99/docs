@@ -1,5 +1,4 @@
 ===================
-===================
 Memory analysis FAQ
 ===================
 
@@ -25,8 +24,8 @@ Memory analysis basics
 
 - Dominator Tree
 
-	- An object x DOMINATES an object y if every path in the object graph from the start (or the root) node to y must go through x. 
-	- The immediate dominator x of some object y is the dominator closest to the object y. 
+	- An object X dominates an object Y if every path in the object graph from the start (or the root) node to Y must go through X. 
+	- The immediate dominator X of some object Y is the dominator closest to the object Y. 
 	- A dominator tree is built out of the object graph. In the dominator tree each object is the immediate dominator of its children, 
 		so dependencies between the objects are easily identified
 	
@@ -204,20 +203,22 @@ SEE ALSO:
 -------------------------------------------------------------------------------------------------	
 Eclipse MAT OQL
 ===============
-Basic OQL syntax is as follows:
+OQL is SQL-like query language to query Java heap. OQL allows to filter/select information wanted from Java heap. While pre-defined queries such as "show all instances of class X" are already supported by HAT, OQL adds more flexibility. OQL is based on JavaScript expression language.
 
-	SELECT * FROM [ INSTANCEOF ]	<class_name> [ WHERE <filter-expression>]
+OQL query is of the form
 
-- to select object instances of a class:
 
-	SELECT * FROM <class_name>
-	
-	select * from java.lang.String
-	
-- to select class instance:
+         select <JavaScript expression to select>
+         [ from [instanceof] <class name> <identifier>
+         [ where <JavaScript boolean expression to filter> ] ]
 
-	SELECT * FROM OBJECTS <class_name>
+		 
 
+
+
+SEE ALSO:	
+	https://visualvm.github.io/documentation.html
+	http://cr.openjdk.java.net/~sundar/8022483/webrev.01/raw_files/new/src/share/classes/com/sun/tools/hat/resources/oqlhelp.html
 
 -------------------------------------------------------------------------------------------------	
 How to add Verbose Garbage Collection to logs?	

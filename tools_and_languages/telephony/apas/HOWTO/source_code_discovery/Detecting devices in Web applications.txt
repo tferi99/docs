@@ -304,41 +304,116 @@ WebClient Login
 				--> SettingsCtrl.getUserSettings(request)
 
 
-
-[1]	--> WebClientConnectionServiceImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
-		--> [2] results = WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
+######## WebClient specific ########
+[1]	--> WebClientConnectionServiceImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)							
+		--> [2] results = WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)				// calling common WEB implementation
 		------------------ if user has a CSF device (Jabber in softphone mode) ---------
 			- Overwrite the active line - that line must be the active line								
 		----------------- !foundActiveLine && !foundCSF -----------------------
 			- first line is the active line
 
-
+			
+######## Common WEB ########
 [2] -->  WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
 	--> connection = getConnection(userId)
 	--------------------------------- if cache is valid ---------------------------------
 		--> fixActiveDeviceSetting()
 		- return connection.getDevices(onlyRegistered)
+	--------------------------------- if cache valid ---------------------------------
+		--> fixActiveDeviceSetting(userId, connection, onlyRegistered)
+		- return connection.getDevices(onlyRegistered)
 	--------------------------------- if cache NOT valid ---------------------------------
-		--> collectConnectionDevices(userId, connection, ...)
-		--> fixActiveDeviceSetting()
-		--> PhoneServiceImpl.devicesForUser(userId, false)
-			--> phones = getAssociatedDevicesForUser(userId)
-				--> docUser = JTAPIServlet.getDefaultJTAPI().axl.sendRequest("getUser", "<userid>" + userid + "</userid>") 				// getting end-user info with AXL
-				--> getAssociatedPhones(docUser)					// getting direct associated devices from docUser AXL response
-				--> getEMPhones(docUser)																								<<<<<<<<<<<<<<<<<<<<< getting EM phone
-					- getting associated devices for end-user with AXL
+	--> collectConnectionDevices(userId, connection, ...)															// collecting devices from PhoneService into connection.devices with AXL
+		--> devices = PhoneServiceImpl.devicesForUser(userId, false)
+			--> phones = getAssociatedDevicesForUser(userId)																	// getting phones from AXL
+				--> docUser = JTAPIServlet.getDefaultJTAPI().axl.sendRequest("getUser", "<userid>" + userid + "</userid>") 		// getting end-user info with AXL
+				--> getAssociatedPhones(docUser)																				// getting direct associated devices from docUser AXL response
+					- devices from AXL node:  	//return/user/associatedDevices/device
+					
+						for example:
+						
+								<associatedDevices>
+									<device>SEP64A0E714F271</device>
+									<device>SEPA45630BB1748</device>
+									<device>SEP110000009100</device>
+									<device>CSF11FToth9110</device>
+									<device>SEP006440B57729</device>
+								</associatedDevices>
+								
+					- deviceName = 1st node
+					--> ph = JTAPIServlet.getPhone(deviceName)																// phone from CCMPhone.thePhones cache or new CCMPhone
+						--> CCMPhone.getPhone(deviceName, this)
+							--> return phone from CCMPhone.thePhones
+							OR
+							--> return new CCMPhone (and put into CCMPhone.thePhones)
+					--> ret.add(new WebPhone(ph, true/false)) 	(only registered/all)
+				--> getEMPhones(docUser)																				<<<<<<<<<<<<<<<<<<<<< getting EM phone
+					- profiles from AXL node:  	//return/user/associatedDevices/device
+						for example:
+						
+							<phoneProfiles>
+								<profileName uuid="6d545b9f-5182-7877-8271-1bd874d11806">FTOTH_EM_9200</profileName>
+							</phoneProfiles>
+				
+					- uuid = 'uuid' property from profile node
+					- getting EM devices for end-user with AXL
 						--> jtapi.axl.sendRequest("executeSQLQuery", AXLquery);
 								
 								<sql>SELECT * from extensionmobilitydynamic where fkdevice_currentloginprofile = <UUID> </sql>
 							
-						--> jtapi.axl.sendRequest("getPhone", "<uuid>" + phoneUUID + "</uuid>")
-					- then getting phones by retrieved device ID with JTAPI
-						--> JTAPIServlet.getPhone(deviceName)
-					
-				
-				
-			--> jtapiDevices = onlyKeepJtapiTerminals(phones, userId)		
-		- return connection.getDevices(onlyRegistered)
+						- phoneUUID = content of //return/row/fkdevice
+						--> AXL request: jtapi.axl.sendRequest("getPhone", "<uuid>" + phoneUUID + "</uuid>")
+						--> phone = XPathAPI.selectSingleNode(phoneData, "//return/device/name")
+							- return content of:	//return/device/name OR  //return/phone/name (AXL translation)
+						--> ph = JTAPIServlet.getPhone(deviceName);
+						--> CCMPhone.getPhone(deviceName, this)																// phone from CCMPhone.thePhones cache or new CCMPhone
+							--> return phone from CCMPhone.thePhones
+							OR
+							--> return new CCMPhone (and put into CCMPhone.thePhones)
+						--> ret.add(new WebPhone(ph, true/false)) (only registered/all)
+						
+						
+		--> jtapiDevices = onlyKeepJtapiTerminals(phones, userId)		
+		--> return mapToDevices(jtapiDevices, onlyRegistered)														// EM profile retrieved from WebPhone.phone.getCurrentprofile()
+		
+	--> fixActiveDeviceSetting()
+	- return connection.getDevices(onlyRegistered)
+		
+		
+		
+- WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection CALLED FROM:
+
+	- WebConnectionServiceBaseImpl
+		- createConnection(Principal user, HttpServletRequest request)
+		- notifyWebOnEMLogin(Terminal terminal, User user, boolean addphone)
+		- removeConnection(String userName)
+	- WebAttendantCallObserver
+		- doHandleTerminalInOutOfServiceEvent(Terminal terminal, boolean inService)
+	- WebClientConnectionServiceImpl
+		- collectDevicesWithLinesForConnection(userId, onlyRegistered)
+	- WebClientProfileResource
+		- getEnabledFeatures()
+	- webattandent.AboutController
+		- getAvailablePartners(HttpServletRequest request, HttpServletResponse response)				/andphone/webattendant-api/about/getdata
+	- webattandent.AuthController
+		- getPhonesForUser(HttpServletRequest request, HttpServletResponse response)
+	- webattandent.DevController
+		collectDevicesIntoCache(HttpServletRequest request)												/andphone/webattendant-api/dev/collectdevs
+	- webattandent.InitController
+		- reload()																						/andphone/webattendant-api/init/reload								<<<<<<<<<< RELOAD
+			- getPhones(String userName)
+	- webclient.AboutCtrl
+		- getAvailablePartners(HttpServletRequest request, HttpServletResponse response)				/andphone/rest-api/about/getdata
+	- webclient.OnDemandRecordingCtrl
+		- getRecordListOnDemand(HttpServletRequest request, HttpServletResponse response)				/andphone/rest-api/ondemandrecording/recordinglist
+	- webclient.RecorderCtrl
+		- getRecordListForUser(...)																		/andphone/rest-api/recorder/recordlist/{userId}/{filter}
+	- webclient.UserCtrl
+		- getCFwdSettingdesForUser(...)																	/andphone/rest-api/users/{userId}/settings/cfwd/{lineId}/{dev}
+		- getPhonesForUser(HttpServletRequest request, HttpServletResponse response)					/andphone/rest-api/users/phones
+		- updateCFwdSettingsForUser(...)																/andphone/rest-api/users/{userId}/settings/cfwd/{lineId}
+		- updateCFwdSettingsForUserOnAllLines(...)														/andphone/rest-api/users/{userId}/settings/cfwd/all		
+	
 ----------------------------------------------------------------------------------------------
 WebClient Logout
 ================
@@ -461,56 +536,92 @@ WebClient has a 'addremoveModal' which registered globally and contains an event
 ----------------------------------------------------------------------------------------------
 WebAttendant EM login/logout
 ============================
-Provider events:
 
-	Login:
-	
-		CiscoProvTerminalRegisteredEvID ---> [APAS] WS: PhoneAddRemoveWebEvt ===> [WAC]
+Login
+-----
+
+Event handling and actions
+	- old device removed:
+		- JTAPI EVENT CiscoTermOutOfServiceEv ==> APAS (WebAttendantCallObserver) ------------ TerminalInOutServiceWebEvt (false) ------------> WAC
+		
+	- new device added:
+		
+		- JTAPI EVENT CiscoTermInServiceEv ==> APAS (WebAttendantCallObserver) ------------ TerminalInOutServiceWebEvt (true) ------------> WAC
+		
+		- JTAPI EVENT CiscoProvTerminalRegisteredEv ==> APAS (CiscoJtapiProviderObserver) ------------ event:PhoneAddRemoveWebEvt  (false) ------------> WAC
+
+
+		WAC  ------------------- /reload -------------------> APAS
+
 			
 	Logout:
 	
-		CiscoProvTerminalUnRegisteredEvID
+		CiscoProvTerminalUnRegisteredEv
 
+
+		
+- Removing old device:
+
+	TerminalInOutServiceWebEvt ===> 
 	
-	--> CiscoJtapiProviderObserver.providerChangedEvent(ProvEv [] eventList)
-		--> NEW THREAD ProviderEventProcessor.run()
-			--> CiscoJtapiProviderObserver.processProviderEvent(ProvEv [] eventList)
-				-------------------------------- loop on events -----------------------------------------
-				--> com.andtek.andphone.utils.Modules.providerEvent(jtapi, eventList[i])
-					--> com.andtek.andphone.web.common.WebModuleBase.providerEvent(ProvEv provEv)
-						-------------------------- if activeConnection and terminal ----------------------------------------
-							--> notifyWebApplications(...)
-								--> emLoggedUser = ct.getEMLoginUsername()
-								----------------------------- if emLoggedUser is not empty -----------------------------------------------
-									--> WebConnectionService.notifyWebOnEMLogin(terminal, user, true/false)
-											- ev == CiscoProvTerminalRegisteredEvID ===> addphone = true
-											- ev == CiscoProvTerminalUnRegisteredEvID ===> addphone = false
-										--> WebConnectionServiceBaseImpl.notifyWebOnEMLogin(terminal, user, addphone)	
-											- lines = phoneService.linesForDevice(dev.getId());
-											- devLine = new DeviceLineImpl(dev, lines);										
+		--> WebCallObserver.terminalChangedEvent()
+			--> WebCallObserver.handleTerminalInOutOfServiceEvent(terminal, inService=false)
+				--> WebAttendantCallObserver.doHandleTerminalInOutOfServiceEvent(terminal, inService)
+					--------------------- if connection found by terminal -----------------------
+						--> conn.invalidateDeviceCache()
+						--> [2] collectDevicesWithLinesForConnection(user, true);
+							... see above
+						--> get device with lines
+						--> creating TerminalInOutServiceWebEvt with devices and lines -> evt
+						--> EventBroadcaster.broadcast(user, evt, ClientType.webattendant)												TerminalInOutServiceWebEvt >>>>>>>>>>>>> WAC
+
+
+- New device detection:				
+
+	CiscoProvTerminalRegisteredEv ===>
+	
+		--> CiscoJtapiProviderObserver.providerChangedEvent(ProvEv [] eventList)
+			--> NEW THREAD ProviderEventProcessor.run()
+				--> CiscoJtapiProviderObserver.processProviderEvent(ProvEv [] eventList)
+					-------------------------------- loop on events -----------------------------------------
+					--> com.andtek.andphone.utils.Modules.providerEvent(jtapi, eventList[i])
+						--> com.andtek.andphone.web.common.WebModuleBase.providerEvent(ProvEv provEv)
+							-------------------------- if activeConnection and terminal ----------------------------------------
+								--> WebModuleBase.notifyWebApplications(...)																			<<<<<<<<<<<<< notify WEB application	
+									--> emLoggedUser = ct.getEMLoginUsername()
+									----------------------------- if emLoggedUser is not empty -----------------------------------------------
+										- ev == CiscoProvTerminalRegisteredEv ===> addphone = true
+										- ev == CiscoProvTerminalUnRegisteredEv ===> addphone = false
+										--> WebConnectionServiceBaseImpl.notifyWebOnEMLogin(terminal, user, addphone=true)
+											- lines = phoneService.linesForDevice(dev.getId())
+											- devLine = new DeviceLineImpl(dev, lines)							
 											
 											--> conn.invalidateDeviceCache();																					<<<<<<< cache is invalidated here (but refreshed only during next reload)
-											--> collectDevicesWithLinesForConnection(userId, onlyRegistered=true)
-												[2]
+											--> [2] collectDevicesWithLinesForConnection(userId, onlyRegistered=true)
+												... see above
 											
 											--> event = new PhoneAddRemoveWebEvt(...)													// without lines
-											--> EventBroadcaster.broadcast(conn.getUsername().toLowerCase(), event, this.clientType)
-
-	
-	--> WebAttendantConnectionService.notifyWebOnEMLogin(terminal, user, true/false)
-		--> conn.invalidateDeviceCache();
-		--> lines = phoneService.linesForDevice(d.getId());
-		--> event = new PhoneAddRemoveWebEvt(...)																// with lines
-		-------------- if add phone ------------------
-			--> ubscribeForEvents(conn)
-				--> subscribeForGroupEvents(conn)
-				--> subscribeForQueueEvents(conn)
-				--> subscribeForTerminalEvents(conn)
-		--> EventBroadcaster.broadcast(conn.getUsername().toLowerCase(), event, this.clientType)
-	
+											--> EventBroadcaster.broadcast(user, event, ClientType.webattendant)							PhoneAddRemoveWebEvt >>>>>>>>>>>>> WAC	
 
 
-
+	CiscoTermInServiceEv ===>
+		--> WebCallObserver.terminalChangedEvent()
+			--> WebCallObserver.handleTerminalInOutOfServiceEvent(terminal, inService=false)
+					--------------------- if connection found by terminal -----------------------
+						--> conn.invalidateDeviceCache()
+						--> [2] collectDevicesWithLinesForConnection(user, true);
+							... see above
+						--> get device with lines
+						--> creating TerminalInOutServiceWebEvt with devices and lines -> evt
+						--> EventBroadcaster.broadcast(user, evt, ClientType.webattendant)													TerminalInOutServiceWebEvt >>>>>>>>>>>>> WAC	
+			
+			
+			
+			
+	// reload
+			
+			
+			
 ----------------------------------------------------------------------------------------------
 WebAttendant EM Logout
 ======================
