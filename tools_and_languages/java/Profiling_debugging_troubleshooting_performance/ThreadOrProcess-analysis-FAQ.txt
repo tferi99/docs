@@ -1,0 +1,232 @@
+=============================
+ThreadOrProcess-analysis-FAQ
+=============================
+
+Process management
+------------------
+- How to find process id (pid) of all running Java processes?
+- How to find process id (pid) of all running Java threads?
+- How can I see which CPU core a thread is running in Linux?
+
+About threads
+-------------
+- Thread States for a Thread Dump
+- Difference Between BLOCKED, WAITING, And TIMED_WAITING?
+
+Thread dumps
+------------
+- Exporting threads from HPROF
+- How to take thread dumps? – 8 options
+
+Analysis
+--------
+- Online Thread analysis
+- Visual tools
+- How to filter threads by status in MAT?
+
+-------------------------------------------------------------------------------------------------
+How to find process id (pid) of all running Java processes?
+===========================================================
+
+	jps -lm
+	
+
+-------------------------------------------------------------------------------------------------
+How to find process id (pid) of all running Java threads?
+=========================================================
+	
+top -H -p {PROC_ID}
+	
+-------------------------------------------------------------------------------------------------	
+How to take thread dumps? – 8 options
+====================================
+
+1. jstack <pid>	
+
+2. kill -3 <pid>
+
+3. VisualVM
+
+4. Java Mission Control (JMC)
+
+5. Windows (Ctrl + Break)
+
+6. ThreadMXBean
+
+7. APM Tool – App Dynamics
+
+8. JCMD
+
+SEE ALSO:	https://blog.fastthread.io/2016/06/06/how-to-take-thread-dumps-7-options/
+
+	
+-------------------------------------------------------------------------------------------------	
+How to get CPU consumption of threads?	
+======================================
+- top
+
+		top -H -p <pid>
+		
+- VisualVM
+	- In Sampler tab start CPU sampler
+	- 'Thread CPU Time' tab contains CPU Time %
+	
+- JConsole
+	- start jconsole with TopThreads plugin
+	
+		jconsole -pluginpath topthreads-1.1.jar
+		
+	- 'Top threads' tab contains threads ordered by CPU usage %
+	- In addition, by selecting a thread entry you can get thread stack trace information, too
+	
+	
+		
+	
+	
+-------------------------------------------------------------------------------------------------	
+How can I see which CPU core a thread is running in Linux?	
+==========================================================
+- get threads of a process:
+
+		top -H -p {PROC_ID}
+		
+		
+- add 'P' column		
+
+	Press 'f' and 'j'
+	
+	top - 04:24:03 up 96 days, 13:41,  1 user,  load average: 0.11, 0.14, 0.15
+	Tasks: 173 total,   1 running, 172 sleeping,   0 stopped,   0 zombie
+	Cpu(s):  7.1%us,  0.2%sy,  0.0%ni, 88.4%id,  0.1%wa,  0.0%hi,  0.0%si,  4.2%st
+	Mem:   1011048k total,   950984k used,    60064k free,     9320k buffers
+	Swap:   524284k total,   113160k used,   411124k free,    96420k cached
+
+	  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  P COMMAND
+	12426 nginx     20   0  345m  47m  29m S 77.6  4.8  40:24.92 7 php-fpm
+	 6685 mysql     20   0 3633m  34m 2932 S  4.3  3.5  63:12.91 4 mysqld
+	19014 root      20   0 15084 1188  856 R  1.3  0.1   0:01.20 4 top
+		9 root      20   0     0    0    0 S  1.0  0.0 129:42.53 1 rcu_sched
+	 6349 memcache  20   0  355m  12m  224 S  0.3  1.2   9:34.82 6 memcached
+
+	 
+	'P' column contains 'Last Used Cpu'
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Exporting threads from HPROF
+============================
+
+- Method-1: direct:
+
+	1. Export thread dump from HPROF:
+	
+		getThreadDumpFomHPROF.sh <HPROF>
+		
+	  Output is a thread dump file.
+		
+	2. Get threads from thread-dump file:
+	
+		getThreads.sh <thread-dump-file> > OUT
+	
+	
+- Method-2: with VisualVM:
+
+	1. Load HPROF into VisualVM
+	
+	2. Switch to 'Threads' view (choose 'Threads' instead of 'Summary' in dropdown)
+	
+	3. Change output format to HTML
+	
+	4. Select all and copy thread-dump into TXT file
+	
+	5. Get threads from thread-dump file:
+	
+		getThreads.sh <thread-dump-file> > OUT
+		
+	
+	
+- Method-3: with MAT:
+
+	1. Load HPROF into MAT
+	
+	2. Show threads with 'Gear' icon
+	
+	3. Expand all rows (right mouse on bottom Total row - Expand All)
+	
+	4. TOOLBAR/Export/Export to CVS...
+	
+	
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Online Thread analysis
+======================
+Create one or more thread dumps and upload here:
+
+	https://fastthread.io/
+	
+Steps:
+	1. Capture thread dumps
+		There are 8 different options to capture thread dumps. Use the one that suits you.
+
+	2. Upload thread dumps to fastThread.io
+
+	3. Review the report
+
+	4. You can also use REST API
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Visual tools
+============
+- VisualVM
+
+- Eclipse MAT 
+
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Thread States for a Thread Dump	
+===============================
+- NEW			: The thread has not yet started.
+
+- RUNNABLE		: The thread is executing in the JVM.
+
+- BLOCKED		: The thread is blocked waiting for a monitor lock.
+
+- WAITING		: The thread is waiting indefinitely for another thread to perform a particular action.
+
+- TIMED_WAITING	: The thread is waiting for another thread to perform an action for up to a specified waiting time.
+
+- TERMINATED	: The thread has exited.	
+	
+SEE ALSO:	https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/tooldescr034.html
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Difference Between BLOCKED, WAITING, And TIMED_WAITING?
+=======================================================
+- BLOCKED:	A Thread will enter in to BLOCKED state when it’s waiting for a monitor lock to enter a synchronized block/method or reenter 
+			a synchronized block/method after calling Object#wait() method.
+			
+- WAITING:	A thread that is waiting INDEFINITELY for another thread to perform a particular action is in this state.
+
+	A Thread will enter in to WAITING state when it’s calling one of the following methods:
+
+		- Object#wait() with no timeout
+		- Thread#join() with no timeout
+		- LockSupport#park()
+
+	Thread that has called Object.wait() on an object is in WAITING state until another thread to call Object.notify() 
+	or Object.notifyAll() on that object. A thread that has called Thread.join() is in WAITING state for a specified thread to terminate.
+	
+- TIMED_WAITING:	A thread that is waiting for another thread to perform an action for up to a SPECIFIED WAITING TIME is in this state.
+
+	A Thread will enter in to TIMED_WAITING state when it’s calling one of the following methods:
+
+		- Thread#sleep()
+		- Object#wait() with timeout
+		- Thread#join() with timeout
+		- LockSupport#parkNanos()
+		- LockSupport#parkUntil()
+	
+		
+SEE ALSO:	https://dzone.com/articles/difference-between-blocked-waiting-timed-waiting-e
+
+sun.security.ssl.SSLSocketImpl
