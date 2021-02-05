@@ -1,0 +1,38 @@
+================
+VisualStudio-FAQ
+================
+
+Tips
+----
+- VS shortcuts
+
+
+Dependencies
+------------
+- How to add NuGet dependencies to your projecty?
+
+
+
+------------------------------------------------------------------------------------------------------------------------------
+VS shortcuts
+============
+Alt-F12		: peek definition (peek source in a dropdown)
+Ctrl-F12	: go to definition
+Shift-F12	: find all references
+
+
+------------------------------------------------------------------------------------------------------------------------------
+How to add NuGet dependencies to your projecty?
+===============================================
+- In Solution Explorer, right-click References and choose Manage NuGet Packages.
+- Choose "nuget.org" as the Package source, select the Browse tab, search package
+
+
+TIP:
+	If you have a missing package in your source press QuickAction on error (Ctrl+.)
+	and maybe it will recommend tp install missing package with NuGet package manager.
+	
+
+
+
+SEE ALSO:	https://docs.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio

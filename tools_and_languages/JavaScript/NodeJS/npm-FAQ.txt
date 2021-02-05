@@ -10,6 +10,7 @@ npm FAQ
 - How to query versions?
 - How to update packages?
 - How npm link works?
+- NPM versioning
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 What is npm?
@@ -44,6 +45,36 @@ npm ls/ll/la [-g] [--<options>] : list of installed packages, it draws a depende
 
 SEE ALSO:	https://docs.npmjs.com/cli-documentation/cli
 
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+NPM versioning
+==============
+- 1.2.3
+
+	1:	Major release	- Changes that break backward compatibility
+	2:	Minor release	- Backward compatible new features
+	3:	Patch release	- Backward compatible bug fixes
+
+- Version ranges
+	NPM allows installing newer version of a package than the one specified. 
+		- Using tilde (~) gives you bug fix releases. 
+		
+			Options for patch releases:		1.0 or 1.0.x or ~1.0.4		
+		
+		- and caret (^) gives you backwards-compatible new functionality as well.
+		
+			Options for minor releases:		1 or 1.x or ^1.0.4
+				
+				
+		- no limitation:					* or x
+
+- Check update ranges of an NPM package - NPM Semver Calculator:		https://semver.npmjs.com/
+
+
+SEE ALSO:
+	https://docs.npmjs.com/about-semantic-versioning
+	https://docs.npmjs.com/cli/v6/using-npm/semver
+	
 ---------------------------------------------------------------------------------------------------------------------------------------------
 How to install packages?
 ========================

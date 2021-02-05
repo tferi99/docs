@@ -1,0 +1,25 @@
+========
+Grep FAQ
+========
+- How to remove empty lines from a file?
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+How to remove empty lines from a file?
+======================================
+
+- normally this shoulr work:
+
+	grep -v '^$'
+	
+  or 
+	
+	grep .
+	
+- but sometimes CRLF can hurt this so first convert it to Linux format:
+
+	dos2unix <file>
+	grep . <file>
+	
+	
+	
