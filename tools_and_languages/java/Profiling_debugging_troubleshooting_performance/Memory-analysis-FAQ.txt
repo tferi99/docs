@@ -2,6 +2,8 @@
 Memory analysis FAQ
 ===================
 
+- Java Memory basics
+- How GC works?
 - Memory analysis basics
 - How to print memory info of JVM?
 - How to create heap dump?
@@ -10,6 +12,53 @@ Memory analysis FAQ
 - Memory analysis with Eclipse MAT
 - How to add Verbose Garbage Collection to logs?
 - GC roots
+- Usable JVM parameters
+- OQL
+- MAT OQL
+- VisualVM OQL
+- MAT tips
+
+
+-------------------------------------------------------------------------------------------------	
+Java Memory basics
+================
+- Heap memory: 	The heap memory is the runtime data area from which the Java VM allocates memory for ALL CLASS INSTANCES AND ARRAYS.
+	
+	- Eden Space: The pool from which memory is INITIALLY ALLOCATED for most objects.
+
+	- Survivor Space: The pool containing objects that have SURVIVED THE GARBAGE COLLECTION OF THE EDEN SPACE.
+
+	- Tenured Generation or Old Gen: The pool containing objects that have EXISTED for some time IN THE SURVIVOR SPACE.
+
+- Non-heap memory
+	Non-heap memory includes a method area shared among all threads and memory required for the internal processing or 
+	optimization for the Java VM. It stores PER-CLASS STRUCTURES such as a 
+		- runtime constant pool
+		- field and method data
+		- the code for methods and constructors
+		
+	- Permanent Generation: 
+		The pool containing all THE REFLECTIVE DATA of the virtual machine itself, such as CLASS AND METHOD OBJECTS. 
+		With Java VMs that use class data sharing, this generation is divided into read-only and read-write areas.
+
+	- Code Cache: The HotSpot Java VM also includes a code cache, containing memory that is used for compilation and storage of native code.		
+	
+		
+SEE ALSO:
+	tools_and_languages\java\Profiling_debugging_troubleshooting_performance\memory\Understanding Java Memory Model - by Thilina Ashen - Medium.pdf
+	
+	https://medium.com/platform-engineer/understanding-java-memory-model-1d0863f6d973
+	https://stackoverflow.com/questions/1262328/how-is-the-java-memory-pool-divided
+	https://www.youtube.com/watch?app=desktop&v=aAjkJW08BGQ
+	
+	
+-------------------------------------------------------------------------------------------------	
+How GC works?	
+=============
+
+SEE ALSO:
+	tools_and_languages\java\Profiling_debugging_troubleshooting_performance\memory\Understanding Java Garbage Collection - by Thilina Ashen - Medium.pdf
+	https://medium.com/platform-engineer/understanding-java-garbage-collection-54fc9230659a
 
 -------------------------------------------------------------------------------------------------	
 Memory analysis basics
@@ -204,25 +253,71 @@ SEE ALSO:
 	https://eclipsesource.com/blogs/2013/01/21/10-tips-for-using-the-eclipse-memory-analyzer/
 
 -------------------------------------------------------------------------------------------------	
-Eclipse MAT OQL
-===============
-OQL is SQL-like query language to query Java heap. OQL allows to filter/select information wanted from Java heap. While pre-defined queries such as "show all instances of class X" are already supported by HAT, OQL adds more flexibility. OQL is based on JavaScript expression language.
+OQL
+===
+OQL is SQL-like query language to query Java heap. OQL allows to filter/select information wanted from Java heap. While pre-defined queries such as "show all instances of class X" 
+are already supported by HAT, OQL adds more flexibility. OQL is based on JavaScript expression language.
 
-OQL query is of the form
+!!! OQL in MAT and VisualVM are NOT COMPATIBLE !!!
+
+-------------------------------------------------------------------------------------------------	
+MAT OQL
+=======
+- SELECT:
+	- *	: To display objects and be able to browse the outgoing references, use the * symbol
+		
+		SELECT * FROM java.lang.String
+		
+	- fields
+	
+		NOTE: result is emty string for non-existing fields
+
+		
+	- Important properties (with @ prefix):			[ <alias>. ] @<attribute> ...
+	
+	
+
+			objectId			: id of snapshot object
+			class				: Java class of this object (in MAT)
+			clazz				: IClass of this object. See also classof(object).
+			usedHeapSize		: shallow heap size
+			retainedHeapSize	:	retained heap size
+			displayName			: display name
+			Class object	IClass	classLoaderId	id of the class loader
+			
+			For example:
+			
+				SELECT @objectId, @class, @clazz, classof(t), @usedHeapSize, @retainedHeapSize, @classSpecificName FROM INSTANCEOF java.lang.Thread t 
+				
+	- Expressions:
+	
+		SELECT s.@objectId, (s.@objectId * 2), ("The object ID is " + @objectId) FROM OBJECTS 0,1,1,2 s 
+		
+		
+		
+		
+		
+		
+SEE ALSO:
+	F1 (in Eclipse MAT)/Memory Analyzer/Reference/OQL Syntax
+	F1 (in Eclipse MAT)/Memory Analyzer/Reference/Propery accessors
+
+	https://help.eclipse.org/2020-12/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Freference%2Ftipsandtricks.html&anchor=oqlcompletion
+
+	
+	
+-------------------------------------------------------------------------------------------------	
+VisualVM OQL
+============
+VisualVM can access object properties directly:
+
+		select t from org.ftoth.javamemoryleakdemo.thread.TestThread t where /cica/.test(t.tag)
 
 
-         select <JavaScript expression to select>
-         [ from [instanceof] <class name> <identifier>
-         [ where <JavaScript boolean expression to filter> ] ]
+		https://visualvm.github.io/documentation.html
+		http://cr.openjdk.java.net/~sundar/8022483/webrev.01/raw_files/new/src/share/classes/com/sun/tools/hat/resources/oqlhelp.html
 
-		 
-
-
-
-SEE ALSO:	
-	https://visualvm.github.io/documentation.html
-	http://cr.openjdk.java.net/~sundar/8022483/webrev.01/raw_files/new/src/share/classes/com/sun/tools/hat/resources/oqlhelp.html
-
+	
 -------------------------------------------------------------------------------------------------	
 How to add Verbose Garbage Collection to logs?	
 ==============================================
@@ -328,3 +423,22 @@ The following reasons make an object a GC root:
 	
 SEE ALSO:
 		https://help.eclipse.org/2020-12/index.jsp?topic=/org.eclipse.mat.ui.help/welcome.html		Memory Analyzer > Concepts > Garbage Collection Roots
+		
+		
+-------------------------------------------------------------------------------------------------	
+Usable JVM parameters
+=====================
+-Xms64m -Xmx100m 					: min/max memory
+-verbose:gc 						: to log GC activity
+-XX:+UseG1GC						: 
+
+
+SEE ALSO:	https://docs.oracle.com/cd/E40972_01/doc.70/e40973/cnf_jvmgc.htm
+
+-------------------------------------------------------------------------------------------------	
+MAT tips
+========
+Finalizer Overview		: Open Query Browser/Java Basics/Finalizer Overview
+
+
+

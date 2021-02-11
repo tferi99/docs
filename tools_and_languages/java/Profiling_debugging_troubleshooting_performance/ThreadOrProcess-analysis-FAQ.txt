@@ -229,4 +229,8 @@ Difference Between BLOCKED, WAITING, And TIMED_WAITING?
 		
 SEE ALSO:	https://dzone.com/articles/difference-between-blocked-waiting-timed-waiting-e
 
-sun.security.ssl.SSLSocketImpl
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+How to filter threads by status in MAT?
+=======================================
+

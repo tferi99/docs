@@ -27,6 +27,9 @@ Maven
 -----
 - How to run a WEB application with Jetty and Maven?
 
+Troubleshooting
+---------------
+- Idea can't find classes in same package
 
 --------------------------------------------------------------------------------------------------------------------------------
 Some nice custom keys
@@ -113,3 +116,13 @@ How to maximize the editor?
 ===========================
 Set 'Hide All Tool Windows' action to Ctrl-M (Eclipse style)
 
+--------------------------------------------------------------------------------------------------------------------------------
+Idea can't find classes in same package
+=======================================
+Sometimes (if you update project from repo) Idea cannot access classes in the same package and shows an error in editor
+even if build was successfully.
+
+Fix:	
+	call:	File/'Invalidate Caches/Restart...'
+
+	
