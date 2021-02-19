@@ -4,7 +4,7 @@ Eclipse FAQ
 
 Configuration
 -------------
-- How to fix decompiler problem?
+- How to fix decompiler problems?
 - How to run Eclipse with different Java version?
 
 UI
@@ -69,19 +69,29 @@ Go to server.xml in server folder under in Servers.
 - Remove duplications
 
 --------------------------------------------------------------------------------------------------
-How to fix decompiler problem?
-==============================
-If you open a class file and you get: "Source not found" instead of decompiled source
-do the following steps:
+How to fix decompiler problems?
+===============================
+- Classes are not decompiled:
+	If you open a class file and you get: "Source not found" instead of decompiled source
+	do the following steps:
 
-1. Go to Windows-->Preferences-->General-->Editors-->File Association
-	-->Select '*.class' from File Types-->Select Class Decompiler Viewer-->click on Default
+	1. Go to Window-->Preferences-->General-->Editors-->File Association
+		-->Select '*.class' from File Types-->Select Class Decompiler Viewer-->click on Default
 
-2. Go to Windows-->Preferences-->General-->Editors-->File Association
-	-->Select '*.class without Source' from File Types-->Select Class Decompiler Viewer-->click on Default
+	2. Go to Window-->Preferences-->General-->Editors-->File Association
+		-->Select '*.class without Source' from File Types-->Select Class Decompiler Viewer-->click on Default
 
-3. Go to command prompt and run 'eclipse -clean' command by going to eclipse folder once it restarted 
-	then you can check for all class files in project it should get decompiled.
+	3. Go to command prompt and run 'eclipse -clean' command by going to eclipse folder once it restarted 
+		then you can check for all class files in project it should get decompiled.
 
+- Inner classes are not displayed:
 
+	Fernflower doesn't show inner classes, switch to a different decompiler.
 
+	- Go to:	Window/Preferences/Java/Decompiler
+	- change:	Default Class Decompiler 
+	
+	to another which matches to JVM version (e.g. Jad).
+	
+	NOTE:	despite JD-Core only supports Java 12 it decompiles Java 8 successfully.
+	

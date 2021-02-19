@@ -31,7 +31,8 @@ Remote monitoring with VisualVM
 - create policy file into target machine here $JAVA_HOME/bin/jstatd.all.policy :
 
 	grant codebase "file:${java.home}/../lib/tools.jar" {
-	permission java.security.AllPermission;};
+		permission java.security.AllPermission;
+	};
 	
 - run jstatd:	
 

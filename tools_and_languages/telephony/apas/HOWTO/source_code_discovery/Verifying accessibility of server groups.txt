@@ -6,7 +6,7 @@ General
 - Description
 - Configuration
 - Server connection verification
-
+- Validating CTI manager
 
 ------------------------------------------------------------------------------------------------------------
 Description
@@ -108,4 +108,16 @@ RPCglobalServiceImpl.RemoteGetServerByID(int serverGroupID)			<<<<<< USECASE: ca
 		--> [2]
 		
 
-	
+-------------------------------------------------------------------------------------------------------------------------------
+Validating CTI manager	
+======================
+APAS/Global/Configuration CUCM/[CUCM CTI Manager [JTAPI]]/(Test Connection)
+
+--> configcm_gwtappMain.RemoteTestJtapiConnection(...)
+	--> RPCglobalServiceImpl.RemoteTestJtapiConnection(...)
+		--------------------- if data not changed ------------------------------
+			--> testResult1 = JTAPIHelper.verifyActiveConnection(JTAPIThread.getInstance())
+		--------------------- if data changed ------------------------------
+			--> testResult1 = JTAPIHelper.testConnection(primaryJtapiConfig)
+			
+			

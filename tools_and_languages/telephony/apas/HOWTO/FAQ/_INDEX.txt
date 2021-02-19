@@ -11,6 +11,7 @@ General
 --------
 - Telephony abbreviations
 - APAS Definitions
+- Java in APAS
 
 JTAPI
 -----
@@ -47,6 +48,7 @@ Configuration
 - How to configure XML service?
 - Admin CLI
 - Call forward-transfer scenarios
+- APAS memory fine tuning
 
 Directory
 ---------

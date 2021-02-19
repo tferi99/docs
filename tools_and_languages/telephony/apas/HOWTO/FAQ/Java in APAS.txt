@@ -1,0 +1,65 @@
+============
+Java in APAS
+============
+
+- Installed Java
+
+----------------------------------------------------------------------------------------------------------------------
+Installed Java
+==============
+- Java in path:
+
+		$ which java
+		/usr/bin/java
+
+		$ java -version
+		java version "1.8.0_144"
+		Java(TM) SE Runtime Environment (build 1.8.0_144-b01)
+		Java HotSpot(TM) 64-Bit Server VM (build 25.144-b01, mixed mode)
+
+	- APAS Linux OS contains a HotSpot Java but APAS uses another one.
+	
+	- it's just a softlink points to here:
+
+		$ l /usr/bin/java
+		lrwxrwxrwx. 1 root root 31 Feb 15 09:03 /usr/bin/java -> /usr/java/jdk1.8.0_144/bin/java
+	
+- Java used by APAS:	
+
+	- JAVA_HOME used by Tomcat can be retrieved from:		/etc/tomcat/yomcat.conf
+	
+		JAVA_HOME="/usr/java/default"
+	
+	- version:
+	
+		$ /usr/java/default/bin//java -version
+		openjdk version "1.8.0_232"
+		OpenJDK Runtime Environment (build 1.8.0_232-b09)
+		OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
+
+		
+		$ ls -l /usr/java/
+		total 0
+		lrwxrwxrwx. 1 root root  16 Oct  5  2018 default -> /usr/java/latest
+		drwxr-xr-x. 9 root root 268 Oct  5  2018 jdk1.8.0_144
+		lrwxrwxrwx. 1 root root  30 Feb 15 09:02 latest -> /usr/lib/jvm/jre-1.8.0-openjdk
+			
+	- so /usr/java contains Java related directories:
+	
+		- home directory of HotSpot Java		
+		
+		- softlinks pointing to OpenJDK JRE
+		
+		
+	- how to change softlink to OpenJDK JDK?
+	
+		rm -f /usr/java/latest
+		ln -s /usr/lib/jvm/java-1.8.0-openjdk /usr/java/latest
+
+
+
+
+
+	
+		
+		
