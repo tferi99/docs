@@ -145,7 +145,7 @@ HTTP, Rest
 ----------
 - How to prototype test Rest services?
 - How to test HTTPS(SSL) in development environment?
-
+- Howto use proxy to access server?
 
 Deployment
 ----------
@@ -1382,63 +1382,65 @@ Without ? operator if 'project' is null an error will generated:
 --------------------------------------------------------------------------------------------------------------------------------------------------
 How to prototype test Rest services?
 ==============================
-https://jsonplaceholder.typicode.com/
+- Method 1:
+	https://jsonplaceholder.typicode.com/
 
-- create a repository in GitHub
-- create db.json into repository with the content like this:
+	- create a repository in GitHub
+	- create db.json into repository with the content like this:
 
-{
-    "posts": [
-        {
-            "id": 1,
-            "title": "Post 1"
-        },
-        {
-            "id": 2,
-            "title": "Post 2"
-        },
-        {
-            "id": 3,
-            "title": "Post 3"
-        }
-    ],
-    "person": [
-        {
-            "id": 1,
-            "name": "John Smith",
-            "gender": "M"
-        },
-        {
-            "id": 2,
-            "name": "Jane Doe",
-            "gender": "F"
-        }
-    ],   
-    "comments": [
-        {
-            "id": 1,
-            "body": "some comment",
-            "postId": 1
-        },
-        {
-            "id": 2,
-            "body": "some comment",
-            "postId": 1
-        }
-    ],
-    "profile": {
-        "name": "typicode"
-    }
-}
+	{
+		"posts": [
+			{
+				"id": 1,
+				"title": "Post 1"
+			},
+			{
+				"id": 2,
+				"title": "Post 2"
+			},
+			{
+				"id": 3,
+				"title": "Post 3"
+			}
+		],
+		"person": [
+			{
+				"id": 1,
+				"name": "John Smith",
+				"gender": "M"
+			},
+			{
+				"id": 2,
+				"name": "Jane Doe",
+				"gender": "F"
+			}
+		],   
+		"comments": [
+			{
+				"id": 1,
+				"body": "some comment",
+				"postId": 1
+			},
+			{
+				"id": 2,
+				"body": "some comment",
+				"postId": 1
+			}
+		],
+		"profile": {
+			"name": "typicode"
+		}
+	}
 
 
-TIP:
-	- changes not updated immediately, maybe a few of minutes later 
-	
-		After changing db.json check changes with:
-	
-			https://my-json-server.typicode.com/<user>/<repo>/db
+	TIP:
+		- changes not updated immediately, maybe a few of minutes later 
 		
+			After changing db.json check changes with:
+		
+				https://my-json-server.typicode.com/<user>/<repo>/db
+			
+- Method 2: use a proxy to call a simple server
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 Property 'map' does not exist on type 'Observable<...>'
@@ -3618,7 +3620,7 @@ Solution --> inject services into base classes manually.
 		return this.http.get<T>(SERVER_API_CONTEXT_PATH + this.apiBasePath + '/' + id);
 	  }
 
-	  getAll(): Observable<T[]> {
+	  -getAll(): Observable<T[]> {
 		return this.http.get<T[]>(SERVER_API_CONTEXT_PATH + this.apiBasePath);
 	  }
 
@@ -3636,4 +3638,19 @@ Solution --> inject services into base classes manually.
 	  }
 	}
 
-		
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Howto use proxy to access server?
+=================================
+- create file proxy.conf.json:
+
+	{
+	  "/api": {
+		"target": "http://localhost:3000",
+		"secure": false
+	  }
+	}
+
+- 	
+	
+SEE ALSO:
+	https://angular.io/guide/build

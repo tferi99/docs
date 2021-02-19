@@ -2,22 +2,46 @@
 Memory analysis FAQ
 ===================
 
+Basics
+------
 - Java Memory basics
 - How GC works?
+
+Memory analysis basics
+----------------------
 - Memory analysis basics
 - How to print memory info of JVM?
 - How to create heap dump?
 - Tools for memory analysis
+
+Memory analysis advanced
+-------------------------
 - How to compare heap dumps?
 - Memory analysis with Eclipse MAT
-- How to add Verbose Garbage Collection to logs?
-- GC roots
-- Usable JVM parameters
+
+OQL
+---
 - OQL
 - MAT OQL
 - VisualVM OQL
 - MAT tips
 
+GC
+--
+- Howto print current GC type?
+- How to log GC activity?
+- GC roots
+- How to specify GC type used by JVM?
+- How to elminate string duplications?
+
+Threads
+-------
+- Thread analysis
+
+System
+------
+- Usable JVM parameters
+- Howto get system information from HPROF?
 
 -------------------------------------------------------------------------------------------------	
 Java Memory basics
@@ -214,7 +238,7 @@ Dinamic analysis
 	
 Analyis with logs
 -----------------
-SEE ALSO:	How to add Verbose Garbage Collection to logs?
+SEE ALSO:	How to log GC activity?
 	
 -------------------------------------------------------------------------------------------------	
 How to compare heap dumps?
@@ -248,6 +272,10 @@ Usable tools:
 	- check number of threads 
 	- check state of threads - can be a lot of [terminated]
 
+- Top consumers
+
+- OQL query + Histogram view of result	
+	
 
 SEE ALSO:
 	https://eclipsesource.com/blogs/2013/01/21/10-tips-for-using-the-eclipse-memory-analyzer/
@@ -319,21 +347,46 @@ VisualVM can access object properties directly:
 
 	
 -------------------------------------------------------------------------------------------------	
-How to add Verbose Garbage Collection to logs?	
-==============================================
-- To activate “simple” GC Logging add JVM start-up arguments:
+How to log GC activity?	
+=======================
+- Simple:	to activate “simple” GC Logging add JVM start-up arguments:
 
-	-XX:+UseSerialGC -Xms1024m -Xmx1024m -verbose:gc
+	-verbose:gc
+
+	for example with other memory parameters:
+
+		-XX:+UseSerialGC -Xms1024m -Xmx1024m -verbose:gc
 
 	NOTE:
 		The important argument here is the -verbose:gc, which activates the logging of garbage collection information in its simplest form. 
 		
 		By default, the GC log is written to stdout and should output a line for every young generation GC and every full GC.
-		For the purposes of our example, we've specified the serial garbage collector, the simplest GC implementation, via the argument -XX:+UseSerialGC.
+		For the purposes of our example, we've specified the serial garbage collector, the simplest GC implementation, via the argument -XX:+UseSerialGC
 
 		We've also set a minimal and maximal heap size of 1024mb, but there are, of course, more JVM parameters we can tune.
+		
+		
+	Output:
+	
+		[GC (Allocation Failure)  279616K->146232K(1013632K), 0.3318607 secs]
+		[GC (Allocation Failure)  425848K->295442K(1013632K), 0.4266943 secs]
+		[Full GC (System.gc())  434341K->368279K(1013632K), 0.5420611 secs]
+		[GC (Allocation Failure)  647895K->368280K(1013632K), 0.0075449 secs]
+		
+		
+			- GC or Full GC:		The type of Garbage Collection, either GC or Full GC to distinguish a minor or full garbage collection.
+			
+			- (Allocation Failure) or (System.gc()):	The cause of the collection – Allocation Failure indicates that no more space was left in Eden to allocate our objects.
+				
+			- 279616K->146232K:		The occupied heap memory before and after the GC, respectively (separated by an arrow)
+				
+			- (1013632K): 			The current capacity of the heap
 
-- To activate the detailed GC logging, we use the argument 
+			- 0.3318607 secs:		The duration of the GC event in seconds		
+		
+		
+
+- Detailed:	to activate the detailed GC logging, we use the argument 
 
 	-XX:+PrintGCDetails
 	
@@ -362,10 +415,14 @@ How to add Verbose Garbage Collection to logs?
 	
 - Java 9: Unified JVM Logging:
 
-	-Xlog:gc
-	-Xlog:gc=debug
-	-Xlog:gc=debug:file=gc.txt
-	-Xlog:gc=debug::pid,time,uptime
+	Please note that the -XX:+PrintGCDetails flag has been deprecated in Java 9.
+	The new equivalent of the -XX:+PrintGCDetails is the -Xlog:gc* option. 
+
+
+		-Xlog:gc
+		-Xlog:gc=debug
+		-Xlog:gc=debug:file=gc.txt
+		-Xlog:gc=debug::pid,time,uptime
 	
 	
 	A Tool to Analyze GC Logs:		Universal GC Log Analyzer:		https://gceasy.io/
@@ -442,3 +499,240 @@ Finalizer Overview		: Open Query Browser/Java Basics/Finalizer Overview
 
 
 
+-------------------------------------------------------------------------------------------------	
+Thread analysis
+===============
+- Thread states can be retieved by 
+
+			State java.lang.Thread.getState()
+				
+	- where State is:			Enum Thread.State
+	
+			NEW				: A thread that has not yet started is in this state.
+			RUNNABLE		: A thread executing in the Java virtual machine is in this state.
+			BLOCKED			: A thread that is blocked waiting for a monitor lock is in this state.
+			WAITING			: A thread that is waiting indefinitely for another thread to perform a particular action is in this state.
+			TIMED_WAITING	: A thread that is waiting for another thread to perform an action for up to a specified waiting time is in this state.
+			TERMINATED		: A thread that has exited is in this state.
+
+	- but in memory state is stored into bits of an integer value:
+	
+			private volatile int threadStatus
+	
+	- and converted into Thread.State enum with:
+		
+			sun.misc.VM.toThreadState(threadStatus)
+		
+
+			public static Thread.State toThreadState(int threadStatus) {
+				if ((threadStatus & JVMTI_THREAD_STATE_RUNNABLE) != 0) {
+					return RUNNABLE;
+				} else if ((threadStatus & JVMTI_THREAD_STATE_BLOCKED_ON_MONITOR_ENTER) != 0) {
+					return BLOCKED;
+				} else if ((threadStatus & JVMTI_THREAD_STATE_WAITING_INDEFINITELY) != 0) {
+					return WAITING;
+				} else if ((threadStatus & JVMTI_THREAD_STATE_WAITING_WITH_TIMEOUT) != 0) {
+					return TIMED_WAITING;
+				} else if ((threadStatus & JVMTI_THREAD_STATE_TERMINATED) != 0) {
+					return TERMINATED;
+				} else if ((threadStatus & JVMTI_THREAD_STATE_ALIVE) == 0) {
+					return NEW;
+				} else {
+					return RUNNABLE;
+				}
+			}
+
+			/* The threadStatus field is set by the VM at state transition
+			 * in the hotspot implementation. Its value is set according to
+			 * the JVM TI specification GetThreadState function.
+			 */
+			private final static int JVMTI_THREAD_STATE_ALIVE = 0x0001;
+			private final static int JVMTI_THREAD_STATE_TERMINATED = 0x0002;
+			private final static int JVMTI_THREAD_STATE_RUNNABLE = 0x0004;
+			private final static int JVMTI_THREAD_STATE_BLOCKED_ON_MONITOR_ENTER = 0x0400;
+			private final static int JVMTI_THREAD_STATE_WAITING_INDEFINITELY = 0x0010;
+			private final static int JVMTI_THREAD_STATE_WAITING_WITH_TIMEOUT = 0x0020;
+			
+		
+
+MAT
+---
+- call Gear icon for Thread report
+	- it can be filtered by any field with regex, for example:	
+	
+		- get terminated threads:								.*terminated.*				(or simply 'terminated' - .* will be addded automatically 
+		- get not-terminated threads:							^((?!terminated).)*$
+		
+		NOTE:	Unfortunately you cannot create a histogram from filtered thread report - histogram is not filtered (see OQL solution)
+		
+	- you can get number of entries at the end of list
+	
+		- if you want to watch all entries right-click on bottom total line + Expand All
+		
+	- OQL:
+		
+		- get all threads:
+		
+			SELECT objects t FROM INSTANCEOF java.lang.Thread t
+		
+		- get terminated threads:
+
+			SELECT objects t FROM INSTANCEOF java.lang.Thread t
+			WHERE t.threadStatus = 2
+		
+		- get not-terminated thread:
+		
+			SELECT objects t FROM INSTANCEOF java.lang.Thread t
+			WHERE t.threadStatus != 2
+		
+		NOTE:	fortunately flag 2 used only for 'Terminated' status and not combined with other flags (I hope so :| ).
+		
+		- create a histogram from OQL result
+		
+		
+-------------------------------------------------------------------------------------------------	
+Howto get system information from HPROF?
+========================================
+Info can be retrieved:
+
+	- OS info
+	- Architecture
+	- Java type and version
+	- Java HOME
+	- JVM uptime
+	- JVM arguments
+	- System properties
+	- Heap statitics:
+		- size of heap
+		- number of classes
+		- number of instances
+		- number of classloaders
+		- number of GC roots
+		- number of object pending finalization
+	
+- MAT
+
+	From toolbar:	Run Expert System Test / Heap Dump Overview / System Properties
+	
+	
+- VisualVM
+
+	'Summary' tab provides a lot of information about system, like:
+	
+
+-------------------------------------------------------------------------------------------------	
+Howto print current GC type?
+============================
+java -XX:+PrintCommandLineFlags -version
+
+	[root@andphone ~]# java -XX:+PrintCommandLineFlags -version
+	-XX:InitialHeapSize=62090048 -XX:MaxHeapSize=993440768 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC
+	java version "1.8.0_144"
+	Java(TM) SE Runtime Environment (build 1.8.0_144-b01)
+	Java HotSpot(TM) 64-Bit Server VM (build 25.144-b01, mixed mode)
+
+SEE ALSO:
+	Howto print current GC type?
+	https://medium.com/@hasithalgamge/seven-types-of-java-garbage-collectors-6297a1418e82
+	https://www.baeldung.com/jvm-garbage-collectors
+
+-------------------------------------------------------------------------------------------------	
+How to specify GC type used by JVM?
+===================================
+1. Serial Garbage Collector
+
+	-XX:+UseSerialGC
+	
+	- It basically designed for a SINGLE THREAD ENVIRONMENT, NOT FOR SERVERS.
+	- This GC implementation freezes all application threads when it runs. 
+	- It uses single thread for garbage collection.
+	
+2. Parallel Garbage Collector
+		
+	- This uses multiple threads for garbage collection. 
+	- Similar to serial garbage collector this also freezes all the application threads while performing garbage collection. 
+	- The garbage collector is suited best for those applications THAT CAN BEAR APPLICATION PAUSES.
+		
+	-XX:+UseParallelGC
+	-XX:ParallelGCThreads=<N>
+	-XX:MaxGCPauseMillis=<N>
+	-XX:GCTimeRatio=<N>
+		
+		
+		Default in Java 8.
+
+3. CMS Garbage Collector
+
+	-XX:+USeParNewGC
+
+	- Concurrent Mark Sweep (CMS) garbage collector uses multiple garbage collector threads for garbage collection. 
+	- It scans the heap memory to mark instances for eviction and then sweep the marked instances. 
+	- It’s designed for applications THAT PREFER SHORTER GARBAGE COLLECTION PAUSES, and that can afford to share processor resources with the garbage collector while the application is running.
+	- In comparison with the parallel garbage collector, CMS COLLECTOR USES MORE CPU to ensure better application throughput. I
+	
+4. G1 Garbage Collector
+
+	 -XX:+UseG1GC
+	 
+	 - G1 collector will replace the CMS collector since it’s more performance efficient.
+	 
+5. Epsilon Garbage Collector
+
+	-XX:+UseEpsilonGC 
+
+	- Epsilon is a non-operational or a passive garbage collector. 
+	- It allocates the memory for the application, but it doesn’t collect the unused objects. 	 
+	- The purpose of this garbage collector is MEASURING AND MANAGING APPLICATION PERFORMANCE.  
+	
+6. Z garbage collector
+
+	- Oracle introduced ZGC in Java 11.
+	- ZGC performs all expensive work concurrently, without stopping the execution of application threads for more than 10ms, 
+		which makes it suitable for applications THAT REQUIRE LOW LATENCY AND/OR USE A VERY LARGE HEAP.
+	- The Z garbage collector performs its cycles in its threads. It pauses the application for an average of 1 ms. 
+		The G1 and Parallel collectors average roughly 200 ms.
+
+	
+7. Shenandoah
+
+	+UseShenanodoahC
+
+	- Shenandoah is an ultra-low pause time garbage collector that reduces GC pause times by performing more garbage collection work 
+		concurrently with the running Java program.
+	
+	
+	
+SEE ALSO:
+	https://medium.com/@hasithalgamge/seven-types-of-java-garbage-collectors-6297a1418e82	
+
+-------------------------------------------------------------------------------------------------	
+How to elminate string duplications?
+====================================
+How does it work?
+	If you have a String whose content already contained by other String it will be checked if this object 
+	survives N GC run. 
+	Then its char[] will be replaced by reference to existing char[].
+
+
+- use: 	-XX:+UseStringDeduplication
+
+- works Only With the G1 GC Algorithm
+
+- works Only on Long-Lived Objects, specified by -XX:StringDeduplicationAgeThreshold (default is 3)
+
+	It means the number of GC runs should be survived before checking duplications on a String object.
+
+- only supported only from Java 8 update 20 (Java 8u20). Thus, if you are running on any older versions of Java, 
+	you will not be able to use this feature.
+
+- tracing:	-XX:+PrintStringDeduplicationStatistics
+	
+	Reported in the error console how much time it took to run, how much duplicate strings were evacuated, how much savings you gained.
+	
+
+SEE ALSO:
+	https://dzone.com/articles/usestringdeduplication
+
+
+	
+	

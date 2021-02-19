@@ -1,0 +1,30 @@
+=======================
+APAS memory fine tuning
+=======================
+
+- Memory management can be specified by JVM startup arguments here:
+
+	/etc/tomcat/tomcat.conf
+
+		JAVA_OPTS="$JAVA_OPTS -Xmx1895M"
+		JAVA_OPTS="$JAVA_OPTS -XX:NewSize=256m -XX:MaxNewSize=256m -XX:PermSize=256m -XX:MaxPermSize=256m -XX:+DisableExplicitGC"
+
+		
+- here you can set:
+	
+	- minimum/maximum heap size
+	
+		-Xmx1895M
+		
+	- eabling/disabling implicite GC
+	
+		-XX:+DisableExplicitGC
+		
+	- Java GC type (default in Java 8 is Parallel GC). To change to GC1 with eliminating string duplications
+	
+	
+		-XX:+UseG1GC -XX:+UseStringDeduplication
+	
+		
+		
+		
