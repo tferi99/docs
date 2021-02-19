@@ -270,6 +270,10 @@ MAT OQL
 		
 	- fields
 	
+		You can access all properties:
+		
+			SELECT t.tid, t.threadStatus, t.name.toString(), t.customId FROM INSTANCEOF java.lang.Thread t 
+	
 		NOTE: result is emty string for non-existing fields
 
 		
@@ -295,13 +299,16 @@ MAT OQL
 		
 		
 		
+- WHERE	
 		
-		
+	SELECT t.tid, t.threadStatus, t.name.toString(), t.customId FROM INSTANCEOF java.lang.Thread t WHERE (t.threadStatus = 225)
+	
 		
 SEE ALSO:
 	F1 (in Eclipse MAT)/Memory Analyzer/Reference/OQL Syntax
 	F1 (in Eclipse MAT)/Memory Analyzer/Reference/Propery accessors
-
+	
+	https://wiki.eclipse.org/MemoryAnalyzer/OQL
 	https://help.eclipse.org/2020-12/index.jsp?topic=%2Forg.eclipse.mat.ui.help%2Freference%2Ftipsandtricks.html&anchor=oqlcompletion
 
 	
