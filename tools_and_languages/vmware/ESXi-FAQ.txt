@@ -5,6 +5,7 @@ ESXi-FAQ
 - Installation/licensing
 - Management
 - VM console
+- Tips
 
 ------------------------------------------------------------------------------------------------------------------------------
 Installation/licensing
@@ -81,3 +82,18 @@ VM console
 	- run:
 	
 		WEBCLI/Console/Launch remote console
+		
+-----------------------------------------------------------------------------------------------------
+Tips
+====
+- enable SSH
+
+	ESXi has a Linux shell.
+
+- download ISO images with wget into:
+
+	/vmfs/volumes/datastore1
+
+  NOTE: ONLY HTTP supported in v6.5 (HTTPS supported from v6.7u...)
+	
+			

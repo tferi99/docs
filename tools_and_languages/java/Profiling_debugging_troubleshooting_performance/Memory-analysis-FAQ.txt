@@ -494,7 +494,9 @@ Usable JVM parameters
 =====================
 -Xms64m -Xmx100m 					: min/max memory
 -verbose:gc 						: to log GC activity
--XX:+UseG1GC						: 
+-XX:+PrintGCDetails					: more detailed GC log
+-XX:+UseG1GC						: use G1 GC
+-XX:+UseStringDeduplication			: activate String deduplication (from Java 1.8u20 with G1)
 
 
 SEE ALSO:	https://docs.oracle.com/cd/E40972_01/doc.70/e40973/cnf_jvmgc.htm
