@@ -1,0 +1,83 @@
+========
+ESXi-FAQ
+========
+
+- Installation/licensing
+- Management
+- VM console
+
+------------------------------------------------------------------------------------------------------------------------------
+Installation/licensing
+======================
+
+- login to myvmware.com (toth_fe....m / T..3$)
+
+- goto:
+
+	https://my.vmware.com/en/group/vmware/downloads/my-downloads
+	
+	
+SEE ALSO:
+	https://kb.vmware.com/s/article/2107518?lang=en_US
+		
+		
+------------------------------------------------------------------------------------------------------------------------------
+Management
+==========
+- ESXi Web Admin
+
+	You can connect to WEB GUI directly with HTTP/HTTPS
+
+- Direct console UI: 
+
+	- on console (if switched to shell):	Alt-F2 
+	
+	- on SSH:	dcui
+
+	
+- Console shell - Alt-F1:
+
+	- option 1 - WEB:
+	
+		WEBADMIN/Actions/Services/Enable(Disable) console shell
+			
+		If console shell enabled you can open it on console with Alt-F1 
+		You get the same linux shell which you can access via SSH.
+	
+	- option 2 - console:
+	
+		CONSOLE/Troubleshooting Mode Options/Enable(Disable) console shell
+		
+- SSH shell
+
+	- option 1 - WEB:
+	
+		WEBADMIN/Actions/Services/Enable(Disable) Secure Shell (SSH)
+		
+	- option 2 - console:
+	
+		CONSOLE/Troubleshooting Mode Options/Enable(Disable) SSH
+		
+SEE ALSO:
+	Accessing the ESXi Shell, 4 methods:	https://www.youtube.com/watch?v=OJil496mNiE
+	
+	
+------------------------------------------------------------------------------------------------------------------------------
+VM console
+==========
+- console from ESXi WEB Client
+
+	WEBCLI/Console/Open Console ...
+	
+	
+- Remote Console
+
+	- download remote console from 
+	
+		WEBCLI/Console/Download VMRC
+		
+	- install
+	
+	- run:
+	
+		WEBCLI/Console/Launch remote console

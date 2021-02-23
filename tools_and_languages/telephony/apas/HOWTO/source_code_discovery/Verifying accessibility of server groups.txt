@@ -22,8 +22,31 @@ Server specific
 ------------------------------------------------------------------------------------------------------------
 Server connection verification
 ==============================
+- initialization 
 
---> com.andtek.andphone.global.servers.ServerGroup.run()
+	- loading server groups and members from DB
+	- intantiating ServerGroup objects
+	- starting verify thread
+
+	--> com.andtek.andphone.JTAPIThread.run()
+		--> loadConfig()
+			--> com.andtek.andphone.global.Module.initServerGroup()
+				--> com.andtek.andphone.global.servers.ServerGroup.load()											
+					- group from DB:
+						SELECT * FROM servergroup ORDER BY name
+						
+					----------------- loop on groups -------------------
+						- group = new ServerGroup(....)													<<<<<<<<<<<<<<<<<<<< starting verify thread in constructor
+					
+						- group members from DB:
+							SELECT * FROM servergroup_members WHERE gid=? ORDER BY priority
+							------------------ loop on memebers -----------------
+							--> group.addMember(...)
+
+						--> addGroup(group)
+
+
+--> com.andtek.andphone.global.servers.ServerGroup$ServerGroupVerifier.run()
 
 	LOG:	ServerGroupVerifier for.*started					// during startup once
 
