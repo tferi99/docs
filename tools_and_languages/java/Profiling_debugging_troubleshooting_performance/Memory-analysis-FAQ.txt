@@ -230,6 +230,26 @@ Static analysis for heap dumps
 		
 	It opens a HTTP port to access information with browser.
 	
+	
+- jstat
+
+	jstat [ generalOption | outputOptions vmid [interval[s|ms] [count]] ]
+	
+	For exaple this example attaches to lvmid 21891 and takes 7 samples at 250 millisecond intervals 
+	and displays the output as specified by the -gcutil option:
+
+		jstat -gcutil 21891 250 7
+
+- jstatd
+
+	If jstatd is running on remote machine you can access it with jstat, for example:
+	
+		jstat -gcutil 40496@remote.domain 1000
+
+		
+	SEE MORE:	https://docs.oracle.com/javase/7/docs/technotes/tools/share/jstat.html
+	
+	
 Dinamic analysis
 ----------------
 - VisualVM
