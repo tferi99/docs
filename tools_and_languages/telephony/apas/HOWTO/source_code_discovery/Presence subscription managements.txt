@@ -5,6 +5,7 @@ Presence subscription managements
 - Basics
 - Configuration
 - Server side
+- Client side
 - Calculation of client side presence management intervals (WAC)
 
 
@@ -57,35 +58,62 @@ Server side
 ===========
 - Subscription store:		DynamicJtapiPresenceServiceImpl.subscriptions
 
+- Subscription start:
+
+	- REST:	/search		params: dirId, search
+	
+		--> com.andtek.andphone.webmvc.webattendant.controllers.DirectoryController.search()
+			--> WebDirectory directory = svc.findDirectoryById(dirId)
+			--> SearchResult result = svc.search(dirId, searchQuery, ...)
+			--> DynamicJtapiPresenceServiceImpl.subscribe(result, connection)
+				--> webPresenceObservationPool = WebPresenceObservationPool.createInstance(connection)
+				--------------------------- loop on contacts ---------------------------
+					--> processContact(contact...)
+					
+						--> DynamicJtapiPresenceServiceImpl.doRegisterSubscription(address, ...)
+							--> subscription = getSubscription(address)
+							------------------------- if subscription not in subscriptions ------------------------------
+								--> ext = Extension.createInstance(address, loadFromDB)
+								--> subscription = new DynamicJtapiPresenceSubscription(phoneNumber, ext)
+								--> subscriptions.put(subscription.getPhoneNumber(), subscription)							// put into map[phoneNumber, subscription]
+							------------------------- else ------------------------------
+								--> subscription.updateSubscriptionTime()
+								--> subscription.updateLastAxlFetchTime()
+
 - Subscription cleanup:
 
---> com.andtek.andphone.utils.Timer.run()		(extends APASThread)
-	--> com.andtek.andphone.global.Module.timerExpired(...)
-		-------------------------- loop with subscriptionVerifyCount ---------------------------------					
-		- if subscriptionVerifyCount % N == 0																											<<<<<<<< cleanup polling time (PRESENCE_GC_PERIOD)
-			--> DynamicJtapiPresenceServiceImpl.verifySubscriptions()
-				--> expiredSubscriptions = getExpiredSubscriptions()
-					--------------------- loop on expiredSubscriptions -------------------------
-						--> removeSubscription(subscription)
+	--> com.andtek.andphone.utils.Timer.run()		(extends APASThread)
+		--> com.andtek.andphone.global.Module.timerExpired(...)
+			-------------------------- loop with subscriptionVerifyCount ---------------------------------					
+			- if subscriptionVerifyCount % N == 0																											<<<<<<<< cleanup polling time (PRESENCE_GC_PERIOD)
+				--> DynamicJtapiPresenceServiceImpl.verifySubscriptions()
+					--> expiredSubscriptions = getExpiredSubscriptions()
+						--------------------- loop on expiredSubscriptions -------------------------
+							--> removeSubscription(subscription)
 
 
-- Presence subscription age:	
+	- Presence subscription age:	
 
-	maxAge = PresenceSubscriptionTime + PRESENCE_GC_PERIOD
+		maxAge = PresenceSubscriptionTime + PRESENCE_GC_PERIOD
 
-- Keep-alive:
+	- Keep-alive:
 
-	- client:	
-		GlobalEffects.appCsrfInitiated$
-		  ==> updatePresenceSubscriptions()
-			--> PresenceEffects.updatePresenceSubscriptions$
-				--> doUpdatePresenceSubscriptions(profile, presenceItems)
-					--> PresenceService.bulkUpdateSubscription(presenceItems)
-						HTTP ==> /presence/bulkUpdateSubscription with presence items
-
-
+		- client:	
+			GlobalEffects.appCsrfInitiated$
+			  ==> updatePresenceSubscriptions()
+				--> PresenceEffects.updatePresenceSubscriptions$
+					--> doUpdatePresenceSubscriptions(profile, presenceItems)
+						--> PresenceService.bulkUpdateSubscription(presenceItems)
+							HTTP ==> /presence/bulkUpdateSubscription with presence items
 
 
+
+--------------------------------------------------------------------------------------------------------------------------
+Client side
+===========
+- Presence items stored into feature Entity node:		presence
+
+	where ID:	<DN>_<Presence Type>			for example:	36110009100_JTAPI
 
 
 --------------------------------------------------------------------------------------------------------------------------
