@@ -314,6 +314,22 @@ WebClient Login
 
 			
 ######## Common WEB ########
+
+- OLD SOLUTION:		getting device info from CCMPhone cache
+
+	- phones are cached in CCMPhone.thePhones and invalidated  very seldom
+	- phones added by ANDCallObserver.AddressChangedEventProcessor
+	- AXL only used here to get EM device names, other fields of devices are retrieved from CCMPhone cache 
+	
+		AND THIS WAS THE PROBLEM HERE: current device profile name was not refreshed in cache 
+
+- NEW SOLUTION: 	
+	-removing CCMPhone cache solution and
+	- loading phones into WebConnection with direct AXL queries (same queries as before but other field are also used)
+
+	
+
+
 [2] -->  WebConnectionServiceBaseImpl.collectDevicesWithLinesForConnection(userName, onlyRegistered)
 	--> connection = getConnection(userId)
 	--------------------------------- if cache is valid ---------------------------------
@@ -341,12 +357,16 @@ WebClient Login
 								</associatedDevices>
 								
 					- deviceName = 1st node
+					#################### OLD SOLUTION #########################
 					--> ph = JTAPIServlet.getPhone(deviceName)																// phone from CCMPhone.thePhones cache or new CCMPhone
 						--> CCMPhone.getPhone(deviceName, this)
 							--> return phone from CCMPhone.thePhones
 							OR
 							--> return new CCMPhone (and put into CCMPhone.thePhones)
 					--> ret.add(new WebPhone(ph, true/false)) 	(only registered/all)
+					#################### NEW SOLUTION #########################
+					.....
+					###########################################################
 				--> getEMPhones(docUser)																				<<<<<<<<<<<<<<<<<<<<< getting EM phone
 					- profiles from AXL node:  	//return/user/associatedDevices/device
 						for example:
@@ -365,11 +385,15 @@ WebClient Login
 						--> AXL request: jtapi.axl.sendRequest("getPhone", "<uuid>" + phoneUUID + "</uuid>")
 						--> phone = XPathAPI.selectSingleNode(phoneData, "//return/device/name")
 							- return content of:	//return/device/name OR  //return/phone/name (AXL translation)
+						#################### OLD SOLUTION #########################
 						--> ph = JTAPIServlet.getPhone(deviceName);
 						--> CCMPhone.getPhone(deviceName, this)																// phone from CCMPhone.thePhones cache or new CCMPhone
 							--> return phone from CCMPhone.thePhones
 							OR
 							--> return new CCMPhone (and put into CCMPhone.thePhones)
+						#################### NEW SOLUTION #########################
+						.....
+						###########################################################
 						--> ret.add(new WebPhone(ph, true/false)) (only registered/all)
 						
 						

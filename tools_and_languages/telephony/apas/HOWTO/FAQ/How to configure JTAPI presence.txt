@@ -57,9 +57,13 @@ NOTE:
 Dynamic JTAPI presence via directory search
 ===========================================
 
-- Create a directory for search where it contains an attribute which type is 'Presence DN'.
-
-	Presence DN will identify device which will be observed for presence.
+- Create a directory for search where 
+	- it contains an attribute which 
+	
+		- Attribute is a phone number		: can be a duplicated attribute which already used as phone number
+		- type is 'Presence DN'				: Presence DN will identify device which will be observed for presence.
+	
+	- assign this attribute to output		NOTE: if type is 'Presence DN' then attribute won't be rendered to output (of WEB search or Directory widget of WAC)
  
 - Create a directory group and assign directory created before.
 
@@ -67,7 +71,7 @@ Dynamic JTAPI presence via directory search
 
 	APAS/Client/Profiles/<DC_PROFILE>/[Directory Search]
 	
-	- choose a 'Directoy Group' 
+	- choose 'Directoy Group' created above
 	- set 'Enable Dynamic JTAPI Presence'
 	- uncheck 'Dynamic presence user subscription'
 
@@ -114,7 +118,7 @@ Test, troubleshooting
 
 - To show dynamic subscriptions use 'Dynamic JTAPI Presence Subscriptions' page:
 
-	http://localhost:8080/andphone/jsp/dynamic_jtapi_subscriptions.jsp
+	http://apasdev.com:8080/andphone/jsp/dynamic_jtapi_subscriptions.jsp?refresh=5
 	
 	
 

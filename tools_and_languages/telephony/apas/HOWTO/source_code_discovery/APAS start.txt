@@ -6,7 +6,7 @@ Started as WEB application and calling bootstrap servlet:
 		JTAPIServlet: load-on-startup = 1
 
 
-	JTAPIServlet.init()
+	JTAPIServlet.init()																			<<<<<< called by Tomcat
 		- starting JTAPIThread								: bootstrap thread to load 	
 		- putting objects into servlet context attributes:
 			- JTAPIThread -> jtapi

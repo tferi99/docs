@@ -1,12 +1,12 @@
-=================================
-Presence subscription managements
-=================================
+===============================================
+JTAPI Dynamic Presence subscription managements
+===============================================
 
 - Basics
 - Configuration
 - Server side
 - Calculation of client side presence management intervals (WAC)
-
+- Troubleshooting
 
 --------------------------------------------------------------------------------------------------------------------------
 Basics
@@ -22,8 +22,7 @@ Supported presence types are:
 
 - Subscriptions:
 	- Presence information can be accessed with subscriptions.
-	- For performance and resource optimization subscriptions 
-		are allocated dynamically (on-demand) and they are destroyed if not used any more.
+	- For performance and resource optimization subscriptions are allocated dynamically (on-demand) and they are destroyed if not used any more.
 
 - Cleanup:	
 	- Server stores subscriptions into a map. 
@@ -57,16 +56,112 @@ Server side
 ===========
 - Subscription store:		DynamicJtapiPresenceServiceImpl.subscriptions
 
+- New subscription:
+	--> com.andtek.andphone.webmvc.webattendant.controllers.DirectoryController.search(dirId, search)
+		--> directory = DirectoryServiceImpl.findDirectoryById(dirId)
+		--> result = DirectoryServiceImpl.search(dirId, searchQuery, ...)
+		--> WebDirectoryPresenceSubscriptionService.subscribe(result, connection)
+			--> contacts = searchResult.getContacts()
+			--> eventReceiver = connection.getWebPresenceEventReceiver()
+			--> webPresenceObservationPool = WebPresenceObservationPool.createInstance(connection)
+			--> profile = connection.getWebProfile()
+			----------------- loop on cotacts ------------------
+				--> processContact(contact, eventReceiver, webPresenceObservationPool)
+					--> detailsMap = contact.getDetails()
+						---------------- iterate over details map values -------------------
+							- looking for 'Presence DN' attibute
+							------------------- if detail is presence DN ---------------------
+								--> WebDirectoryPresenceSubscriptionService.doTelephonyPresenceSubscription(contact, detail, eventReceiver, webPresenceObservationPool)
+									- identifier from detail
+									------------------ if identifier is JTAPI controlled ---------------------
+										--> UnifiedWebPresenceServiceImpl.register(identifier, eventReceiver, webPresenceObservationPool, WebPresenceTypeEnum.JTAPI)
+											--------------- if presence type is JTAPI ----------------------
+												--> JtapiWebPresenceRegistrator.register(identifier, receiver, webPresenceObservationPool)
+													- pdn = new PGroupDN(identifier)
+													--> subscriptionList = DynamicJtapiPresenceServiceImpl.registerSubscription(phoneNumber = pdn, receiver)
+														- addressList = getAddresses(phoneNumber)
+														------------ loop on addressList --------------
+															--> subscription = doRegisterSubscription(address, listener)
+																-------------------- synchronized (subscriptions) ---------------------
+																	--> subscriptions.put(getKeyForSubscriptionCache(subscription.getPhoneNumber()), subscription)					// subsript
+																--> event = new DynamicJtapiPresenceEvent(this, subscription, DynamicJtapiPresenceEvent.CAUSE_STANDARD, CiscoAddrEv.class.getSimpleName())
+																--> sendPresenceEvent(event, listener)
+																	--> [client notification]
+																	
+
+- [client notification] and presence event handling:
+
+- generation of DynamicJtapiPresenceEvent
+
+	CALL EVENTS ==> DynamicJtapiPresenceCallObserver.callChangedEvent()
+		--> DynamicJtapiEventProcessor.handle..Ev()
+			--> caller = event.getConnection().getAddress()
+				--> subscription = getDynamicJtapiPresenceSubscriptionByAddress(caller)
+				---------------------------- if subscription found -----------------------------
+					--> updateState(ext, ....)
+					--> DynamicJtapiEventProcessor.fireObservers(new DynamicJtapiPresenceEvent(...))
+						--> DynamicJtapiPresenceServiceImpl.sendPresenceEvent(event);
+							- get listeners
+							- send new DynamicJtapiPresenceEvent[] to event queue
+
+
+
+- events for WebAttendant
+
+	- WebAttendantPresenceEventHandler created for every WebAttendantConnection.
+		Constructor:
+		
+			this.presenceEventHandler = new WebAttendantPresenceEventHandler(this)
+
+
+	- WebAttendantPresenceEventHandler bound to event sources in:		WebDirectoryPresenceSubscriptionService.subscribe(...)
+	
+		--> eventReceiver = connection.getWebPresenceEventReceiver()
+			...
+			--> processContact(contact, eventReceiver, webPresenceObservationPool)
+				--> doTelephonyPresenceSubscription(contact, detail, eventReceiver, webPresenceObservationPool)
+					--> UnifiedWebPresenceService.register(identifier, eventReceiver, webPresenceObservationPool, WebPresenceTypeEnum.JTAPI)
+						--> JtapiWebPresenceRegistrator.register(identifier, receiver, webPresenceObservationPool)
+								...
+								--> subscriptionList = DynamicJtapiPresenceServiceImpl.registerSubscription(phoneNumber = pdn, receiver)
+									- addressList = getAddresses(phoneNumber)
+									------------ loop on addressList --------------
+										--> subscription = doRegisterSubscription(address, listener)
+											--> DynamicJtapiPresenceSubscription.addPresenceListener(listener)
+	
+	
+	- sending events to WebAttendant:
+		--> EventQueueWorker.run()
+			----------------- loop on eventsList --------------------
+				--> handleEvent(entry)
+					...
+					--> DynamicJtapiPresenceServiceImpl.handleEvents(APASEvent[] events, Object ob)
+						--> WebAttendantPresenceEventHandler.dynamicJtapiPresentEvent(DynamicJtapiPresenceEvent jtapiPresenceEvent)
+						
+							- PresenceWebEvt event = new PresenceWebEvt(presenceItem)																
+							
+							--> sendPresenceEvent(event)
+								--> EventBroadcaster.broadcast(connection.getUsername(), event, ClientType.webattendant)						<<<<<<< PUSH PresenceWebEvt message to WAC by username
+
+	
+	
+	
 - Subscription cleanup:
 
---> com.andtek.andphone.utils.Timer.run()		(extends APASThread)
-	--> com.andtek.andphone.global.Module.timerExpired(...)
-		-------------------------- loop with subscriptionVerifyCount ---------------------------------					
-		- if subscriptionVerifyCount % N == 0																											<<<<<<<< cleanup polling time (PRESENCE_GC_PERIOD)
-			--> DynamicJtapiPresenceServiceImpl.verifySubscriptions()
-				--> expiredSubscriptions = getExpiredSubscriptions()
-					--------------------- loop on expiredSubscriptions -------------------------
-						--> removeSubscription(subscription)
+	- subscriptions are stored into:
+	
+		com.andtek.andphone.ccm.jtapi.presence.impl.DynamicJtapiPresenceServiceImpl.subscriptions
+		
+		It's a map[phoneNumber, DynamicJtapiPresenceSubscription]
+
+	--> com.andtek.andphone.utils.Timer.run()		(extends APASThread)
+		--> com.andtek.andphone.global.Module.timerExpired(...)
+			-------------------------- loop with subscriptionVerifyCount ---------------------------------					
+			- if subscriptionVerifyCount % N == 0																											<<<<<<<< cleanup polling time (PRESENCE_GC_PERIOD)
+				--> DynamicJtapiPresenceServiceImpl.verifySubscriptions()
+					--> expiredSubscriptions = getExpiredSubscriptions()
+						--------------------- loop on expiredSubscriptions -------------------------
+							--> removeSubscription(subscription)
 
 
 - Presence subscription age:	
@@ -158,5 +253,10 @@ Calculation of client side presence management intervals (WAC)
  */
 
 
-
-						
+--------------------------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+- No JTAPI presence info about a phone:
+	
+	Check if phone controlled by your application user.
+	

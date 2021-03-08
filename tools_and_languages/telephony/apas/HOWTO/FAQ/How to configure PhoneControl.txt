@@ -19,6 +19,10 @@ Configuration
 		The Cisco RIS Data Collector service provides an interface for applications, such as Real-Time Monitoring Tool (RTMT), SOAP applications, 
 		Cisco Unified Communications Manager Administration and AlertMgrCollector (AMC) to retrieve the information that is stored in all RIS nodes in the cluster.
 
+		To activate:
+		
+			CUCM Admin/Cisco Unified Serviceability/Trace/TroubleShooting Trace Settings/[Performance and Monitoring Services]/(Cisco RIS Data Collector)
+		
 	- activate WEB access of phone devices
 
 	- assign user to these groups to APAS application user in 

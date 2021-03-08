@@ -23,7 +23,7 @@ Use-cases
 - On-demand recording
 - Status page for recording
 - Search
-
+- REST API
 
 Protocol
 --------
@@ -53,17 +53,15 @@ Database
 --------
 - Writing/changing rec_call table
 - Recording start time information
-
+- KEEP values
+- Status values
+- 
 
 Recording files
 ---------------
 - Structure of REC file
 - Post-processing recorded media
 - How recordings can be deleted?
-
-Storage profiles
-----------------
-- KEEP values
 
 C++ Recorder
 ------------
@@ -239,10 +237,47 @@ On demand recording can be started with XML service served by recording servlet:
 				--> onDemandStartRecord()				
 					LOG:	<recordCall terminal="rec" callID="sip13293/1" onDemand="1" />
 		
-						
-			
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+REST API
+========
 
+	- GET /api/recorder/active		(<6.2.2)
+	- GET /api/recorder/ondemand	(>=6.2.2)
+	
+		List of on-demand recordings (running and stopped, too), field onDemand contains status:
+		For example:
 		
+				http://apasdev.com:8080/andphone/api/recorder/active
+			
+	- PUT /api/recorder/active/{callId}/{extId}		(<6.2.2)
+	- PUT /api/recorder/ondemand/{callId}/{extId}	(>=6.2.2)
+
+		Start/stop on-demant call.
+		You simply add callID retrieved from previous GET list (so {callId}/{extId} are TOGETHER the original call ID)
+		For example:	
+		
+		http://apasdev.com:8080/andphone/api/recorder/active/1748S26085/1
+
+	- GET /api/recorder/recordings
+	
+		List of all recordings which contained by APAS recorder database.
+		It contains all active, recorded calls and archived old recordings (which have not been deleted by maintenance job yet)
+		For example:
+		
+			http://apasdev.com:8080/andphone/api/recorder/recordings
+		
+	- GET /api/recorder/recordings/{recordId}
+	
+		Getting a single recording by recording ID.
+		'recorderId' can be achieved from result of query[GET /api/recorder/recordings] or you can find this ID 
+		in result of APAS/Recording/Search page.
+		
+	- PUT /api/recorder/recordings/{recordId}
+	
+		Requirement:
+			IT updates recording fields. You can update ANY fields so use it VERY CAREFULLY!
+			It has been proposed to make deprecated. Maybe it will be removed from future versions.
+		But: i think it does nothing 
 		
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Recording protocol between APAS and recorder
@@ -1124,7 +1159,27 @@ keep >= 10	: ID of storage profile
 						
 							UPDATE rec_call SET keep=?,lastaction=NOW() WHERE id=?
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Status values
+=============
+From call.h:
 
+	enum CallStatus {
+		CALL_STATUS_NEW = 0, CALL_STATUS_RECORDING = 1, CALL_STATUS_FINISHED = 2
+	}; 							
+
+From RecordingResource.java:
+	/** The status. */
+	@ApiModelProperty(value="Processing status of the recording. Values: "
+			+ "0: recorder initialized but not started (on-demand), "
+			+ "1: recording started,"
+			+ "2: recording completed, "
+			+ "3: completed recording beeing processed (conversion, encryption), "
+			+ "4: recording processed and saved, "
+			+ "5: recording designated for backup, "
+			+ "6: recording prevented from deleting by Maintenance Cleanup GC") 	
+
+							
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ERROR - in APAS event log: The recording of call ... has been locked because a new call has reserved licenses in the ruleset
 ============================================================================================================================
