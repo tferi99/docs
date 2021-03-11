@@ -40,6 +40,7 @@ Troubleshooting
 - ERROR: column ... is of type jsonb but expression is of type ...
 - ERROR: invalid input syntax for type json
 - ERROR: To use assign() on not managed entities, explicitly provide EM instance
+- ERROR: Nest can't resolve dependencies of the ...Service (?). Please make sure that the argument ...Repository at index [0] is available in the ...Module context.
 
 NestJS
 ------
@@ -278,7 +279,7 @@ How to configure NestJS?
 			import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 			import { logger } from '@mikro-orm/nestjs';
 
-			export default {
+			export default {															<<<<<< config in separate TS
 			  type: 'postgresql',
 			  dbName: 'mymikroormdemo',
 			  entitiesTs: ['./src/entities'],
@@ -298,7 +299,7 @@ How to configure NestJS?
 
 			@Module({
 			  imports: [
-				MikroOrmModule.forRoot({
+				MikroOrmModule.forRoot({												<<<<<< OR config in forRoot(...)
 				  entities: ['./dist/entities'],
 				  entitiesTs: ['./src/entities'],
 				  dbName: 'my-db-name.sqlite3',
@@ -322,7 +323,7 @@ How to configure NestJS?
 		// photo.module.ts
 
 		@Module({
-		  imports: [MikroOrmModule.forFeature([Photo])],
+		  imports: [MikroOrmModule.forFeature([Photo])],												<<<<<<<<<< repositories are registered here
 		  providers: [PhotoService],
 		  controllers: [PhotoController],
 		})
@@ -352,7 +353,7 @@ How to configure NestJS?
 		}	
 		
 	NOTE:
-		You should not register your base entities via forFeature(), as there are no repositories for those. 
+		You SHOULD NOT REGISTER your base entities via forFeature(), as there are no repositories for those. 
 		On the other hand, base entities need to be part of the list in forRoot() (or in the ORM config in general).
 	
 SEE ALSO:	https://mikro-orm.io/docs/usage-with-nestjs	
@@ -585,5 +586,16 @@ Specifying loading strategy
 		const author = await this.authorRepository.findOne(id, ['books']);													// default
 		const author = await this.authorRepository.findOne(id, { populate: ['books'], strategy: LoadStrategy.JOINED});		// joined
 		
-		
-		
+
+------------------------------------------------------------------------------------------------------------------------------------------------		
+ERROR: Nest can't resolve dependencies of the ...Service (?). Please make sure that the argument ...Repository at index [0] is available in the ...Module context.
+==================================================================================================================================================================
+If you have a repository related dependency issue in Nest JS then the problem maybe 
+that you forgot to register Entity into forFeature(...) list described by documentation.
+
+SEE ALSO:	
+	How to configure NestJS?
+	https://mikro-orm.io/docs/usage-with-nestjs
+
+
+

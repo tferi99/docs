@@ -1,5 +1,27 @@
 ==========================
 Howto use update packages?
 ==========================
+- Usage
+- Troubleshooting
+
+------------------------------------------------------------------------------------------------------------------
+Usage
+=====
 - Download package (ZIP)
 - APAS/Global/Software Update/[Upload update package]
+
+------------------------------------------------------------------------------------------------------------------
+Troubleshooting
+===============
+If you have an error message:
+
+- check /var/log/update.log
+
+- Possible problems:
+
+	- bad java symlink (jarsigner not in path)
+	
+SEE ALSO:	Java in APAS
+
+
+	

@@ -5,6 +5,7 @@ JTAPI Dynamic Presence subscription managements
 - Basics
 - Configuration
 - Server side
+- Client side
 - Calculation of client side presence management intervals (WAC)
 - Troubleshooting
 
@@ -54,9 +55,31 @@ Maximum age of presence subscription entries (without keep-alive):
 --------------------------------------------------------------------------------------------------------------------------
 Server side
 ===========
-- Subscription store:		DynamicJtapiPresenceServiceImpl.subscriptions
+- Presence state of every contact stored into DynamicJtapiPresenceSubscription objects 
+
+- Subscription objects are cached here:		DynamicJtapiPresenceServiceImpl.subscriptions
+
+- New subscriptions are created on-demand during query commands which return contact information to clients (e.g. LDAP Directory search)
+
+	- Clients are notified about new presence information via pushed messages, for example 'PresenceWebEvt' WebSocket message to WebAttendant
+
+	- Search queries create new subscriptions ONLY for contacts which don't exist in subscription cache
+	
+	- Pushed messages are ONLY sent during new subscription. That means:
+	
+		- contact search DON'T create new subscriptions about cached contacts
+		- contact search DON'T create pushed messages about cached contacts
+		- if a client needs information about cached contact it should send a request to server, like: WAC PresenceService.forcePushPresenceItems()
+		
+- Unused subscriptions are cleaned up automatically
+	- a subscription has an age value
+	- age has been reset by clients with keep-alive signals
+	- usused item (which not refreshed by keep-alive) are deleted by a background job reqularly
+	
 
 - New subscription:
+	- REST:	/search		params: dirId, search
+
 	--> com.andtek.andphone.webmvc.webattendant.controllers.DirectoryController.search(dirId, search)
 		--> directory = DirectoryServiceImpl.findDirectoryById(dirId)
 		--> result = DirectoryServiceImpl.search(dirId, searchQuery, ...)
@@ -91,9 +114,9 @@ Server side
 
 - [client notification] and presence event handling:
 
-- generation of DynamicJtapiPresenceEvent
+	Ggeneration of presence (DynamicJtapiPresenceEvent) events:
 
-	CALL EVENTS ==> DynamicJtapiPresenceCallObserver.callChangedEvent()
+	PHONE CALL EVENTS ==> DynamicJtapiPresenceCallObserver.callChangedEvent()
 		--> DynamicJtapiEventProcessor.handle..Ev()
 			--> caller = event.getConnection().getAddress()
 				--> subscription = getDynamicJtapiPresenceSubscriptionByAddress(caller)
@@ -106,7 +129,7 @@ Server side
 
 
 
-- events for WebAttendant
+- events for clients (WebAttendant):
 
 	- WebAttendantPresenceEventHandler created for every WebAttendantConnection.
 		Constructor:
@@ -130,7 +153,7 @@ Server side
 											--> DynamicJtapiPresenceSubscription.addPresenceListener(listener)
 	
 	
-	- sending events to WebAttendant:
+	- sending events to WebAttendant:		PresenceWebEvt
 		--> EventQueueWorker.run()
 			----------------- loop on eventsList --------------------
 				--> handleEvent(entry)
@@ -164,25 +187,101 @@ Server side
 							--> removeSubscription(subscription)
 
 
-- Presence subscription age:	
+	- Presence subscription age:	
 
-	maxAge = PresenceSubscriptionTime + PRESENCE_GC_PERIOD
+		maxAge = PresenceSubscriptionTime + PRESENCE_GC_PERIOD
 
-- Keep-alive:
+	- Keep-alive:
 
-	- client:	
-		GlobalEffects.appCsrfInitiated$
-		  ==> updatePresenceSubscriptions()
-			--> PresenceEffects.updatePresenceSubscriptions$
-				--> doUpdatePresenceSubscriptions(profile, presenceItems)
-					--> PresenceService.bulkUpdateSubscription(presenceItems)
-						HTTP ==> /presence/bulkUpdateSubscription with presence items
-
-
+		- client:	
+			GlobalEffects.appCsrfInitiated$
+			  ==> updatePresenceSubscriptions()
+				--> PresenceEffects.updatePresenceSubscriptions$
+					--> doUpdatePresenceSubscriptions(profile, presenceItems)
+						--> PresenceService.bulkUpdateSubscription(presenceItems)
+							HTTP ==> /presence/bulkUpdateSubscription with presence items
 
 
 
+--------------------------------------------------------------------------------------------------------------------------
+Client side
+===========
+PUSHED message:		PresenceWebEvt
 
+
+- Presence items stored into feature Entity node:		presence
+
+	where ID:	<DN>_<Presence Type>			for example:	36110009100_JTAPI
+	
+	
+	--> AtmosphereService.onMessage()
+		- on PresenceWebEvt
+			--> store.dispatch(PresenceActions.itemReceived({item: data.presenceItem}))
+				--> presenceReducer - upsertOne															// merge into 'presence' entity
+	
+
+- Presence client store cleanup and server keep-alive:
+	A background job removes ununsed items from store and sends keep-alive signals to server regularly.
+	
+	- It updates server side presence items via POST REST message
+	- it removes old items from store
+	- call itself (infinite loop)
+
+
+	presenceStoreCleanupInit --> presenceStoreCleanup 
+	   ^             |
+	   |             |
+	   |-------------|
+	   
+	- job started during startup - in handler effect of AppCsrfInitiatedAction
+		
+		
+	--> MainComponent.onInit() action: AppDataLoadRequestedAction ==>
+		--> GlobalEffect.appDataLoadRequested REST /reload ==> APAS
+			--> action AppCsrfInitiatingAction ==>
+				--> GlobalEffect.appCsrfInitiating$ action: AppCsrfInitiatedAction ==>
+					--> GlobalEffect.appCsrfInitiated$ 
+						--> A LOT OF ACTIONS to features ==>
+						
+						------------------------------------- presence store cleanup / keep-alive to server -----------------------
+						--> PresenceEffects.presenceStoreCleanupInit$
+								<- selectUserProfile()																						// profile with input parameters
+								<- selectOldPresences																						// old presences from store (where last keep-alive is elder then (now - oldAge))
+							--> doUpdatePresenceSubscriptions(profile, presenceItems)
+								--> presenceService.bulkUpdateSubscription(presenceItems, profile)
+									--> retryInterval = getPresenceSubscriptionKeepaliveIntervalMsecs(profile) / RETRY_FACTOR				// 
+									--> POST /presence/bulkUpdateSubscription', presenceItemsToSend											// POST to server - max retry: 3
+								--> doPresenceStoreCleanupInit(profile)																		// call this job again (later)
+									--> timeout => store.dispatch(presenceStoreCleanupInit({now: Date.now()})), cleanupInterval)			// presenceStoreCleanup
+								 --> PresenceReducer.on(presenceStoreCleanup({oldPresences}))
+									--> updating lastKeepAlive in store if empty															// lat keepalive if empty
+									--> oldIds = IDs from old presence items
+									--> removeMany(oldIds)
+						-----------------------------------------------------------------------------------------------------------
+						--> action: AppDataLoadedAction ==>
+							--> GlobalEffect.appDataLoaded$
+								--> AtmosphereService.reSubscribe()																			// subscription to WebSocket
+									--> unsubscribe()
+									--> subscribe() action: WebSocketConnectedAction ==>
+										--> GlobalEffect.webSocketConnected$
+											--> PresenceService.forcePushPresenceItems()													<<<<<<<<<<<<<<<<< request to APAS to get my presence cache items (sent via WebSocket)
+							
+					
+- presence store keep-alive:
+
+	DirectoryComponent updates 'lastKeepAlive' in all presence items of store which contained by Directory widget as serch result.
+	So if there is no Directory widget opened store keepalive won't created.
+
+	--> DirectoryComponenent.onInit()
+		--> sendPresenceStoreKeepAliveUpdate()
+			--> action presenceStoreKeepAliveUpdate({result: this.dirSearchResult})
+			
+				--> PresenceReducer.on(presenceStoreKeepAliveUpdate)
+					- changes[] <- {id, changes: {lastKeepAlive: now}} 
+					--> updateMany(changes)
+			
+		--> timeout: sendPresenceStoreKeepAliveUpdate()																// call itself infinitely
+					
 --------------------------------------------------------------------------------------------------------------------------
 Calculation of client side presence management intervals (WAC)
 ==============================================================

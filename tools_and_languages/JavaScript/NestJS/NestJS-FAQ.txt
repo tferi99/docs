@@ -11,8 +11,9 @@ Dependency injection
 
 Validations
 -----------
+- How to validate input data in controllers?
 - How to validate a DTO member agains enum?
-- How to specify optional searh criteria?
+- How to specify optional search criteria?
 
 Error handling
 --------------
@@ -99,6 +100,49 @@ This error generated when component XXX cannot inject element specified in const
 
 Fix:	maybe expected component did not added to 'providers' of current module.
 
+
+--------------------------------------------------------------------------------------------------------------------------------------
+How to validate input data in controllers?
+==========================================
+- Method 1: pipes
+
+	- input paramters are passed as input arguments to controller methods
+	- annotate input fields with @Param 
+	- add validator pipes to @Param
+
+	for example:
+	
+		@Get(':id')
+		async findOne(@Param('id', ParseIntPipe) id: number) {
+		  return this.catsService.findOne(id);
+		}	
+  OR
+	
+	@Get(':id')
+	async findOne(
+	  @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }))
+	  id: number,
+	) {
+	  return this.catsService.findOne(id);
+	}
+
+	
+- Method 2: DTO
+
+	- use a singl
+- You need class-validator. Internally uses validator.js to perform validation. Class-validator works on both browser and node.js platforms.
+- Annotate 
+
+
+
+
+
+SEE ALSO:
+	Howto build-up a NestJS development environment?
+	https://docs.nestjs.com/pipes#class-validator
+	https://github.com/typestack/class-validator#readme
+	
+	
 --------------------------------------------------------------------------------------------------------------------------------------
 How to validate a DTO member agains enum?
 =========================================
@@ -129,17 +173,64 @@ How to validate a DTO member agains enum?
 	}
 
 --------------------------------------------------------------------------------------------------------------------------------------
-How to specify optional searh criteria?
+How to specify optional search criteria?
 =========================================
-export class CatFilterDto {
-  name: string;
+- Generally you can use pipes for validate controller query parameters.
+	For example:
 
-  @IsIn(ColorValues)
-  @IsOptional()
-  color: Color;
-}
+		async getAllByName(@Query('username') username?: string, @Query('active', ParseIntPipe) active?: number): Promise<User[]> {
+			...
+		}
+
+- BUT, ParseBoolPipe and ParseIntPipe has been implemented to allow explicitly validating & transforming NON-OPTIONAL parameters.
+	In your case, you can either use the implicit type conversion or define a DTO:
+		
+Ecample 1:
+
+	export class PersonQueryFilterDto {
+	  @IsOptional()
+	  @IsNumber()
+	  id: number;
+
+	  @IsOptional()
+	  name: string;
+	}
+
+	export class PersonController {
+		...
+		@Get()
+		async getAllByName(@Query() {id, name} : PersonQueryFilterDto): Promise<Person[]> {
+			const filter = {};
+			if (id) {
+			  filter['id'] = id;
+			}
+
+			if (name) {
+			  filter['name'] = name;
+			}
+			return this.personService.getAll(filter);
+		}
+		...
+	}
 
 
+Example 2:
+
+	export class CatFilterDto {
+	  name: string;
+
+	  @IsIn(ColorValues)
+	  @IsOptional()
+	  color: Color;
+	}
+
+
+NOTE: You need class-validator and class-trasformer package.
+
+SEE ALSO:
+	Howto build-up a NestJS development environment?
+	https://github.com/nestjs/nest/issues/4328
+	
 --------------------------------------------------------------------------------------------------------------------------------------
 Error handling
 ==============

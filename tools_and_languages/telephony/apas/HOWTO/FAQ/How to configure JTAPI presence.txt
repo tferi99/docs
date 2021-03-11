@@ -120,5 +120,5 @@ Test, troubleshooting
 
 	http://apasdev.com:8080/andphone/jsp/dynamic_jtapi_subscriptions.jsp?refresh=5
 	
-	
+
 
