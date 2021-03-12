@@ -9,8 +9,9 @@ Dependency injection
 - How to resolve circular dependency between services?
 - Howto access injectables during the startup?
 
-Validations
------------
+Controllers, validations
+------------------------
+- @Param, @Query
 - How to validate input data in controllers?
 - How to validate a DTO member agains enum?
 - How to specify optional search criteria?
@@ -104,41 +105,120 @@ Fix:	maybe expected component did not added to 'providers' of current module.
 --------------------------------------------------------------------------------------------------------------------------------------
 How to validate input data in controllers?
 ==========================================
-- Method 1: pipes
+Recommended pattern:
+	- use global-scoped ValidationPipe with class-validator and class-transformer
+	
+		app.useGlobalPipes(new MyValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } }));
+	
+	
+		NOTE: 	Before v6 'transformation: true' was enough but since v7 you need also this:
+		
+			transformOptions: { enableImplicitConversion: true }
+	
+	- use DTO in controllers instead of using simple @Param and @Query variables
+	
+		export class PersonFilterDto {
+		  @IsOptional()
+		  @IsInt()
+		  id: number;
 
-	- input paramters are passed as input arguments to controller methods
-	- annotate input fields with @Param 
-	- add validator pipes to @Param
+		  @IsOptional()
+		  name: string;
+		}
+				
 
-	for example:
+		@Get()
+		async getAllFiltered(@Query() filter: PersonFilterDto): Promise<Person[]> {
+			return this.personService.getAll(filter);
+		}
+
+############################################# Explanation #############################################
+- You can use pipes to validate input.
+- Pipes can be 
+
+	- parameter-scoped:
+
+		@Post()
+		async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {				<<<<<< parameter-scoped
+			this.catsService.create(createCatDto);
+		}
+
+	- method-scoped:
+	
+		@Post()
+		@UsePipes(new JoiValidationPipe(createCatSchema))									<<<<<< method-scoped
+		async create(@Body() createCatDto: CreateCatDto) {
+		  this.catsService.create(createCatDto);
+		}	
+
+	- controller-scoped: same as method-scoped but decoration is in controller head.
+	
+	- global-scoped:
+	
+		main.ts
+
+		async function bootstrap() {
+		  const app = await NestFactory.create(AppModule);
+		  app.useGlobalPipes(new ValidationPipe());
+		  await app.listen(3000);
+		}
+		bootstrap();
+		
+- pipes can be:
+
+	- built-in:
+	
+		ValidationPipe
+		ParseIntPipe
+		ParseBoolPipe
+		ParseArrayPipe
+		ParseUUIDPipe
+		DefaultValuePipe		
+	
+	- custom pipe:
+	
+		@Injectable()
+		export class MyValidationPipe implements PipeTransform {
+		  transform(value: any, metadata: ArgumentMetadata) {
+			return value;
+		  }
+		}		
+	
+	
+	
+- pipe instantiating:
+
+	- framework instantiates the pipe:
 	
 		@Get(':id')
 		async findOne(@Param('id', ParseIntPipe) id: number) {
 		  return this.catsService.findOne(id);
 		}	
-  OR
+		
+	- OR when we instantiate a pipe:
 	
-	@Get(':id')
-	async findOne(
-	  @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }))
-	  id: number,
-	) {
-	  return this.catsService.findOne(id);
-	}
+		@Get(':id')
+		async findOne(
+		  @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }))
+		  id: number,
+		) {
+		  return this.catsService.findOne(id);
+		}
+
 
 	
-- Method 2: DTO
+- DTO
 
-	- use a singl
-- You need class-validator. Internally uses validator.js to perform validation. Class-validator works on both browser and node.js platforms.
-- Annotate 
-
-
-
+	- use a single DTO instead of multiple parameters
+	- You need class-validator. Internally uses validator.js to perform validation. Class-validator works on both browser and node.js platforms.
+	- Annotate with class-validator decorators, like:
+	
+		- IsOptional
 
 
 SEE ALSO:
 	Howto build-up a NestJS development environment?
+	https://docs.nestjs.com/techniques/validation
 	https://docs.nestjs.com/pipes#class-validator
 	https://github.com/typestack/class-validator#readme
 	
@@ -147,7 +227,7 @@ SEE ALSO:
 How to validate a DTO member agains enum?
 =========================================
 - create an array from enum values (ColorValues)
-- use validatoy on value property: @IsIn(valuesArray)
+- use validator (class-validator) on value property: @IsIn(valuesArray)
 
 	export enum Color {
 	  WHITE = 'white',
@@ -665,8 +745,39 @@ In this case you can attach debugger manually.
 	4. start project (start:debug) first with Debug
 	5. start attach entry with Debug
 
-If project started with --watch and it reloaded on code change sometimes debugger shoul be re-attached (restart step 5).
+If project started with --watch and it reloaded on code change sometimes debugger should be re-attached (restart step 5).
+
+--------------------------------------------------------------------------------------------------------------------------------------
+@Param, @Query
+==============
+Both of them extract something from request, but...
 
 
+(from source comments)
 
+
+- @Param:	it gets value from path.
+	
+- @Query:	it gets value from query.
+
+
+	/somepath/param/param2?query1=...&query2=...
+
+
+NOTE:	There are a lot of other decorators to extract request:
+
+	- @Request(), @Req()
+	- @Response(), @Res()
+	- @Next()
+	- @Session()
+	- @Param(param?: string)
+	- @Body(param?: string)
+	- @Query(param?: string)
+	- @Headers(param?: string)
+	- @Ip()
+	- @HostParam()
+
+
+SEE ALSO:
+	https://docs.nestjs.com/custom-decorators#param-decorators
 		
