@@ -12,6 +12,8 @@ Dependency injection
 Controllers, validations
 ------------------------
 - @Param, @Query
+- Validation, transformation
+- How class-validator and class-transformer work?
 - How to validate input data in controllers?
 - How to validate a DTO member agains enum?
 - How to specify optional search criteria?
@@ -102,6 +104,102 @@ This error generated when component XXX cannot inject element specified in const
 Fix:	maybe expected component did not added to 'providers' of current module.
 
 
+--------------------------------------------------------------------------------------------------------------------------------------
+Validation, transformation
+==========================
+We are now talking about payload/parameter validation in controllers, WebSockets and Microservices.
+
+- How to activate validation?
+
+	- add class-validator to project
+	- apply ValidationPipe on parameter/method/controllel/global scope, e.g:
+	
+		app.useGlobalPipes(new ValidationPipe());
+		
+	- how validation works for
+		- parameters which are primitive members:
+			
+		- DTO:
+		
+
+
+
+Example controller method where DTO used to collect query params:
+
+	@Get()
+	async getAllFiltered(@Query() filter: PersonFilterDto): Promise<Person[]> {
+		console.log('FILTER:', filter);
+		return this.personService.getAll(filter);
+	}
+
+	export class PersonFilterDto {
+	  id: number;
+	  name: string;
+	  test: boolean;
+	}
+  
+  
+- No validation, no transformation:			
+
+	app.useGlobalPipes(new ValidationPipe());
+
+	- request: 	GET http://localhost:3000/person?id=2&dummy=abc
+	- output:	FILTER: { id: '2', dummy: 'abc' }
+
+	- By default, every path parameter and query parameter comes over the network as a string.
+	- All query parameters are mapped into DTO as strings, all parameters are mapped even if they are not member of DTO.
+	- Without any validation arbitrary parameters and values are mapped to DTO as is.
+
+- Validation but no transformation:
+
+	app.useGlobalPipes(new ValidationPipe());
+
+	If you want to check if 'id' is number use @IsNumberString because input parameters are not converted.
+
+		export class PersonFilterDto {
+			@IsNumberString
+			id: number;
+			...
+		}
+
+	NOTE: if you use @IsNumber() now you get a validation error:	"id must be a number conforming to the specified constraints"
+	
+- Transformation + validation:				
+
+	app.useGlobalPipes(new ValidationPipe({ transform: true }));	
+	
+	- request: 	GET http://localhost:3000/person?id=2&dummy=abc
+	- output:	FILTER: PersonFilterDto { id: '2', dummy: 'abc' }						<<<<<<<<<<<<<<< JSON object transformed into PersonFilterDto
+	
+	Validation is still @IsNumberString bacause because auto-transformation only converts primitive types (but not a DTO).
+	As you can see, 'id' is '2' (string).
+	
+- Transformation + validation + conversion:	
+	
+	app.useGlobalPipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true }}));	
+	
+	- request: 	GET http://localhost:3000/person?id=2&dummy=abc
+	- output:	FILTER: PersonFilterDto { id: 2, dummy: 'abc' }							<<<<<<<<<<<<<<< JSON object transformed into PersonFilterDto + 'id' converted into number
+	
+	NOTE: Validation should be @IsNumber since 'id' has been converted to number.
+		
+	+ if you omit 'id' query param in URL:		http://localhost:3000/person?dummy=abc
+		then you will get validation error about missing 'id' -> add @IsOptional
+	
+		export class PersonFilterDto {
+			@IsOptional()
+			@IsNumber
+			id: number;
+			...
+		}
+		
+	
+SEE ALSO:
+	https://docs.nestjs.com/techniques/validation#auto-validation
+	https://docs.nestjs.com/techniques/validation#transform-payload-objects
+		
+	
+	
 --------------------------------------------------------------------------------------------------------------------------------------
 How to validate input data in controllers?
 ==========================================
