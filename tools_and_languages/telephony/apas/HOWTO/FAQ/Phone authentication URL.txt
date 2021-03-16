@@ -13,10 +13,10 @@ If you want access some protected resource in CUCM environment the resource owne
 For example if you want to download screenshot from a phone. 
 In this case protected object is authenticated and you get a login dialog (possible Basic Authentication).
 
-For example here you want to download scrrenshot from a phone.
-Your IP:	10.255.249.145
-Phone IP:	10.255.249.150
-CUCM IP:	10.51.51.34
+For example here you want to download screenshot from a phone.
+	Your IP:	10.255.249.145
+	Phone IP:	10.255.249.150
+	CUCM IP:	10.51.51.34
 
 - browser sends a HTTP request to device:
 

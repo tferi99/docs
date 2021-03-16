@@ -29,12 +29,13 @@ Configuration
 	
 		CUCM/User Management/Application User/<choose a user>/[Permission Information]/(Add to Access Control Group):
 		
+		- Standard CCM Admin Users
 		- Standard RealtimeAndTraceCollection			: for RIS service
 		- Standard Packet Sniffer Users
 		
 - APAS config:
 
-	- create a user pool
+	- create a user pool (IP Phones)
 	
 	- add phones to this pool
 	
@@ -42,7 +43,8 @@ Configuration
 ------------------------------------------------------------------------------------------------------------------------	
 Run
 ===
-
+From AdminGUI:
+	
 	APAS/Testing/Phone Control
 	
 	Choose a pool then select phones you want to control remotely.
@@ -55,8 +57,62 @@ NOTE:	Only phones can be controlled with this feature which provide WEB access.
 Troubleshooting
 ===============
 - if phones cannot be accessed at all
-	- check application user groups (SEE: Configuration)
+	- check application user groups		(SEE MORE: Configuration)
 	
+- check phone:
+	- WEB access should be enabled
+	
+	
+- Check RIS service on CUCM		(SEE MORE: Configuration)
+	
+	- test RIS SOAP accessibility with your application user, too:
+	
+			https://APPUSER:PWD@CUCM:8443/realtimeservice/services/RisPort
+		e.g:
+			https://10.51.51.34:8443/realtimeservice/services/RisPort
+			https://FTOTH_APAS:12345@10.51.51.34:8443/realtimeservice/services/RisPort
+		
+		If you have Forbidden (403) then add the 
+			- Standard CCM Admin Users
+			- Standard RealtimeAndTraceCollection
+		roles to your applciation user.
+
+
+	- validate RIS query by calling REST API:
+	
+		http://APAS:8080/andphone/admingui/testing/phone?name=DEVICE
+	
+	  for example:
+	  
+		http://localhost:8080/andphone/admingui/testing/phone?name=SEP64A0E714F271
+		
+		
+	If RIS access is forbidden then reponse of this REST request will be 401 (with '(403)Forbidden' in response)
+	and andphone.log contains:
+	
+		[2021-03-16 16:17:51,167] [ERROR] [http-nio-8080-exec-8] [TestingModuleController.java:102] - [PhoneControl] IO Exception
+		org.apache.axis.AxisFault: (403)Forbidden
+				at org.apache.axis.transport.http.HTTPSender.readFromSocket(HTTPSender.java:744) ~[axis.jar:?]
+				at org.apache.axis.transport.http.HTTPSender.invoke(HTTPSender.java:144) ~[axis.jar:?]
+				at org.apache.axis.strategies.InvocationStrategy.visit(InvocationStrategy.java:32) ~[axis.jar:?]
+				at org.apache.axis.SimpleChain.doVisiting(SimpleChain.java:118) ~[axis.jar:?]
+				at org.apache.axis.SimpleChain.invoke(SimpleChain.java:83) ~[axis.jar:?]
+				at org.apache.axis.client.AxisClient.invoke(AxisClient.java:165) ~[axis.jar:?]
+				at org.apache.axis.client.Call.invokeEngine(Call.java:2784) ~[axis.jar:?]
+				at org.apache.axis.client.Call.invoke(Call.java:2767) ~[axis.jar:?]
+				at org.apache.axis.client.Call.invoke(Call.java:2443) ~[axis.jar:?]
+				at org.apache.axis.client.Call.invoke(Call.java:2366) ~[axis.jar:?]
+				at org.apache.axis.client.Call.invoke(Call.java:1812) ~[axis.jar:?]
+				at com.cisco.schemas.ast.soap.RisBindingStub.selectCmDevice(RisBindingStub.java:573) ~[classes/:?]
+				at com.cisco.schemas.ast.soap.RisPortTypeProxy.selectCmDevice(RisPortTypeProxy.java:81) ~[classes/:?]
+				at com.andtek.andphone.testing.DeviceListX.getDeviceRISInfo(DeviceListX.java:447) ~[classes/:?]
+				at com.andtek.andphone.admingui.rest.controllers.testing.TestingModuleController.getPhoneControlResource(TestingModuleController.java:127) ~[classes/:?]
+				at com.andtek.andphone.admingui.rest.controllers.testing.TestingModuleController.getPhone(TestingModuleController.java:96) [classes/:?]
+				at sun.reflect.GeneratedMethodAccessor215.invoke(Unknown Source) ~[?:?]
+				at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_282]
+				at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_282]
+				....
+				
 - if a single phone cannot be accessed:
 
 	- try to capture phone screen with this URL:
@@ -74,8 +130,8 @@ Troubleshooting
 		http://CUCM_HOST/ccmcip/authenticate.jsp?UserID=USER&Password=PASSWORD&devicename=PHONE_DEVICE
 		
 		e.g:
-		
-			http://10.51.51.34/ccmcip/authenticate.jsp?UserID=FTOTH_APAS2&Password=12345&devicename=SEPA45630401BDA
+			http://10.51.51.34/ccmcip/authenticate.jsp?UserID=FTOTH_APAS&Password=12345&devicename=SEP64A0E714F271
+			https://10.51.51.34:8443/ccmcip/authenticate.jsp?UserID=FTOTH_APAS&Password=12345&devicename=SEP64A0E714F271
 		
 SEE ALSO:
 
@@ -83,3 +139,5 @@ SEE ALSO:
 		
 SEE ALSO:
 	https://secure.n-able.com/webhelp/nc_11-0-0_en/content/Help_20/Services/CUCM/Services_CUCM_Process_RisDC.htm
+	https://www.reddit.com/r/Cisco/comments/ehvmil/required_user_roles_for_risport70_on_cucm/
+	
